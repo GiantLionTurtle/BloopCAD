@@ -1,2 +1,0 @@
-/usr/bin/ar qc libentities.a  CMakeFiles/entities.dir/plane_abstract.cpp.o CMakeFiles/entities.dir/plane.cpp.o CMakeFiles/entities.dir/entitiesIndexer.cpp.o CMakeFiles/entities.dir/entity.cpp.o
-/usr/bin/ranlib libentities.a

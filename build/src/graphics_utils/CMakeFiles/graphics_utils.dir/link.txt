@@ -1,2 +1,0 @@
-/usr/bin/ar qc libgraphics_utils.a  CMakeFiles/graphics_utils.dir/GLCall.cpp.o CMakeFiles/graphics_utils.dir/shader.cpp.o CMakeFiles/graphics_utils.dir/vertexBuffer.cpp.o CMakeFiles/graphics_utils.dir/vertexBufferLayout.cpp.o CMakeFiles/graphics_utils.dir/indexBuffer.cpp.o CMakeFiles/graphics_utils.dir/vertexArray.cpp.o CMakeFiles/graphics_utils.dir/camera.cpp.o
-/usr/bin/ranlib libgraphics_utils.a
