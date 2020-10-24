@@ -1,0 +1,2 @@
+/usr/bin/ar qc libworkSpaces.a  CMakeFiles/workSpaces.dir/partDesign.cpp.o CMakeFiles/workSpaces.dir/sketchDesign.cpp.o CMakeFiles/workSpaces.dir/workSpace.cpp.o
+/usr/bin/ranlib libworkSpaces.a

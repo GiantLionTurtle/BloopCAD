@@ -1,0 +1,86 @@
+
+#ifndef TOOL_HPP_
+#define TOOL_HPP_
+
+#include "../forward_bloop.hpp"
+// #include "document.hpp"
+#include "../entities/part.hpp"
+
+#include <memory>
+
+#include <glm/glm.hpp>
+
+#include <gtkmm.h>
+
+class workspaceState;
+
+class tool_abstract {
+protected:
+	std::shared_ptr<std::shared_ptr<workspaceState>> mWorkspaceState;
+public:
+	tool_abstract(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): mWorkspaceState(workspaceState_) {}
+	virtual void finish() {};
+	virtual void init() {};
+
+	virtual bool manage_key_press(GdkEventKey* event){ return true; };
+	virtual bool manage_mouse_move(GdkEventMotion* event) { return true; }
+	virtual bool manage_scroll(GdkEventScroll* event) { return true; }
+	virtual bool manage_button_release(GdkEventButton* event) { return true; }
+
+	void set_state(std::shared_ptr<workspaceState> state) { (*mWorkspaceState) = state; }
+};
+
+template<typename actOn>
+class tool : public tool_abstract {
+protected:
+	std::shared_ptr<actOn> mTarget;
+
+public:
+    tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool_abstract(workspaceState_) {};
+
+	void set_target(std::shared_ptr<actOn> target) 
+	{
+		mTarget = target;
+	}
+};
+
+class orbit_tool : public tool_abstract {
+private:
+	glm::vec2 prevPos;
+	bool is_moving;
+public:
+	orbit_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool_abstract(workspaceState_), is_moving(false) {};
+
+	virtual void finish() { is_moving = false; }
+	virtual void init() { is_moving = false; }
+	virtual bool manage_mouse_move(GdkEventMotion* event);
+	virtual bool manage_button_release(GdkEventButton* event) { if(event->state & GDK_BUTTON1_MASK) finish(); return true; }
+};
+
+class zoom_tool : public tool_abstract {
+private:
+	glm::vec2 prevPos;
+	bool is_moving;
+public:
+	zoom_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool_abstract(workspaceState_) {};
+
+	virtual bool manage_mouse_move(GdkEventMotion* event);
+	virtual bool manage_scroll(GdkEventScroll* event);
+};
+
+class line_tool : public tool<sketch> {
+public:
+	line_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool(workspaceState_) {};
+};
+
+class startSketch_tool : public tool<part> {
+public:
+	startSketch_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool(workspaceState_) {};
+};
+
+class extrusion_tool : public tool<part> {
+public:
+	extrusion_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool(workspaceState_) {};
+};
+
+#endif
