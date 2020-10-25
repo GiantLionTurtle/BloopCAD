@@ -45,6 +45,19 @@ std::shared_ptr<entity> entitiesIndexer::operator[](glm::ivec3 const& ind) const
 	return get(ind);
 }
 
+void entitiesIndexer::for_each(std::function<void (std::shared_ptr<entity>, glm::ivec3)> func)
+{
+	for(size_t i = 0; i < mEntities.size(); ++i) {
+		func(std::get<1>(mEntities[i]), std::get<0>(mEntities[i]));
+	}
+}
+void entitiesIndexer::for_each(std::function<void (std::shared_ptr<entity>)> func)
+{
+	for(size_t i = 0; i < mEntities.size(); ++i) {
+		func(std::get<1>(mEntities[i]));
+	}
+}
+
 int entitiesIndexer::compareIndices(glm::ivec3 const& a, glm::ivec3 const& b)
 {
 	for(int i = 0; i < 3; ++i) {

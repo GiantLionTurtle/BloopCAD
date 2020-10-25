@@ -21,7 +21,7 @@ private:
 	std::shared_ptr<vertexBuffer> 	mVB;
 	std::shared_ptr<vertexArray> 	mVA;
 	std::shared_ptr<indexBuffer>	mIB, mOutlineIB;
-	std::shared_ptr<shader> 		mShader;
+	std::shared_ptr<shader> 		mShader, mSelectionShader;
 public:
 	plane(plane_abstract const& plane_, std::string const& label = "");
 
@@ -34,6 +34,7 @@ public:
 	// static std::shared_ptr<plane> from_3Points_ptr(glm::vec3 origin, glm::vec3 pt1, glm::vec3 pt2, std::string const& label);
 
 	virtual void draw(std::shared_ptr<camera> cam);
+	virtual void draw_selection(std::shared_ptr<camera> cam, glm::ivec3 ind);
 private:
 	void init_buffers();
 };

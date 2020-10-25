@@ -35,8 +35,8 @@ shader shader::fromFiles(std::string const& vertexShaderFilePath, std::string co
 }
 shader shader::fromFiles(std::vector<shader_source> shaderPaths)
 {
-	if(shaderPaths.size() == 0 || shaderPaths.size() > 5) {
-		std::cerr<<"Warning: Invalid number of paths in shader::fromFiles, empty shader returned"<<std::endl;
+	if(shaderPaths.size() < 2 || shaderPaths.size() > 5) {
+		LOG_WARNING("Invalid number of paths given, empty shader returned");
 		return shader();
 	}
 	for(int i = 0; i < shaderPaths.size(); ++i) {
@@ -68,7 +68,7 @@ shader shader::fromFile(std::string const& resourceFilePath)
 			std::filesystem::path(resourceFolderPath).append(filePaths[0]).string(), 
 			std::filesystem::path(resourceFolderPath).append(filePaths[1]).string());
 	} else {
-		std::cerr<<"Warning: more than two shaders stages from single file not supported, empty shader returned"<<std::endl;
+		LOG_WARNING("more than two shaders stages from single file not supported, empty shader returned.");
 	}
 	return shader();
 }
@@ -82,8 +82,8 @@ std::shared_ptr<shader> shader::fromFiles_ptr(std::string const& vertexShaderFil
 }
 std::shared_ptr<shader> shader::fromFiles_ptr(std::vector<shader_source> shaderPaths)
 {
-	if(shaderPaths.size() == 0 || shaderPaths.size() > 5) {
-		std::cerr<<"Warning: Invalid number of paths in shader::fromFiles, empty shader returned"<<std::endl;
+	if(shaderPaths.size() < 2 || shaderPaths.size() > 5) {
+		LOG_WARNING("Invalid number of paths in shader::fromFiles, empty shader returned");
 		return std::shared_ptr<shader>(nullptr);
 	}
 	for(int i = 0; i < shaderPaths.size(); ++i) {
@@ -115,7 +115,7 @@ std::shared_ptr<shader> shader::fromFile_ptr(std::string const& resourceFilePath
 			std::filesystem::path(resourceFolderPath).append(filePaths[0]).string(), 
 			std::filesystem::path(resourceFolderPath).append(filePaths[1]).string());
 	} else {
-		std::cerr<<"Warning: more than two shaders stages from single file not supported, empty shader returned"<<std::endl;
+		LOG_WARNING("More than two shaders stages from single file not supported, empty shader returned.")
 	}
 	return std::shared_ptr<shader>(nullptr);
 }
@@ -159,12 +159,12 @@ unsigned int shader::compileShader(unsigned int type, std::string const& source)
 	{
 		int length;
 		GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
-		char* message = (char*)alloca(length*sizeof(char));
-		GLCall(glGetShaderInfoLog(id, length, &length, message));
-		std::cout << "Failed to compile " <<
-			(type == GL_VERTEX_SHADER ? "vertex" : (type == GL_FRAGMENT_SHADER ? "fragment" : "geometry"))
-			<< " shader." << std::endl;
-		std::cout << message << std::endl;
+		std::string message;
+		message.reserve(length);
+		GLCall(glGetShaderInfoLog(id, length, &length, (GLchar*)message.c_str()));
+		LOG_WARNING("Failed to compile " +
+			(type == GL_VERTEX_SHADER ? std::string("vertex") : (type == GL_FRAGMENT_SHADER ? std::string("fragment") : std::string("geometry")))
+			+ " shader: " + message);
 		return 0;
 	}
 
@@ -191,10 +191,10 @@ unsigned int shader::createShader(std::string const& vertexShaderSource, std::st
 	{
 		int length;
 		GLCall(glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length));
-		char* message = (char*)alloca(length*sizeof(char));
-		GLCall(glGetProgramInfoLog(program, length, &length, message));
-		std::cout << "Failed to link shader program." << std::endl;
-		std::cout << message << std::endl;
+		std::string message;
+		message.reserve(length);
+		GLCall(glGetProgramInfoLog(program, length, &length, (GLchar*)message.c_str()));
+		LOG_WARNING("Failed to link shader program: \"" + message + "\"");
 
 		GLCall(glDetachShader(program, vertexShader));
 		GLCall(glDetachShader(program, fragmentShader));
@@ -218,7 +218,7 @@ unsigned int shader::createShader(std::string const& vertexShaderSource, std::st
 unsigned int shader::createShader(std::vector<shader_source> const& shaderSources)
 {
 	if(shaderSources.size() == 0 || shaderSources.size() > 5) {
-		std::cerr<<"Warning: Invalid number of paths in shader::fromFiles, empty shader returned"<<std::endl;
+		LOG_WARNING("Invalid number of paths in shader::fromFiles, empty shader returned");
 		return 0;
 	}
 	unsigned int shaders[5];
@@ -226,8 +226,7 @@ unsigned int shader::createShader(std::vector<shader_source> const& shaderSource
 	for(int i = 0; i < shaderSources.size(); ++i) {
 		shaders[i] = compileShader(shaderSources[i].type, shaderSources[i].source);
 		if(!shaders[i]) {
-			std::cerr<<"Warnng: could not compile shader stage "<<i<<", empty shader returned"<<std::endl;
-			return 0;
+			LOG_WARNING("could not compile shader stage " + std::to_string(i) + ", empty shader returned");
 		}
 	}
 	
@@ -244,10 +243,10 @@ unsigned int shader::createShader(std::vector<shader_source> const& shaderSource
 	{
 		int length;
 		GLCall(glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length));
-		char* message = (char*)alloca(length*sizeof(char));
-		GLCall(glGetProgramInfoLog(program, length, &length, message));
-		std::cout << "Failed to link shader program." << std::endl;
-		std::cout << message << std::endl;
+		std::string message;
+		message.reserve(length);
+		GLCall(glGetProgramInfoLog(program, length, &length, (GLchar *)message.c_str()));
+		LOG_ERROR("Failed to link shader program: \"" + message + "\"");
 
 		// TODO: check if for loops can be combined
 		for(int i = 0; i < shaderSources.size(); ++i) {
@@ -274,12 +273,13 @@ unsigned int shader::createShader(std::vector<shader_source> const& shaderSource
 }
 
 
-
 std::string shader::readFromFile(std::string const& filePath)
 {
 	std::ifstream stream(filePath);
-	if(!stream)
+	if(!stream) {
+		LOG_ERROR("Could not open file \"" + filePath + "\"");
 		return "";
+	}
 
 	std::string str(std::istreambuf_iterator<char>(stream), {});
 	return str;
@@ -318,7 +318,7 @@ int shader::getUniformLocation(std::string const& name)
 
 	GLCall(int location = glGetUniformLocation(mRendererID, name.c_str()));
 	if(location == -1)
-		std::cerr << "Warning: uniform \"" << name << "\" does not exist." << std::endl;
+		LOG_WARNING("Uniform \"" + name + "\" does not exist.");
 
 	mUniformCache[name] = location;
 

@@ -51,8 +51,8 @@ bool workspace::manage_button_release(GdkEventButton* event)
 	if((*mState) && (*mState)->currentTool) {
 		return (*mState)->currentTool->manage_button_release(event);
 	}
+	return true;
 }
-
 
 bool workspace::invoke_from_key(unsigned int key, std::string& toolName)
 {

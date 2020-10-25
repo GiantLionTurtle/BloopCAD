@@ -5,6 +5,7 @@ set(graphics_utils_source_files
   vertexBufferLayout.cpp
   indexBuffer.cpp
   vertexArray.cpp
+  frameBuffer.cpp
   camera.cpp)
 
 add_subdirectory(textures)

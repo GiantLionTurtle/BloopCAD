@@ -8,6 +8,7 @@
 #include "entities/entitiesIndexer.hpp"
 #include "entities/plane_abstract.hpp"
 #include "tools/tool.hpp"
+#include "graphics_utils/frameBuffer.hpp"
 
 #include <gtkmm.h>
 
@@ -24,6 +25,8 @@ private:
 
 	std::map<std::string, std::shared_ptr<workspaceState>> mWorkspaceStates;
 	std::shared_ptr<workspaceState> mCurrentWorkspaceState;
+
+	std::shared_ptr<frameBuffer> mSelectionBuffer;
 
 	Gtk::GLArea mViewPort;
 

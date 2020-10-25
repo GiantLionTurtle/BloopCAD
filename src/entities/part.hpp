@@ -7,6 +7,8 @@
 #include "plane.hpp"
 #include "editable.hpp"
 
+#include "entitiesIndexer.hpp"
+
 #include <memory>
 
 class sketch : public plane_abstract, public entity, public editable {
@@ -22,21 +24,25 @@ public:
 
 class part : public entity {
 private:
-	std::shared_ptr<plane> mXY_plane, mYZ_plane, mZX_plane;
+	entitiesIndexer mEntities;
 public:
-	part() 
+	part():
+		mEntities(glm::ivec3(100, 0, 0)) 
 	{
-		mXY_plane = plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.0f, 0.0f), glm::vec3(0.0f, 0.8f, 0.0f));
-		mYZ_plane = plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.8f, 0.0f), glm::vec3(0.0f, 0.0f, 0.8f));
-		mZX_plane = plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.8f), glm::vec3(0.8f, 0.0f, 0.0f));
+		mEntities.add(plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.0f, 0.0f), glm::vec3(0.0f, 0.8f, 0.0f)));
+		mEntities.add(plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.8f, 0.0f), glm::vec3(0.0f, 0.0f, 0.8f)));
+		mEntities.add(plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.8f), glm::vec3(0.8f, 0.0f, 0.0f)));
 	};
 
 
 	virtual void draw(std::shared_ptr<camera> cam)
 	{
-		mXY_plane->draw(cam);
-		mYZ_plane->draw(cam);
-		mZX_plane->draw(cam);
+		mEntities.for_each([cam](std::shared_ptr<entity> ent) { ent->draw(cam); });
+	}
+
+	virtual void draw_selection(std::shared_ptr<camera> cam, glm::ivec3 ind)
+	{
+		mEntities.for_each([cam](std::shared_ptr<entity> ent, glm::ivec3 ind) { ent->draw_selection(cam, ind); });
 	}
 
     virtual std::string type() { return "part"; }

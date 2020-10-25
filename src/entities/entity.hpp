@@ -18,7 +18,8 @@ protected:
 public:
     entity() {};
 
-    virtual void draw(std::shared_ptr<camera> cam) {};
+    virtual void draw(std::shared_ptr<camera> cam) { std::cout<<"Draw not implemented...\n"; };
+    virtual void draw_selection(std::shared_ptr<camera> cam, glm::ivec3 ind) { std::cout<<"Selection draw not implemented...\n"; }
 
     void select() { set_selected(true); };
     void unselect() { set_selected(false); };

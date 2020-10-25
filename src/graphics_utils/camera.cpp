@@ -48,7 +48,7 @@ glm::mat4 camera::view() const
 
 glm::mat4 camera::projection() const
 {
-	return glm::perspective(glm::radians(mZoom), mAspectRatio, 0.1f, 800.0f);
+	return glm::perspective(glm::radians(mZoom), mAspectRatio, 1.0f, 4.0f);
 }
 
 void camera::move_spherical(glm::vec3 delta)

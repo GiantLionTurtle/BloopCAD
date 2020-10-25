@@ -19,6 +19,7 @@ plane::plane(plane_abstract const& plane_, std::string const& label) :
 	mVA->add_buffer(*mVB.get(), layout);
 	mIB = std::shared_ptr<indexBuffer>(new indexBuffer(mIndices, 6));
 	mShader = shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/planeShader.frag");
+	mSelectionShader = shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/plainColor.frag");
 }
 
 plane plane::from_1Point2Vectors(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, std::string const& label)
@@ -40,6 +41,24 @@ void plane::draw(std::shared_ptr<camera> cam)
 	} else {
 		color = glm::vec3(0.15f, 0.0f, 0.25f);
 	}
+	mShader->setUniform3f("u_Color", color.r, color.g, color.b);
+	mShader->setUniformMat4f("u_MVP", cam->projection() * cam->view());
+	mVA->bind();
+	mIB->bind();
+
+	GLCall(glDrawElements(GL_TRIANGLES, mIB->count(), GL_UNSIGNED_INT, nullptr));
+
+	mIB->unbind();
+	mShader->unbind();
+}
+
+void plane::draw_selection(std::shared_ptr<camera> cam, glm::ivec3 ind)
+{
+	mSelectionShader->bind();
+
+	glm::vec3 color(ind);
+	color /= 255.0f;
+
 	mShader->setUniform3f("u_Color", color.r, color.g, color.b);
 	mShader->setUniformMat4f("u_MVP", cam->projection() * cam->view());
 	mVA->bind();
