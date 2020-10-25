@@ -34,6 +34,7 @@ std::shared_ptr<plane> plane::from_1Point2Vectors_ptr(glm::vec3 const& origin, g
 
 void plane::draw(std::shared_ptr<camera> cam)
 {
+	GLCall(glDisable(GL_DEPTH_TEST));
 	mShader->bind();
 	glm::vec3 color;
 	if(dist_signed(cam->pos_cartesian()) >= 0) {
@@ -50,6 +51,8 @@ void plane::draw(std::shared_ptr<camera> cam)
 
 	mIB->unbind();
 	mShader->unbind();
+
+	GLCall(glEnable(GL_DEPTH_TEST));
 }
 
 void plane::draw_selection(std::shared_ptr<camera> cam, glm::ivec3 ind)
