@@ -104,6 +104,12 @@ bool bloop::manage_key_press(GdkEventKey* event)
 }
 bool bloop::manage_mouse_move(GdkEventMotion* event)
 {
+	if(mCurrentDocument) {
+		bool success;
+		glm::ivec3 sampledColor = mCurrentDocument->selection_buffer_at(glm::ivec2(event->x, event->y), success);
+		if(success)
+			std::cout<<"Selection: "<<glm::to_string(sampledColor)<<std::endl;
+	}
 	if(mCurrentWorkspace) {
 		return mCurrentWorkspace->manage_mouse_move(event);
 	}

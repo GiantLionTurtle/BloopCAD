@@ -35,6 +35,7 @@ void document::do_realize()
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
+		mSelectionBuffer = std::shared_ptr<frameBuffer>(new frameBuffer(get_width(), get_height()));
 		mSubject = std::shared_ptr<entity>(new part());
 		set_workspace("partDesign");
 		mCurrentWorkspaceState->cam = camera::from_spherical_ptr(glm::vec3(3.0f, 0.785398, 0.955317), glm::vec3(0.0f, 0.0f, 0.0f), 100.0f, (float)get_width() / (float)get_height());
@@ -58,19 +59,18 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 	GLCall(glClearColor(0.3, 0.05, 0.2, 1.0));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-	// for(size_t i = 0; i < mEntities.size(); ++i) {
-	// 	mEntities[i]->draw();
-	// }
-	// mCurrentWorkspaceState->cam->move_spherical(glm::vec3(0.0, 0.05, 0.05));
+	int initialFrameBuffer;
+	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &initialFrameBuffer); // TODO: check if this could change (if it does not, no need to do it every loop)
+
 	if(mSubject) {
 		mSubject->draw(mCurrentWorkspaceState->cam);
-
-		// Will be important later: https://stackoverflow.com/questions/62422683/framebuffer-issue-render-to-texture-with-gtk3-glarea-vs-glfw-identical-opengl
-		// mSelectionBuffer->bind();
-		// GLCall(glClearColor(0.0, 0.0, 0.0, 1.0));
-		// GLCall(glClear(GL_COLOR_BUFFER_BIT));
-		// mSubject->draw_selection(mCurrentWorkspaceState->cam, glm::ivec3(0, 0, 0));
-		// mSelectionBuffer->unbind();
+		// // Will be important later: https://stackoverflow.com/questions/62422683/framebuffer-issue-render-to-texture-with-gtk3-glarea-vs-glfw-identical-opengl
+		mSelectionBuffer->bind();
+		GLCall(glViewport(0, 0, get_width(), get_height()));
+		GLCall(glClearColor(0.0, 0.0, 0.0, 1.0));
+		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+		mSubject->draw_selection(mCurrentWorkspaceState->cam, glm::ivec3(0, 0, 0));
+		mSelectionBuffer->unbind(initialFrameBuffer);
 	}
 	return true;
 }
@@ -113,4 +113,17 @@ bool document::set_workspace(std::string const& name)
 		return true;
 	}
 	return false;
+}
+
+glm::ivec3 document::selection_buffer_at(glm::ivec2 pos, bool& success) 
+{
+	if(mSelectionBuffer) {
+		mSelectionBuffer->bind();
+		unsigned char data[4] = {0, 0, 0, 0};
+		GLCall(glReadPixels(pos.x, get_height() - pos.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &data));
+		success = true;
+		return glm::ivec3(data[0], data[1], data[2]);
+	}
+	success = false;
+	return glm::ivec3(0, 0, 0);
 }
