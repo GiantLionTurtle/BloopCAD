@@ -34,6 +34,9 @@ bool workspace::manage_mouse_move(GdkEventMotion* event)
 	if(event->state & GDK_BUTTON2_MASK) {
 		return mTools.at("orbit")->manage_mouse_move(event);
 	}
+	// if((*mState) && (*mState)->cam) {
+	// 	(*mState)->cam->move_spherical(glm::vec3(0.0f, 0.0f, -0.05f));
+	// }
 	if((*mState) && (*mState)->currentTool) {
 		return (*mState)->currentTool->manage_mouse_move(event);
 	}

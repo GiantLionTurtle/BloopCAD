@@ -6,17 +6,22 @@ camera::camera(glm::vec3 cartesianCoords, glm::vec3 target, float zoom_, float a
 	mPos_cartesian(cartesianCoords),
 	mTarget(target),
 	mZoom(zoom_),
-	mAspectRatio(aspectRatio_)
+	mAspectRatio(aspectRatio_),
+	mIs_flipped(false)
 {
 	updatePos_spherical();
+	updateUp();
 }
 camera::camera(glm::vec3 target, float zoom_, float aspectRatio_):
 	mPos_spherical(0.0f, 0.0f, 0.0f),
 	mPos_cartesian(0.0f, 0.0f, 0.0f),
 	mTarget(target),
 	mZoom(zoom_),
-	mAspectRatio(aspectRatio_)
-{}
+	mAspectRatio(aspectRatio_),
+	mIs_flipped(false)
+{
+	updateUp();
+}
 
 camera camera::from_cartesian(glm::vec3 cartesianCoords, glm::vec3 target, float zoom_, float aspectRatio_)
 {
@@ -43,33 +48,38 @@ std::shared_ptr<camera> camera::from_spherical_ptr(glm::vec3 sphericalCoords, gl
 glm::mat4 camera::view() const
 {
 	// TODO: have a competant up
-	return glm::lookAt(mPos_cartesian, mTarget, glm::vec3(0.0f, 1.0f, 0.0f));
+	return glm::lookAt(mPos_cartesian, mTarget, mUp);
 }
 
 glm::mat4 camera::projection() const
 {
-	return glm::perspective(glm::radians(mZoom), mAspectRatio, 1.0f, 4.0f);
+	return glm::perspective(glm::radians(mZoom), mAspectRatio, 0.1f, 20.0f);
 }
 
 void camera::move_spherical(glm::vec3 delta)
 {
 	mPos_spherical += delta;
 	updatePos_cartesian();
+	updateUp();	
+	// std::cout<<glm::to_string(mPos_spherical)<<"\n";
 }
 void camera::set_spherical(glm::vec3 spherical)
 {
 	mPos_spherical = spherical;
 	updatePos_cartesian();
+	updateUp();
 }
 void camera::move_cartesian(glm::vec3 delta)
 {
 	mPos_cartesian += delta;
 	updatePos_spherical();
+	updateUp();
 }
 void camera::set_cartesian(glm::vec3 cartesian)
 {
 	mPos_cartesian = cartesian;
 	updatePos_spherical();
+	updateUp();
 }
 
 void camera::updatePos_cartesian()
@@ -95,4 +105,16 @@ void camera::updatePos_spherical()
 		mPos_spherical.z = 3.1415 / 2.0;
 	}
 	// std::cout<<"New pos sphe: "<<glm::to_string(mPos_spherical)<<"\n";
+}
+
+void camera::updateUp()
+{
+	glm::vec3 dir_inv = glm::normalize(mPos_cartesian - mTarget);
+	float modz = std::fmod(mPos_spherical.z, 6.283);
+	if(modz < 0.0f)
+		modz = 6.283f + modz;
+	mIs_flipped = (modz > 3.1415);
+	glm::vec3 up = glm::vec3(0.0f, (mIs_flipped) ? -1.0f : 1.0f, 0.0f); // global up
+	mRight = glm::normalize(glm::cross(up, dir_inv));
+	mUp = glm::cross(dir_inv, mRight);
 }

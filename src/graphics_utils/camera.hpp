@@ -20,6 +20,9 @@ protected:
 	glm::vec3 mPos_spherical, mPos_cartesian, mTarget;
 	glm::mat4 mProjection;
 	float mZoom, mAspectRatio;
+	glm::vec3 mUp, mRight;
+
+	bool mIs_flipped;
 public:
 	camera(glm::vec3 cartesianCoords, glm::vec3 target, float zoom_, float aspectRatio_);
 	camera(glm::vec3 target, float zoom, float aspectRatio_);
@@ -48,8 +51,11 @@ public:
 	float aspectRatio() const { return mAspectRatio; }
 	void set_aspectRatio(float aspectRatio_) { mAspectRatio = aspectRatio_; }
 
+	bool flipped() const { return mIs_flipped; }
+
 	void updatePos_cartesian();
 	void updatePos_spherical();
+	void updateUp();
 };
 
 #endif

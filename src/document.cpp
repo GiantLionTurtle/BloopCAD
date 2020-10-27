@@ -56,7 +56,7 @@ void document::do_unrealize()
 }
 bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 {
-	GLCall(glClearColor(0.3, 0.05, 0.2, 1.0));
+	GLCall(glClearColor(1.0, 0.6, 0.88, 1.0));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	int initialFrameBuffer;
@@ -64,7 +64,7 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 
 	if(mSubject) {
 		mSubject->draw(mCurrentWorkspaceState->cam);
-		// // Will be important later: https://stackoverflow.com/questions/62422683/framebuffer-issue-render-to-texture-with-gtk3-glarea-vs-glfw-identical-opengl
+	
 		mSelectionBuffer->bind();
 		GLCall(glViewport(0, 0, get_width(), get_height()));
 		GLCall(glClearColor(0.0, 0.0, 0.0, 1.0));

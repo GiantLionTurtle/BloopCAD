@@ -34,6 +34,7 @@ std::shared_ptr<plane> plane::from_1Point2Vectors_ptr(glm::vec3 const& origin, g
 
 void plane::draw(std::shared_ptr<camera> cam)
 {
+	// TODO: make this less sketch?
 	GLCall(glDisable(GL_DEPTH_TEST));
 	mShader->bind();
 	glm::vec3 color;
