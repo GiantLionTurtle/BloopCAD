@@ -5,13 +5,15 @@
 int workspace::count = 0;
 
 workspace::workspace(bloop* parent) :
-	mParentBloop(parent)
+	mParentBloop(parent),
+	mDefaultTool(nullptr)
 {}
 
 workspace::workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
 	mParentBloop(parent),
 	id(++count),
-	mState(new std::shared_ptr<workspaceState>())
+	mState(new std::shared_ptr<workspaceState>()),
+	mDefaultTool(nullptr)
 {
 	builder->get_widget(upperBarID, mUpperBar);
 
@@ -25,7 +27,7 @@ bool workspace::manage_key_press(GdkEventKey* event)
 	if(event->keyval == GDK_KEY_Escape) {
 		if((*mState) && (*mState)->currentTool) {
 			(*mState)->currentTool->finish();
-			(*mState)->currentTool = nullptr;
+			(*mState)->currentTool = mDefaultTool;
 		}
 	}
 	return true;
@@ -81,6 +83,14 @@ bool workspace::set_tool(std::string const& name)
 	return false;
 }
 
+void workspace::set_state(std::shared_ptr<workspaceState> state_) 
+{ 
+	if(mState) {
+		(*mState) = state_;
+	} else {
+		LOG_ERROR("No state available.");
+	}
+}
 
 	// std::cout<<"-----------------------\n";
 	// std::cout<<event->state<<"\n";

@@ -124,6 +124,8 @@ public:
 	bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder);
 
 	std::shared_ptr<document> currentDocument() { return mCurrentDocument; }
+	std::shared_ptr<workspace> currentWorkspace() { return mCurrentWorkspace; }
+
 	void set_workspaceState(std::shared_ptr<workspaceState> state);
 
 	void set_workspace(std::string const& name, std::shared_ptr<entity> target);

@@ -31,6 +31,7 @@ protected:
 	std::map<unsigned int, std::string> mMouse_invokes;
 
 	std::map<std::string, std::shared_ptr<tool_abstract>> mTools;
+	std::shared_ptr<tool_abstract> mDefaultTool;
 	std::shared_ptr<entity> mTarget;
 
 	std::shared_ptr<std::shared_ptr<workspaceState>> mState;
@@ -62,6 +63,7 @@ public:
 	void set_target(std::shared_ptr<entity> target) { mTarget = target; }
 
 	bool set_tool(std::string const& name);
+	std::shared_ptr<tool_abstract> defaultTool() { return mDefaultTool; }
 
 	bool manage_key_press(GdkEventKey* event);
 	bool manage_mouse_move(GdkEventMotion* event);
@@ -69,14 +71,7 @@ public:
 	bool manage_button_release(GdkEventButton* event);
 
 	std::shared_ptr<workspaceState> state() const { return (*mState); }
-	void set_state(std::shared_ptr<workspaceState> state_) 
-	{ 
-		if(mState) {
-			(*mState) = state_; 
-		} else {
-			LOG_ERROR("No state available.");
-		}
-	}
+	void set_state(std::shared_ptr<workspaceState> state_);
 
 	Gtk::Box* upperBar() { return mUpperBar; }
 };

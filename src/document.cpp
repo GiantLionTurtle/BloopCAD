@@ -47,6 +47,8 @@ void document::do_realize()
 		mCurrentWorkspaceState->selectionBuffer = mSelectionBuffer;
 		mCurrentWorkspaceState->width = get_width();
 		mCurrentWorkspaceState->height = get_height();
+		if(mParentBloop->currentWorkspace())
+			mCurrentWorkspaceState->currentTool = mParentBloop->currentWorkspace()->defaultTool();
 		mParentBloop->set_workspaceState(mCurrentWorkspaceState);
 	} catch(const Gdk::GLError& gle) {
 		LOG_ERROR("\ndomain: " + std::to_string(gle.domain()) + "\ncode: " + std::to_string(gle.code()) + "\nwhat: " + gle.what());

@@ -14,6 +14,8 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 	mTools["startSketch"] 	= std::shared_ptr<tool_abstract>(new startSketch_tool(mState));
 	mTools["extrusion"] 	= std::shared_ptr<tool_abstract>(new extrusion_tool(mState));
 
+	mDefaultTool = mTools.at("simpleSelector");
+
 	builder->get_widget("startSketch", mStartSketch_btn);
 	builder->get_widget("extrusion", mExtrude_btn);
 
