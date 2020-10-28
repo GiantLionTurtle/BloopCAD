@@ -115,7 +115,7 @@ std::shared_ptr<shader> shader::fromFile_ptr(std::string const& resourceFilePath
 			std::filesystem::path(resourceFolderPath).append(filePaths[0]).string(), 
 			std::filesystem::path(resourceFolderPath).append(filePaths[1]).string());
 	} else {
-		LOG_WARNING("More than two shaders stages from single file not supported, empty shader returned.")
+		LOG_WARNING("More than two shaders stages from single file not supported, empty shader returned.");
 	}
 	return std::shared_ptr<shader>(nullptr);
 }

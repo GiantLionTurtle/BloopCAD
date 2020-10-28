@@ -68,6 +68,15 @@ public:
 	virtual bool manage_scroll(GdkEventScroll* event);
 };
 
+class simpleSelector_tool : public tool_abstract {
+private:
+	std::shared_ptr<entity> mCurrentHover;
+public: 
+	simpleSelector_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool_abstract(workspaceState_), mCurrentHover(nullptr) {};
+
+	virtual bool manage_mouse_move(GdkEventMotion* event);
+};
+
 class line_tool : public tool<sketch> {
 public:
 	line_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool(workspaceState_) {};

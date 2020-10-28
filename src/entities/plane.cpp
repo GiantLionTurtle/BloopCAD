@@ -43,7 +43,7 @@ void plane::draw(std::shared_ptr<camera> cam)
 	} else {
 		color = glm::vec3(0.15f, 0.0f, 0.25f);
 	}
-	mShader->setUniform3f("u_Color", color.r, color.g, color.b);
+	mShader->setUniform4f("u_Color", color.r, color.g, color.b, mHovered ? 0.7 : 0.5);
 	mShader->setUniformMat4f("u_MVP", cam->projection() * cam->view());
 	mVA->bind();
 	mIB->bind();
@@ -56,14 +56,11 @@ void plane::draw(std::shared_ptr<camera> cam)
 	GLCall(glEnable(GL_DEPTH_TEST));
 }
 
-void plane::draw_selection(std::shared_ptr<camera> cam, glm::ivec3 ind)
+void plane::draw_selection(std::shared_ptr<camera> cam)
 {
 	mSelectionShader->bind();
 
-	glm::vec3 color(ind);
-	color /= 255.0f;
-
-	mShader->setUniform3f("u_Color", color.r, color.g, color.b);
+	mShader->setUniform3f("u_Color", mSelectionColor.r, mSelectionColor.g, mSelectionColor.b);
 	mShader->setUniformMat4f("u_MVP", cam->projection() * cam->view());
 	mVA->bind();
 	mIB->bind();

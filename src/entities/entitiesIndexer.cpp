@@ -13,6 +13,9 @@ void entitiesIndexer::add(std::shared_ptr<entity> elem)
 {
 	incrementIndex(mHighestInd);
 	mEntities.push_back({mHighestInd, elem});
+	glm::vec3 ind_float = mHighestInd;
+	ind_float /= 255.0f;
+	elem->setSelectionColor(ind_float);
 }
 
 std::shared_ptr<entity> entitiesIndexer::get(size_t ind) const

@@ -6,6 +6,8 @@
 #include "../errorLogger.hpp"
 #include "../graphics_utils/camera.hpp"
 #include "../tools/tool.hpp"
+#include "../entities/entitiesIndexer.hpp"
+#include "../graphics_utils/frameBuffer.hpp"
 
 #include <gtkmm.h>
 
@@ -14,6 +16,9 @@
 #include <memory>
 
 struct workspaceState {
+	int width, height;
+	std::shared_ptr<entitiesIndexer> indexer;
+	std::shared_ptr<frameBuffer> selectionBuffer;
 	std::shared_ptr<camera> cam;
 	std::shared_ptr<tool_abstract> currentTool;
 };
@@ -64,7 +69,14 @@ public:
 	bool manage_button_release(GdkEventButton* event);
 
 	std::shared_ptr<workspaceState> state() const { return (*mState); }
-	void set_state(std::shared_ptr<workspaceState> state_) { std::cout<<"setting state\n";(*mState) = state_; }
+	void set_state(std::shared_ptr<workspaceState> state_) 
+	{ 
+		if(mState) {
+			(*mState) = state_; 
+		} else {
+			LOG_ERROR("No state available.");
+		}
+	}
 
 	Gtk::Box* upperBar() { return mUpperBar; }
 };

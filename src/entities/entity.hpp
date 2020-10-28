@@ -15,11 +15,12 @@
 class entity {
 protected:
     bool mSelected, mHovered;
+    glm::vec3 mSelectionColor;
 public:
-    entity() {};
+    entity(): mSelected(false), mHovered(false), mSelectionColor(0.0f, 0.0f, 0.0f) {};
 
     virtual void draw(std::shared_ptr<camera> cam) { std::cout<<"Draw not implemented...\n"; };
-    virtual void draw_selection(std::shared_ptr<camera> cam, glm::ivec3 ind) { std::cout<<"Selection draw not implemented...\n"; }
+    virtual void draw_selection(std::shared_ptr<camera> cam) { std::cout<<"Selection draw not implemented...\n"; }
 
     void select() { set_selected(true); };
     void unselect() { set_selected(false); };
@@ -28,6 +29,8 @@ public:
 
     void set_hover(bool hover) { mHovered = hover; };
     bool hovered() { return mHovered; };
+
+    void setSelectionColor(glm::vec3 color) { mSelectionColor = color; }
 
     virtual bool can_focus() { return true; };
 

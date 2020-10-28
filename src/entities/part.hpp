@@ -9,6 +9,8 @@
 
 #include "entitiesIndexer.hpp"
 
+#include "../errorLogger.hpp"
+
 #include <memory>
 
 class sketch : public plane_abstract, public entity, public editable {
@@ -24,25 +26,43 @@ public:
 
 class part : public entity {
 private:
-	entitiesIndexer mEntities;
+	std::shared_ptr<entitiesIndexer> mEntities;
+	std::shared_ptr<plane> mXY, mYZ, mZX;
 public:
 	part():
-		mEntities(glm::ivec3(100, 0, 0)) 
+		mEntities(new entitiesIndexer()) 
 	{
-		mEntities.add(plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.0f, 0.0f), glm::vec3(0.0f, 0.8f, 0.0f)));
-		mEntities.add(plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.8f, 0.0f), glm::vec3(0.0f, 0.0f, 0.8f)));
-		mEntities.add(plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.8f), glm::vec3(0.8f, 0.0f, 0.0f)));
-	};
+		init_scene();
+	}
+	part(std::shared_ptr<entitiesIndexer> indexer):
+		mEntities(indexer)
+	{
+		init_scene();
+	}
 
+	virtual void init_scene()
+	{
+		mXY = plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.8f, 0.0f, 0.0f), glm::vec3(0.0f, 0.8f, 0.0f));
+		mYZ = plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.8f, 0.0f), glm::vec3(0.0f, 0.0f, 0.8f));
+		mZX = plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.8f), glm::vec3(0.8f, 0.0f, 0.0f));
+		mEntities->add(mXY);
+		mEntities->add(mYZ);
+		mEntities->add(mZX);
+	}
 
 	virtual void draw(std::shared_ptr<camera> cam)
 	{
-		mEntities.for_each([cam](std::shared_ptr<entity> ent) { ent->draw(cam); });
+		mXY->draw(cam);
+		mYZ->draw(cam);
+		mZX->draw(cam);
 	}
 
-	virtual void draw_selection(std::shared_ptr<camera> cam, glm::ivec3 ind)
+	virtual void draw_selection(std::shared_ptr<camera> cam)
 	{
-		mEntities.for_each([cam](std::shared_ptr<entity> ent, glm::ivec3 ind) { ent->draw_selection(cam, ind); });
+		// mEntities->for_each([cam](std::shared_ptr<entity> ent, glm::ivec3 ind) { ent->draw_selection(cam, ind); });
+		mXY->draw_selection(cam);
+		mYZ->draw_selection(cam);
+		mZX->draw_selection(cam);
 	}
 
     virtual std::string type() { return "part"; }

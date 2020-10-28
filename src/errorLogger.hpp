@@ -53,7 +53,8 @@ private:
 	}
 };
 
-#define LOG_ERROR(msg)		errorLogger::get_instance().log("ERROR", __FUNCTION__, __FILE__, __LINE__, msg);
-#define LOG_WARNING(msg) 	errorLogger::get_instance().log("WARNING", __FUNCTION__, __FILE__, __LINE__, msg);
+#define LOG_ERROR(msg)		errorLogger::get_instance().log("ERROR", __FUNCTION__, __FILE__, __LINE__, msg)
+#define LOG_WARNING(msg) 	errorLogger::get_instance().log("WARNING", __FUNCTION__, __FILE__, __LINE__, msg)
+#define BLOOP_MARKER		errorLogger::get_instance().log("MARKER", __FUNCTION__, __FILE__, __LINE__, "")
 
 #endif

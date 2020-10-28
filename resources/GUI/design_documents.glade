@@ -232,6 +232,26 @@
         <property name="position">2</property>
       </packing>
     </child>
+    <child>
+      <object class="GtkAspectFrame">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label_xalign">0</property>
+        <property name="shadow_type">none</property>
+        <child>
+          <object class="GtkButton" id="selector_btn">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="receives_default">True</property>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">3</property>
+      </packing>
+    </child>
   </object>
   <object class="GtkBox" id="partDesign_upperBar">
     <property name="visible">True</property>

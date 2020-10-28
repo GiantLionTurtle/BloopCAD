@@ -15,8 +15,9 @@ workspace::workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> c
 {
 	builder->get_widget(upperBarID, mUpperBar);
 
-	mTools["orbit"] 	= std::shared_ptr<tool_abstract>(new orbit_tool(mState));
-	mTools["zoom"] 		= std::shared_ptr<tool_abstract>(new zoom_tool(mState));
+	mTools["orbit"] 				= std::shared_ptr<tool_abstract>(new orbit_tool(mState));
+	mTools["zoom"] 					= std::shared_ptr<tool_abstract>(new zoom_tool(mState));
+	mTools["simpleSelector"] 		= std::shared_ptr<tool_abstract>(new simpleSelector_tool(mState));
 }
 
 bool workspace::manage_key_press(GdkEventKey* event)
@@ -74,6 +75,8 @@ bool workspace::set_tool(std::string const& name)
 		(*mState)->currentTool = mTools[name];
 		(*mState)->currentTool->set_state((*mState));
 		return true;
+	} else {
+		LOG_ERROR("Trying to set \"" + name + "\" as current tool. There is no such tool.");
 	}
 	return false;
 }

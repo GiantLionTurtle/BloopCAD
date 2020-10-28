@@ -36,9 +36,17 @@ void document::do_realize()
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 		mSelectionBuffer = std::shared_ptr<frameBuffer>(new frameBuffer(get_width(), get_height()));
-		mSubject = std::shared_ptr<entity>(new part());
+		mEntities = std::shared_ptr<entitiesIndexer>(new entitiesIndexer());
+		mSubject = std::shared_ptr<entity>(new part(mEntities));
+		mEntities->add(mSubject);
 		set_workspace("partDesign");
+
+		mCurrentWorkspaceState = std::shared_ptr<workspaceState>(new workspaceState);
 		mCurrentWorkspaceState->cam = camera::from_spherical_ptr(glm::vec3(3.0f, 0.785398, 0.955317), glm::vec3(0.0f, 0.0f, 0.0f), 100.0f, (float)get_width() / (float)get_height());
+		mCurrentWorkspaceState->indexer = mEntities;
+		mCurrentWorkspaceState->selectionBuffer = mSelectionBuffer;
+		mCurrentWorkspaceState->width = get_width();
+		mCurrentWorkspaceState->height = get_height();
 		mParentBloop->set_workspaceState(mCurrentWorkspaceState);
 	} catch(const Gdk::GLError& gle) {
 		LOG_ERROR("\ndomain: " + std::to_string(gle.domain()) + "\ncode: " + std::to_string(gle.code()) + "\nwhat: " + gle.what());
@@ -64,12 +72,12 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 
 	if(mSubject) {
 		mSubject->draw(mCurrentWorkspaceState->cam);
-	
+
 		mSelectionBuffer->bind();
 		GLCall(glViewport(0, 0, get_width(), get_height()));
 		GLCall(glClearColor(0.0, 0.0, 0.0, 1.0));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-		mSubject->draw_selection(mCurrentWorkspaceState->cam, glm::ivec3(0, 0, 0));
+		mSubject->draw_selection(mCurrentWorkspaceState->cam);
 		mSelectionBuffer->unbind(initialFrameBuffer);
 	}
 	return true;
