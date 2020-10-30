@@ -18,6 +18,7 @@
 struct workspaceState {
 	int width, height;
 	std::shared_ptr<entitiesIndexer> indexer;
+	std::shared_ptr<entity> target;
 	std::shared_ptr<frameBuffer> selectionBuffer;
 	std::shared_ptr<camera> cam;
 	std::shared_ptr<tool_abstract> currentTool;

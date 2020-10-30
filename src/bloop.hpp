@@ -79,8 +79,9 @@ public:
 
 	void notify_pan()
 	{
-		// mCurrentWorkspace->set_tool("pan");
-		std::cout<<"pan button not implemented yet...\n";
+		if(mCurrentWorkspace) {
+			mCurrentWorkspace->set_tool("pan");
+		}
 	}
 	void notify_orbit()
 	{

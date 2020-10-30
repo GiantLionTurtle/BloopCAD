@@ -52,6 +52,7 @@ public:
 
 	virtual void draw(std::shared_ptr<camera> cam)
 	{
+		update_transforms();
 		mXY->draw(cam);
 		mYZ->draw(cam);
 		mZX->draw(cam);
@@ -59,10 +60,18 @@ public:
 
 	virtual void draw_selection(std::shared_ptr<camera> cam)
 	{
+		update_transforms();
 		// mEntities->for_each([cam](std::shared_ptr<entity> ent, glm::ivec3 ind) { ent->draw_selection(cam, ind); });
 		mXY->draw_selection(cam);
 		mYZ->draw_selection(cam);
 		mZX->draw_selection(cam);
+	}
+
+	void update_transforms()
+	{
+		mXY->set_transform(mTransform);
+		mYZ->set_transform(mTransform);
+		mZX->set_transform(mTransform);
 	}
 
     virtual std::string type() { return "part"; }

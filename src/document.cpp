@@ -42,11 +42,13 @@ void document::do_realize()
 		set_workspace("partDesign");
 
 		mCurrentWorkspaceState = std::shared_ptr<workspaceState>(new workspaceState);
-		mCurrentWorkspaceState->cam = camera::from_spherical_ptr(glm::vec3(3.0f, 0.785398, 0.955317), glm::vec3(0.0f, 0.0f, 0.0f), 100.0f, (float)get_width() / (float)get_height());
+		//mCurrentWorkspaceState->cam = camera::from_spherical_ptr(glm::vec3(3.0f, 0.785398, 0.955317), glm::vec3(0.0f, 0.0f, 0.0f), 100.0f, (float)get_width() / (float)get_height());
+		mCurrentWorkspaceState->cam = camera::from_cartesian_ptr(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, (float)get_width() / (float)get_height());
 		mCurrentWorkspaceState->indexer = mEntities;
 		mCurrentWorkspaceState->selectionBuffer = mSelectionBuffer;
 		mCurrentWorkspaceState->width = get_width();
 		mCurrentWorkspaceState->height = get_height();
+		mCurrentWorkspaceState->target = mSubject;
 		if(mParentBloop->currentWorkspace())
 			mCurrentWorkspaceState->currentTool = mParentBloop->currentWorkspace()->defaultTool();
 		mParentBloop->set_workspaceState(mCurrentWorkspaceState);

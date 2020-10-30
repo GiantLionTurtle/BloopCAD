@@ -25,7 +25,8 @@ bool zoom_tool::manage_mouse_move(GdkEventMotion* event)
 	if((*mWorkspaceState) && event->state & GDK_BUTTON1_MASK) {
 		glm::vec2 pos(event->x, -event->y);
 		if(is_moving) {
-			(*mWorkspaceState)->cam->change_zoom((pos.y-prevPos.y) * 2.0f);
+			float scale = 1.0f - 0.02f * (pos.y-prevPos.y);
+			(*mWorkspaceState)->target->scale(glm::vec3(scale, scale, scale));
 		} else {
 			is_moving = true;
 		}
@@ -34,12 +35,13 @@ bool zoom_tool::manage_mouse_move(GdkEventMotion* event)
 		is_moving = false;
 	}
 	return true;
-} 
+}
 
 bool zoom_tool::manage_scroll(GdkEventScroll* event)
 {
 	if((*mWorkspaceState)) {
-		(*mWorkspaceState)->cam->change_zoom(event->delta_y * 1.5);
+		float scale = 1.0f - 0.015f * event->delta_y;
+		(*mWorkspaceState)->target->scale(glm::vec3(scale, scale, scale));
 	}
 	return true;
 }
@@ -61,6 +63,28 @@ bool simpleSelector_tool::manage_mouse_move(GdkEventMotion* event)
 			}
 			mCurrentHover = ent;
 		}
+	}
+	return true;
+}
+
+bool pan_tool::manage_mouse_move(GdkEventMotion* event) 
+{
+	if((*mWorkspaceState) && event->state & GDK_BUTTON1_MASK) {
+		glm::vec2 pos(event->x, -event->y);
+		if(is_moving) {
+			glm::vec2 abs_mov(pos.x-prevPos.x, pos.y-prevPos.y);
+			// (*mWorkspaceState)->cam->change_zoom((pos.y-prevPos.y) * 2.0f);
+			// std::cout<<"Right: "<<glm::to_string((*mWorkspaceState)->cam->right())<<"\n";
+			// std::cout<<"Up: "<<glm::to_string((*mWorkspaceState)->cam->up())<<"\n";
+			float speed_ratio = 1.0f / (*mWorkspaceState)->cam->zoom();
+			(*mWorkspaceState)->cam->move_cartesian((*mWorkspaceState)->cam->right() * -abs_mov.x * 0.2f * speed_ratio);
+			(*mWorkspaceState)->cam->move_cartesian((*mWorkspaceState)->cam->up() * -abs_mov.y * 0.2f * speed_ratio);
+		} else {
+			is_moving = true;
+		}
+		prevPos = pos;
+	} else {
+		is_moving = false;
 	}
 	return true;
 }

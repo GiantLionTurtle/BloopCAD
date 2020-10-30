@@ -19,6 +19,7 @@ workspace::workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> c
 
 	mTools["orbit"] 				= std::shared_ptr<tool_abstract>(new orbit_tool(mState));
 	mTools["zoom"] 					= std::shared_ptr<tool_abstract>(new zoom_tool(mState));
+	mTools["pan"] 					= std::shared_ptr<tool_abstract>(new pan_tool(mState));
 	mTools["simpleSelector"] 		= std::shared_ptr<tool_abstract>(new simpleSelector_tool(mState));
 }
 

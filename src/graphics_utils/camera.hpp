@@ -21,6 +21,7 @@ protected:
 	glm::mat4 mProjection;
 	float mZoom, mAspectRatio;
 	glm::vec3 mUp, mRight;
+	glm::vec3 mFront;
 
 	bool mIs_flipped;
 public:
@@ -44,6 +45,8 @@ public:
 	void move_cartesian(glm::vec3 delta);
 	void set_cartesian(glm::vec3 cartesian);
 
+	void move_target(glm::vec3 delta);
+
 	float zoom() const { return mZoom; }
 	void change_zoom(float delta) { mZoom += delta; };
 	void set_zoom(float zoom_) { mZoom = zoom_; }
@@ -52,6 +55,9 @@ public:
 	void set_aspectRatio(float aspectRatio_) { mAspectRatio = aspectRatio_; }
 
 	bool flipped() const { return mIs_flipped; }
+
+	glm::vec3 up() const { return mUp; }
+	glm::vec3 right() const { return mRight; }
 
 	void updatePos_cartesian();
 	void updatePos_spherical();

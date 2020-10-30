@@ -44,7 +44,7 @@ void plane::draw(std::shared_ptr<camera> cam)
 		color = glm::vec3(0.15f, 0.0f, 0.25f);
 	}
 	mShader->setUniform4f("u_Color", color.r, color.g, color.b, mHovered ? 0.7 : 0.5);
-	mShader->setUniformMat4f("u_MVP", cam->projection() * cam->view());
+	mShader->setUniformMat4f("u_MVP", cam->projection() * cam->view() * mTransform);
 	mVA->bind();
 	mIB->bind();
 
