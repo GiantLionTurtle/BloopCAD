@@ -46,6 +46,9 @@ public:
 	// void set_tool(std::shared_ptr<tool_abstract> aTool) { if(mCurrentWorkspaceState->currentTool) mCurrentWorkspaceState->currentTool->finish(); mCurrentWorkspaceState->currentTool = aTool; }
 
 	bool manage_key_press(GdkEventKey* event){ if(mCurrentWorkspaceState->currentTool) return mCurrentWorkspaceState->currentTool->manage_key_press(event); return false; };
+	bool manage_mouse_scroll(GdkEventScroll* event);
+	bool manage_mouse_move(GdkEventMotion* event);
+
 
 	glm::ivec3 selection_buffer_at(glm::ivec2 pos, bool& success);
 };

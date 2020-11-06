@@ -25,6 +25,7 @@ public:
 	virtual bool manage_key_press(GdkEventKey* event){ return true; };
 	virtual bool manage_mouse_move(GdkEventMotion* event) { return true; }
 	virtual bool manage_scroll(GdkEventScroll* event) { return true; }
+	virtual bool manage_button_press(GdkEventButton* event) { return true; }
 	virtual bool manage_button_release(GdkEventButton* event) { return true; }
 
 	void set_state(std::shared_ptr<workspaceState> state) { (*mWorkspaceState) = state; }
@@ -61,11 +62,22 @@ class zoom_tool : public tool_abstract {
 private:
 	glm::vec2 prevPos;
 	bool is_moving;
+
+	glm::vec2 zoomStart;
+	bool is_zooming;
 public:
 	zoom_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool_abstract(workspaceState_) {};
 
+	virtual void finish() { is_moving = false; }
+	virtual void init() { is_moving = false; }
+
+	virtual bool manage_button_press(GdkEventButton* event);
+	virtual bool manage_button_release(GdkEventButton* event) { if(event->state & GDK_BUTTON1_MASK) finish(); return true; }
+
 	virtual bool manage_mouse_move(GdkEventMotion* event);
 	virtual bool manage_scroll(GdkEventScroll* event);
+
+	void zoom(glm::vec2 origin, float amount);
 };
 
 class pan_tool : public tool_abstract {

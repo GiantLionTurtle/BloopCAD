@@ -46,6 +46,7 @@ public:
 	void set_cartesian(glm::vec3 cartesian);
 
 	void move_target(glm::vec3 delta);
+	void move_front(glm::vec3 delta);
 
 	float zoom() const { return mZoom; }
 	void change_zoom(float delta) { mZoom += delta; };

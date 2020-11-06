@@ -33,6 +33,7 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	builder->get_widget("homePage", mHome);
 	builder->get_widget("upperBar_stack", mUI_upperBar);
 	builder->get_widget_derived("navigationBar", mNavigationBar);
+	builder->get_widget("sideBar", mSideBar);
 
 	if(mHome && mDocumentIndexer) {
 		try {
@@ -109,9 +110,21 @@ bool bloop::manage_mouse_move(GdkEventMotion* event)
 	}
 	return true;
 }
+
+bool bloop::manage_mouse_scroll_internal(GdkEventScroll* event)
+{
+	scroll_deltas = glm::vec2(event->delta_x, event->delta_y);
+	return true;
+}
+
 bool bloop::manage_mouse_scroll(GdkEventScroll* event)
 {
 	if(mCurrentWorkspace) {
+		// event->y -= mCurrentWorkspace->upperBar()->get_height();
+		// event->x -= mSideBar->get_width();
+		// if(event->y >= 0.0 && event->x >= 0.0)
+		event->delta_x = scroll_deltas.x;
+		event->delta_y = scroll_deltas.y;
 		return mCurrentWorkspace->manage_mouse_scroll(event);
 	}
 	return true;
@@ -146,7 +159,8 @@ void bloop::set_tool(std::string const& name)
 
 void bloop::connect_signals()
 {
-	add_events( Gdk::POINTER_MOTION_MASK
+	
+	add_events( 		  Gdk::POINTER_MOTION_MASK
 						| Gdk::BUTTON_PRESS_MASK
 						| Gdk::BUTTON_RELEASE_MASK
 						| Gdk::KEY_PRESS_MASK
@@ -154,7 +168,7 @@ void bloop::connect_signals()
 						| Gdk::STRUCTURE_MASK
 						| Gdk::SCROLL_MASK);
 	signal_key_press_event().connect(sigc::mem_fun(*this, &bloop::manage_key_press));
-	signal_motion_notify_event().connect(sigc::mem_fun(*this, &bloop::manage_mouse_move));
-	signal_scroll_event().connect(sigc::mem_fun(*this, &bloop::manage_mouse_scroll));
+	//signal_motion_notify_event().connect(sigc::mem_fun(*this, &bloop::manage_mouse_move));
+	signal_scroll_event().connect(sigc::mem_fun(*this, &bloop::manage_mouse_scroll_internal)); // workaroound
 	signal_button_release_event().connect(sigc::mem_fun(*this, &bloop::manage_button_release));	
 }

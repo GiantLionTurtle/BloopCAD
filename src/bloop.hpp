@@ -117,9 +117,11 @@ private:
 
 	Gtk::Image* mHomePage, * mIcon;
 	Gtk::Notebook* mDocumentIndexer;
-	Gtk::Stack* mUI_upperBar;
+	Gtk::Stack* mUI_upperBar, *mSideBar;
 	Gtk::Overlay* mHome;
 	navigationBar* mNavigationBar;
+
+	glm::vec2 scroll_deltas; // kinda dirty but it's a workaround for a bug in gtk3
 public:
 	bloop();
 	bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder);
@@ -134,6 +136,7 @@ public:
 	bool manage_key_press(GdkEventKey* event);
 	bool manage_mouse_move(GdkEventMotion* event);
 	bool manage_mouse_scroll(GdkEventScroll* event);
+	bool manage_mouse_scroll_internal(GdkEventScroll* event);
 	bool manage_button_release(GdkEventButton* event);
 
 	void set_tool(GdkEventKey* event);

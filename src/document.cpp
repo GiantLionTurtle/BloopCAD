@@ -94,20 +94,46 @@ gboolean document::frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock,
     return G_SOURCE_CONTINUE;
 }
 
+// bool document::manage_mouse_scroll(GdkEventScroll* event)
+// {
+// 	std::cout<<"Scroool: "<<event->delta_y<<",  "<<event->delta_x<<",  "<<event->direction<<"\n";
+// 	if(mParentBloop->currentWorkspace())
+// 		return mParentBloop->currentWorkspace()->manage_mouse_scroll(event);
+// 	return true;
+// }
+
+// bool document::manage_mouse_move(GdkEventMotion* event)
+// {
+// 	mParentBloop->manage_mouse_move(event);
+// 	return true;
+// }
+
+
 void document::connect_signals()
 {
+	add_events(	  Gdk::POINTER_MOTION_MASK
+				| Gdk::BUTTON_PRESS_MASK
+				| Gdk::BUTTON_RELEASE_MASK
+				| Gdk::KEY_PRESS_MASK
+				| Gdk::KEY_RELEASE_MASK
+				| Gdk::STRUCTURE_MASK
+				| Gdk::SCROLL_MASK
+	);
 	mViewPort.add_events( Gdk::POINTER_MOTION_MASK
 						| Gdk::BUTTON_PRESS_MASK
 						| Gdk::BUTTON_RELEASE_MASK
 						| Gdk::KEY_PRESS_MASK
 						| Gdk::KEY_RELEASE_MASK
-						| Gdk::STRUCTURE_MASK);
+						| Gdk::STRUCTURE_MASK
+						| Gdk::SCROLL_MASK);
 
 	mViewPort.signal_realize().connect(sigc::mem_fun(*this, &document::do_realize));
 	mViewPort.signal_unrealize().connect(sigc::mem_fun(*this, &document::do_unrealize), false);
 	mViewPort.signal_render().connect(sigc::mem_fun(*this, &document::do_render));
 	gtk_widget_add_tick_callback((GtkWidget*) this->gobj(),	document::frame_callback, this, NULL); // Couldn't find a c++-y way to do it
-	
+	mViewPort.signal_scroll_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_scroll));
+	mViewPort.signal_motion_notify_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_move));
+
 	// mViewPort.signal_key_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_key_press));
 
 	pack_end(mViewPort);

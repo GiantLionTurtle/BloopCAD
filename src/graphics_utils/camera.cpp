@@ -95,6 +95,11 @@ void camera::move_target(glm::vec3 delta)
 	//std::cout<<"New target: "<<glm::to_string(mTarget)<<"\n";
 }
 
+void camera::move_front(glm::vec3 delta)
+{
+	mFront += delta;
+}
+
 void camera::updatePos_cartesian()
 {
 	mPos_cartesian = glm::vec3(
