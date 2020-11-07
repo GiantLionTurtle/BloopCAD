@@ -137,6 +137,7 @@ public:
 	bool manage_mouse_move(GdkEventMotion* event);
 	bool manage_mouse_scroll(GdkEventScroll* event);
 	bool manage_mouse_scroll_internal(GdkEventScroll* event);
+	bool manage_button_press(GdkEventButton* event);
 	bool manage_button_release(GdkEventButton* event);
 
 	void set_tool(GdkEventKey* event);

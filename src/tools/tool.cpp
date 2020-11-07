@@ -20,21 +20,18 @@ bool orbit_tool::manage_mouse_move(GdkEventMotion* event)
 	return true;
 } 
 
-bool zoom_tool::manage_button_press(GdkEventButton* event) 
-{
-	if(event->state & GDK_BUTTON1_MASK) {
-		zoomStart = glm::vec2(event->x / (*mWorkspaceState)->width  * 2.0f - 1.0f, 1.0f - event->y / (*mWorkspaceState)->height * 2.0f);
-		is_zooming = true; init();
-	} 
-	return true; 
-}
-
 bool zoom_tool::manage_mouse_move(GdkEventMotion* event) 
 {
-	if((*mWorkspaceState) && is_zooming) {
+	if((*mWorkspaceState) && event->state & GDK_BUTTON1_MASK) {
+		if(!is_zooming) {
+			is_zooming = true;
+			zoomStart = glm::vec2(event->x / (*mWorkspaceState)->width  * 2.0f - 1.0f, 1.0f - event->y / (*mWorkspaceState)->height * 2.0f);
+		}
 		glm::vec2 pos(event->x, -event->y);
+
+		float delta = pos.y - prevPos.y;
 		if(is_moving) {
-			zoom(zoomStart, -0.02f * (pos.y-prevPos.y));
+			zoom(zoomStart, 0.02f * delta);
 		} else {
 			is_moving = true;
 		}
@@ -57,7 +54,7 @@ void zoom_tool::zoom(glm::vec2 origin, float amount)
 {
 	float scale = 1.0f + amount;
 	(*mWorkspaceState)->target->scale(scale);
-
+	
 	glm::vec4 event_pos(origin.x, origin.y, 0.0f, 0.0f);
 
 	glm::mat4 mvp = (*mWorkspaceState)->cam->projection() * (*mWorkspaceState)->cam->view() * (*mWorkspaceState)->target->transform();

@@ -68,10 +68,9 @@ private:
 public:
 	zoom_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool_abstract(workspaceState_) {};
 
-	virtual void finish() { is_moving = false; }
+	virtual void finish() { is_moving = false; is_zooming = false; }
 	virtual void init() { is_moving = false; }
 
-	virtual bool manage_button_press(GdkEventButton* event);
 	virtual bool manage_button_release(GdkEventButton* event) { if(event->state & GDK_BUTTON1_MASK) finish(); return true; }
 
 	virtual bool manage_mouse_move(GdkEventMotion* event);

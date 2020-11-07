@@ -129,6 +129,13 @@ bool bloop::manage_mouse_scroll(GdkEventScroll* event)
 	}
 	return true;
 }
+bool bloop::manage_button_press(GdkEventButton* event)
+{
+	if(mCurrentWorkspace) {
+		return mCurrentWorkspace->manage_button_press(event);
+	}
+	return true;
+}
 bool bloop::manage_button_release(GdkEventButton* event)
 {
 	if(mCurrentWorkspace) {
@@ -170,5 +177,5 @@ void bloop::connect_signals()
 	signal_key_press_event().connect(sigc::mem_fun(*this, &bloop::manage_key_press));
 	//signal_motion_notify_event().connect(sigc::mem_fun(*this, &bloop::manage_mouse_move));
 	signal_scroll_event().connect(sigc::mem_fun(*this, &bloop::manage_mouse_scroll_internal)); // workaroound
-	signal_button_release_event().connect(sigc::mem_fun(*this, &bloop::manage_button_release));	
+	// signal_button_release_event().connect(sigc::mem_fun(*this, &bloop::manage_button_release));	
 }

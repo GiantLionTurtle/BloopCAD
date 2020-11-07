@@ -69,6 +69,7 @@ public:
 	bool manage_key_press(GdkEventKey* event);
 	bool manage_mouse_move(GdkEventMotion* event);
 	bool manage_mouse_scroll(GdkEventScroll* event);
+	bool manage_button_press(GdkEventButton* event);
 	bool manage_button_release(GdkEventButton* event);
 
 	std::shared_ptr<workspaceState> state() const { return (*mState); }

@@ -50,6 +50,14 @@ bool workspace::manage_mouse_scroll(GdkEventScroll* event)
 {
 	return mTools.at("zoom")->manage_scroll(event);
 }
+
+bool workspace::manage_button_press(GdkEventButton* event)
+{
+	if((*mState) && (*mState)->currentTool) {
+		return (*mState)->currentTool->manage_button_press(event);
+	}
+	return true;
+}
 bool workspace::manage_button_release(GdkEventButton* event)
 {
 	if(event->state * GDK_BUTTON2_MASK) {
