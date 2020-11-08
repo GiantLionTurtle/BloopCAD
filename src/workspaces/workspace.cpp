@@ -1,6 +1,7 @@
 
 #include "workspace.hpp"
 #include "../bloop.hpp"
+#include "../tools/navigation/navigation.hpp"
 
 int workspace::count = 0;
 

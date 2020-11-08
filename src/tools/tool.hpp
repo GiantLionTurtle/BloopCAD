@@ -45,50 +45,6 @@ public:
 	}
 };
 
-class orbit_tool : public tool_abstract {
-private:
-	glm::vec2 prevPos;
-	bool is_moving;
-public:
-	orbit_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool_abstract(workspaceState_), is_moving(false) {};
-
-	virtual void finish() { is_moving = false; }
-	virtual void init() { is_moving = false; }
-	virtual bool manage_mouse_move(GdkEventMotion* event);
-	virtual bool manage_button_release(GdkEventButton* event) { if(event->state & GDK_BUTTON1_MASK) finish(); return true; }
-};
-
-class zoom_tool : public tool_abstract {
-private:
-	glm::vec2 prevPos;
-	bool is_moving;
-
-	glm::vec2 zoomStart;
-	bool is_zooming;
-public:
-	zoom_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool_abstract(workspaceState_) {};
-
-	virtual void finish() { is_moving = false; is_zooming = false; }
-	virtual void init() { is_moving = false; }
-
-	virtual bool manage_button_release(GdkEventButton* event) { if(event->state & GDK_BUTTON1_MASK) finish(); return true; }
-
-	virtual bool manage_mouse_move(GdkEventMotion* event);
-	virtual bool manage_scroll(GdkEventScroll* event);
-
-	void zoom(glm::vec2 origin, float amount);
-};
-
-class pan_tool : public tool_abstract {
-private:
-	glm::vec2 prevPos;
-	bool is_moving;
-public:
-	pan_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool_abstract(workspaceState_) {};
-
-	virtual bool manage_mouse_move(GdkEventMotion* event);
-};
-
 
 class simpleSelector_tool : public tool_abstract {
 private:
