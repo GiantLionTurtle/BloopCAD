@@ -7,11 +7,18 @@
 
 document::document(bloop* parent) :
 	mParentBloop(parent),
-	mCurrentWorkspaceState(nullptr)
+	mCurrentWorkspaceState(nullptr),
+	mEntities(new entitiesIndexer())
 {
 	connect_signals();
 
-	mWorkspaceStates["partDesign"] = std::shared_ptr<workspaceState>(new workspaceState);
+	mWorkspaceStates["partDesign"] 			= std::shared_ptr<workspaceState>(new workspaceState);
+	mWorkspaceStates.at("partDesign")->cam 	= camera::from_spherical_ptr(glm::vec3(3.0f, 0.785398, 0.955317), glm::vec3(0.0f, 0.0f, 0.0f), 100.0f, 1.0f);
+	mWorkspaceStates.at("partDesign")->indexer = mEntities;
+
+	mWorkspaceStates["sketchDesign"] 		= std::shared_ptr<workspaceState>(new workspaceState);
+	mWorkspaceStates.at("sketchDesign")->cam = camera::from_cartesian_ptr(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1.0f);
+	mWorkspaceStates.at("sketchDesign")->indexer = mEntities;
 }
 
 void document::do_realize()
@@ -36,19 +43,11 @@ void document::do_realize()
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 		mSelectionBuffer = std::shared_ptr<frameBuffer>(new frameBuffer(get_width(), get_height()));
-		mEntities = std::shared_ptr<entitiesIndexer>(new entitiesIndexer());
+		std::cout<<"SelID:"<<mSelectionBuffer->id()<<"\n";
 		mSubject = std::shared_ptr<entity>(new part(mEntities));
 		mEntities->add(mSubject);
 		set_workspace("partDesign");
 
-		mCurrentWorkspaceState = std::shared_ptr<workspaceState>(new workspaceState);
-		//mCurrentWorkspaceState->cam = camera::from_spherical_ptr(glm::vec3(3.0f, 0.785398, 0.955317), glm::vec3(0.0f, 0.0f, 0.0f), 100.0f, (float)get_width() / (float)get_height());
-		mCurrentWorkspaceState->cam = camera::from_cartesian_ptr(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, (float)get_width() / (float)get_height());
-		mCurrentWorkspaceState->indexer = mEntities;
-		mCurrentWorkspaceState->selectionBuffer = mSelectionBuffer;
-		mCurrentWorkspaceState->width = get_width();
-		mCurrentWorkspaceState->height = get_height();
-		mCurrentWorkspaceState->target = mSubject;
 		if(mParentBloop->currentWorkspace())
 			mCurrentWorkspaceState->currentTool = mParentBloop->currentWorkspace()->defaultTool();
 		mParentBloop->set_workspaceState(mCurrentWorkspaceState);
@@ -82,6 +81,7 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 		GLCall(glClearColor(0.0, 0.0, 0.0, 1.0));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 		mSubject->draw_selection(mCurrentWorkspaceState->cam);
+		
 		mSelectionBuffer->unbind(initialFrameBuffer);
 	}
 	return true;
@@ -93,21 +93,6 @@ gboolean document::frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock,
 
     return G_SOURCE_CONTINUE;
 }
-
-// bool document::manage_mouse_scroll(GdkEventScroll* event)
-// {
-// 	std::cout<<"Scroool: "<<event->delta_y<<",  "<<event->delta_x<<",  "<<event->direction<<"\n";
-// 	if(mParentBloop->currentWorkspace())
-// 		return mParentBloop->currentWorkspace()->manage_mouse_scroll(event);
-// 	return true;
-// }
-
-// bool document::manage_mouse_move(GdkEventMotion* event)
-// {
-// 	mParentBloop->manage_mouse_move(event);
-// 	return true;
-// }
-
 
 void document::connect_signals()
 {
@@ -135,7 +120,6 @@ void document::connect_signals()
 	mViewPort.signal_motion_notify_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_move));
 	mViewPort.signal_button_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_button_press));
 	mViewPort.signal_button_release_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_button_release));
-	// mViewPort.signal_key_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_key_press));
 
 	pack_end(mViewPort);
 
@@ -145,24 +129,25 @@ void document::connect_signals()
 	mViewPort.set_vexpand(true);
 }
 
+void document::update_state_dims()
+{
+	mCurrentWorkspaceState->width = get_width();
+	mCurrentWorkspaceState->height = get_height();
+}
+
 bool document::set_workspace(std::string const& name) 
 {
 	if(mWorkspaceStates.find(name) != mWorkspaceStates.end()) {
-		mCurrentWorkspaceState = mWorkspaceStates[name]; 
+		mCurrentWorkspaceState = mWorkspaceStates[name];
+		mCurrentWorkspaceState->cam->set_aspectRatio((float)get_width() / (float)get_height());
+		mCurrentWorkspaceState->target = mSubject;
+		mCurrentWorkspaceState->selectionBuffer = mSelectionBuffer;
+
+		mCurrentWorkspaceState->width = get_width();
+		mCurrentWorkspaceState->height = get_height();
+
+		mParentBloop->set_workspace(name);
 		return true;
 	}
 	return false;
-}
-
-glm::ivec3 document::selection_buffer_at(glm::ivec2 pos, bool& success) 
-{
-	if(mSelectionBuffer) {
-		mSelectionBuffer->bind();
-		unsigned char data[4] = {0, 0, 0, 0};
-		GLCall(glReadPixels(pos.x, get_height() - pos.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &data));
-		success = true;
-		return glm::ivec3(data[0], data[1], data[2]);
-	}
-	success = false;
-	return glm::ivec3(0, 0, 0);
 }

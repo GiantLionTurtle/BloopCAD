@@ -131,7 +131,8 @@ public:
 
 	void set_workspaceState(std::shared_ptr<workspaceState> state);
 
-	void set_workspace(std::string const& name, std::shared_ptr<entity> target);
+	void set_workspace(std::string const& name);
+
 
 	bool manage_key_press(GdkEventKey* event);
 	bool manage_mouse_move(GdkEventMotion* event);

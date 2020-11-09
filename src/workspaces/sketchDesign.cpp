@@ -95,55 +95,55 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 
 void sketchDesign::line()
 {
-	mParentBloop->set_tool("line");
+//	mParentBloop->set_tool("line");
 }
 void sketchDesign::rectangle()
 {
-	mParentBloop->set_tool("rectangle");
+//	mParentBloop->set_tool("rectangle");
 }
 void sketchDesign::polygon()
 {
-	mParentBloop->set_tool("polygon");
+//	mParentBloop->set_tool("polygon");
 }
 void sketchDesign::circle()
 {
-	mParentBloop->set_tool("circle");
+//	mParentBloop->set_tool("circle");
 }
 void sketchDesign::threePointsArc()
 {
-	mParentBloop->set_tool("threePointsArc");
+//	mParentBloop->set_tool("threePointsArc");
 }
 
 void sketchDesign::dimension()
 {
-	mParentBloop->set_tool("dimension");
+//	mParentBloop->set_tool("dimension");
 }
 void sketchDesign::verticality()
 {
-	mParentBloop->set_tool("verticality");
+//	mParentBloop->set_tool("verticality");
 }
 void sketchDesign::horizontality()
 {
-	mParentBloop->set_tool("horizontality");
+//	mParentBloop->set_tool("horizontality");
 }
 void sketchDesign::perpendicularity()
 {
-	mParentBloop->set_tool("perpendicularity");
+//	mParentBloop->set_tool("perpendicularity");
 }
 void sketchDesign::parallelism()
 {
-	mParentBloop->set_tool("parallelism");
+//	mParentBloop->set_tool("parallelism");
 }
 void sketchDesign::coincidence()
 {
-	mParentBloop->set_tool("coincidence");
+//	mParentBloop->set_tool("coincidence");
 }
 void sketchDesign::equality()
 {
-	mParentBloop->set_tool("equality");
+//	mParentBloop->set_tool("equality");
 }
 
 void sketchDesign::finish()
 {
-	mParentBloop->set_tool("finish");
+//	mParentBloop->set_tool("finish");
 }

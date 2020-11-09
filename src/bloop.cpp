@@ -77,7 +77,7 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	show_all();	
 }
 
-void bloop::set_workspace(std::string const& name, std::shared_ptr<entity> target)
+void bloop::set_workspace(std::string const& name)
 {
 	std::cout<<__FILE__<<",  "<<__LINE__<<" : Disabled\n";
 	// if(mWorkspaces.find(name) != mWorkspaces.end()) {
@@ -120,9 +120,6 @@ bool bloop::manage_mouse_scroll_internal(GdkEventScroll* event)
 bool bloop::manage_mouse_scroll(GdkEventScroll* event)
 {
 	if(mCurrentWorkspace) {
-		// event->y -= mCurrentWorkspace->upperBar()->get_height();
-		// event->x -= mSideBar->get_width();
-		// if(event->y >= 0.0 && event->x >= 0.0)
 		event->delta_x = scroll_deltas.x;
 		event->delta_y = scroll_deltas.y;
 		return mCurrentWorkspace->manage_mouse_scroll(event);
@@ -142,26 +139,6 @@ bool bloop::manage_button_release(GdkEventButton* event)
 		return mCurrentWorkspace->manage_button_release(event);
 	}
 	return true;
-}
-
-void bloop::set_tool(GdkEventKey* event)
-{
-	std::cout<<__FILE__<<",  "<<__LINE__<<" : Disabled\n";
-	//std::string toolName;
-	// if(std::get<1>(mCurrentWorkSpace)->invoke_from_key(event->keyval, toolName))
-	// 	set_tool(toolName);
-}
-void bloop::set_tool(std::string const& name) 
-{
-	std::cout<<__FILE__<<",  "<<__LINE__<<" : Disabled\n";
-	// std::cout<<"Attempting to set tool to \""<<name<<"\"\n";
-	// if(mTools.find(name) != mTools.end()) {
-	// 	std::get<1>(mCurrentTool)->finish();
-	// 	mCurrentTool = std::make_pair(name, mTools[name]);
-	// 	std::get<1>(mCurrentTool)->set_subject(mCurrentDocument->focused_entity());
-	// } else {
-	// 	LOG_WARNING("Attempted to set current tool to \"" + name + "\". There is no such tool.")
-	// }
 }
 
 void bloop::connect_signals()
