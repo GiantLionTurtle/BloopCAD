@@ -9,8 +9,7 @@
 
 class partDesign : public workspace {
 private:
-	Gtk::Button* mStartSketch_btn, * mExtrude_btn;
-	Gtk::Image* mStartSketch_icon, * mExtrude_icon;
+	std::map<std::string, std::pair<Gtk::Button*, Gtk::Image*>> mButtons;
 public:
 	partDesign(bloop* parent);
 	partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);

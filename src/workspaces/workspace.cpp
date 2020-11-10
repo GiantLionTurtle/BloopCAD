@@ -2,6 +2,7 @@
 #include "workspace.hpp"
 #include <bloop.hpp>
 #include <tools/navigation/navigation.hpp>
+#include <tools/utils/simpleSelector_tool.hpp>
 
 int workspace::count = 0;
 

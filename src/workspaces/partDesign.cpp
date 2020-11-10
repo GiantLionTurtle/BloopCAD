@@ -2,43 +2,45 @@
 #include "partDesign.hpp"
 #include <bloop.hpp>
 
+#include <tools/partDesign/startSketch_tool.hpp>
+
 partDesign::partDesign(bloop* parent) :
 	workspace(parent)
 {}
 
 partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
-	workspace("partDesign_upperBar", builder, parent),
-	mStartSketch_btn(nullptr),
-	mExtrude_btn(nullptr)
+	workspace("partDesign_upperBar", builder, parent)
 {
 	mTools["startSketch"] 	= std::shared_ptr<tool_abstract>(new startSketch_tool(mState));
 	mTools["extrusion"] 	= std::shared_ptr<tool_abstract>(new extrusion_tool(mState));
-
 	mDefaultTool = mTools.at("simpleSelector");
 
-	builder->get_widget("startSketch", mStartSketch_btn);
-	builder->get_widget("extrusion", mExtrude_btn);
+	mButtons["startSketch"] = std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
+	mButtons["extrusion"] 	= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
 
-	if(mStartSketch_btn && mExtrude_btn) {
+	bool all_btns_valid = true;
+	for(auto it = mButtons.begin(); it != mButtons.end(); ++it) {
+		builder->get_widget(it->first, std::get<0>(it->second));
+
+		if(!std::get<0>(it->second))
+			all_btns_valid = false;
+	}
+
+	if(all_btns_valid) {
 		try {
-			auto pixbuf = Gdk::Pixbuf::create_from_file("resources/textures/images/icons/partDesign/startSketch.png", 60, 60);
-			guint32 color = 2000;
-			pixbuf->composite_color_simple(60, 60, Gdk::InterpType::INTERP_NEAREST, 255, 50, color, color);
-			mStartSketch_icon = new Gtk::Image(pixbuf);
-			mStartSketch_icon->set_tooltip_text("Start sketch");
-
-			mExtrude_icon = new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/partDesign/extrusion.png", 60, 60));
-			mExtrude_icon->set_tooltip_text("Extrude");
+			std::get<1>(mButtons.at("startSketch")) = new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/partDesign/startSketch.png", 60, 60));
+			std::get<1>(mButtons.at("extrusion")) 	= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/partDesign/extrusion.png", 60, 60));
 		} catch(const Glib::FileError& ex) {
 			LOG_ERROR("Glib file error: " + ex.what());
 		} catch(const Gdk::PixbufError& ex) {
 			LOG_ERROR("Gtk pixbuf error: " + ex.what());
 		}
 		
-		mStartSketch_btn->set_image(*mStartSketch_icon);
-		mStartSketch_btn->signal_clicked().connect(sigc::mem_fun(*this, &partDesign::startSketch));
-		mExtrude_btn->set_image(*mExtrude_icon);
-		mExtrude_btn->signal_clicked().connect(sigc::mem_fun(*this, &partDesign::extrusion));
+		std::get<0>(mButtons.at("startSketch"))->	set_image(*std::get<1>(mButtons.at("startSketch")));
+		std::get<0>(mButtons.at("extrusion"))->		set_image(*std::get<1>(mButtons.at("extrusion")));
+
+		std::get<0>(mButtons.at("startSketch"))->	signal_clicked().connect(sigc::mem_fun(*this, &partDesign::startSketch));
+		std::get<0>(mButtons.at("extrusion"))->		signal_clicked().connect(sigc::mem_fun(*this, &partDesign::extrusion));
 	} else {
 		LOG_ERROR("Could not build part design workspace.");
 	}
@@ -46,11 +48,7 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 
 void partDesign::startSketch()
 {
-	// set_tool_target<part>("startSketch");
-	// mParentBloop->currentDocument()->set_tool(mTools.at("startSketch"));
-	// mParentBloop->set_tool("startSketch");
-
-	LOG_WARNING("Start sketch not implemented yet");
+	set_tool("startSketch");
 }
 void partDesign::extrusion()
 {

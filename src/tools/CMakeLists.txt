@@ -1,5 +1,7 @@
 
+add_subdirectory(utils)
 add_subdirectory(navigation)
+add_subdirectory(partDesign)
 
 set(tools_source_files
   tool.cpp)
@@ -7,6 +9,8 @@ set(tools_source_files
 add_library(tools ${tools_source_files})
 
 target_link_libraries(tools
-  navigation
+  utils_tools
+  navigation_tools
+  partDesign_tools
 	entities
   )
