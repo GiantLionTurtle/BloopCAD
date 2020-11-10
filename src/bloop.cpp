@@ -3,6 +3,7 @@
 #include "errorLogger.hpp"
 #include "workspaces/partDesign.hpp"
 #include "workspaces/sketchDesign.hpp"
+#include "workspaces/home.hpp"
 
 bloop::bloop()
 {
@@ -26,6 +27,7 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 {
 	maximize();
 
+	mWorkspaces["home"]			= std::shared_ptr<workspace>(new home(builder, this));
 	mWorkspaces["sketchDesign"] = std::shared_ptr<workspace>(new sketchDesign(builder, this));
 	mWorkspaces["partDesign"] 	= std::shared_ptr<workspace>(new partDesign(builder, this));
 
@@ -49,6 +51,7 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 		}
 	} else {
 		LOG_ERROR("Could not build home page.");
+		exit(EXIT_FAILURE);
 	}
 	
 	if(mDocumentIndexer) {
@@ -60,18 +63,21 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 		if(mNavigationBar) {
 			std::get<1>(mDocuments.back()).add_overlay(*mNavigationBar);
 		} else {
-			LOG_ERROR("Could not build navigation bar");
+			LOG_ERROR("Could not build navigation bar.");
+			exit(EXIT_FAILURE);
 		}
 	}
 	
 	if(mUI_upperBar) {
-		mUI_upperBar->add(*mWorkspaces["sketchDesign"]->upperBar());
-		mUI_upperBar->add(*mWorkspaces["partDesign"]->upperBar());
-		mUI_upperBar->set_visible_child(*mWorkspaces["partDesign"]->upperBar());
-		mCurrentWorkspace = mWorkspaces.at("partDesign");
-		if(mNavigationBar)
-			mNavigationBar->set_workspace(mCurrentWorkspace);
+		mUI_upperBar->add(*mWorkspaces.at("home")->upperBar());
+		mUI_upperBar->add(*mWorkspaces.at("sketchDesign")->upperBar());
+		mUI_upperBar->add(*mWorkspaces.at("partDesign")->upperBar());
+	} else {
+		LOG_ERROR("Cold not build upper bar.");
+		exit(EXIT_FAILURE);
 	}
+
+	set_workspace("home");
 
 	connect_signals();
 	show_all();	
@@ -79,11 +85,14 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 
 void bloop::set_workspace(std::string const& name)
 {
-	std::cout<<__FILE__<<",  "<<__LINE__<<" : Disabled\n";
-	// if(mWorkspaces.find(name) != mWorkspaces.end()) {
-	// 	mCurrentWorkspace = mWorkspaces.at(name);
-	// 	mCurrentWorkspace->set_target(target);
-	// }
+	if(mWorkspaces.find(name) != mWorkspaces.end()) {
+		mUI_upperBar->set_visible_child(*mWorkspaces.at(name)->upperBar());
+		mCurrentWorkspace = mWorkspaces.at(name);
+		if(mNavigationBar)
+			mNavigationBar->set_workspace(mCurrentWorkspace);
+	} else {
+		LOG_WARNING("Trying to set workspace to \"" + name + "\". No such workspace exist.");
+	}
 }
 
 void bloop::set_workspaceState(std::shared_ptr<workspaceState> state)

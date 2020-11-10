@@ -1,4 +1,7 @@
 
+#ifndef SKETCHDESIGN_HPP_
+#define SKETCHDESIGN_HPP_
+
 #include "workspace.hpp"
 
 #include <map>
@@ -26,3 +29,5 @@ public:
 
 	void finish();
 };
+
+#endif

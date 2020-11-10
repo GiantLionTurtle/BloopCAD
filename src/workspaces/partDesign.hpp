@@ -1,4 +1,7 @@
 
+#ifndef PARTDESIGN_HPP_
+#define PARTDESIGN_HPP_
+
 #include "workspace.hpp"
 #include "../entities/part.hpp"
 
@@ -15,3 +18,5 @@ public:
 	void startSketch();
 	void extrusion();
 };
+
+#endif
