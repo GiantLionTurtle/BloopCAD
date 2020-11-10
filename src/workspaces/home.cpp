@@ -1,6 +1,6 @@
 
 #include "home.hpp"
-#include "../bloop.hpp"
+#include <bloop.hpp>
 
 home::home(bloop* parent) :
 	workspace(parent)

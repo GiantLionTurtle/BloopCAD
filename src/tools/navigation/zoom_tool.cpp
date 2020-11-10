@@ -1,7 +1,7 @@
 
 #include "zoom_tool.hpp"
 
-#include "../../workspaces/workspace.hpp"
+#include <workspaces/workspace.hpp>
 
 bool zoom_tool::manage_mouse_move(GdkEventMotion* event) 
 {

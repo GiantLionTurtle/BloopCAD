@@ -1,7 +1,7 @@
 
 #include "pan_tool.hpp"
 
-#include "../../workspaces/workspace.hpp"
+#include <workspaces/workspace.hpp>
 
 bool pan_tool::manage_mouse_move(GdkEventMotion* event) 
 {

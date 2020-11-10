@@ -2,7 +2,7 @@
 #ifndef ZOOM_TOOL_HPP_
 #define ZOOM_TOOL_HPP_
 
-#include "../tool.hpp"
+#include <tools/tool.hpp>
 
 class zoom_tool : public tool_abstract {
 private:

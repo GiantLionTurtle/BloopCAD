@@ -2,7 +2,7 @@
 #ifndef GLCALL_HPP_
 #define GLCALL_HPP_
 
-#include "../errorLogger.hpp"
+#include <errorLogger.hpp>
 
 #include <epoxy/gl.h>
 

@@ -2,7 +2,7 @@
 #ifndef ORBIT_TOOL_HPP_
 #define ORBIT_TOOL_HPP_
 
-#include "../tool.hpp"
+#include <tools/tool.hpp>
 
 class orbit_tool : public tool_abstract {
 private:

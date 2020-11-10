@@ -2,9 +2,9 @@
 #ifndef TOOL_HPP_
 #define TOOL_HPP_
 
-#include "../forward_bloop.hpp"
+#include <forward_bloop.hpp>
 // #include "document.hpp"
-#include "../entities/part.hpp"
+#include <entities/part.hpp>
 
 #include <memory>
 

@@ -10,6 +10,7 @@ pkg_check_modules(GTKMM gtkmm-3.0)
 
 include_directories(
     vendor/
+	src/
 	${GTKMM_INCLUDE_DIRS})
 
 link_directories(

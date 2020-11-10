@@ -1,7 +1,7 @@
 
 #include "tool.hpp"
-#include "../bloop.hpp"
-#include "../workspaces/workspace.hpp"
+#include <bloop.hpp>
+#include <workspaces/workspace.hpp>
 
 bool simpleSelector_tool::manage_mouse_move(GdkEventMotion* event) 
 {

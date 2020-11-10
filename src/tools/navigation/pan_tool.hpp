@@ -2,7 +2,7 @@
 #ifndef PAN_TOOL_HPP_
 #define PAN_TOOL_HPP_
 
-#include "../tool.hpp"
+#include <tools/tool.hpp>
 
 class pan_tool : public tool_abstract {
 private:

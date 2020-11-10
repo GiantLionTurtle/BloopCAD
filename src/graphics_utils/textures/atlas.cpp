@@ -1,6 +1,6 @@
 
 #include "atlas.hpp"
-#include "../GLCall.hpp"
+#include <graphics_utils/GLCall.hpp>
 
 atlas::atlas(FT_Face face, int fontHeight)
 {

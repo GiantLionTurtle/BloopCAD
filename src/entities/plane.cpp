@@ -1,6 +1,6 @@
 
 #include "plane.hpp"
-#include "../graphics_utils/GLCall.hpp"
+#include <graphics_utils/GLCall.hpp>
 
 plane::plane(plane_abstract const& plane_, std::string const& label) :
 	plane_abstract(plane_),

@@ -1,7 +1,7 @@
 
 #include "texture.hpp"
 
-#include "../GLCall.hpp"
+#include <graphics_utils/GLCall.hpp>
 
 #include <stb_image.h>
 

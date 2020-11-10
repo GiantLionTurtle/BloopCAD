@@ -4,10 +4,10 @@
 
 #include "texture.hpp"
 #include "atlas.hpp"
-#include "../vertexBufferLayout.hpp"
-#include "../vertexBuffer.hpp"
-#include "../indexBuffer.hpp"
-#include "../vertexArray.hpp"
+#include <graphics_utils/vertexBufferLayout.hpp>
+#include <graphics_utils/vertexBuffer.hpp>
+#include <graphics_utils/indexBuffer.hpp>
+#include <graphics_utils/vertexArray.hpp>
 
 #include <unordered_map>
 #include <memory>

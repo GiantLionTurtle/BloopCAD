@@ -9,7 +9,7 @@
 
 #include "entitiesIndexer.hpp"
 
-#include "../errorLogger.hpp"
+#include <errorLogger.hpp>
 
 #include <memory>
 

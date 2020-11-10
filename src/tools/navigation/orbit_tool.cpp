@@ -1,7 +1,7 @@
 
 #include "orbit_tool.hpp"
 
-#include "../../workspaces/workspace.hpp"
+#include <workspaces/workspace.hpp>
 
 bool orbit_tool::manage_mouse_move(GdkEventMotion* event) 
 {

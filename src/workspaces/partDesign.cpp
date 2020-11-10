@@ -1,6 +1,6 @@
 
 #include "partDesign.hpp"
-#include "../bloop.hpp"
+#include <bloop.hpp>
 
 partDesign::partDesign(bloop* parent) :
 	workspace(parent)

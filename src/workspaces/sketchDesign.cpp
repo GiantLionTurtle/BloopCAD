@@ -1,6 +1,6 @@
 
 #include "sketchDesign.hpp"
-#include "../bloop.hpp"
+#include <bloop.hpp>
 
 sketchDesign::sketchDesign(bloop* parent) :
 	workspace(parent)
