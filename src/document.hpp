@@ -43,6 +43,7 @@ public:
 	void update_state_dims(); // TODO: find a better name
 
 	bool set_workspace(std::string const& name);
+	bool set_workspace();
 	std::shared_ptr<workspaceState> currentWorkspaceState() { return mCurrentWorkspaceState; };
 };
 

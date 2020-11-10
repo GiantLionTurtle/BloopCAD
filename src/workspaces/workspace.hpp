@@ -22,6 +22,7 @@ struct workspaceState {
 	std::shared_ptr<frameBuffer> selectionBuffer;
 	std::shared_ptr<camera> cam;
 	std::shared_ptr<tool_abstract> currentTool;
+	std::string workspaceName;
 };
 
 class workspace {

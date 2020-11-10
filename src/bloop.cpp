@@ -40,9 +40,7 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	if(mHome && mDocumentIndexer) {
 		try {
 			mHomePage = new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/normal/sunset.png"));
-			mHomePage->set_tooltip_text("Home");
 			mHome->add_overlay(*mHomePage);
-
 			set_icon(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/icon.png", 400, 400));
 		} catch(const Glib::FileError& ex) {
 			LOG_ERROR("Glib file error: " + ex.what());
@@ -55,17 +53,24 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	}
 	
 	if(mDocumentIndexer) {
+		mDocumentIndexer->signal_switch_page().connect(sigc::mem_fun(*this, &bloop::manage_tab_switch));
+
+		// Warning: this is for testing purposes.
 		mDocuments.push_back(std::make_tuple(tabButton("Document"), Gtk::Overlay(), std::shared_ptr<document>(new document(this))));
 		mDocumentIndexer->append_page(std::get<1>(mDocuments.back()), std::get<0>(mDocuments.back()));
-		mDocumentIndexer->set_tab_reorderable(std::get<1>(mDocuments.back()));
+		//mDocumentIndexer->set_tab_reorderable(std::get<1>(mDocuments.back()));
+
 		std::get<1>(mDocuments.back()).add(*std::get<2>(mDocuments.back())); // Add the document (for Gtk it is a box with a GLArea) to the new overlay
-		mCurrentDocument = std::get<2>(mDocuments.back());
-		if(mNavigationBar) {
-			std::get<1>(mDocuments.back()).add_overlay(*mNavigationBar);
-		} else {
-			LOG_ERROR("Could not build navigation bar.");
-			exit(EXIT_FAILURE);
-		}
+	} else {
+		LOG_ERROR("Could not build document indexer.");
+		exit(EXIT_FAILURE);
+	}
+
+	if(mNavigationBar) {
+		std::get<1>(mDocuments.back()).add_overlay(*mNavigationBar);
+	} else {
+		LOG_ERROR("Could not build navigation bar.");
+		exit(EXIT_FAILURE);
 	}
 	
 	if(mUI_upperBar) {
@@ -148,6 +153,26 @@ bool bloop::manage_button_release(GdkEventButton* event)
 		return mCurrentWorkspace->manage_button_release(event);
 	}
 	return true;
+}
+
+void bloop::manage_tab_switch(Gtk::Widget* widget, unsigned int tab_ind)
+{
+	std::shared_ptr<document> doc = get_document_at_tabInd(tab_ind);
+
+	if(doc) {
+		mCurrentDocument = doc;
+		mCurrentDocument->set_workspace();
+	} else {
+		mCurrentDocument = nullptr;
+		set_workspace("home");
+	}
+}
+
+std::shared_ptr<document> bloop::get_document_at_tabInd(unsigned int ind)
+{
+	if(ind == 0 || ind > mDocuments.size())
+		return nullptr;
+	return std::get<2>(mDocuments.at(ind-1));
 }
 
 void bloop::connect_signals()

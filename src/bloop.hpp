@@ -133,7 +133,6 @@ public:
 
 	void set_workspace(std::string const& name);
 
-
 	bool manage_key_press(GdkEventKey* event);
 	bool manage_mouse_move(GdkEventMotion* event);
 	bool manage_mouse_scroll(GdkEventScroll* event);
@@ -141,10 +140,11 @@ public:
 	bool manage_button_press(GdkEventButton* event);
 	bool manage_button_release(GdkEventButton* event);
 
-	void set_tool(GdkEventKey* event);
-	void set_tool(std::string const& name);
+	void manage_tab_switch(Gtk::Widget* widget, unsigned int tab_ind);
 
 	void connect_signals();
+
+	std::shared_ptr<document> get_document_at_tabInd(unsigned int ind);
 };
 
 #endif

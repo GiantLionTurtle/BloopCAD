@@ -49,10 +49,14 @@ void partDesign::startSketch()
 	// set_tool_target<part>("startSketch");
 	// mParentBloop->currentDocument()->set_tool(mTools.at("startSketch"));
 	// mParentBloop->set_tool("startSketch");
+
+	LOG_WARNING("Start sketch not implemented yet");
 }
 void partDesign::extrusion()
 {
 	// set_tool_target<part>("extrusion");
 	// mParentBloop->currentDocument()->set_tool(mTools.at("extrusion"));
 	// mParentBloop->set_tool("extrusion");
+
+	LOG_WARNING("Extrusion not implemented yet");
 }

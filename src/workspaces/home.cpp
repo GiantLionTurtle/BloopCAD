@@ -42,11 +42,9 @@ home::home(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
 
 void home::new_file()
 {
-    BLOOP_MARKER;
-    std::cout<<"Not implemented yet\n";
+	LOG_WARNING("New file not implemented yet");
 }
 void home::open_file()
 {
-    BLOOP_MARKER;
-    std::cout<<"Not implemented yet\n";
+	LOG_WARNING("Open file not implemented yet");
 }

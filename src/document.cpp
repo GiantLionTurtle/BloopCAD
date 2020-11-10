@@ -146,8 +146,27 @@ bool document::set_workspace(std::string const& name)
 		mCurrentWorkspaceState->width = get_width();
 		mCurrentWorkspaceState->height = get_height();
 
+		mCurrentWorkspaceState->workspaceName = name;
+
 		mParentBloop->set_workspace(name);
 		return true;
 	}
 	return false;
 }
+
+bool document::set_workspace() 
+{
+	if(mCurrentWorkspaceState && mWorkspaceStates.find(mCurrentWorkspaceState->workspaceName) != mWorkspaceStates.end()) {
+		mCurrentWorkspaceState->cam->set_aspectRatio((float)get_width() / (float)get_height());
+		mCurrentWorkspaceState->target = mSubject;
+		mCurrentWorkspaceState->selectionBuffer = mSelectionBuffer;
+
+		mCurrentWorkspaceState->width = get_width();
+		mCurrentWorkspaceState->height = get_height();
+
+		mParentBloop->set_workspace(mCurrentWorkspaceState->workspaceName);
+		return true;
+	}
+	return false;
+}
+
