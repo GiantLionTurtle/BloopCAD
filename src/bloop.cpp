@@ -49,7 +49,6 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 		}
 	} else {
 		LOG_ERROR("Could not build home page.");
-		exit(EXIT_FAILURE);
 	}
 	
 	if(mDocumentIndexer) {
@@ -63,14 +62,12 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 		std::get<1>(mDocuments.back()).add(*std::get<2>(mDocuments.back())); // Add the document (for Gtk it is a box with a GLArea) to the new overlay
 	} else {
 		LOG_ERROR("Could not build document indexer.");
-		exit(EXIT_FAILURE);
 	}
 
 	if(mNavigationBar) {
 		std::get<1>(mDocuments.back()).add_overlay(*mNavigationBar);
 	} else {
 		LOG_ERROR("Could not build navigation bar.");
-		exit(EXIT_FAILURE);
 	}
 	
 	if(mUI_upperBar) {
@@ -79,7 +76,6 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 		mUI_upperBar->add(*mWorkspaces.at("partDesign")->upperBar());
 	} else {
 		LOG_ERROR("Cold not build upper bar.");
-		exit(EXIT_FAILURE);
 	}
 
 	set_workspace("home");
