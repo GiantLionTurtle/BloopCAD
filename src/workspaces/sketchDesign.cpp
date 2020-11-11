@@ -29,7 +29,7 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 	bool all_btns_valid = true;
 	for(auto it = mButtons.begin(); it != mButtons.end(); ++it) {
 		builder->get_widget(it->first, std::get<0>(it->second));
-
+		
 		if(!std::get<0>(it->second))
 			all_btns_valid = false;
 	}
@@ -52,9 +52,9 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 
 			std::get<1>(mButtons.at("sketchFinish")) = new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/sketchFinish.png", 60, 60));			
 		} catch(const Glib::FileError& ex) {
-			LOG_ERROR("Glib file error: " + ex.what());
+			LOG_WARNING("Glib file error: " + ex.what());
 		} catch(const Gdk::PixbufError& ex) {
-			LOG_ERROR("Gtk pixbuf error: " + ex.what());
+			LOG_WARNING("Gtk pixbuf error: " + ex.what());
 		}
 		
 		std::get<0>(mButtons.at("line"))->			set_image(*std::get<1>(mButtons.at("line")));
@@ -73,18 +73,18 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 
 		std::get<0>(mButtons.at("sketchFinish"))->set_image(*std::get<1>(mButtons.at("sketchFinish")));
 
-		std::get<0>(mButtons.at("line"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::line));
-		std::get<0>(mButtons.at("rectangle"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::rectangle));
-		std::get<0>(mButtons.at("circle"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::circle));
-		std::get<0>(mButtons.at("polygon"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::polygon));
+		std::get<0>(mButtons.at("line"))->			signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::line));
+		std::get<0>(mButtons.at("rectangle"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::rectangle));
+		std::get<0>(mButtons.at("circle"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::circle));
+		std::get<0>(mButtons.at("polygon"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::polygon));
 		std::get<0>(mButtons.at("threePointsArc"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::threePointsArc));
 
-		std::get<0>(mButtons.at("dimension"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::dimension));
-		std::get<0>(mButtons.at("verticality"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::verticality));
-		std::get<0>(mButtons.at("perpendicularity"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::perpendicularity));
-		std::get<0>(mButtons.at("parallelism"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::parallelism));
-		std::get<0>(mButtons.at("coincidence"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::coincidence));
-		std::get<0>(mButtons.at("equality"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::equality));
+		std::get<0>(mButtons.at("dimension"))->			signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::dimension));
+		std::get<0>(mButtons.at("verticality"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::verticality));
+		std::get<0>(mButtons.at("perpendicularity"))->	signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::perpendicularity));
+		std::get<0>(mButtons.at("parallelism"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::parallelism));
+		std::get<0>(mButtons.at("coincidence"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::coincidence));
+		std::get<0>(mButtons.at("equality"))->			signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::equality));
 
 		std::get<0>(mButtons.at("sketchFinish"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::finish));
 

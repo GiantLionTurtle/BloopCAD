@@ -43,9 +43,9 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 			mHome->add_overlay(*mHomePage);
 			set_icon(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/icon.png", 400, 400));
 		} catch(const Glib::FileError& ex) {
-			LOG_ERROR("Glib file error: " + ex.what());
+			LOG_WARNING("Glib file error: " + ex.what());
 		} catch(const Gdk::PixbufError& ex) {
-			LOG_ERROR("Gtk pixbuf error: " + ex.what());
+			LOG_WARNING("Gtk pixbuf error: " + ex.what());
 		}
 	} else {
 		LOG_ERROR("Could not build home page.");
@@ -102,7 +102,7 @@ void bloop::set_workspaceState(std::shared_ptr<workspaceState> state)
 	if(mCurrentWorkspace) {
 		mCurrentWorkspace->set_state(state);
  	} else {
-		LOG_ERROR("There are no current workspace in bloop");
+		LOG_WARNING("There are no current workspace in bloop");
 	}
 }
 

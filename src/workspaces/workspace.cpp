@@ -89,7 +89,7 @@ bool workspace::set_tool(std::string const& name)
 		(*mState)->currentTool->set_state((*mState));
 		return true;
 	} else {
-		LOG_ERROR("Trying to set \"" + name + "\" as current tool. There is no such tool.");
+		LOG_WARNING("Trying to set \"" + name + "\" as current tool. There is no such tool.");
 	}
 	return false;
 }
@@ -99,7 +99,7 @@ void workspace::set_state(std::shared_ptr<workspaceState> state_)
 	if(mState) {
 		(*mState) = state_;
 	} else {
-		LOG_ERROR("No state available.");
+		LOG_WARNING("No state available.");
 	}
 }
 

@@ -54,7 +54,7 @@ public:
 			try {
 				std::dynamic_pointer_cast<tool<actOn>>(mTools.at(toolName))->set_target(std::dynamic_pointer_cast<actOn>(mTarget));
 			} catch (std::exception& ex) {
-				LOG_ERROR("Failed to set target for tool " + toolName + ": " + ex.what());
+				LOG_WARNING("Failed to set target for tool " + toolName + ": " + ex.what());
 				return false;
 			}
 			return true;

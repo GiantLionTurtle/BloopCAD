@@ -10,7 +10,7 @@ unsigned int vertexBufferProprety::typeSize() const
     case GL_UNSIGNED_BYTE:return 1;
   };
 
-  LOG_ERROR("Unknown type.");
+  LOG_WARNING("Unknown type.");
   return 0;
 }
 

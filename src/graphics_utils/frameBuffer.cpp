@@ -25,7 +25,7 @@ frameBuffer::frameBuffer(unsigned int width, unsigned int height):
 
 	GLCall(unsigned int status = glCheckFramebufferStatus(GL_FRAMEBUFFER));
 	if (status != GL_FRAMEBUFFER_COMPLETE) {
-		LOG_ERROR("Incomplete frame buffer: " + std::to_string(status));
+		LOG_WARNING("Incomplete frame buffer: " + std::to_string(status));
 	}
 	
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, initialFrameBuffer));

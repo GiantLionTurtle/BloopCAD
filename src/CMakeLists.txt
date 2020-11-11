@@ -6,6 +6,7 @@ add_subdirectory(workspaces)
 
 add_executable(BloopCAD
 	document.cpp
+	navigationBar.cpp
 	bloop.cpp
 	main.cpp)
 

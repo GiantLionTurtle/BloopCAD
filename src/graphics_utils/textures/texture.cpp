@@ -21,7 +21,7 @@ texture::texture(int width, int height, unsigned int wrap_s, unsigned int wrap_t
 	bind();
 
 	if(channels != 4) {
-		LOG_ERROR("Only 4 channels is supported for the momemnt.");
+		LOG_WARNING("Only 4 channels is supported for the momemnt.");
 	}
 
 	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, width, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr));

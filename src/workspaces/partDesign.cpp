@@ -31,9 +31,9 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 			std::get<1>(mButtons.at("startSketch")) = new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/partDesign/startSketch.png", 60, 60));
 			std::get<1>(mButtons.at("extrusion")) 	= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/partDesign/extrusion.png", 60, 60));
 		} catch(const Glib::FileError& ex) {
-			LOG_ERROR("Glib file error: " + ex.what());
+			LOG_WARNING("Glib file error: " + ex.what());
 		} catch(const Gdk::PixbufError& ex) {
-			LOG_ERROR("Gtk pixbuf error: " + ex.what());
+			LOG_WARNING("Gtk pixbuf error: " + ex.what());
 		}
 		
 		std::get<0>(mButtons.at("startSketch"))->	set_image(*std::get<1>(mButtons.at("startSketch")));
