@@ -7,8 +7,7 @@
 
 document::document(bloop* parent) :
 	mParentBloop(parent),
-	mCurrentWorkspaceState(nullptr),
-	mEntitiesIndexer(new entitiesIndexer())
+	mCurrentWorkspaceState(nullptr)
 {
 	connect_signals();
 
@@ -43,8 +42,7 @@ void document::do_realize()
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 		mSelectionBuffer = std::shared_ptr<frameBuffer>(new frameBuffer(get_width(), get_height()));
-		mSubject = std::shared_ptr<entity>(new part(mEntitiesIndexer));
-		mEntitiesIndexer->add(mSubject);
+		mPart = std::shared_ptr<part>(new part());
 		set_workspace("partDesign");
 
 		if(mParentBloop->currentWorkspace())
@@ -72,14 +70,14 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 	int initialFrameBuffer;
 	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &initialFrameBuffer); // TODO: check if this could change (if it does not, no need to do it every loop)
 
-	if(mSubject) {
-		mSubject->draw(mCurrentWorkspaceState->cam);
+	if(mPart) {
+		mPart->draw(mCurrentWorkspaceState->cam);
 
 		mSelectionBuffer->bind();
 		GLCall(glViewport(0, 0, get_width(), get_height()));
 		GLCall(glClearColor(0.0, 0.0, 0.0, 1.0));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-		mSubject->draw_selection(mCurrentWorkspaceState->cam);
+		mPart->draw_selection(mCurrentWorkspaceState->cam);
 		
 		mSelectionBuffer->unbind(initialFrameBuffer);
 	}
@@ -145,7 +143,7 @@ bool document::set_workspace()
 {
 	if(mCurrentWorkspaceState && mWorkspaceStates.find(mCurrentWorkspaceState->workspaceName) != mWorkspaceStates.end()) {
 		mCurrentWorkspaceState->cam->set_aspectRatio((float)get_width() / (float)get_height());
-		mCurrentWorkspaceState->target = mSubject;
+		mCurrentWorkspaceState->target = mPart;
 
 		mParentBloop->set_workspace(mCurrentWorkspaceState->workspaceName);
 		return true;

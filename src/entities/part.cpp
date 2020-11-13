@@ -2,12 +2,12 @@
 #include "part.hpp"
 
 part::part():
-    mIndexer(new entitiesIndexer()) 
+    entitiesIndexer()
 {
     init_scene();
 }
 part::part(std::shared_ptr<entitiesIndexer> indexer):
-    mIndexer(new entitiesIndexer(indexer))
+    entitiesIndexer(indexer)
 {
     init_scene();
 }
@@ -17,9 +17,9 @@ void part::init_scene()
     mXY = plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     mYZ = plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     mZX = plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    mIndexer->add(mXY);
-    mIndexer->add(mYZ);
-    mIndexer->add(mZX);
+    add(mXY);
+    add(mYZ);
+    add(mZX);
 }
 
 void part::draw(std::shared_ptr<camera> cam)

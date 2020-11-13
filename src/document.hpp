@@ -10,6 +10,7 @@
 #include <tools/tool.hpp>
 #include <graphics_utils/frameBuffer.hpp>
 #include <actions/action.hpp>
+#include <entities/part.hpp>
 
 #include <gtkmm.h>
 
@@ -21,8 +22,7 @@
 
 class document : public Gtk::Box {
 private:
-	std::shared_ptr<entitiesIndexer> mEntitiesIndexer;
-	std::shared_ptr<entity> mSubject;
+	std::shared_ptr<part> mPart;
 
 	std::map<std::string, std::shared_ptr<workspaceState>> mWorkspaceStates;
 	std::shared_ptr<workspaceState> mCurrentWorkspaceState;
@@ -47,7 +47,7 @@ public:
 	bool set_workspace();
 	std::shared_ptr<workspaceState> currentWorkspaceState() { return mCurrentWorkspaceState; };
 
-	std::shared_ptr<entitiesIndexer> indexer() { return mEntitiesIndexer; }
+	std::shared_ptr<entitiesIndexer> indexer() { return mPart; }
 	std::shared_ptr<frameBuffer> selectionBuffer() { return mSelectionBuffer; }
 
 	void push_action(std::shared_ptr<action> to_push);
