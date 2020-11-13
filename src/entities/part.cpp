@@ -7,7 +7,7 @@ part::part():
     init_scene();
 }
 part::part(std::shared_ptr<entitiesIndexer> indexer):
-    mIndexer(indexer)
+    mIndexer(new entitiesIndexer(indexer))
 {
     init_scene();
 }

@@ -21,7 +21,7 @@
 
 class document : public Gtk::Box {
 private:
-	std::shared_ptr<entitiesIndexer> mEntities;
+	std::shared_ptr<entitiesIndexer> mEntitiesIndexer;
 	std::shared_ptr<entity> mSubject;
 
 	std::map<std::string, std::shared_ptr<workspaceState>> mWorkspaceStates;
@@ -43,13 +43,11 @@ public:
 	static gboolean frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock, gpointer data);
 	void connect_signals();
 
-	void update_state_dims(); // TODO: find a better name
-
 	bool set_workspace(std::string const& name);
 	bool set_workspace();
 	std::shared_ptr<workspaceState> currentWorkspaceState() { return mCurrentWorkspaceState; };
 
-	std::shared_ptr<entitiesIndexer> indexer() { return mEntities; }
+	std::shared_ptr<entitiesIndexer> indexer() { return mEntitiesIndexer; }
 	std::shared_ptr<frameBuffer> selectionBuffer() { return mSelectionBuffer; }
 
 	void push_action(std::shared_ptr<action> to_push);

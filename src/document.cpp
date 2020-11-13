@@ -8,7 +8,7 @@
 document::document(bloop* parent) :
 	mParentBloop(parent),
 	mCurrentWorkspaceState(nullptr),
-	mEntities(new entitiesIndexer())
+	mEntitiesIndexer(new entitiesIndexer())
 {
 	connect_signals();
 
@@ -43,9 +43,8 @@ void document::do_realize()
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 		mSelectionBuffer = std::shared_ptr<frameBuffer>(new frameBuffer(get_width(), get_height()));
-		std::cout<<"SelID:"<<mSelectionBuffer->id()<<"\n";
-		mSubject = std::shared_ptr<entity>(new part(mEntities));
-		mEntities->add(mSubject);
+		mSubject = std::shared_ptr<entity>(new part(mEntitiesIndexer));
+		mEntitiesIndexer->add(mSubject);
 		set_workspace("partDesign");
 
 		if(mParentBloop->currentWorkspace())

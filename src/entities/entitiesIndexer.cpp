@@ -2,20 +2,33 @@
 #include "entitiesIndexer.hpp"
 
 entitiesIndexer::entitiesIndexer():
+	mToFollow(nullptr),
 	mHighestInd(0, 0, 0)
 {}
 
 entitiesIndexer::entitiesIndexer(glm::ivec3 startInd):
+	mToFollow(nullptr),
 	mHighestInd(glm::abs(startInd))
+{}
+
+entitiesIndexer::entitiesIndexer(std::shared_ptr<entitiesIndexer> to_follow):
+	mToFollow(to_follow),
+	mHighestInd(to_follow->mHighestInd)
 {}
 
 void entitiesIndexer::add(std::shared_ptr<entity> elem)
 {
-	incrementIndex(mHighestInd);
-	mEntities.push_back({mHighestInd, elem});
-	glm::vec3 ind_float = mHighestInd;
-	ind_float /= 255.0f;
-	elem->setSelectionColor(ind_float);
+	if(!is_following()) {
+		incrementIndex(mHighestInd);
+		mEntities.push_back({mHighestInd, elem});
+		glm::vec3 ind_float = mHighestInd;
+		ind_float /= 255.0f;
+		elem->setSelectionColor(ind_float);
+	} else {
+		mToFollow->add(elem);
+		mHighestInd = mToFollow->mHighestInd;
+		mEntities.push_back({mHighestInd, elem});
+	}
 }
 
 std::shared_ptr<entity> entitiesIndexer::get(size_t ind) const

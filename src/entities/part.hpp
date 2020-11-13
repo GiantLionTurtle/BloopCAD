@@ -5,7 +5,6 @@
 #include "entity.hpp"
 #include "plane_abstract.hpp"
 #include "plane.hpp"
-#include "editable.hpp"
 
 #include "entitiesIndexer.hpp"
 

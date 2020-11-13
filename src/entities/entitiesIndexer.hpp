@@ -16,9 +16,12 @@ class entitiesIndexer {
 private:
 	std::vector<std::pair<glm::ivec3, std::shared_ptr<entity>>> mEntities;
 	glm::ivec3 mHighestInd;
+
+	std::shared_ptr<entitiesIndexer> mToFollow;
 public:
 	entitiesIndexer();
 	entitiesIndexer(glm::ivec3 startInd);
+	entitiesIndexer(std::shared_ptr<entitiesIndexer> to_follow);
 	
 	void add(std::shared_ptr<entity> elem);
 
@@ -31,6 +34,8 @@ public:
 
 	void for_each(std::function<void (std::shared_ptr<entity>, glm::ivec3)> func);
 	void for_each(std::function<void (std::shared_ptr<entity>)> func);
+
+	bool is_following() const { return (bool)mToFollow; }
 private:
 	static int compareIndices(glm::ivec3 const& a, glm::ivec3 const& b);
 	static void incrementIndex(glm::ivec3 &ind);
