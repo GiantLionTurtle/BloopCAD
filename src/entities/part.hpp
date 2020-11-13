@@ -20,8 +20,8 @@ public:
 
 	virtual void init_scene();
 
-	virtual void draw(std::shared_ptr<camera> cam);
-	virtual void draw_selection(std::shared_ptr<camera> cam);
+	virtual void draw(std::shared_ptr<camera> cam, glm::mat4 additionalTransform = glm::mat4(1.0f));
+	virtual void draw_selection(std::shared_ptr<camera> cam, glm::mat4 additionalTransform = glm::mat4(1.0f));
 
 	void update_transforms();
 };

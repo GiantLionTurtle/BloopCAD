@@ -33,8 +33,8 @@ public:
 	static std::shared_ptr<plane> from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, std::string const& label = "");
 	// static std::shared_ptr<plane> from_3Points_ptr(glm::vec3 origin, glm::vec3 pt1, glm::vec3 pt2, std::string const& label);
 
-	virtual void draw(std::shared_ptr<camera> cam);
-	virtual void draw_selection(std::shared_ptr<camera> cam);
+	virtual void draw(std::shared_ptr<camera> cam, glm::mat4 additionalTransform = glm::mat4(1.0f));
+	virtual void draw_selection(std::shared_ptr<camera> cam, glm::mat4 additionalTransform = glm::mat4(1.0f));
 private:
 	void init_buffers();
 };

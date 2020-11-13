@@ -24,8 +24,8 @@ protected:
 public:
 	entity(): mSelected(false), mHovered(false), mSelectionColor(0.0f, 0.0f, 0.0f), mTranslation(0.0f, 0.0f, 0.0f), mScale(1.0f, 1.0f, 1.0f), mTransform(1.0f) {};
 
-	virtual void draw(std::shared_ptr<camera> cam) { std::cout<<"Draw not implemented...\n"; };
-	virtual void draw_selection(std::shared_ptr<camera> cam) { std::cout<<"Selection draw not implemented...\n"; }
+	virtual void draw(std::shared_ptr<camera> cam, glm::mat4 additionalTransform = glm::mat4(1.0f)) { std::cout<<"Draw not implemented...\n"; };
+	virtual void draw_selection(std::shared_ptr<camera> cam, glm::mat4 additionalTransform = glm::mat4(1.0f)) { std::cout<<"Selection draw not implemented...\n"; }
 
 	void select() { set_selected(true); };
 	void unselect() { set_selected(false); };
