@@ -16,10 +16,8 @@
 #include <memory>
 
 struct workspaceState {
-	int width, height;
-	std::shared_ptr<entitiesIndexer> indexer;
+	document* doc;
 	std::shared_ptr<entity> target;
-	std::shared_ptr<frameBuffer> selectionBuffer;
 	std::shared_ptr<camera> cam;
 	std::shared_ptr<tool_abstract> currentTool;
 	std::string workspaceName;

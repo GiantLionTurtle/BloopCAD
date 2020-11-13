@@ -14,11 +14,11 @@ document::document(bloop* parent) :
 
 	mWorkspaceStates["partDesign"] 			= std::shared_ptr<workspaceState>(new workspaceState);
 	mWorkspaceStates.at("partDesign")->cam 	= camera::from_spherical_ptr(glm::vec3(3.0f, 0.785398, 0.955317), glm::vec3(0.0f, 0.0f, 0.0f), 100.0f, 1.0f);
-	mWorkspaceStates.at("partDesign")->indexer = mEntities;
+	mWorkspaceStates.at("partDesign")->doc 	= this;
 
 	mWorkspaceStates["sketchDesign"] 		= std::shared_ptr<workspaceState>(new workspaceState);
 	mWorkspaceStates.at("sketchDesign")->cam = camera::from_cartesian_ptr(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1.0f);
-	mWorkspaceStates.at("sketchDesign")->indexer = mEntities;
+	mWorkspaceStates.at("sketchDesign")->doc = this;
 }
 
 void document::do_realize()
@@ -129,23 +129,11 @@ void document::connect_signals()
 	mViewPort.set_vexpand(true);
 }
 
-void document::update_state_dims()
-{
-	mCurrentWorkspaceState->width = get_width();
-	mCurrentWorkspaceState->height = get_height();
-}
-
 bool document::set_workspace(std::string const& name) 
 {
 	if(mWorkspaceStates.find(name) != mWorkspaceStates.end()) {
 		mCurrentWorkspaceState = mWorkspaceStates[name];
 		mCurrentWorkspaceState->cam->set_aspectRatio((float)get_width() / (float)get_height());
-		mCurrentWorkspaceState->target = mSubject;
-		mCurrentWorkspaceState->selectionBuffer = mSelectionBuffer;
-
-		mCurrentWorkspaceState->width = get_width();
-		mCurrentWorkspaceState->height = get_height();
-
 		mCurrentWorkspaceState->workspaceName = name;
 
 		mParentBloop->set_workspace(name);
@@ -159,10 +147,6 @@ bool document::set_workspace()
 	if(mCurrentWorkspaceState && mWorkspaceStates.find(mCurrentWorkspaceState->workspaceName) != mWorkspaceStates.end()) {
 		mCurrentWorkspaceState->cam->set_aspectRatio((float)get_width() / (float)get_height());
 		mCurrentWorkspaceState->target = mSubject;
-		mCurrentWorkspaceState->selectionBuffer = mSelectionBuffer;
-
-		mCurrentWorkspaceState->width = get_width();
-		mCurrentWorkspaceState->height = get_height();
 
 		mParentBloop->set_workspace(mCurrentWorkspaceState->workspaceName);
 		return true;
@@ -170,3 +154,34 @@ bool document::set_workspace()
 	return false;
 }
 
+void document::push_action(std::shared_ptr<action> to_push)
+{
+	if(mActionInd != mActionStackSize) {
+		mActionStackSize = mActionInd;
+	}
+	if(mActionStack.size() >= mActionInd) {
+		mActionStack[mActionInd] = to_push;
+	} else {
+		mActionStack.push_back(to_push);
+	}
+	to_push->do_work();
+	mActionInd++;
+	mActionStackSize++;
+
+}
+void document::advance_action_index(unsigned int amount)
+{
+	for(unsigned int i = 0; i < amount; ++i) {
+		if((mActionInd + 1) < mActionStackSize) {
+			mActionStack[mActionInd++]->do_work();
+		}
+	}
+}
+void document::rewind_action_index(unsigned int amount)
+{
+	for(unsigned int i = 0; i < amount; ++i) {
+		if((mActionInd) > 0) {
+			mActionStack[mActionInd--]->undo_work();
+		}
+	}
+}

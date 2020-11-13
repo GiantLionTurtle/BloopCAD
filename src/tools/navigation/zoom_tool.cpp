@@ -2,13 +2,14 @@
 #include "zoom_tool.hpp"
 
 #include <workspaces/workspace.hpp>
+#include <document.hpp>
 
 bool zoom_tool::manage_mouse_move(GdkEventMotion* event) 
 {
 	if((*mWorkspaceState) && event->state & GDK_BUTTON1_MASK) {
 		if(!is_zooming) {
 			is_zooming = true;
-			zoomStart = glm::vec2(event->x / (*mWorkspaceState)->width  * 2.0f - 1.0f, 1.0f - event->y / (*mWorkspaceState)->height * 2.0f);
+			zoomStart = glm::vec2(event->x / (*mWorkspaceState)->doc->get_width()  * 2.0f - 1.0f, 1.0f - event->y / (*mWorkspaceState)->doc->get_height() * 2.0f);
 		}
 		glm::vec2 pos(event->x, -event->y);
 
@@ -28,7 +29,7 @@ bool zoom_tool::manage_mouse_move(GdkEventMotion* event)
 bool zoom_tool::manage_scroll(GdkEventScroll* event)
 {
 	if((*mWorkspaceState)) {
-		zoom(glm::vec2(event->x / (*mWorkspaceState)->width  * 2.0f - 1.0f, 1.0f - event->y / (*mWorkspaceState)->height * 2.0f), -0.015f * event->delta_y);
+		zoom(glm::vec2(event->x / (*mWorkspaceState)->doc->get_width()  * 2.0f - 1.0f, 1.0f - event->y / (*mWorkspaceState)->doc->get_height() * 2.0f), -0.015f * event->delta_y);
 	}
 	return true;
 }

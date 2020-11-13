@@ -2,13 +2,14 @@
 #ifndef DOCUMENT_HPP_
 #define DOCUMENT_HPP_
 
-#include "forward_bloop.hpp"
-#include "workspaces/workspace.hpp"
-#include "entities/entity.hpp"
-#include "entities/entitiesIndexer.hpp"
-#include "entities/plane_abstract.hpp"
-#include "tools/tool.hpp"
-#include "graphics_utils/frameBuffer.hpp"
+#include <forward_bloop.hpp>
+#include <workspaces/workspace.hpp>
+#include <entities/entity.hpp>
+#include <entities/entitiesIndexer.hpp>
+#include <entities/plane_abstract.hpp>
+#include <tools/tool.hpp>
+#include <graphics_utils/frameBuffer.hpp>
+#include <actions/action.hpp>
 
 #include <gtkmm.h>
 
@@ -28,8 +29,10 @@ private:
 
 	std::shared_ptr<frameBuffer> mSelectionBuffer;
 
-	Gtk::GLArea mViewPort;
+	std::vector<std::shared_ptr<action>> mActionStack;
+	unsigned int mActionInd, mActionStackSize;
 
+	Gtk::GLArea mViewPort;
 	bloop* mParentBloop;
 public:
 	document(bloop* parent);
@@ -45,6 +48,13 @@ public:
 	bool set_workspace(std::string const& name);
 	bool set_workspace();
 	std::shared_ptr<workspaceState> currentWorkspaceState() { return mCurrentWorkspaceState; };
+
+	std::shared_ptr<entitiesIndexer> indexer() { return mEntities; }
+	std::shared_ptr<frameBuffer> selectionBuffer() { return mSelectionBuffer; }
+
+	void push_action(std::shared_ptr<action> to_push);
+	void advance_action_index(unsigned int amount = 1);
+	void rewind_action_index(unsigned int amount = 1);
 };
 
 #endif

@@ -13,11 +13,14 @@
 
 #include <memory>
 
-class sketch : public plane_abstract, public entity, public editable {
+class sketch : public entity {
 private:
+	std::shared_ptr<entitiesIndexer> mIndexer;
 	std::vector<std::shared_ptr<entity>> mEntities;
+
+	std::shared_ptr<plane_abstract> mBasePlane;
 public:
-	sketch(plane_abstract const& plane_);
+	sketch(std::shared_ptr<plane_abstract> base_plane);
 
 	void add_entity();
 
@@ -26,8 +29,10 @@ public:
 
 class part : public entity {
 private:
-	std::shared_ptr<entitiesIndexer> mEntities;
+	std::shared_ptr<entitiesIndexer> mIndexer;
 	std::shared_ptr<plane> mXY, mYZ, mZX;
+
+	std::vector<std::shared_ptr<entity>> mEntities;
 public:
 	part();
 	part(std::shared_ptr<entitiesIndexer> indexer);
@@ -35,12 +40,11 @@ public:
 	virtual void init_scene();
 
 	virtual void draw(std::shared_ptr<camera> cam);
-
 	virtual void draw_selection(std::shared_ptr<camera> cam);
 
 	void update_transforms();
 
-    virtual std::string type() { return "part"; }
+	
 };
 
 #endif

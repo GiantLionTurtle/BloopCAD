@@ -2,5 +2,6 @@
 #define FORWARD_BLOOP_HPP_
 
 class bloop;
+class document;
 
 #endif
