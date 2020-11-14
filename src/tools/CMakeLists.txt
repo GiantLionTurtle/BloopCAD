@@ -9,8 +9,9 @@ set(tools_source_files
 add_library(tools ${tools_source_files})
 
 target_link_libraries(tools
+  entities
+  actions
   utils_tools
   navigation_tools
   partDesign_tools
-	entities
   )

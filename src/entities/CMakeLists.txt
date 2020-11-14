@@ -3,7 +3,8 @@ set(entities_utils_source_files
   entitiesIndexer.cpp
   entity.cpp
   plane.cpp
-  part.cpp)
+  part.cpp
+  sketch.cpp)
 
 add_library(entities ${entities_utils_source_files})
 

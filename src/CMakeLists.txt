@@ -1,6 +1,7 @@
 
 add_subdirectory(graphics_utils)
 add_subdirectory(entities)
+add_subdirectory(actions)
 add_subdirectory(tools)
 add_subdirectory(workspaces)
 
@@ -14,6 +15,7 @@ target_link_libraries(BloopCAD
 	vendor
 	graphics_utils
 	entities
+	actions
 	tools
 	workspaces
 	${GTKMM_LIBRARIES}
