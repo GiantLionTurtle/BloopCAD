@@ -22,7 +22,7 @@ void part::init_scene()
 	add(mZX);
 }
 
-void part::draw(std::shared_ptr<camera> cam, glm::mat4 additionalTransform)
+void part::draw_impl(std::shared_ptr<camera> cam, glm::mat4 additionalTransform)
 {
 	additionalTransform *= transform(); // TOOD: right order?
 	mXY->draw(cam, additionalTransform);
@@ -30,19 +30,10 @@ void part::draw(std::shared_ptr<camera> cam, glm::mat4 additionalTransform)
 	mZX->draw(cam, additionalTransform);
 }
 
-void part::draw_selection(std::shared_ptr<camera> cam, glm::mat4 additionalTransform)
+void part::draw_selection_impl(std::shared_ptr<camera> cam, glm::mat4 additionalTransform)
 {
 	additionalTransform *= transform(); // TOOD: right order?
 	mXY->draw_selection(cam, additionalTransform);
 	mYZ->draw_selection(cam, additionalTransform);
 	mZX->draw_selection(cam, additionalTransform);
-}
-
-void part::update_transforms()
-{
-	transform();
-	
-	mXY->set_transform(mTranslation, mScale);
-	mYZ->set_transform(mTranslation, mScale);
-	mZX->set_transform(mTranslation, mScale);
 }

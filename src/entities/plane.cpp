@@ -32,7 +32,7 @@ std::shared_ptr<plane> plane::from_1Point2Vectors_ptr(glm::vec3 const& origin, g
 	return std::shared_ptr<plane>(new plane(plane_abstract::from_1Point2Vectors(origin, v, w), label));
 }
 
-void plane::draw(std::shared_ptr<camera> cam, glm::mat4 additionalTransform)
+void plane::draw_impl(std::shared_ptr<camera> cam, glm::mat4 additionalTransform)
 {
 	// TODO: make this less sketch?
 	GLCall(glDisable(GL_DEPTH_TEST));
@@ -40,7 +40,6 @@ void plane::draw(std::shared_ptr<camera> cam, glm::mat4 additionalTransform)
 
 	additionalTransform *= transform(); // TOOD: right order?
 	glm::vec3 color;
-	// std::cout<<glm::to_string(additionalTransform * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))<<std::endl;
 	glm::vec4 campos = glm::vec4(cam->pos_cartesian(), 1.0f) - additionalTransform * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	if(dist_signed(glm::vec3(campos.x, campos.y, campos.z)) >= 0) {
 		color = glm::vec3(0.34f, 0.17f, 0.05f);
@@ -62,7 +61,7 @@ void plane::draw(std::shared_ptr<camera> cam, glm::mat4 additionalTransform)
 	GLCall(glEnable(GL_DEPTH_TEST));
 }
 
-void plane::draw_selection(std::shared_ptr<camera> cam, glm::mat4 additionalTransform)
+void plane::draw_selection_impl(std::shared_ptr<camera> cam, glm::mat4 additionalTransform)
 {
 	mSelectionShader->bind();
 
