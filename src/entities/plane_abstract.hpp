@@ -22,6 +22,10 @@ public:
 
 	float dist(glm::vec3 const& point) const;
 	float dist_signed(glm::vec3 const& point) const;
+
+	glm::vec3 origin() const { return mOrigin; }
+	glm::vec3 v() const { return mV; }
+	glm::vec3 w() const { return mW; }
 };
 
 #endif

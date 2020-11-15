@@ -8,7 +8,7 @@ class simpleSelector_tool : public tool_abstract {
 private:
 	std::shared_ptr<entity> mCurrentHover;
 public: 
-	simpleSelector_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_);
+	simpleSelector_tool(workspace* env);
 
 	virtual bool manage_mouse_move(GdkEventMotion* event);
 

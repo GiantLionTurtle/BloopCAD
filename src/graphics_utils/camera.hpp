@@ -17,12 +17,13 @@
 // https://math.libretexts.org/Bookshelves/Calculus/Book%3A_Calculus_(OpenStax)/12%3A_Vectors_in_Space/12.7%3A_Cylindrical_and_Spherical_Coordinates
 class camera {
 protected:
+	static int numCams;
+	int mID;
 	glm::vec3 mPos_spherical, mPos_cartesian, mTarget;
 	glm::mat4 mProjection;
 	float mZoom, mAspectRatio;
 	glm::vec3 mUp, mRight;
 	glm::vec3 mFront;
-
 	bool mIs_flipped;
 public:
 	camera(glm::vec3 cartesianCoords, glm::vec3 target, float zoom_, float aspectRatio_);
@@ -46,6 +47,7 @@ public:
 	void set_cartesian(glm::vec3 cartesian);
 
 	void move_target(glm::vec3 delta);
+	void set_target(glm::vec3 target);
 	void move_front(glm::vec3 delta);
 
 	float zoom() const { return mZoom; }
@@ -63,6 +65,8 @@ public:
 	void updatePos_cartesian();
 	void updatePos_spherical();
 	void updateUp();
+
+	int id() const { return mID; }
 };
 
 #endif

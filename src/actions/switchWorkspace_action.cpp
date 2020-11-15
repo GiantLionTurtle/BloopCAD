@@ -11,8 +11,12 @@ switchWorkspace_action::switchWorkspace_action(document* doc, std::string const&
 void switchWorkspace_action::do_work()
 {
 	if(mDoc) {
-		mInitWorkspaceName = mDoc->currentWorkspaceState()->workspaceName;
-		mDoc->set_workspace(mTargetWorkspaceName);
+		if(mDoc->currentWorkspaceState()) {
+			mInitWorkspaceName = mDoc->currentWorkspaceState()->workspaceName;
+			mDoc->set_workspace(mTargetWorkspaceName);
+		} else {
+			LOG_WARNING("No workspace state.");
+		}
 	} else {
 		LOG_WARNING("Document pointer is not valid.");
 	}

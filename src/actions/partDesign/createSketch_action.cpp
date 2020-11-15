@@ -12,7 +12,7 @@ createSketch_action::createSketch_action(std::shared_ptr<plane_abstract> sketchP
 void createSketch_action::do_work()
 {
 	if(mSketch) {
-		
+		mSketch->set_exists(true);
 	} else {
 		mSketch = std::shared_ptr<sketch>(new sketch(mSketchPlane, mTarget));
 	}
@@ -20,6 +20,6 @@ void createSketch_action::do_work()
 void createSketch_action::undo_work()
 {
 	if(mSketch) {
-		
+		mSketch->set_exists(false);
 	}
 }

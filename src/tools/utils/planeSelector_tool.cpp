@@ -2,8 +2,8 @@
 #include "planeSelector_tool.hpp"
 #include <entities/plane_abstract.hpp>
 
-planeSelector_tool::planeSelector_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_):
-    simpleSelector_tool(workspaceState_)
+planeSelector_tool::planeSelector_tool(workspace* env):
+    simpleSelector_tool(env)
 {
 
 }

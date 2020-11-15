@@ -1,13 +1,16 @@
 
 #include "camera.hpp"
 
+int camera::numCams = 0;
+
 camera::camera(glm::vec3 cartesianCoords, glm::vec3 target, float zoom_, float aspectRatio_):
 	mPos_spherical(0.0f, 0.0f, 0.0f),
 	mPos_cartesian(cartesianCoords),
 	mTarget(target),
 	mZoom(zoom_),
 	mAspectRatio(aspectRatio_),
-	mIs_flipped(false)
+	mIs_flipped(false),
+	mID(numCams++)
 {
 	updatePos_spherical();
 	updateUp();
@@ -19,7 +22,8 @@ camera::camera(glm::vec3 target, float zoom_, float aspectRatio_):
 	mTarget(target),
 	mZoom(zoom_),
 	mAspectRatio(aspectRatio_),
-	mIs_flipped(false)
+	mIs_flipped(false),
+	mID(numCams++)
 {
 	updateUp();
 	mFront = mTarget-mPos_cartesian;
@@ -50,7 +54,7 @@ std::shared_ptr<camera> camera::from_spherical_ptr(glm::vec3 sphericalCoords, gl
 glm::mat4 camera::view() const
 {
 	// TODO: have a competant up
-	return glm::lookAt(mPos_cartesian, mPos_cartesian+mFront, glm::vec3(0.0f, (mIs_flipped) ? -1.0f : 1.0f, 0.0f));
+	return glm::lookAt(mPos_cartesian, mTarget, glm::vec3(0.0f, (mIs_flipped) ? -1.0f : 1.0f, 0.0f));
 }
 
 glm::mat4 camera::projection() const
@@ -93,6 +97,10 @@ void camera::move_target(glm::vec3 delta)
 {
 	mTarget += delta;
 	//std::cout<<"New target: "<<glm::to_string(mTarget)<<"\n";
+}
+void camera::set_target(glm::vec3 target)
+{
+	mTarget = target;
 }
 
 void camera::move_front(glm::vec3 delta)

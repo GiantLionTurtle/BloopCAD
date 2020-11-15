@@ -78,31 +78,22 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 		LOG_ERROR("Cold not build upper bar.");
 	}
 
-	set_workspace("home");
+	set_workspace("home", nullptr);
 
 	connect_signals();
 	show_all();	
 }
 
-void bloop::set_workspace(std::string const& name)
+void bloop::set_workspace(std::string const& name, std::shared_ptr<workspaceState> state)
 {
 	if(mWorkspaces.find(name) != mWorkspaces.end()) {
 		mUI_upperBar->set_visible_child(*mWorkspaces.at(name)->upperBar());
 		mCurrentWorkspace = mWorkspaces.at(name);
+		mCurrentWorkspace->set_state(state);
 		if(mNavigationBar)
 			mNavigationBar->set_workspace(mCurrentWorkspace);
 	} else {
 		LOG_WARNING("Trying to set workspace to \"" + name + "\". No such workspace exist.");
-	}
-}
-
-void bloop::set_workspaceState(std::shared_ptr<workspaceState> state)
-{
-//	std::cout<<__FILE__<<",  "<<__LINE__<<" : Disabled\n\n";
-	if(mCurrentWorkspace) {
-		mCurrentWorkspace->set_state(state);
- 	} else {
-		LOG_WARNING("There are no current workspace in bloop");
 	}
 }
 
@@ -160,7 +151,7 @@ void bloop::manage_tab_switch(Gtk::Widget* widget, unsigned int tab_ind)
 		mCurrentDocument->set_workspace();
 	} else {
 		mCurrentDocument = nullptr;
-		set_workspace("home");
+		set_workspace("home", nullptr);
 	}
 }
 

@@ -57,9 +57,7 @@ public:
 	std::shared_ptr<document> currentDocument() { return mCurrentDocument; }
 	std::shared_ptr<workspace> currentWorkspace() { return mCurrentWorkspace; }
 
-	void set_workspaceState(std::shared_ptr<workspaceState> state);
-
-	void set_workspace(std::string const& name);
+	void set_workspace(std::string const& name, std::shared_ptr<workspaceState> state);
 
 	bool manage_key_press(GdkEventKey* event);
 	bool manage_mouse_move(GdkEventMotion* event);

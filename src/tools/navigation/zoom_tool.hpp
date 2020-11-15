@@ -12,8 +12,8 @@ private:
 	glm::vec2 zoomStart;
 	bool is_zooming;
 public:
-	zoom_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool_abstract(workspaceState_) {};
-
+	zoom_tool(workspace* env);
+	
 	virtual void finish() { is_moving = false; is_zooming = false; }
 	virtual void init() { is_moving = false; }
 

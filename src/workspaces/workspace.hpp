@@ -34,7 +34,7 @@ protected:
 	std::shared_ptr<tool_abstract> mDefaultTool;
 	std::shared_ptr<entity> mTarget;
 
-	std::shared_ptr<std::shared_ptr<workspaceState>> mState;
+	std::shared_ptr<workspaceState> mState;
 
 	Gtk::Box* mUpperBar;
 
@@ -44,21 +44,6 @@ public:
 	workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
 
 	bool invoke_from_key(unsigned int key, std::string& toolName);
-
-	template<typename actOn>
-	bool set_tool_target(std::string const& toolName)
-	{
-		if(mTools.find(toolName) != mTools.end() && mTools.at(toolName)) {
-			try {
-				std::dynamic_pointer_cast<tool<actOn>>(mTools.at(toolName))->set_target(std::dynamic_pointer_cast<actOn>(mTarget));
-			} catch (std::exception& ex) {
-				LOG_WARNING("Failed to set target for tool " + toolName + ": " + ex.what());
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}
 
 	void set_target(std::shared_ptr<entity> target) { mTarget = target; }
 
@@ -71,7 +56,7 @@ public:
 	bool manage_button_press(GdkEventButton* event);
 	bool manage_button_release(GdkEventButton* event);
 
-	std::shared_ptr<workspaceState> state() const { return (*mState); }
+	std::shared_ptr<workspaceState> state() { return mState; }
 	void set_state(std::shared_ptr<workspaceState> state_);
 
 	Gtk::Box* upperBar() { return mUpperBar; }

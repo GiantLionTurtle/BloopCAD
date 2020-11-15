@@ -47,6 +47,7 @@ public:
 	bool set_workspace();
 	std::shared_ptr<workspaceState> currentWorkspaceState() { return mCurrentWorkspaceState; };
 
+	std::shared_ptr<part> target() { return mPart; }
 	std::shared_ptr<entitiesIndexer> indexer() { return mPart; }
 	std::shared_ptr<frameBuffer> selectionBuffer() { return mSelectionBuffer; }
 

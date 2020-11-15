@@ -14,10 +14,12 @@ document::document(bloop* parent) :
 	mWorkspaceStates["partDesign"] 			= std::shared_ptr<workspaceState>(new workspaceState);
 	mWorkspaceStates.at("partDesign")->cam 	= camera::from_spherical_ptr(glm::vec3(3.0f, 0.785398, 0.955317), glm::vec3(0.0f, 0.0f, 0.0f), 100.0f, 1.0f);
 	mWorkspaceStates.at("partDesign")->doc 	= this;
+	mWorkspaceStates.at("partDesign")->workspaceName = "partDesign";
 
 	mWorkspaceStates["sketchDesign"] 		= std::shared_ptr<workspaceState>(new workspaceState);
 	mWorkspaceStates.at("sketchDesign")->cam = camera::from_cartesian_ptr(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1.0f);
 	mWorkspaceStates.at("sketchDesign")->doc = this;
+	mWorkspaceStates.at("sketchDesign")->workspaceName = "sketchDesign";
 }
 
 void document::do_realize()
@@ -43,11 +45,10 @@ void document::do_realize()
 
 		mSelectionBuffer = std::shared_ptr<frameBuffer>(new frameBuffer(get_width(), get_height()));
 		mPart = std::shared_ptr<part>(new part());
-		set_workspace("partDesign");
 
+		set_workspace("partDesign");
 		if(mParentBloop->currentWorkspace())
 			mCurrentWorkspaceState->currentTool = mParentBloop->currentWorkspace()->defaultTool();
-		mParentBloop->set_workspaceState(mCurrentWorkspaceState);
 	} catch(const Gdk::GLError& gle) {
 		LOG_ERROR("\ndomain: " + std::to_string(gle.domain()) + "\ncode: " + std::to_string(gle.code()) + "\nwhat: " + gle.what());
 	}
@@ -131,9 +132,8 @@ bool document::set_workspace(std::string const& name)
 	if(mWorkspaceStates.find(name) != mWorkspaceStates.end()) {
 		mCurrentWorkspaceState = mWorkspaceStates[name];
 		mCurrentWorkspaceState->cam->set_aspectRatio((float)get_width() / (float)get_height());
-		mCurrentWorkspaceState->workspaceName = name;
 
-		mParentBloop->set_workspace(name);
+		mParentBloop->set_workspace(name, mCurrentWorkspaceState);
 		return true;
 	}
 	return false;
@@ -145,7 +145,7 @@ bool document::set_workspace()
 		mCurrentWorkspaceState->cam->set_aspectRatio((float)get_width() / (float)get_height());
 		mCurrentWorkspaceState->target = mPart;
 
-		mParentBloop->set_workspace(mCurrentWorkspaceState->workspaceName);
+		mParentBloop->set_workspace(mCurrentWorkspaceState->workspaceName, mCurrentWorkspaceState);
 		return true;
 	}
 	return false;
@@ -156,15 +156,15 @@ void document::push_action(std::shared_ptr<action> to_push)
 	if(mActionInd != mActionStackSize) {
 		mActionStackSize = mActionInd;
 	}
-	if(mActionStack.size() >= mActionInd) {
+	if(mActionStack.size() > mActionInd) {
 		mActionStack[mActionInd] = to_push;
 	} else {
 		mActionStack.push_back(to_push);
 	}
+
 	to_push->do_work();
 	mActionInd++;
 	mActionStackSize++;
-
 }
 void document::advance_action_index(unsigned int amount)
 {

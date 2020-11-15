@@ -11,8 +11,8 @@ partDesign::partDesign(bloop* parent) :
 partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
 	workspace("partDesign_upperBar", builder, parent)
 {
-	mTools["startSketch"] 	= std::shared_ptr<tool_abstract>(new startSketch_tool(mState));
-	mTools["extrusion"] 	= std::shared_ptr<tool_abstract>(new extrusion_tool(mState));
+	mTools["startSketch"] 	= std::shared_ptr<tool_abstract>(new startSketch_tool(this));
+	mTools["extrusion"] 	= std::shared_ptr<tool_abstract>(new extrusion_tool(this));
 	mDefaultTool = mTools.at("simpleSelector");
 
 	mButtons["startSketch"] = std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);

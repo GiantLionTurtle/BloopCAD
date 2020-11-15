@@ -12,23 +12,21 @@
 
 #include <gtkmm.h>
 
-class workspaceState;
+class workspace;
 
 class tool_abstract {
 protected:
-	std::shared_ptr<std::shared_ptr<workspaceState>> mWorkspaceState;
+	workspace* mEnv;
 public:
-	tool_abstract(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): mWorkspaceState(workspaceState_) {}
+	tool_abstract(workspace* env): mEnv(env) {}
 	virtual void finish() {};
 	virtual void init() {};
 
-	virtual bool manage_key_press(GdkEventKey* event){ return true; };
+	virtual bool manage_key_press(GdkEventKey* event) { return true; };
 	virtual bool manage_mouse_move(GdkEventMotion* event) { return true; }
 	virtual bool manage_scroll(GdkEventScroll* event) { return true; }
 	virtual bool manage_button_press(GdkEventButton* event) { return true; }
 	virtual bool manage_button_release(GdkEventButton* event) { return true; }
-
-	void set_state(std::shared_ptr<workspaceState> state) { (*mWorkspaceState) = state; }
 };
 
 template<typename actOn>
@@ -37,7 +35,7 @@ protected:
 	std::shared_ptr<actOn> mTarget;
 
 public:
-    tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool_abstract(workspaceState_) {};
+    tool(workspace* env): tool_abstract(env) {};
 
 	void set_target(std::shared_ptr<actOn> target) 
 	{
@@ -47,12 +45,12 @@ public:
 
 class line_tool : public tool<sketch> {
 public:
-	line_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool(workspaceState_) {};
+	line_tool(workspace* env): tool(env) {};
 };
 
 class extrusion_tool : public tool<part> {
 public:
-	extrusion_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool(workspaceState_) {};
+	extrusion_tool(workspace* env): tool(env) {};
 };
 
 #endif

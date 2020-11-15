@@ -6,7 +6,7 @@
 
 class startSketch_tool : public planeSelector_tool {
 public:
-	startSketch_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_);
+	startSketch_tool(workspace* env);
 
    	virtual bool manage_button_press(GdkEventButton* event);
 };

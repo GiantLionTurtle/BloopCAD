@@ -4,12 +4,19 @@
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 
+zoom_tool::zoom_tool(workspace* env): 
+	tool_abstract(env) 
+{
+
+}
+
+
 bool zoom_tool::manage_mouse_move(GdkEventMotion* event) 
 {
-	if((*mWorkspaceState) && event->state & GDK_BUTTON1_MASK) {
+	if(mEnv->state() && event->state & GDK_BUTTON1_MASK) {
 		if(!is_zooming) {
 			is_zooming = true;
-			zoomStart = glm::vec2(event->x / (*mWorkspaceState)->doc->get_width()  * 2.0f - 1.0f, 1.0f - event->y / (*mWorkspaceState)->doc->get_height() * 2.0f);
+			zoomStart = glm::vec2(event->x / mEnv->state()->doc->get_width()  * 2.0f - 1.0f, 1.0f - event->y / mEnv->state()->doc->get_height() * 2.0f);
 		}
 		glm::vec2 pos(event->x, -event->y);
 
@@ -28,8 +35,8 @@ bool zoom_tool::manage_mouse_move(GdkEventMotion* event)
 
 bool zoom_tool::manage_scroll(GdkEventScroll* event)
 {
-	if((*mWorkspaceState)) {
-		zoom(glm::vec2(event->x / (*mWorkspaceState)->doc->get_width()  * 2.0f - 1.0f, 1.0f - event->y / (*mWorkspaceState)->doc->get_height() * 2.0f), -0.015f * event->delta_y);
+	if(mEnv->state()) {
+		zoom(glm::vec2(event->x / mEnv->state()->doc->get_width()  * 2.0f - 1.0f, 1.0f - event->y / mEnv->state()->doc->get_height() * 2.0f), -0.015f * event->delta_y);
 	}
 	return true;
 }
@@ -37,19 +44,19 @@ bool zoom_tool::manage_scroll(GdkEventScroll* event)
 void zoom_tool::zoom(glm::vec2 origin, float amount)
 {
 	float scale = 1.0f + amount;
-	(*mWorkspaceState)->target->scale(scale);
+	mEnv->state()->doc->target()->scale(scale);
 	
 	glm::vec4 event_pos(origin.x, origin.y, 0.0f, 0.0f);
 
-	glm::mat4 mvp = (*mWorkspaceState)->cam->projection() * (*mWorkspaceState)->cam->view() * (*mWorkspaceState)->target->transform();
-	glm::mat4 vp = (*mWorkspaceState)->cam->projection() * (*mWorkspaceState)->cam->view();
+	glm::mat4 mvp = mEnv->state()->cam->projection() * mEnv->state()->cam->view() * mEnv->state()->doc->target()->transform();
+	glm::mat4 vp = mEnv->state()->cam->projection() * mEnv->state()->cam->view();
 
 	glm::vec4 pos_screen = mvp * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	pos_screen /= pos_screen.w;
 
-	glm::vec4 up_screen = vp * glm::vec4((*mWorkspaceState)->cam->up(), 1.0f);
+	glm::vec4 up_screen = vp * glm::vec4(mEnv->state()->cam->up(), 1.0f);
 	up_screen /= up_screen.w;
-	glm::vec4 right_screen = vp * glm::vec4((*mWorkspaceState)->cam->right(), 1.0f);
+	glm::vec4 right_screen = vp * glm::vec4(mEnv->state()->cam->right(), 1.0f);
 	right_screen /= right_screen.w;
 
 	float up_length = std::sqrt(up_screen.x * up_screen.x + up_screen.y * up_screen.y);
@@ -60,6 +67,6 @@ void zoom_tool::zoom(glm::vec2 origin, float amount)
 	float translate_by_x = (delta.x * -amount) / right_length;
 	float translate_by_y = (delta.y * -amount) / up_length;
 
-	(*mWorkspaceState)->target->translate((*mWorkspaceState)->cam->right() * translate_by_x);
-	(*mWorkspaceState)->target->translate((*mWorkspaceState)->cam->up() * translate_by_y);
+	mEnv->state()->doc->target()->translate(mEnv->state()->cam->right() * translate_by_x);
+	mEnv->state()->doc->target()->translate(mEnv->state()->cam->up() * translate_by_y);
 }

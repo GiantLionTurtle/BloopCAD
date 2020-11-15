@@ -9,7 +9,7 @@ private:
 	glm::vec2 prevPos;
 	bool is_moving;
 public:
-	pan_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool_abstract(workspaceState_) {};
+	pan_tool(workspace* env);
 
 	virtual bool manage_mouse_move(GdkEventMotion* event);
 };

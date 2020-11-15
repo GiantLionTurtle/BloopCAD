@@ -9,7 +9,7 @@ private:
 	glm::vec2 prevPos;
 	bool is_moving;
 public:
-	orbit_tool(std::shared_ptr<std::shared_ptr<workspaceState>> workspaceState_): tool_abstract(workspaceState_), is_moving(false) {};
+	orbit_tool(workspace* env);
 
 	virtual void finish() { is_moving = false; }
 	virtual void init() { is_moving = false; }
