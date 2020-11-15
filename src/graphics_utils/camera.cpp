@@ -1,5 +1,6 @@
 
 #include "camera.hpp"
+#include <errorLogger.hpp>
 
 int camera::numCams = 0;
 
@@ -10,11 +11,11 @@ camera::camera(glm::vec3 cartesianCoords, glm::vec3 target, float zoom_, float a
 	mZoom(zoom_),
 	mAspectRatio(aspectRatio_),
 	mIs_flipped(false),
-	mID(numCams++)
+	mID(numCams++),
+	mFinishedMove(true)
 {
 	updatePos_spherical();
 	updateUp();
-	mFront = mTarget-mPos_cartesian;
 }
 camera::camera(glm::vec3 target, float zoom_, float aspectRatio_):
 	mPos_spherical(0.0f, 0.0f, 0.0f),
@@ -23,10 +24,10 @@ camera::camera(glm::vec3 target, float zoom_, float aspectRatio_):
 	mZoom(zoom_),
 	mAspectRatio(aspectRatio_),
 	mIs_flipped(false),
-	mID(numCams++)
+	mID(numCams++),
+	mFinishedMove(true)
 {
 	updateUp();
-	mFront = mTarget-mPos_cartesian;
 }
 
 camera camera::from_cartesian(glm::vec3 cartesianCoords, glm::vec3 target, float zoom_, float aspectRatio_)
@@ -66,25 +67,19 @@ void camera::move_spherical(glm::vec3 delta)
 {
 	mPos_spherical += delta;
 	updatePos_cartesian();
-	updateUp();	
-	// std::cout<<glm::to_string(mPos_spherical)<<"\n";
-		mFront = mTarget-mPos_cartesian;
-
+	updateUp();
 }
 void camera::set_spherical(glm::vec3 spherical)
 {
 	mPos_spherical = spherical;
 	updatePos_cartesian();
 	updateUp();
-		mFront = mTarget-mPos_cartesian;
-
 }
 void camera::move_cartesian(glm::vec3 delta)
 {
 	mPos_cartesian += delta;
 	updatePos_spherical();
-	//updateUp();
-	//std::cout<<"New cart: "<<glm::to_string(mPos_cartesian)<<"\n";
+	updateUp();
 }
 void camera::set_cartesian(glm::vec3 cartesian)
 {
@@ -96,16 +91,44 @@ void camera::set_cartesian(glm::vec3 cartesian)
 void camera::move_target(glm::vec3 delta)
 {
 	mTarget += delta;
-	//std::cout<<"New target: "<<glm::to_string(mTarget)<<"\n";
 }
 void camera::set_target(glm::vec3 target)
 {
 	mTarget = target;
 }
 
-void camera::move_front(glm::vec3 delta)
+void camera::set_targetState(camState state, unsigned int moveDuration)
+{	
+	mMoveEnd = std::chrono::steady_clock::now();
+	mMoveEnd += std::chrono::milliseconds(moveDuration);
+	mMoveDuration = moveDuration;
+	mMoveInitState = { state.cartesian, (state.cartesian ? mPos_cartesian : mPos_spherical), mTarget };
+	mMoveFinalState = state;
+	mFinishedMove = false;
+}
+
+void camera::update_move()
 {
-	mFront += delta;
+	if(mFinishedMove)
+		return;
+	float timeLeft = std::chrono::duration_cast<std::chrono::milliseconds>(mMoveEnd-std::chrono::steady_clock::now()).count();
+	if(timeLeft > 0) {
+		float amount = timeLeft / mMoveDuration;
+		if(mMoveInitState.cartesian) {
+			set_cartesian(mMoveFinalState.Pos + (mMoveFinalState.Pos - mMoveInitState.Pos) * amount);
+		} else {
+			set_spherical(mMoveFinalState.Pos + (mMoveFinalState.Pos - mMoveInitState.Pos) * amount);
+		}
+		mTarget += mMoveFinalState.Target + (mMoveFinalState.Target - mMoveInitState.Target) * amount;
+	} else {
+		if(mMoveFinalState.cartesian) {
+			set_cartesian(mMoveFinalState.Pos);
+		} else {
+			set_spherical(mMoveFinalState.Pos);
+		}
+		mTarget = mMoveFinalState.Target;
+		mFinishedMove = true;
+	}
 }
 
 void camera::updatePos_cartesian()
@@ -115,7 +138,6 @@ void camera::updatePos_cartesian()
 		mPos_spherical.x * std::cos(mPos_spherical.z),
 		mPos_spherical.x * std::sin(mPos_spherical.z) * std::sin(mPos_spherical.y)
 	);
-	// std::cout<<"New pos cart: "<< glm::to_string(mPos_cartesian)<<"\n";
 }
 void camera::updatePos_spherical()
 {
@@ -130,7 +152,6 @@ void camera::updatePos_spherical()
 	if(mPos_cartesian.y == 0) {
 		mPos_spherical.z = 3.1415 / 2.0;
 	}
-	// std::cout<<"New pos sphe: "<<glm::to_string(mPos_spherical)<<"\n";
 }
 
 void camera::updateUp()

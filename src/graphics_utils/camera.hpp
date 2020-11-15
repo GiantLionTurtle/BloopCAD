@@ -12,6 +12,12 @@
 #include <glm/gtx/norm.hpp>
 #include <glm/gtx/string_cast.hpp>
 
+#include <chrono>
+
+struct camState {
+	bool cartesian;
+	glm::vec3 Pos, Target;
+};
 
 // https://en.wikipedia.org/wiki/Spherical_coordinate_system
 // https://math.libretexts.org/Bookshelves/Calculus/Book%3A_Calculus_(OpenStax)/12%3A_Vectors_in_Space/12.7%3A_Cylindrical_and_Spherical_Coordinates
@@ -23,8 +29,11 @@ protected:
 	glm::mat4 mProjection;
 	float mZoom, mAspectRatio;
 	glm::vec3 mUp, mRight;
-	glm::vec3 mFront;
 	bool mIs_flipped;
+	camState mMoveInitState, mMoveFinalState;
+	std::chrono::steady_clock::time_point mMoveEnd;
+	float mMoveDuration;
+	bool mFinishedMove;
 public:
 	camera(glm::vec3 cartesianCoords, glm::vec3 target, float zoom_, float aspectRatio_);
 	camera(glm::vec3 target, float zoom, float aspectRatio_);
@@ -37,18 +46,20 @@ public:
 
 	glm::mat4 view() const;
 	glm::mat4 projection() const;
-
-	glm::vec3 pos_cartesian() const { return mPos_cartesian; }
-	glm::vec3 pos_spherical() const { return mPos_spherical; }
-
+	
 	void move_spherical(glm::vec3 delta);
 	void set_spherical(glm::vec3 sperical);
+	glm::vec3 pos_spherical() const { return mPos_spherical; }
 	void move_cartesian(glm::vec3 delta);
 	void set_cartesian(glm::vec3 cartesian);
+	glm::vec3 pos_cartesian() const { return mPos_cartesian; }
 
 	void move_target(glm::vec3 delta);
 	void set_target(glm::vec3 target);
-	void move_front(glm::vec3 delta);
+	glm::vec3 target() const { return mTarget; };
+
+	void set_targetState(camState state, unsigned int moveDuration);
+	void update_move();
 
 	float zoom() const { return mZoom; }
 	void change_zoom(float delta) { mZoom += delta; };

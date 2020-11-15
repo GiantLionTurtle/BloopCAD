@@ -32,8 +32,9 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 				glm::vec4 w = target->transform() * target->transform() * glm::vec4(sketchPlane->w(), 1.0f);
 				glm::vec3 campos = glm::vec3(planePos.x, planePos.y, planePos.z) + 
 				glm::normalize(glm::cross(glm::vec3(v.x, v.y, v.z), glm::vec3(w.x, w.y, w.z))) * 1.8f; // TODO: make this 1.8f thingy less arbitrary
-				newState->cam->set_cartesian(campos);
-				newState->cam->set_target(planePos);
+				newState->cam->set_target(mEnv->state()->cam->target());
+				newState->cam->set_cartesian(mEnv->state()->cam->pos_cartesian());
+				newState->cam->set_targetState({ true, campos, planePos }, 2000);
 			}
 			std::cout<<"Start sketch!\n";
 		}

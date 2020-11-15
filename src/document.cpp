@@ -71,6 +71,8 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 	int initialFrameBuffer;
 	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &initialFrameBuffer); // TODO: check if this could change (if it does not, no need to do it every loop)
 
+	mCurrentWorkspaceState->cam->update_move();
+
 	if(mPart) {
 		mPart->draw(mCurrentWorkspaceState->cam);
 
