@@ -2,166 +2,110 @@
 #include "camera.hpp"
 #include <errorLogger.hpp>
 
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/ext/quaternion_trigonometric.hpp>
+
 int camera::numCams = 0;
 
-camera::camera(glm::vec3 cartesianCoords, glm::vec3 target, float zoom_, float aspectRatio_):
-	mPos_spherical(0.0f, 0.0f, 0.0f),
-	mPos_cartesian(cartesianCoords),
+camera::camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float FOV_, float aspectRatio_):
+	mPos(cartesianCoords),
 	mTarget(target),
-	mZoom(zoom_),
+	mSphere(glm::vec2(0.0f, 0.0f)),
+	mZoom(1.0f),
+	mFOV(FOV_),
 	mAspectRatio(aspectRatio_),
-	mIs_flipped(false),
-	mID(numCams++),
-	mFinishedMove(true)
+	mTransformation{glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 
+	// glm::vec3(0.0f, 0.0f, 0.0f)},
+	glm::quat(1.0f, 0.0f, 0.0f, 0.0f)},
+	mID(numCams++)
 {
-	updatePos_spherical();
-	updateUp();
-}
-camera::camera(glm::vec3 target, float zoom_, float aspectRatio_):
-	mPos_spherical(0.0f, 0.0f, 0.0f),
-	mPos_cartesian(0.0f, 0.0f, 0.0f),
-	mTarget(target),
-	mZoom(zoom_),
-	mAspectRatio(aspectRatio_),
-	mIs_flipped(false),
-	mID(numCams++),
-	mFinishedMove(true)
-{
-	updateUp();
+
 }
 
-camera camera::from_cartesian(glm::vec3 cartesianCoords, glm::vec3 target, float zoom_, float aspectRatio_)
+glm::mat4 camera::model() const
 {
-	return camera(cartesianCoords, target, zoom_, aspectRatio_);
+	return 
+	glm::translate(glm::mat4(1.0f), mTransformation.translation.get()) * 
+	glm::toMat4(mTransformation.rotation.get()) *
+	// glm::rotate(glm::mat4(1.0f), mTransformation.rotation.get().x, glm::vec3(1.0f, 0.0f, 0.0f)) *
+	// glm::rotate(glm::mat4(1.0f), mTransformation.rotation.get().y, glm::vec3(0.0f, 1.0f, 0.0f)) *
+	// glm::rotate(glm::mat4(1.0f), mTransformation.rotation.get().z, glm::vec3(0.0f, 0.0f, 1.0f)) *
+	glm::scale(glm::mat4(1.0f), mTransformation.scale.get());
 }
-camera camera::from_spherical(glm::vec3 sphericalCoords, glm::vec3 target, float zoom_, float aspectRatio_)
+glm::mat4 camera::model_inv() const
 {
-	camera out(target, zoom_, aspectRatio_);
-	out.set_spherical(sphericalCoords);
-	return out;
+	return 
+	glm::scale(glm::mat4(1.0f), 1.0f/mTransformation.scale.get()) * 
+	glm::toMat4(glm::inverse(mTransformation.rotation.get())) *
+	// glm::rotate(glm::mat4(1.0f), -mTransformation.rotation.get().z, glm::vec3(0.0f, 0.0f, 1.0f)) *
+	// glm::rotate(glm::mat4(1.0f), -mTransformation.rotation.get().y, glm::vec3(0.0f, 1.0f, 0.0f)) *
+	// glm::rotate(glm::mat4(1.0f), -mTransformation.rotation.get().x, glm::vec3(1.0f, 0.0f, 0.0f)) *
+	glm::translate(glm::mat4(1.0f), -mTransformation.translation.get());
 }
-
-std::shared_ptr<camera> camera::from_cartesian_ptr(glm::vec3 cartesianCoords, glm::vec3 target, float zoom_, float aspectRatio_)
-{
-	return std::shared_ptr<camera>(new camera(cartesianCoords, target, zoom_, aspectRatio_));
-}
-std::shared_ptr<camera> camera::from_spherical_ptr(glm::vec3 sphericalCoords, glm::vec3 target, float zoom_, float aspectRatio_)
-{
-	std::shared_ptr<camera> out(new camera(target, zoom_, aspectRatio_));
-	out->set_spherical(sphericalCoords);
-	return out;
-}
-
 glm::mat4 camera::view() const
 {
 	// TODO: have a competant up
-	return glm::lookAt(mPos_cartesian, mTarget, glm::vec3(0.0f, (mIs_flipped) ? -1.0f : 1.0f, 0.0f));
+	return glm::lookAt(mPos.get(), mTarget.get(), glm::vec3(0.0f, 1.0f, 0.0f));
 }
-
 glm::mat4 camera::projection() const
 {
-	return glm::perspective(glm::radians(mZoom), mAspectRatio, 0.1f, 100.0f);
+	return glm::perspective(mFOV.get(), mAspectRatio.get(), 0.1f, 100.0f);
 }
 
-void camera::move_spherical(glm::vec3 delta)
+glm::vec3 camera::pos() const
 {
-	mPos_spherical += delta;
-	updatePos_cartesian();
-	updateUp();
+	// std::cout<<"right: "<<glm::to_string(right())<<"\n";
+	// std::cout<<"pos: "<<glm::to_string(model_inv() * glm::vec4(mPos.get(), 1.0f))<<"\n";
+	return model_inv() * glm::vec4(mPos.get(), 1.0f);
 }
-void camera::set_spherical(glm::vec3 spherical)
+glm::vec3 camera::target() const
 {
-	mPos_spherical = spherical;
-	updatePos_cartesian();
-	updateUp();
-}
-void camera::move_cartesian(glm::vec3 delta)
-{
-	mPos_cartesian += delta;
-	updatePos_spherical();
-	updateUp();
-}
-void camera::set_cartesian(glm::vec3 cartesian)
-{
-	mPos_cartesian = cartesian;
-	updatePos_spherical();
-	updateUp();
+	return model_inv() * glm::vec4(mTarget.get(), 1.0f);
 }
 
-void camera::move_target(glm::vec3 delta)
+glm::vec3 camera::up() const
 {
-	mTarget += delta;
+	return model_inv() * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 }
-void camera::set_target(glm::vec3 target)
+glm::vec3 camera::right() const
 {
-	mTarget = target;
-}
-
-void camera::set_targetState(camState state, unsigned int moveDuration)
-{	
-	mMoveEnd = std::chrono::steady_clock::now();
-	mMoveEnd += std::chrono::milliseconds(moveDuration);
-	mMoveDuration = moveDuration;
-	mMoveInitState = { state.cartesian, (state.cartesian ? mPos_cartesian : mPos_spherical), mTarget };
-	mMoveFinalState = state;
-	mFinishedMove = false;
+	return model_inv() * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 }
 
-void camera::update_move()
+void camera::set(std::shared_ptr<camera> other)
 {
-	if(mFinishedMove)
-		return;
-	float timeLeft = std::chrono::duration_cast<std::chrono::milliseconds>(mMoveEnd-std::chrono::steady_clock::now()).count();
-	if(timeLeft > 0) {
-		float amount = timeLeft / mMoveDuration;
-		if(mMoveInitState.cartesian) {
-			set_cartesian(mMoveFinalState.Pos + (mMoveFinalState.Pos - mMoveInitState.Pos) * amount);
-		} else {
-			set_spherical(mMoveFinalState.Pos + (mMoveFinalState.Pos - mMoveInitState.Pos) * amount);
-		}
-		mTarget += mMoveFinalState.Target + (mMoveFinalState.Target - mMoveInitState.Target) * amount;
-	} else {
-		if(mMoveFinalState.cartesian) {
-			set_cartesian(mMoveFinalState.Pos);
-		} else {
-			set_spherical(mMoveFinalState.Pos);
-		}
-		mTarget = mMoveFinalState.Target;
-		mFinishedMove = true;
-	}
+	mPos.set(other->mPos.get());
+	mTarget.set(other->mTarget.get());
+
+	mZoom.set(other->mZoom.get());
+	mFOV.set(other->mFOV.get());
+	mAspectRatio.set(other->mAspectRatio.get());
+	
+	mTransformation.rotation.set(other->mTransformation.rotation.get());
+	mTransformation.translation.set(other->mTransformation.translation.get());
+	mTransformation.scale.set(other->mTransformation.scale.get());
 }
 
-void camera::updatePos_cartesian()
+void camera::go_to(glm::vec3 lookat_, glm::vec3 up_, glm::vec3 right_)
 {
-	mPos_cartesian = glm::vec3(
-		mPos_spherical.x * std::sin(mPos_spherical.z) * std::cos(mPos_spherical.y),
-		mPos_spherical.x * std::cos(mPos_spherical.z),
-		mPos_spherical.x * std::sin(mPos_spherical.z) * std::sin(mPos_spherical.y)
-	);
+
 }
-void camera::updatePos_spherical()
+void camera::go_to(glm::vec3 target_, glm::vec3 up_, glm::vec3 right_, unsigned int duration)
 {
-	mPos_spherical = glm::vec3(
-		glm::length(mPos_cartesian),
-		std::atan(mPos_cartesian.y/mPos_cartesian.x),
-		std::atan(std::sqrt(std::pow(mPos_cartesian.x, 2.0f) + std::pow(mPos_cartesian.y, 2.0f)) / mPos_cartesian.z)
-	);
-	if(mPos_cartesian.x == 0) {
-		mPos_spherical.y = 3.1415 / 2.0;
-	}
-	if(mPos_cartesian.y == 0) {
-		mPos_spherical.z = 3.1415 / 2.0;
-	}
+
 }
 
-void camera::updateUp()
+void camera::update()
 {
-	glm::vec3 dir_inv = glm::normalize(mPos_cartesian - mTarget);
-	float modz = std::fmod(mPos_spherical.z, 6.283);
-	if(modz < 0.0f)
-		modz = 6.283f + modz;
-	mIs_flipped = (modz > 3.1415);
-	glm::vec3 up_tmp = glm::vec3(0.0f, (mIs_flipped) ? -1.0f : 1.0f, 0.0f); // global up
-	mRight = glm::normalize(glm::cross(up_tmp, dir_inv));
-	mUp = glm::cross(dir_inv, mRight);
+	mTarget.update();
+	mZoom.update();	
+	mAspectRatio.update();
+	mTransformation.translation.update();
+	mTransformation.rotation.update();
+
+	// TODO: change position, fov and scale in a way that makes sense and is coherent
+	mTransformation.scale.set(glm::vec3(mZoom, mZoom, mZoom));
+
+	mTransformation.rotation.set(glm::angleAxis(mSphere.get().x, glm::vec3(1.0f, 0.0f, 0.0f)) * glm::angleAxis(mSphere.get().y, glm::vec3(0.0f, 1.0f, 0.0f)));
 }

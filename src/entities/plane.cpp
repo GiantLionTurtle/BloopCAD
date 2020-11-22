@@ -32,22 +32,21 @@ std::shared_ptr<plane> plane::from_1Point2Vectors_ptr(glm::vec3 const& origin, g
 	return std::shared_ptr<plane>(new plane(plane_abstract::from_1Point2Vectors(origin, v, w), label));
 }
 
-void plane::draw_impl(std::shared_ptr<camera> cam, glm::mat4 additionalTransform)
+void plane::draw_impl(std::shared_ptr<camera> cam)
 {
 	// TODO: make this less sketch?
 	GLCall(glDisable(GL_DEPTH_TEST));
 	mShader->bind();
 
-	additionalTransform *= transform(); // TOOD: right order?
 	glm::vec3 color;
-	glm::vec4 campos = glm::vec4(cam->pos_cartesian(), 1.0f) - additionalTransform * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-	if(dist_signed(glm::vec3(campos.x, campos.y, campos.z)) >= 0) {
+	// std::cout<<"Pos: "<<glm::to_string(cam->pos())<<"\n";
+	if(dist_signed(cam->pos()) >= 0) {
 		color = glm::vec3(0.34f, 0.17f, 0.05f);
 	} else {
 		color = glm::vec3(0.15f, 0.0f, 0.25f);
 	}
 	mShader->setUniform4f("u_Color", color.r, color.g, color.b, mHovered ? 0.7 : 0.5);
-	glm::mat4 mvp = (cam->projection() * cam->view() * additionalTransform);
+	glm::mat4 mvp = (cam->projection() * cam->view() * cam->model());
 	mShader->setUniformMat4f("u_MVP", mvp);
 	
 	mVA->bind();
@@ -61,14 +60,12 @@ void plane::draw_impl(std::shared_ptr<camera> cam, glm::mat4 additionalTransform
 	GLCall(glEnable(GL_DEPTH_TEST));
 }
 
-void plane::draw_selection_impl(std::shared_ptr<camera> cam, glm::mat4 additionalTransform)
+void plane::draw_selection_impl(std::shared_ptr<camera> cam)
 {
 	mSelectionShader->bind();
 
-	additionalTransform *= transform(); // TOOD: right order?
-
 	mShader->setUniform3f("u_Color", mSelectionColor.r, mSelectionColor.g, mSelectionColor.b);
-	mShader->setUniformMat4f("u_MVP", cam->projection() * cam->view() * additionalTransform);
+	mShader->setUniformMat4f("u_MVP", cam->projection() * cam->view() * cam->model());
 	mVA->bind();
 	mIB->bind();
 

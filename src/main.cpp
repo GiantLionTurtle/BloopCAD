@@ -11,6 +11,7 @@
 #include "bloop.hpp"
 #include "workspaces/partDesign.hpp"
 #include <glm/glm.hpp>
+#include <glm/ext/quaternion_common.hpp>
 
 struct st {
 	std::string name;
@@ -19,24 +20,26 @@ struct st {
 	{}
 };
 
-
 int main (int argc, char *argv[])
 {
-	// std::shared_ptr<st> st_a(new st("a"));
-	// std::shared_ptr<st> st_b(new st("b"));
-	// std::shared_ptr<st> st_c(new st("c"));
-
-	// std::shared_ptr<st>* st_ = &st_b;
-
-	// int counter = 0;
-	// std::cout<<counter++<<(*st_)->name<<"\n";
-
-	// st_ = &st_a;
-	// std::cout<<counter++<<(*st_)->name<<"\n";
-
-	// st_a = st_c;
-	// std::cout<<counter++<<(*st_)->name<<"\n";
-
+	/*
+		Init: 5.173954, 4.249190, 4.378881
+		Delta: vec2(-0.010894, -0.003804)
+		Predicted pos[1]: vec3(5.221350, 4.249190, 4.322257)
+		Rot: quat(0.871874, {0.250690, -0.404320, -0.116254})
+		Actual pos: vec3(5.229948, 4.248937, 4.312097)
+	*/
+	// glm::quat q1 = glm::angleAxis((float)M_PI/4.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	// glm::quat q2 = glm::angleAxis(-(float)M_PI/4.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+	// glm::quat q3 = glm::angleAxis(-(float)M_PI/4.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	// glm::vec3 pos(0.0f, 0.0f, 8.0f);
+	// // glm::vec3 pos(4.6188f, 4.6188f, 4.6188f);
+	
+	// glm::vec3 p_rot_1 = glm::inverse(glm::toMat3(q1)) * pos;
+	// glm::vec3 p_rot_2 = glm::inverse(glm::toMat3(q2 * q1)) * pos;
+	// glm::vec3 p_rot_3 = glm::inverse(glm::toMat3(q3 * q2 * q1)) * pos;
+	// std::cout<<"p_rot: \n"<<glm::to_string(pos)<<"=>\n"<<glm::to_string(p_rot_1)<<"=>\n"<<glm::to_string(p_rot_2)<<"=>\n"<<glm::to_string(p_rot_3)<<"\n";
+	
 	errorLogger::get_instance().init();
 	auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
 	auto refBuilder = Gtk::Builder::create();
@@ -62,8 +65,6 @@ int main (int argc, char *argv[])
 	}
 
 	LOG_ERROR("Could not build window, returning early.");
-
-	return 0;
 }
 
 // g++ `pkg-config gtkmm-3.0 --cflags` main.cpp helloworld.cpp -o demo `pkg-config gtkmm-3.0 --libs`

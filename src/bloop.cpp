@@ -104,6 +104,13 @@ bool bloop::manage_key_press(GdkEventKey* event)
 	}
 	return true;
 }
+bool bloop::manage_key_release(GdkEventKey* event)
+{
+	if(mCurrentWorkspace) {
+		return mCurrentWorkspace->manage_key_release(event);
+	}
+	return true;
+}
 bool bloop::manage_mouse_move(GdkEventMotion* event)
 {
 	if(mCurrentWorkspace) {

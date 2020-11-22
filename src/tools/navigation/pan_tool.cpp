@@ -10,16 +10,14 @@ pan_tool::pan_tool(workspace* env):
 
 }
 
-
 bool pan_tool::manage_mouse_move(GdkEventMotion* event) 
 {
 	if(mEnv->state() && event->state & GDK_BUTTON1_MASK) {
 		glm::vec2 pos(event->x, -event->y);
 		if(is_moving) {
 			glm::vec2 abs_mov(pos.x-prevPos.x, pos.y-prevPos.y);
-			float speed_ratio = 1.0f / mEnv->state()->cam->zoom();
-			mEnv->state()->doc->target()->translate(mEnv->state()->cam->right() 	* abs_mov.x * 0.2f * speed_ratio);
-			mEnv->state()->doc->target()->translate(mEnv->state()->cam->up() 		* abs_mov.y * 0.2f * speed_ratio);
+			float speed_ratio = (float)mEnv->state()->cam->zoom() * 0.02f;
+			mEnv->state()->cam->transformation().translation += speed_ratio * glm::vec3(abs_mov.x, abs_mov.y, 0.0f);
 		} else {
 			is_moving = true;
 		}

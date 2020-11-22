@@ -12,12 +12,14 @@ document::document(bloop* parent) :
 	connect_signals();
 
 	mWorkspaceStates["partDesign"] 			= std::shared_ptr<workspaceState>(new workspaceState);
-	mWorkspaceStates.at("partDesign")->cam 	= camera::from_spherical_ptr(glm::vec3(3.0f, 0.785398, 0.955317), glm::vec3(0.0f, 0.0f, 0.0f), 100.0f, 1.0f);
+	mWorkspaceStates.at("partDesign")->cam 	= std::shared_ptr<camera>(new camera(glm::vec3(0.0f, 0.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), 1.0f));
+	mWorkspaceStates.at("partDesign")->cam->sphere() += glm::vec2(M_PI_4, -M_PI_4);
+
 	mWorkspaceStates.at("partDesign")->doc 	= this;
 	mWorkspaceStates.at("partDesign")->workspaceName = "partDesign";
 
 	mWorkspaceStates["sketchDesign"] 		= std::shared_ptr<workspaceState>(new workspaceState);
-	mWorkspaceStates.at("sketchDesign")->cam = camera::from_cartesian_ptr(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1.0f);
+	mWorkspaceStates.at("sketchDesign")->cam = std::shared_ptr<camera>(new camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(45.0f), 1.0f));
 	mWorkspaceStates.at("sketchDesign")->doc = this;
 	mWorkspaceStates.at("sketchDesign")->workspaceName = "sketchDesign";
 }
@@ -71,7 +73,7 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 	int initialFrameBuffer;
 	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &initialFrameBuffer); // TODO: check if this could change (if it does not, no need to do it every loop)
 
-	mCurrentWorkspaceState->cam->update_move();
+	mCurrentWorkspaceState->cam->update();
 
 	if(mPart) {
 		mPart->draw(mCurrentWorkspaceState->cam);
@@ -116,6 +118,8 @@ void document::connect_signals()
 	mViewPort.signal_unrealize().connect(sigc::mem_fun(*this, &document::do_unrealize), false);
 	mViewPort.signal_render().connect(sigc::mem_fun(*this, &document::do_render));
 	gtk_widget_add_tick_callback((GtkWidget*) this->gobj(),	document::frame_callback, this, NULL); // Couldn't find a c++-y way to do it
+	mViewPort.signal_key_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_key_press));
+	mViewPort.signal_key_release_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_key_release));
 	mViewPort.signal_scroll_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_scroll));
 	mViewPort.signal_motion_notify_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_move));
 	mViewPort.signal_button_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_button_press));
@@ -133,7 +137,7 @@ bool document::set_workspace(std::string const& name)
 {
 	if(mWorkspaceStates.find(name) != mWorkspaceStates.end()) {
 		mCurrentWorkspaceState = mWorkspaceStates[name];
-		mCurrentWorkspaceState->cam->set_aspectRatio((float)get_width() / (float)get_height());
+		mCurrentWorkspaceState->cam->aspectRatio().set((float)get_width() / (float)get_height());
 
 		mParentBloop->set_workspace(name, mCurrentWorkspaceState);
 		return true;
@@ -144,7 +148,7 @@ bool document::set_workspace(std::string const& name)
 bool document::set_workspace() 
 {
 	if(mCurrentWorkspaceState && mWorkspaceStates.find(mCurrentWorkspaceState->workspaceName) != mWorkspaceStates.end()) {
-		mCurrentWorkspaceState->cam->set_aspectRatio((float)get_width() / (float)get_height());
+		mCurrentWorkspaceState->cam->aspectRatio().set((float)get_width() / (float)get_height());
 		mCurrentWorkspaceState->target = mPart;
 
 		mParentBloop->set_workspace(mCurrentWorkspaceState->workspaceName, mCurrentWorkspaceState);

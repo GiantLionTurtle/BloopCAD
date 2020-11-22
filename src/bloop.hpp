@@ -60,6 +60,7 @@ public:
 	void set_workspace(std::string const& name, std::shared_ptr<workspaceState> state);
 
 	bool manage_key_press(GdkEventKey* event);
+	bool manage_key_release(GdkEventKey* event);
 	bool manage_mouse_move(GdkEventMotion* event);
 	bool manage_mouse_scroll(GdkEventScroll* event);
 	bool manage_mouse_scroll_internal(GdkEventScroll* event);

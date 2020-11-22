@@ -34,6 +34,15 @@ bool workspace::manage_key_press(GdkEventKey* event)
 			mState->currentTool->finish();
 			mState->currentTool = mDefaultTool;
 		}
+	} else if(mState && mState->currentTool) {
+		return mState->currentTool->manage_key_press(event);
+	}
+	return true;
+}
+bool workspace::manage_key_release(GdkEventKey* event)
+{
+	if(mState && mState->currentTool) {
+		return mState->currentTool->manage_key_release(event);
 	}
 	return true;
 }

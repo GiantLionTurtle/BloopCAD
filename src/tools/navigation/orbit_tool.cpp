@@ -3,11 +3,26 @@
 
 #include <workspaces/workspace.hpp>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/ext/quaternion_trigonometric.hpp>
+
 orbit_tool::orbit_tool(workspace* env):
 	tool_abstract(env), 
-	is_moving(false)
+	is_moving(false),
+	tmp_right(0.0f, 0.0f, 0.0f)
 {
 
+}
+
+bool orbit_tool::manage_key_press(GdkEventKey* event)
+{
+	if(event->keyval == GDK_KEY_q) {
+		tmp_right = mEnv->state()->cam->right();
+		std::cout<<"Saving right vector: "<<glm::to_string(tmp_right)<<"\n";
+	}
+	return true;
 }
 
 bool orbit_tool::manage_mouse_move(GdkEventMotion* event) 
@@ -16,7 +31,9 @@ bool orbit_tool::manage_mouse_move(GdkEventMotion* event)
 		glm::vec2 pos(event->x, -event->y);
 		if(is_moving) {
 			glm::vec2 abs_mov = (pos-prevPos) * 0.005f;
-			mEnv->state()->cam->move_spherical(glm::vec3(0, mEnv->state()->cam->flipped() ? -abs_mov.x : abs_mov.x, abs_mov.y));
+			
+			std::shared_ptr<camera> cam = mEnv->state()->cam;
+			cam->sphere() += glm::vec2(-abs_mov.y, abs_mov.x);
 		} else {
 			is_moving = true;
 		}

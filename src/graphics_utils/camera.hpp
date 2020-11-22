@@ -2,8 +2,7 @@
 #ifndef CAMERA_HPP_
 #define CAMERA_HPP_
 
-#include <iostream>
-#include <memory>
+#include <animatable.hpp>
 
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -12,11 +11,14 @@
 #include <glm/gtx/norm.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-#include <chrono>
+#include <iostream>
+#include <memory>
 
-struct camState {
-	bool cartesian;
-	glm::vec3 Pos, Target;
+struct transform {
+	animatable<glm::vec3> translation;
+	animatable<glm::vec3> scale;
+	animatable<glm::quat> rotation;
+	// animatable<glm::vec3> rotation;
 };
 
 // https://en.wikipedia.org/wiki/Spherical_coordinate_system
@@ -25,57 +27,40 @@ class camera {
 protected:
 	static int numCams;
 	int mID;
-	glm::vec3 mPos_spherical, mPos_cartesian, mTarget;
-	glm::mat4 mProjection;
-	float mZoom, mAspectRatio;
-	glm::vec3 mUp, mRight;
-	bool mIs_flipped;
-	camState mMoveInitState, mMoveFinalState;
-	std::chrono::steady_clock::time_point mMoveEnd;
-	float mMoveDuration;
-	bool mFinishedMove;
+	animatable<glm::vec3> mPos, mTarget;
+	animatable<glm::vec2> mSphere;
+	
+	animatable<float> mZoom;
+	animatable<float> mFOV;
+	animatable<float> mAspectRatio;
+	transform mTransformation;
 public:
-	camera(glm::vec3 cartesianCoords, glm::vec3 target, float zoom_, float aspectRatio_);
-	camera(glm::vec3 target, float zoom, float aspectRatio_);
+	camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float FOV_, float aspectRatio_);
 
-	static camera from_cartesian(glm::vec3 cartesianCoords, glm::vec3 target, float zoom_, float aspectRatio_);
-	static camera from_spherical(glm::vec3 sphericalCoords, glm::vec3 target, float zoom_, float aspectRatio_);
-
-	static std::shared_ptr<camera> from_cartesian_ptr(glm::vec3 cartesianCoords, glm::vec3 target, float zoom_, float aspectRatio_);
-	static std::shared_ptr<camera> from_spherical_ptr(glm::vec3 sphericalCoords, glm::vec3 target, float zoom_, float aspectRatio_);
-
+	glm::mat4 model() const;
+	glm::mat4 model_inv() const;
 	glm::mat4 view() const;
 	glm::mat4 projection() const;
+
+	glm::vec3 pos() const;
+	glm::vec3 target() const;
+
+	glm::vec3 up() const;
+	glm::vec3 right() const;
 	
-	void move_spherical(glm::vec3 delta);
-	void set_spherical(glm::vec3 sperical);
-	glm::vec3 pos_spherical() const { return mPos_spherical; }
-	void move_cartesian(glm::vec3 delta);
-	void set_cartesian(glm::vec3 cartesian);
-	glm::vec3 pos_cartesian() const { return mPos_cartesian; }
+	animatable<glm::vec2>& sphere() { return mSphere; }
 
-	void move_target(glm::vec3 delta);
-	void set_target(glm::vec3 target);
-	glm::vec3 target() const { return mTarget; };
+	// animatable<float>& FOV() { return mFOV; }
+	animatable<float>& zoom() { return mZoom; };
+	animatable<float>& aspectRatio() { return mAspectRatio; }
+	transform& transformation() { return mTransformation; }
 
-	void set_targetState(camState state, unsigned int moveDuration);
-	void update_move();
+	void set(std::shared_ptr<camera> other);
 
-	float zoom() const { return mZoom; }
-	void change_zoom(float delta) { mZoom += delta; };
-	void set_zoom(float zoom_) { mZoom = zoom_; }
+	void go_to(glm::vec3 target_, glm::vec3 up_, glm::vec3 right_);
+	void go_to(glm::vec3 target_, glm::vec3 up_, glm::vec3 right_, unsigned int duration);
 
-	float aspectRatio() const { return mAspectRatio; }
-	void set_aspectRatio(float aspectRatio_) { mAspectRatio = aspectRatio_; }
-
-	bool flipped() const { return mIs_flipped; }
-
-	glm::vec3 up() const { return mUp; }
-	glm::vec3 right() const { return mRight; }
-
-	void updatePos_cartesian();
-	void updatePos_spherical();
-	void updateUp();
+	void update();
 
 	int id() const { return mID; }
 };

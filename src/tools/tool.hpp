@@ -23,6 +23,7 @@ public:
 	virtual void init() {};
 
 	virtual bool manage_key_press(GdkEventKey* event) { return true; };
+	virtual bool manage_key_release(GdkEventKey* event) { return true; };
 	virtual bool manage_mouse_move(GdkEventMotion* event) { return true; }
 	virtual bool manage_scroll(GdkEventScroll* event) { return true; }
 	virtual bool manage_button_press(GdkEventButton* event) { return true; }

@@ -51,6 +51,7 @@ public:
 	std::shared_ptr<tool_abstract> defaultTool() { return mDefaultTool; }
 
 	bool manage_key_press(GdkEventKey* event);
+	bool manage_key_release(GdkEventKey* event);
 	bool manage_mouse_move(GdkEventMotion* event);
 	bool manage_mouse_scroll(GdkEventScroll* event);
 	bool manage_button_press(GdkEventButton* event);

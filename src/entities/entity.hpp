@@ -18,14 +18,11 @@ class entity {
 protected:
 	bool mSelected, mHovered, mExists;
 	glm::vec3 mSelectionColor;
-	
-	glm::vec3 mTranslation, mScale;
-	glm::mat4 mTransform;
 public:
 	entity();
 
-	void draw(std::shared_ptr<camera> cam, glm::mat4 additionalTransform = glm::mat4(1.0f));
-	void draw_selection(std::shared_ptr<camera> cam, glm::mat4 additionalTransform = glm::mat4(1.0f));
+	void draw(std::shared_ptr<camera> cam);
+	void draw_selection(std::shared_ptr<camera> cam);
 
 	void select();
 	void unselect();
@@ -40,24 +37,10 @@ public:
 
 	void setSelectionColor(glm::vec3 color) { mSelectionColor = color; }
 
-	// void rotate(float angle, glm::vec3 axis) { mTransform = glm::rotate(mTransform, angle, axis); }
-	void translate(glm::vec3 trans);
-	void scale(float sc);
-
-	void set_translation(glm::vec3 trans);
-	void set_scale(glm::vec3 sc);
-
-	float scale() const;
-	glm::vec3 translation() const;
-
-	glm::mat4 transform();
-	void set_transform(glm::mat4 trans);
-	void set_transform(glm::vec3 trans, glm::vec3 sc);
-
 	operator bool() const { return exists(); }
 protected:
-	virtual void draw_impl(std::shared_ptr<camera> cam, glm::mat4 additionalTransform = glm::mat4(1.0f)) {};
-	virtual void draw_selection_impl(std::shared_ptr<camera> cam, glm::mat4 additionalTransform = glm::mat4(1.0f)) {};
+	virtual void draw_impl(std::shared_ptr<camera> cam) {};
+	virtual void draw_selection_impl(std::shared_ptr<camera> cam) {};
 };
 
 #endif

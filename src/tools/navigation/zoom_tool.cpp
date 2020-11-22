@@ -44,19 +44,19 @@ bool zoom_tool::manage_scroll(GdkEventScroll* event)
 void zoom_tool::zoom(glm::vec2 origin, float amount)
 {
 	float scale = 1.0f + amount;
-	mEnv->state()->doc->target()->scale(scale);
+	mEnv->state()->cam->zoom() *= scale;
 	
 	glm::vec4 event_pos(origin.x, origin.y, 0.0f, 0.0f);
 
-	glm::mat4 mvp = mEnv->state()->cam->projection() * mEnv->state()->cam->view() * mEnv->state()->doc->target()->transform();
+	glm::mat4 mvp = mEnv->state()->cam->projection() * mEnv->state()->cam->view() * mEnv->state()->cam->model();
 	glm::mat4 vp = mEnv->state()->cam->projection() * mEnv->state()->cam->view();
 
 	glm::vec4 pos_screen = mvp * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	pos_screen /= pos_screen.w;
 
-	glm::vec4 up_screen = vp * glm::vec4(mEnv->state()->cam->up(), 1.0f);
+	glm::vec4 up_screen = vp * glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 	up_screen /= up_screen.w;
-	glm::vec4 right_screen = vp * glm::vec4(mEnv->state()->cam->right(), 1.0f);
+	glm::vec4 right_screen = vp * glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	right_screen /= right_screen.w;
 
 	float up_length = std::sqrt(up_screen.x * up_screen.x + up_screen.y * up_screen.y);
@@ -67,6 +67,5 @@ void zoom_tool::zoom(glm::vec2 origin, float amount)
 	float translate_by_x = (delta.x * -amount) / right_length;
 	float translate_by_y = (delta.y * -amount) / up_length;
 
-	mEnv->state()->doc->target()->translate(mEnv->state()->cam->right() * translate_by_x);
-	mEnv->state()->doc->target()->translate(mEnv->state()->cam->up() * translate_by_y);
+	mEnv->state()->cam->transformation().translation += glm::vec3(translate_by_x, translate_by_y, 0.0f);
 }
