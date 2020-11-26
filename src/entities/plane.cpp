@@ -22,14 +22,14 @@ plane::plane(plane_abstract const& plane_, std::string const& label) :
 	mSelectionShader = shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/plainColor.frag");
 }
 
-plane plane::from_1Point2Vectors(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, std::string const& label)
+plane plane::from_1Point2Vectors(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed, std::string const& label)
 {
-	return plane(plane_abstract::from_1Point2Vectors(origin, v, w), label);
+	return plane(plane_abstract::from_1Point2Vectors(origin, v, w, reversed), label);
 }
 
-std::shared_ptr<plane> plane::from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, std::string const& label)
+std::shared_ptr<plane> plane::from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed, std::string const& label)
 {
-	return std::shared_ptr<plane>(new plane(plane_abstract::from_1Point2Vectors(origin, v, w), label));
+	return std::shared_ptr<plane>(new plane(plane_abstract::from_1Point2Vectors(origin, v, w, reversed), label));
 }
 
 void plane::draw_impl(std::shared_ptr<camera> cam)

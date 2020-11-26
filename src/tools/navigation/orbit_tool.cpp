@@ -33,7 +33,11 @@ bool orbit_tool::manage_mouse_move(GdkEventMotion* event)
 			glm::vec2 abs_mov = (pos-prevPos) * 0.005f;
 			
 			std::shared_ptr<camera> cam = mEnv->state()->cam;
-			cam->sphere() += glm::vec2(-abs_mov.y, abs_mov.x);
+			cam->orientation() += glm::vec3(
+				-abs_mov.y, 
+				(cam->flipped() ? -abs_mov.x : abs_mov.x), 
+				0.0f);
+			// cam->move_spherical(glm::vec2(-abs_mov.y, abs_mov.x));
 		} else {
 			is_moving = true;
 		}

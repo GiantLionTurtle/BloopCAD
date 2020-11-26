@@ -8,6 +8,7 @@
 
 #include <actions/partDesign/createSketch_action.hpp>
 #include <actions/switchWorkspace_action.hpp>
+#include <glm/gtx/vector_angle.hpp>
 
 startSketch_tool::startSketch_tool(workspace* env):
 	planeSelector_tool(env)
@@ -28,11 +29,23 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 				std::shared_ptr<workspaceState> newState = mEnv->state()->doc->currentWorkspaceState();
 
 				newState->cam->set(mEnv->state()->cam);
-				
-				LOG_WARNING("Startsketch disabled.");
-				// newState->cam->set_target(mEnv->state()->cam->target());
-				// newState->cam->set_cartesian(mEnv->state()->cam->pos_cartesian());
-				// newState->cam->set_targetState({ true, campos, planePos }, 2000);
+
+				glm::vec3 camRight 	= newState->cam->right();
+				glm::vec3 camUp 	= newState->cam->up();
+
+				float dot_right_v 	= glm::dot(camRight, sketchPlane->v());
+				float dot_up_v 		= glm::dot(camUp, sketchPlane->v());
+
+				glm::vec3 right_plane, up_plane;
+
+				if(std::abs(dot_right_v) < std::abs(dot_up_v)) {
+					right_plane = sketchPlane->w() * glm::sign(glm::dot(camRight, sketchPlane->w()));
+					up_plane = sketchPlane->v() * glm::sign(dot_up_v);
+				} else {
+					right_plane = sketchPlane->v() * glm::sign(dot_right_v);
+					up_plane = sketchPlane->w() * glm::sign(glm::dot(camUp, sketchPlane->w()));
+				}
+				newState->cam->go_to(sketchPlane->origin(), up_plane, right_plane, 1000);
 			}
 			std::cout<<"Start sketch!\n";
 		}

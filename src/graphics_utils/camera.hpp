@@ -28,8 +28,8 @@ protected:
 	static int numCams;
 	int mID;
 	animatable<glm::vec3> mPos, mTarget;
-	animatable<glm::vec2> mSphere;
-	
+	animatable<glm::vec3> mOrientation;
+
 	animatable<float> mZoom;
 	animatable<float> mFOV;
 	animatable<float> mAspectRatio;
@@ -48,7 +48,8 @@ public:
 	glm::vec3 up() const;
 	glm::vec3 right() const;
 	
-	animatable<glm::vec2>& sphere() { return mSphere; }
+	// animatable<glm::vec2>& sphere() { return mSphere; }
+	animatable<glm::vec3>& orientation() { return mOrientation; }
 
 	// animatable<float>& FOV() { return mFOV; }
 	animatable<float>& zoom() { return mZoom; };
@@ -59,10 +60,16 @@ public:
 
 	void go_to(glm::vec3 target_, glm::vec3 up_, glm::vec3 right_);
 	void go_to(glm::vec3 target_, glm::vec3 up_, glm::vec3 right_, unsigned int duration);
+	void go_to(glm::vec2 sp, unsigned int duration);
 
 	void update();
 
 	int id() const { return mID; }
+
+	bool flipped() const;
+private:
+	void update_rotation();
+	void update_orientation();
 };
 
 #endif

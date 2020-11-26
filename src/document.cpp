@@ -13,7 +13,8 @@ document::document(bloop* parent) :
 
 	mWorkspaceStates["partDesign"] 			= std::shared_ptr<workspaceState>(new workspaceState);
 	mWorkspaceStates.at("partDesign")->cam 	= std::shared_ptr<camera>(new camera(glm::vec3(0.0f, 0.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), 1.0f));
-	mWorkspaceStates.at("partDesign")->cam->sphere() += glm::vec2(M_PI_4, -M_PI_4);
+	mWorkspaceStates.at("partDesign")->cam->orientation() += glm::vec3(0.615480037895f, -M_PI_4, 0.0f);
+
 
 	mWorkspaceStates.at("partDesign")->doc 	= this;
 	mWorkspaceStates.at("partDesign")->workspaceName = "partDesign";

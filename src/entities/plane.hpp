@@ -26,11 +26,11 @@ public:
 	plane(plane_abstract const& plane_, std::string const& label = "");
 
 	// static plane from_1Point1Vector(glm::vec3 origin, glm::vec3 n, std::string const& label);
-	static plane from_1Point2Vectors(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, std::string const& label = "");
+	static plane from_1Point2Vectors(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed = false, std::string const& label = "");
 	// static plane from_3Points(glm::vec3 origin, glm::vec3 pt1, glm::vec3 pt2, std::string const& label);
 
 	// static std::shared_ptr<plane> from_1Point1Vector_ptr(glm::vec3 origin, glm::vec3 n, std::string const& label);
-	static std::shared_ptr<plane> from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, std::string const& label = "");
+	static std::shared_ptr<plane> from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed = false, std::string const& label = "");
 	// static std::shared_ptr<plane> from_3Points_ptr(glm::vec3 origin, glm::vec3 pt1, glm::vec3 pt2, std::string const& label);
 
 protected:

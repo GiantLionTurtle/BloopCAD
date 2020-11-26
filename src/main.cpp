@@ -12,6 +12,8 @@
 #include "workspaces/partDesign.hpp"
 #include <glm/glm.hpp>
 #include <glm/ext/quaternion_common.hpp>
+#include <glm/gtx/vector_angle.hpp>
+
 
 struct st {
 	std::string name;
@@ -19,6 +21,7 @@ struct st {
 		name(str)
 	{}
 };
+
 
 int main (int argc, char *argv[])
 {
@@ -40,6 +43,14 @@ int main (int argc, char *argv[])
 	// glm::vec3 p_rot_3 = glm::inverse(glm::toMat3(q3 * q2 * q1)) * pos;
 	// std::cout<<"p_rot: \n"<<glm::to_string(pos)<<"=>\n"<<glm::to_string(p_rot_1)<<"=>\n"<<glm::to_string(p_rot_2)<<"=>\n"<<glm::to_string(p_rot_3)<<"\n";
 	
+	// glm::vec3 camFront(0.0f, 0.0f, 1.0f);
+	// glm::vec3 targetFront(0.0f, 0.0f, 1.0f);
+
+	// glm::vec2 spherePos(
+	// 	M_PI_2 - std::atan2(targetFront.z, targetFront.x),
+	// 	M_PI_2 - std::atan2(std::sqrt(targetFront.x*targetFront.x + targetFront.z*targetFront.z), targetFront.y)
+	// );
+	// std::cout<<"spherePos: "<<glm::to_string(spherePos)<<"\n";
 	errorLogger::get_instance().init();
 	auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
 	auto refBuilder = Gtk::Builder::create();
