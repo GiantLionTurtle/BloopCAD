@@ -10,10 +10,12 @@ private:
 public: 
 	simpleSelector_tool(workspace* env);
 
+	virtual bool manage_button_press(GdkEventButton* event);
 	virtual bool manage_mouse_move(GdkEventMotion* event);
 
 	virtual std::shared_ptr<entity> entity_at_point(glm::vec2 point);
 protected:
+	glm::ivec3 id_at_point(glm::vec2 point);
 	std::shared_ptr<entity> primitive_entity_at_point(glm::vec2 point);
 };
 

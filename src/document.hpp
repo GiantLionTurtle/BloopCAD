@@ -11,6 +11,7 @@
 #include <graphics_utils/frameBuffer.hpp>
 #include <actions/action.hpp>
 #include <entities/part.hpp>
+#include <graphics_utils/camera.hpp>
 
 #include <gtkmm.h>
 
@@ -20,9 +21,20 @@
 #include <vector>
 #include <memory>
 
+struct selection {
+	std::shared_ptr<entity> ent;
+	camState cam;
+
+	selection(std::shared_ptr<entity> ent_, camState cam_) :
+		ent(ent_),
+		cam(cam_)
+	{}
+};
+
 class document : public Gtk::Box {
 private:
 	std::shared_ptr<part> mPart;
+	std::vector<std::pair<glm::ivec3, selection>> mSelection; // This will be kept linear for as long as there is no need for large selections
 
 	std::map<std::string, std::shared_ptr<workspaceState>> mWorkspaceStates;
 	std::shared_ptr<workspaceState> mCurrentWorkspaceState;
@@ -54,6 +66,12 @@ public:
 	void push_action(std::shared_ptr<action> to_push);
 	void advance_action_index(unsigned int amount = 1);
 	void rewind_action_index(unsigned int amount = 1);
+
+	unsigned int selection_size() const { return mSelection.size(); }
+	selection selection_at(unsigned int ind);
+	int selection_ind(glm::ivec3 id);
+	void clear_selection();
+	void toggle_select(glm::ivec3 id, camState cam, bool additive);
 };
 
 #endif

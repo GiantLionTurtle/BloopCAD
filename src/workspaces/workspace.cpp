@@ -2,7 +2,7 @@
 #include "workspace.hpp"
 #include <bloop.hpp>
 #include <tools/navigation/navigation.hpp>
-#include <tools/utils/simpleSelector_tool.hpp>
+#include <tools/common_tools/simpleSelector_tool.hpp>
 
 int workspace::count = 0;
 
@@ -95,6 +95,7 @@ bool workspace::set_tool(std::string const& name)
 		if(mState->currentTool)
 			mState->currentTool->finish();
 		mState->currentTool = mTools[name];
+		mState->currentTool->init();
 		return true;
 	} else {
 		LOG_WARNING("Trying to set \"" + name + "\" as current tool. There is no such tool.");

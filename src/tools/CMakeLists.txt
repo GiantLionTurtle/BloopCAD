@@ -1,5 +1,5 @@
 
-add_subdirectory(utils)
+add_subdirectory(common_tools)
 add_subdirectory(navigation)
 add_subdirectory(partDesign)
 
@@ -11,7 +11,7 @@ add_library(tools ${tools_source_files})
 target_link_libraries(tools
   entities
   actions
-  utils_tools
+  common_tools
   navigation_tools
   partDesign_tools
   )

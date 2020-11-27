@@ -189,3 +189,49 @@ void document::rewind_action_index(unsigned int amount)
 		}
 	}
 }
+
+selection document::selection_at(unsigned int ind)
+{
+	if(ind < selection_size()) {
+		return std::get<1>(mSelection.at(ind));
+	}
+	return {nullptr, {glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)}};
+}
+int document::selection_ind(glm::ivec3 id)
+{
+	for(int i = 0; i < mSelection.size(); ++i) {
+		if(std::get<0>(mSelection.at(i)) == id)
+			return i;
+	}
+	return -1;
+}
+void document::clear_selection()
+{
+	for(int i = 0; i < mSelection.size(); ++i) {
+		std::get<1>(mSelection.at(i)).ent->unselect();
+	}
+	mSelection.clear();
+}
+void document::toggle_select(glm::ivec3 id, camState cam, bool additive)
+{
+	int ind = selection_ind(id);
+	if(ind >= 0) {
+		if(additive) {
+			std::get<1>(mSelection.at(ind)).ent->unselect();
+			mSelection.erase(mSelection.begin() + ind);
+		} else {
+			clear_selection();
+		}
+	} else {
+		std::shared_ptr<entity> ent = mPart->get(id);
+		if(ent) {
+			if(!additive) {
+				clear_selection();
+			}
+			ent->select();
+			mSelection.push_back(std::make_pair(id, selection(ent, cam)));
+		} else {
+			clear_selection();
+		}
+	}
+}

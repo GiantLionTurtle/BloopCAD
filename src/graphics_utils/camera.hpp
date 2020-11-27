@@ -21,6 +21,10 @@ struct transform {
 	// animatable<glm::vec3> rotation;
 };
 
+struct camState {
+	glm::vec3 up, right;
+};
+
 // https://en.wikipedia.org/wiki/Spherical_coordinate_system
 // https://math.libretexts.org/Bookshelves/Calculus/Book%3A_Calculus_(OpenStax)/12%3A_Vectors_in_Space/12.7%3A_Cylindrical_and_Spherical_Coordinates
 class camera {

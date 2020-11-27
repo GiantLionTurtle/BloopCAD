@@ -3,13 +3,11 @@
 #define TOOL_HPP_
 
 #include <forward_bloop.hpp>
-// #include "document.hpp"
 #include <entities/part.hpp>
 
 #include <memory>
 
 #include <glm/glm.hpp>
-
 #include <gtkmm.h>
 
 class workspace;
