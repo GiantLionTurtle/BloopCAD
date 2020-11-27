@@ -1,5 +1,8 @@
 
 #include "sketchDesign.hpp"
+
+#include <utils/mathUtils.hpp>
+#include <actions/switchWorkspace_action.hpp>
 #include <bloop.hpp>
 
 sketchDesign::sketchDesign(bloop* parent) :
@@ -145,5 +148,22 @@ void sketchDesign::equality()
 
 void sketchDesign::finish()
 {
-//	mParentBloop->set_tool("finish");
+	mState->doc->push_action(std::shared_ptr<action>(new switchWorkspace_action(mState->doc, "partDesign")));
+	std::shared_ptr<workspaceState> newState = mState->doc->currentWorkspaceState();
+
+	transform targetTransform = newState->cam->transformation();
+	glm::vec3 orientation = newState->cam->orientation().get();
+	glm::vec2 angles(
+		mState->cam->orientation().get().x + diff_angle(mState->cam->orientation().get().x, orientation.x), 
+		mState->cam->orientation().get().y + diff_angle(mState->cam->orientation().get().y, orientation.y)
+	);
+	
+	newState->cam->set(mState->cam);
+	newState->cam->transformation().rotation.set(
+		glm::angleAxis(angles.x, glm::vec3(1.0f, 0.0f, 0.0f)) * 
+		glm::angleAxis(angles.y, glm::vec3(0.0f, 1.0f, 0.0f)), 1000);
+	newState->cam->transformation().translation.set(targetTransform.translation.get(), 1000);
+	newState->cam->transformation().scale.set(targetTransform.scale.get(), 1000);
+
+	std::cout<<"Finish!\n";
 }

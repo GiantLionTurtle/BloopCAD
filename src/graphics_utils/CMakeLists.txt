@@ -13,4 +13,5 @@ add_subdirectory(textures)
 add_library(graphics_utils ${graphics_utils_source_files})
 
 target_link_libraries(graphics_utils
+    utils
     textures)

@@ -1,4 +1,5 @@
 
+add_subdirectory(utils)
 add_subdirectory(graphics_utils)
 add_subdirectory(entities)
 add_subdirectory(actions)
@@ -14,6 +15,7 @@ add_executable(BloopCAD
 
 target_link_libraries(BloopCAD
 	vendor
+	utils
 	graphics_utils
 	entities
 	actions

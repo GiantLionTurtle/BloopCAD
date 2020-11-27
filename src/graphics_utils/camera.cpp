@@ -1,6 +1,7 @@
 
 #include "camera.hpp"
 #include <errorLogger.hpp>
+#include <utils/mathUtils.hpp>
 
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -102,11 +103,6 @@ void camera::go_to(glm::vec3 target_, glm::vec3 up_, glm::vec3 right_)
 	go_to(target_, up_, right_, 0); // This will make the animatable set directly
 }
 
-float diff_angle(float current, float target)
-{
-	float out = target - current + M_PI;	
-	return (out - (std::floor(out / (M_PI * 2.0f)) * M_PI * 2.0f)) - M_PI;
-}
 void camera::go_to(glm::vec3 target_, glm::vec3 up_, glm::vec3 right_, unsigned int duration)
 {
 	glm::vec3 targetBack = glm::normalize(glm::cross(right_, up_));
