@@ -14,9 +14,14 @@
 #include <string>
 #include <memory>
 
+#define BLOOP_ENTITY_SELECTED_FLAG 	1
+#define BLOOP_ENTITY_HOVERED_FLAG	2
+#define BLOOP_ENTITY_HIDDEN_FLAG 	4
+#define BLOOP_ENTITY_EXISTS_FLAG 	8
+
 class entity {
 protected:
-	bool mSelected, mHovered, mExists;
+	int mState;
 	glm::vec3 mSelectionColor;
 public:
 	entity();
@@ -24,16 +29,24 @@ public:
 	void draw(std::shared_ptr<camera> cam);
 	void draw_selection(std::shared_ptr<camera> cam);
 
+	void set_selected(bool select);
 	void select();
 	void unselect();
-	void set_selected(bool select);
 	bool selected() const;
 
 	void set_hover(bool hover);
 	bool hovered() const;
 
+	void set_hidden(bool hidden);
+	void hide();
+	void show();
+	bool hidden() const;
+	bool visible() const;
+
 	void set_exists(bool exists_);
-	bool exists() const { return mExists; }
+	bool exists() const;
+
+	int state() const { return mState; }
 
 	void setSelectionColor(glm::vec3 color) { mSelectionColor = color; }
 

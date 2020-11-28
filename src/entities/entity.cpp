@@ -2,9 +2,7 @@
 #include "entity.hpp"
 
 entity::entity(): 
-	mSelected(false), 
-	mHovered(false), 
-	mExists(true),
+	mState(BLOOP_ENTITY_EXISTS_FLAG),
 	mSelectionColor(0.0f, 0.0f, 0.0f)
 {
 
@@ -12,12 +10,12 @@ entity::entity():
 
 void entity::draw(std::shared_ptr<camera> cam)
 {
-	if(exists())
+	if(exists() && (visible() || selected()))
 		draw_impl(cam);
 }
 void entity::draw_selection(std::shared_ptr<camera> cam)
 {
-	if(exists())
+	if(exists() && (visible() || selected()))
 		draw_selection_impl(cam);
 }
 
@@ -33,34 +31,81 @@ void entity::unselect()
 }
 void entity::set_selected(bool select) 
 { 	
-	if(exists())
-		mSelected = select; 
+	if(exists()) {
+		if(select) {
+			mState |= BLOOP_ENTITY_SELECTED_FLAG;
+		} else {
+			mState &= ~BLOOP_ENTITY_SELECTED_FLAG;
+		}		
+	}
 }
 bool entity::selected() const
 { 	
 	if(exists())
-		return mSelected; 
+		return mState & BLOOP_ENTITY_SELECTED_FLAG; 
 	return false;
 }
 
 void entity::set_hover(bool hover) 
 { 	
-	if(exists())
-		mHovered = hover; 
+	if(exists()) {
+		if(hover) {
+			mState |= BLOOP_ENTITY_HOVERED_FLAG;
+		} else {
+			mState &= ~BLOOP_ENTITY_HOVERED_FLAG;
+		}		
+	}
 }
 bool entity::hovered() const
 { 	
 	if(exists())
-		return mHovered;
+		return mState & BLOOP_ENTITY_HOVERED_FLAG;
 	return false; 
+}
+
+void entity::set_hidden(bool hidden)
+{
+	if(exists()) {
+		if(hidden) {
+			mState |= BLOOP_ENTITY_HIDDEN_FLAG;
+		} else {
+			mState &= ~BLOOP_ENTITY_HIDDEN_FLAG;
+		}		
+	}
+}
+void entity::hide()
+{
+	set_hidden(true);
+}
+void entity::show()
+{
+	set_hidden(false);
+}
+bool entity::hidden() const
+{
+	if(exists())
+		return mState & BLOOP_ENTITY_HIDDEN_FLAG;
+	return false; 
+}
+bool entity::visible() const
+{
+	return !hidden();
 }
 
 void entity::set_exists(bool exists_) 
 { 
-	mExists = exists_; 
+	if(exists_) {
+		mState |= BLOOP_ENTITY_EXISTS_FLAG;
+	} else {
+		mState &= ~BLOOP_ENTITY_EXISTS_FLAG;
+	}		
 	if(!exists()) {
 		set_hover(false);
 		set_selected(false);
+		set_hidden(false);
 	}
 }
-
+bool entity::exists() const
+{
+	return mState & BLOOP_ENTITY_EXISTS_FLAG;
+}

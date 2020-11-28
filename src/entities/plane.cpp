@@ -47,7 +47,7 @@ void plane::draw_impl(std::shared_ptr<camera> cam)
 	}
 	if(selected()) 
 		color += glm::vec3(0.0f, 0.0f, 0.3f);
-	mShader->setUniform4f("u_Color", color.r, color.g, color.b, mHovered ? 0.7 : 0.5);
+	mShader->setUniform4f("u_Color", color.r, color.g, color.b, hovered() ? 0.7 : 0.5);
 	glm::mat4 mvp = (cam->projection() * cam->view() * cam->model());
 	mShader->setUniformMat4f("u_MVP", mvp);
 	
