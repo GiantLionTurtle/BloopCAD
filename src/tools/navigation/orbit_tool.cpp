@@ -2,6 +2,7 @@
 #include "orbit_tool.hpp"
 
 #include <workspaces/workspace.hpp>
+#include <document.hpp>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -9,11 +10,23 @@
 #include <glm/ext/quaternion_trigonometric.hpp>
 
 orbit_tool::orbit_tool(workspace* env):
-	tool_abstract(env), 
+	tool_abstract(env, std::shared_ptr<compositeCursor>(new compositeCursor
+		{Gdk::Cursor::create(Gdk::CROSSHAIR), nullptr, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f)})), 
 	is_moving(false),
 	tmp_right(0.0f, 0.0f, 0.0f)
 {
+	try {
+		mCursor->windowCursor = Gdk::Cursor::create(Gdk::Display::get_default(), Gdk::Pixbuf::create_from_file("resources/textures/images/icons/navigation/orbit.png", 50, 50), 0, 0);
+	} catch(const Glib::FileError& ex) {
+		LOG_WARNING("Glib::FileError: " + ex.what());
+	} catch(const Gdk::PixbufError& ex) {
+		LOG_WARNING("Glib::PixbufError: " + ex.what());
+	}
+}
 
+void orbit_tool::init() 
+{ 
+	is_moving = false;
 }
 
 bool orbit_tool::manage_key_press(GdkEventKey* event)

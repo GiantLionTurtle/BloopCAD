@@ -113,6 +113,7 @@ bool bloop::manage_key_release(GdkEventKey* event)
 }
 bool bloop::manage_mouse_move(GdkEventMotion* event)
 {
+	//mCursorImg->set_margin_bottom(event->y + mCursorImg->get_height() / 2);
 	if(mCurrentWorkspace) {
 		return mCurrentWorkspace->manage_mouse_move(event);
 	}
@@ -162,6 +163,12 @@ void bloop::manage_tab_switch(Gtk::Widget* widget, unsigned int tab_ind)
 	}
 }
 
+void bloop::set_cursor(std::shared_ptr<compositeCursor> cursor_)
+{
+	mCursor = cursor_;
+	get_window()->set_cursor(cursor_->windowCursor);
+}
+
 std::shared_ptr<document> bloop::get_document_at_tabInd(unsigned int ind)
 {
 	if(ind == 0 || ind > mDocuments.size())
@@ -180,7 +187,6 @@ void bloop::connect_signals()
 						| Gdk::STRUCTURE_MASK
 						| Gdk::SCROLL_MASK);
 	signal_key_press_event().connect(sigc::mem_fun(*this, &bloop::manage_key_press));
-	//signal_motion_notify_event().connect(sigc::mem_fun(*this, &bloop::manage_mouse_move));
-	signal_scroll_event().connect(sigc::mem_fun(*this, &bloop::manage_mouse_scroll_internal)); // workaroound
-	// signal_button_release_event().connect(sigc::mem_fun(*this, &bloop::manage_button_release));	
+	// signal_motion_notify_event().connect(sigc::mem_fun(*this, &bloop::manage_mouse_move));
+	signal_scroll_event().connect(sigc::mem_fun(*this, &bloop::manage_mouse_scroll_internal));
 }

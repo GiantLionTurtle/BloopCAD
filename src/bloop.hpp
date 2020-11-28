@@ -43,7 +43,9 @@ private:
 
 	Gtk::Box mContainer;
 
-	Gtk::Image* mHomePage, * mIcon;
+	std::shared_ptr<compositeCursor> mCursor;
+
+	Gtk::Image* mHomePage, *mIcon;
 	Gtk::Notebook* mDocumentIndexer;
 	Gtk::Stack* mUI_upperBar, *mSideBar;
 	Gtk::Overlay* mHome;
@@ -70,6 +72,8 @@ public:
 	void manage_tab_switch(Gtk::Widget* widget, unsigned int tab_ind);
 
 	void connect_signals();
+
+	void set_cursor(std::shared_ptr<compositeCursor> cursor_);
 
 	std::shared_ptr<document> get_document_at_tabInd(unsigned int ind);
 };

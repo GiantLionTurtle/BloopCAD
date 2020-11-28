@@ -5,9 +5,16 @@
 #include <document.hpp>
 
 pan_tool::pan_tool(workspace* env): 
-	tool_abstract(env) 
+	tool_abstract(env, std::shared_ptr<compositeCursor>(new compositeCursor
+		{Gdk::Cursor::create(Gdk::IRON_CROSS), nullptr, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f)}))
 {
-
+	try {
+		mCursor->windowCursor = Gdk::Cursor::create(Gdk::Display::get_default(), Gdk::Pixbuf::create_from_file("resources/textures/images/icons/navigation/pan.png", 30, 30), 0, 0);
+	} catch(const Glib::FileError& ex) {
+		LOG_WARNING("Glib::FileError: " + ex.what());
+	} catch(const Gdk::PixbufError& ex) {
+		LOG_WARNING("Glib::PixbufError: " + ex.what());
+	}
 }
 
 bool pan_tool::manage_mouse_move(GdkEventMotion* event) 

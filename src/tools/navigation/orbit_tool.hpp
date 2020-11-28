@@ -13,7 +13,7 @@ public:
 	orbit_tool(workspace* env);
 
 	virtual void finish() { is_moving = false; }
-	virtual void init() { is_moving = false; }
+	virtual void init();
 	virtual bool manage_key_press(GdkEventKey* event);
 	virtual bool manage_mouse_move(GdkEventMotion* event);
 	virtual bool manage_button_release(GdkEventButton* event) { if(event->state & GDK_BUTTON1_MASK) finish(); return true; }

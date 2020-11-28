@@ -20,7 +20,7 @@ workspace::workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> c
 	mDefaultTool(nullptr)
 {
 	builder->get_widget(upperBarID, mUpperBar);
-
+	
 	mTools["orbit"] 				= std::shared_ptr<tool_abstract>(new orbit_tool(this));
 	mTools["zoom"] 					= std::shared_ptr<tool_abstract>(new zoom_tool(this));
 	mTools["pan"] 					= std::shared_ptr<tool_abstract>(new pan_tool(this));
@@ -32,7 +32,7 @@ bool workspace::manage_key_press(GdkEventKey* event)
 	if(event->keyval == GDK_KEY_Escape) {
 		if(mState && mState->currentTool) {
 			mState->currentTool->finish();
-			mState->currentTool = mDefaultTool;
+			set_tool(mDefaultTool);
 		}
 	} else if(mState && mState->currentTool) {
 		return mState->currentTool->manage_key_press(event);
@@ -49,6 +49,7 @@ bool workspace::manage_key_release(GdkEventKey* event)
 bool workspace::manage_mouse_move(GdkEventMotion* event)
 {
 	if(event->state & GDK_BUTTON2_MASK) {
+		set_tool_cursor(mTools.at("orbit"));
 		return mTools.at("orbit")->manage_mouse_move(event);
 	}
 
@@ -71,8 +72,9 @@ bool workspace::manage_button_press(GdkEventButton* event)
 }
 bool workspace::manage_button_release(GdkEventButton* event)
 {
-	if(event->state * GDK_BUTTON2_MASK) {
+	if(event->state & GDK_BUTTON2_MASK) {
 		mTools.at("orbit")->finish();
+		set_tool_cursor(mState->currentTool);
 	}
 	if(mState && mState->currentTool) {
 		return mState->currentTool->manage_button_release(event);
@@ -92,15 +94,28 @@ bool workspace::invoke_from_key(unsigned int key, std::string& toolName)
 bool workspace::set_tool(std::string const& name) 
 {	
 	if(mTools.find(name) != mTools.end()) {
-		if(mState->currentTool)
-			mState->currentTool->finish();
-		mState->currentTool = mTools[name];
-		mState->currentTool->init();
+		set_tool(mTools.at(name));
 		return true;
 	} else {
 		LOG_WARNING("Trying to set \"" + name + "\" as current tool. There is no such tool.");
 	}
 	return false;
+}
+void workspace::set_tool(std::shared_ptr<tool_abstract> tool_)
+{
+	if(!tool_) {
+		LOG_WARNING("Attempting to set null tool.");
+		return;
+	}
+	if(mState->currentTool)
+		mState->currentTool->finish();
+	mState->currentTool = tool_;
+	mState->currentTool->init();
+	set_tool_cursor(mState->currentTool);
+}
+void workspace::set_tool_cursor(std::shared_ptr<tool_abstract> tool_)
+{
+	mParentBloop->set_cursor(tool_->cursor());
 }
 
 void workspace::set_state(std::shared_ptr<workspaceState> state_) 
@@ -111,20 +126,3 @@ void workspace::set_state(std::shared_ptr<workspaceState> state_)
 		LOG_WARNING("No state available.");
 	}
 }
-
-	// std::cout<<"-----------------------\n";
-	// std::cout<<event->state<<"\n";
-	// std::cout<<(event->state & GDK_SHIFT_MASK) << "\n";
-	// std::cout<<(event->state & GDK_LOCK_MASK) << "\n";
-	// std::cout<<(event->state & GDK_CONTROL_MASK) << "\n";
-	// std::cout<<(event->state & GDK_MOD1_MASK) << "\n";
-	// std::cout<<(event->state & GDK_MOD2_MASK) << "\n";
-	// std::cout<<(event->state & GDK_MOD3_MASK) << "\n";
-	// std::cout<<(event->state & GDK_MOD4_MASK) << "\n";
-	// std::cout<<(event->state & GDK_MOD5_MASK) << "\n";
-	// std::cout<<(event->state & GDK_BUTTON1_MASK) << "\n";
-	// std::cout<<(event->state & GDK_BUTTON2_MASK) << "\n";
-	// std::cout<<(event->state & GDK_BUTTON3_MASK) << "\n";
-	// std::cout<<(event->state & GDK_BUTTON4_MASK) << "\n";
-	// std::cout<<(event->state & GDK_BUTTON5_MASK) << "\n";
-	// std::cout<<"-----------------------\n";

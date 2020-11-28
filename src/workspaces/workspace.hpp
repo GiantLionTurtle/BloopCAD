@@ -48,6 +48,8 @@ public:
 	void set_target(std::shared_ptr<entity> target) { mTarget = target; }
 
 	bool set_tool(std::string const& name);
+	void set_tool(std::shared_ptr<tool_abstract> tool_);
+	void set_tool_cursor(std::shared_ptr<tool_abstract> tool_);
 	std::shared_ptr<tool_abstract> defaultTool() { return mDefaultTool; }
 
 	bool manage_key_press(GdkEventKey* event);
@@ -61,6 +63,7 @@ public:
 	void set_state(std::shared_ptr<workspaceState> state_);
 
 	Gtk::Box* upperBar() { return mUpperBar; }
+
 };
 
 #endif
