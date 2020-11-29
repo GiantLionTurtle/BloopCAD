@@ -7,6 +7,7 @@ add_subdirectory(tools)
 add_subdirectory(workspaces)
 
 add_executable(BloopCAD
+	preferences.cpp
 	document.cpp
 	bloop.cpp
 	main.cpp)

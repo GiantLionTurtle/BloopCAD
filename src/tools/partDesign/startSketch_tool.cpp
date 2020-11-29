@@ -1,9 +1,9 @@
 
 #include "startSketch_tool.hpp"
 
+#include <preferences.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
-
 #include <entities/part.hpp>
 
 #include <actions/partDesign/createSketch_action.hpp>
@@ -69,7 +69,7 @@ void startSketch_tool::start_sketch(std::shared_ptr<plane_abstract> sketchPlane,
 			right_plane = sketchPlane->v() * glm::sign(dot_right_v);
 			up_plane = sketchPlane->w() * glm::sign(glm::dot(camUp, sketchPlane->w()));
 		}
-		newState->cam->go_to(sketchPlane->origin(), up_plane, right_plane, 1000);
+		newState->cam->go_to(sketchPlane->origin(), up_plane, right_plane, preferences::get_instance().get_long("cam_trans"));
 		newState->doc->clear_selection();
 	}
 }

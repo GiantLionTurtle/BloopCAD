@@ -1,5 +1,7 @@
 
 #include <utils/errorLogger.hpp>
+#include <preferences.hpp>
+
 #include "bloop.hpp"
 #include "workspaces/partDesign.hpp"
 
@@ -17,6 +19,9 @@
 int main (int argc, char *argv[])
 {
 	errorLogger::get_instance().init();
+
+	preferences::get_instance().set("cam_trans", (long)500);
+
 	auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
 	auto refBuilder = Gtk::Builder::create();
 	try {
