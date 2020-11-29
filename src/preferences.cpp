@@ -12,20 +12,30 @@ preferences& preferences::get_instance()
 	return prefs;
 }
 
-template<> 
-void preferences::set(std::string const& param, long const& val)
+void preferences::add_callback(std::string const& param, std::function<void(long)> func)
 {
-	mParams_long[param] = val;
+	add_callback_to_map(param, mParams_long, func);
 }
-template<> 
-void preferences::set(std::string const& param, float const& val)
+void preferences::add_callback(std::string const& param, std::function<void(float)> func)
 {
-	mParams_float[param] = val;
+	add_callback_to_map(param, mParams_float, func);
 }
-template<> 
-void preferences::set(std::string const& param, glm::vec3 const& val)
+void preferences::add_callback(std::string const& param, std::function<void(glm::vec3)> func)
 {
-	mParams_vec3[param] = val;
+	add_callback_to_map(param, mParams_vec3, func);
+}
+
+void preferences::set(std::string const& param, long val)
+{
+	set_in_map(param, mParams_long, val);
+}
+void preferences::set(std::string const& param, float val)
+{
+	set_in_map(param, mParams_float, val);
+}
+void preferences::set(std::string const& param, glm::vec3 val)
+{
+	set_in_map(param, mParams_vec3, val);
 }
 
 long preferences::get_long(std::string const& param)

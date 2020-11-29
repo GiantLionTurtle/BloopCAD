@@ -1,5 +1,7 @@
 
 #include "document.hpp"
+
+#include <preferences.hpp>
 #include "bloop.hpp"
 #include "graphics_utils/GLCall.hpp"
 
@@ -7,7 +9,8 @@
 
 document::document(bloop* parent) :
 	mParentBloop(parent),
-	mCurrentWorkspaceState(nullptr)
+	mCurrentWorkspaceState(nullptr),
+	mBackgroundColor(0.0f, 0.0f, 0.0f)
 {
 	connect_signals();
 
@@ -22,6 +25,9 @@ document::document(bloop* parent) :
 	mWorkspaceStates.at("sketchDesign")->cam = std::shared_ptr<camera>(new camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(45.0f), 1.0f));
 	mWorkspaceStates.at("sketchDesign")->doc = this;
 	mWorkspaceStates.at("sketchDesign")->workspaceName = "sketchDesign";
+
+	mBackgroundColor = preferences::get_instance().get_vec3("background");
+	preferences::get_instance().add_callback("background", [this](glm::vec3 color) { mBackgroundColor = color; });
 }
 
 void document::do_realize()
@@ -67,7 +73,7 @@ void document::do_unrealize()
 }
 bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 {
-	GLCall(glClearColor(1.0, 0.6, 0.88, 1.0));
+	GLCall(glClearColor(mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, 1.0));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	int initialFrameBuffer;

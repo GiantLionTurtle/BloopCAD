@@ -44,6 +44,7 @@ private:
 	std::vector<std::shared_ptr<action>> mActionStack;
 	unsigned int mActionInd, mActionStackSize;
 
+	glm::vec3 mBackgroundColor;
 	Gtk::GLArea mViewPort;
 	bloop* mParentBloop;
 public:
