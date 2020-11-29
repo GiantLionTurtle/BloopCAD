@@ -3,7 +3,6 @@
 #define WORKSPACE_HPP_
 
 #include <forward_bloop.hpp>
-#include <errorLogger.hpp>
 #include <graphics_utils/camera.hpp>
 #include <tools/tool.hpp>
 #include <entities/entitiesIndexer.hpp>

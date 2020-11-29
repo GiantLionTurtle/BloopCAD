@@ -1,19 +1,18 @@
 
-#include "errorLogger.hpp"
+#include <utils/errorLogger.hpp>
+#include "bloop.hpp"
+#include "workspaces/partDesign.hpp"
 
 #include <gtkmm.h>
+
+#include <glm/glm.hpp>
+#include <glm/ext/quaternion_common.hpp>
+#include <glm/gtx/vector_angle.hpp>
 
 #include <memory>
 #include <vector>
 #include <tuple>
 #include <map>
-
-#include "bloop.hpp"
-#include "workspaces/partDesign.hpp"
-#include <glm/glm.hpp>
-#include <glm/ext/quaternion_common.hpp>
-#include <glm/gtx/vector_angle.hpp>
-
 
 int main (int argc, char *argv[])
 {

@@ -1,6 +1,6 @@
 
 #include "bloop.hpp"
-#include "errorLogger.hpp"
+#include <utils/errorLogger.hpp>
 #include "workspaces/partDesign.hpp"
 #include "workspaces/sketchDesign.hpp"
 #include "workspaces/home.hpp"

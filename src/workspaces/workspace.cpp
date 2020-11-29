@@ -1,5 +1,6 @@
 
 #include "workspace.hpp"
+#include <utils/errorLogger.hpp>
 #include <bloop.hpp>
 #include <tools/navigation/navigation.hpp>
 #include <tools/common_tools/simpleSelector_tool.hpp>

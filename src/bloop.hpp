@@ -6,7 +6,7 @@
 #include "document.hpp"
 #include <tools/tool.hpp>
 #include <workspaces/workspace.hpp>
-#include "navigationBar.hpp"
+#include <workspaces/navigationBar.hpp>
 
 #include <gtkmm.h>
 #include <string>

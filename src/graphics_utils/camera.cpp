@@ -1,6 +1,6 @@
 
 #include "camera.hpp"
-#include <errorLogger.hpp>
+#include <utils/errorLogger.hpp>
 #include <utils/mathUtils.hpp>
 
 #include <glm/gtc/quaternion.hpp>

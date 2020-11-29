@@ -7,9 +7,7 @@ add_subdirectory(tools)
 add_subdirectory(workspaces)
 
 add_executable(BloopCAD
-	animatable.cpp
 	document.cpp
-	navigationBar.cpp
 	bloop.cpp
 	main.cpp)
 

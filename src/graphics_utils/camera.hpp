@@ -2,7 +2,7 @@
 #ifndef CAMERA_HPP_
 #define CAMERA_HPP_
 
-#include <animatable.hpp>
+#include <utils/animatable.hpp>
 
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -64,7 +64,6 @@ public:
 
 	void go_to(glm::vec3 target_, glm::vec3 up_, glm::vec3 right_);
 	void go_to(glm::vec3 target_, glm::vec3 up_, glm::vec3 right_, unsigned int duration);
-	void go_to(glm::vec2 sp, unsigned int duration);
 
 	void update();
 

@@ -1,4 +1,5 @@
 set(workspaces_utils_source_files
+  navigationBar.cpp
   partDesign.cpp
   sketchDesign.cpp
   home.cpp
