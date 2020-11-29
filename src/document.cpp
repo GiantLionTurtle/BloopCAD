@@ -15,7 +15,6 @@ document::document(bloop* parent) :
 	mWorkspaceStates.at("partDesign")->cam 	= std::shared_ptr<camera>(new camera(glm::vec3(0.0f, 0.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), 1.0f));
 	mWorkspaceStates.at("partDesign")->cam->orientation() += glm::vec3(0.615480037895f, -M_PI_4, 0.0f);
 
-
 	mWorkspaceStates.at("partDesign")->doc 	= this;
 	mWorkspaceStates.at("partDesign")->workspaceName = "partDesign";
 
@@ -119,7 +118,7 @@ void document::connect_signals()
 	mViewPort.signal_unrealize().connect(sigc::mem_fun(*this, &document::do_unrealize), false);
 	mViewPort.signal_render().connect(sigc::mem_fun(*this, &document::do_render));
 	gtk_widget_add_tick_callback((GtkWidget*) this->gobj(),	document::frame_callback, this, NULL); // Couldn't find a c++-y way to do it
-	
+
 	mViewPort.signal_key_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_key_press));
 	mViewPort.signal_key_release_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_key_release));
 	mViewPort.signal_scroll_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_scroll));

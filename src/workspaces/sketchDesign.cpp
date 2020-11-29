@@ -162,8 +162,7 @@ void sketchDesign::finish()
 	newState->cam->transformation().rotation.set(
 		glm::angleAxis(angles.x, glm::vec3(1.0f, 0.0f, 0.0f)) * 
 		glm::angleAxis(angles.y, glm::vec3(0.0f, 1.0f, 0.0f)), 1000);
+	newState->cam->orientation().set(glm::vec3(angles.x, angles.y, 0.0f));
 	newState->cam->transformation().translation.set(targetTransform.translation.get(), 1000);
 	newState->cam->transformation().scale.set(targetTransform.scale.get(), 1000);
-
-	std::cout<<"Finish!\n";
 }

@@ -44,7 +44,7 @@ private:
 	Gtk::Box mContainer;
 
 	std::shared_ptr<compositeCursor> mCursor;
-
+	Gtk::Image* mCursorImg;
 	Gtk::Image* mHomePage, *mIcon;
 	Gtk::Notebook* mDocumentIndexer;
 	Gtk::Stack* mUI_upperBar, *mSideBar;

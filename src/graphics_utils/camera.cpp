@@ -132,6 +132,7 @@ void camera::go_to(glm::vec3 target_, glm::vec3 up_, glm::vec3 right_, unsigned 
 	mTransformation.rotation.set(
 		glm::angleAxis(angles.x, glm::vec3(1.0f, 0.0f, 0.0f)) * 
 		glm::angleAxis(angles.y, glm::vec3(0.0f, 1.0f, 0.0f)), duration);
+	mOrientation.set(glm::vec3(angles.x, angles.y, 0.0f));
 }
 
 void camera::update()
@@ -146,7 +147,6 @@ void camera::update()
 		update_rotation();
 	} else {
 		mTransformation.rotation.update();
-		update_orientation();
 	}
 
 	// TODO: change position, fov and scale in a way that makes sense and is coherent
@@ -164,26 +164,4 @@ bool camera::flipped() const
 void camera::update_rotation()
 {
 	mTransformation.rotation.set(glm::angleAxis(mOrientation.get().x, glm::vec3(1.0f, 0.0f, 0.0f)) * glm::angleAxis(mOrientation.get().y, glm::vec3(0.0f, 1.0f, 0.0f)));
-}
-
-void camera::update_orientation()
-{
-	glm::vec3 result(0.0f, 0.0f, 1.0f);
-	result = glm::inverse(glm::toMat3(mTransformation.rotation.get())) * result;
-
-	float angle_x = std::asin(result.y);
-	float angle_y = -std::asin(result.x);
-	if(flipped()) {
-		if(result.z < 0.0f) {
-			angle_x = M_PI - angle_x;
-		} else {
-			angle_x = M_PI * 2.0f - angle_x;
-		}
-		angle_y = -angle_y;
-	} else {
-		if(result.z < 0.0f) {
-			angle_y = M_PI - angle_y;
-		} 
-	}
-	mOrientation.set(glm::vec3(angle_x, angle_y, 0.0f));
 }

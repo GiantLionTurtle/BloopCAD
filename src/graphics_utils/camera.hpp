@@ -73,7 +73,6 @@ public:
 	bool flipped() const;
 private:
 	void update_rotation();
-	void update_orientation();
 };
 
 #endif

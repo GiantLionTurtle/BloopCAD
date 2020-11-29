@@ -28,8 +28,8 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 
 	if(all_btns_valid) {
 		try {
-			std::get<1>(mButtons.at("startSketch")) = new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/partDesign/startSketch.png", 60, 60));
-			std::get<1>(mButtons.at("extrusion")) 	= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/partDesign/extrusion.png", 60, 60));
+			std::get<1>(mButtons.at("startSketch")) = new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/partDesign/buttons/startSketch_button.png", 60, 60));
+			std::get<1>(mButtons.at("extrusion")) 	= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/partDesign/buttons/extrusion_button.png", 60, 60));
 		} catch(const Glib::FileError& ex) {
 			LOG_WARNING("Glib file error: " + ex.what());
 		} catch(const Gdk::PixbufError& ex) {

@@ -13,7 +13,13 @@
 startSketch_tool::startSketch_tool(workspace* env):
 	planeSelector_tool(env)
 {
-
+	try {
+		mCursor->windowCursor = Gdk::Cursor::create(Gdk::Display::get_default(), Gdk::Pixbuf::create_from_file("resources/textures/images/icons/partDesign/cursors/startSketch_cursor.png", 16, 24), 0, 0);
+	} catch(const Glib::FileError& ex) {
+		LOG_WARNING("Glib::FileError: " + ex.what());
+	} catch(const Gdk::PixbufError& ex) {
+		LOG_WARNING("Glib::PixbufError: " + ex.what());
+	}
 }
 
 void startSketch_tool::init()
@@ -33,6 +39,7 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 {
 	if(mEnv->state()) {
 		std::shared_ptr<plane_abstract> sketchPlane = std::dynamic_pointer_cast<plane_abstract>(entity_at_point(glm::vec2(event->x, mEnv->state()->doc->get_height() - event->y)));
+		std::cout<<"Startsketch cam: "<<glm::to_string(mEnv->state()->cam->pos())<<"\n";
 		if(sketchPlane) {
 			start_sketch(sketchPlane, mEnv->state()->cam->up(), mEnv->state()->cam->right());
 		}
