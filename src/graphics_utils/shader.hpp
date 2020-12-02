@@ -52,8 +52,6 @@ public:
 	static unsigned int createShader(std::string const& vertexShaderSource, std::string const& fragmentShaderSource);
 	static unsigned int createShader(std::vector<shader_source> const& shaderSources);
 
-	static std::string readFromFile(std::string const& filePath);
-
 	void setUniform1i(std::string const& name, int v0);
 	void setUniform1f(std::string const& name, float v0);
 	void setUniform2f(std::string const& name, float v0, float v1);

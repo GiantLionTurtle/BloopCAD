@@ -1,10 +1,10 @@
 
 #include "shader.hpp"
+#include "GLCall.hpp"
+#include <utils/fileUtils.hpp>
 
 #include <fstream>
 #include <filesystem>
-
-#include "GLCall.hpp"
 
 shader::shader(std::string const& vertexShaderSource, std::string const& fragmentShaderSource)
 {
@@ -270,19 +270,6 @@ unsigned int shader::createShader(std::vector<shader_source> const& shaderSource
 	}
 
 	return program;
-}
-
-
-std::string shader::readFromFile(std::string const& filePath)
-{
-	std::ifstream stream(filePath);
-	if(!stream) {
-		LOG_ERROR("Could not open file \"" + filePath + "\"");
-		return "";
-	}
-
-	std::string str(std::istreambuf_iterator<char>(stream), {});
-	return str;
 }
 
 void shader::setUniform1i(std::string const& name, int v0)
