@@ -3,9 +3,6 @@
 #define XMLPARSER_HPP_
 
 #include <string>
-
-char* skip_white_spaces(char* it);
-
 class XML_document;
 class XML_element;
 
@@ -68,6 +65,7 @@ private:
 	XML_attribute* mFirstAttrib, * mLastAttrib;
 
 	std::string mName;
+	std::string mContent;
 public:
 	XML_element();
 
@@ -88,7 +86,6 @@ public:
 	char* parse_name(char* it);
 	char* check_endTag(char* it, const char* stop, int stop_len, bool& out);
 	char* parse(char* it);
-	char* parse_internal(char* it, const char* stop, int stop_len);
 
 	virtual void print(int tabs = 0);
 };

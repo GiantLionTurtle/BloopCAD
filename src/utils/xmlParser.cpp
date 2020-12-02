@@ -1,6 +1,5 @@
 
 #include "xmlParser.hpp"
-
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
@@ -22,6 +21,20 @@ char* skip_to(char* it, char stop)
 		it++;
 	}
 	return it;
+}
+std::string no_leading_nor_trailing_spaces(char* it_first, char* it_last)
+{
+	while(it_first && (*it_first == ' ' || *it_first == '\t' || *it_first == '\n')) {
+		it_first++;	
+	}
+	while((it_last-1) && (*(it_last-1) == ' ' || *(it_last-1) == '\t' || *(it_last-1) == '\n')) {
+		it_last--;	
+	}
+
+	if(it_first && it_last) {
+		return std::string(it_first, it_last);
+	}
+	return std::string();
 }
 
 void print_tabs(int tabs)
@@ -126,7 +139,9 @@ XML_attribute::XML_attribute():
 
 XML_element::XML_element():
 	mFirstAttrib(nullptr),
-	mLastAttrib(nullptr)
+	mLastAttrib(nullptr),
+	mContent(""),
+	mName("")
 {
 
 }
@@ -239,49 +254,30 @@ char* XML_element::parse(char* it)
 	if(mClosingType == OPENED) {
 		XML_node* node = nullptr;
 		do {
+			std::cout<<"it1: "<<it<<"\n";
 			it = skip_white_spaces(it);
-			bool ex;
-			it = check_endTag(it, mName.c_str(), mName.length(), ex);
-			if(ex) {
-				return it;
+			char* it_tmp = it;
+			it = skip_to(it, '<');
+			if(it != it_tmp) {
+				mContent += no_leading_nor_trailing_spaces(it_tmp, it);
 			}
-			it = create_classified_node(it, &node);
-			XML_element* elem = dynamic_cast<XML_element*>(node);
-			if(elem) {
-				it = elem->parse_internal(it, mName.c_str(), mName.length());
-				add_lastChild(elem);
-			}
-			it = skip_white_spaces(it);
-			it = check_endTag(it, mName.c_str(), mName.length(), ex);
-			if(ex) {
-				return it;
-			}
-		} while(node);
-	}
-	return it;
-}
-char* XML_element::parse_internal(char* it, const char* stop, int stop_len)
-{
-	it = skip_white_spaces(it);
-	it = parse_name(it);
-	it = parse_attributes(it);
-	if(mClosingType == OPENED) {
-		XML_node* node = nullptr;
-		do {
-			it = skip_white_spaces(it);
-			bool ex;
-			it = check_endTag(it, mName.c_str(), mName.length(), ex);
-			if(ex) {
-				return it;
-			}
-			it = create_classified_node(it, &node);
-			XML_element* elem = dynamic_cast<XML_element*>(node);
-			if(elem) {
-				it = elem->parse_internal(it, mName.c_str(), mName.length());
-				add_lastChild(elem);
-			}
-			it = skip_white_spaces(it);
 
+			std::cout<<"it2: "<<it<<"\n";
+			bool ex;
+			it = check_endTag(it, mName.c_str(), mName.length(), ex);
+			std::cout<<"it3: "<<it<<"\n";
+			if(ex) {
+				return it;
+			}
+			it = create_classified_node(it, &node);
+			std::cout<<"it4: "<<it<<"\n";
+			XML_element* elem = dynamic_cast<XML_element*>(node);
+			if(elem) {
+				it = elem->parse(it);
+				add_lastChild(elem);
+			}
+			std::cout<<"it5: "<<it<<"\n";
+			it = skip_white_spaces(it);
 			it = check_endTag(it, mName.c_str(), mName.length(), ex);
 			if(ex) {
 				return it;
@@ -294,7 +290,7 @@ char* XML_element::parse_internal(char* it, const char* stop, int stop_len)
 void XML_element::print(int tabs)
 {
 	print_tabs(tabs);
-	std::cout<<" "<<mName<<"\n";
+	std::cout<<" "<<mName<<" => <"<<mContent<<">\n";
 	XML_attribute* attrib = mFirstAttrib;
 	while(attrib) {
 		print_tabs(tabs+1);
