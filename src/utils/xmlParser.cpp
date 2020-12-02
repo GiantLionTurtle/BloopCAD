@@ -2,6 +2,7 @@
 #include "xmlParser.hpp"
 
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -146,6 +147,7 @@ XML_element::XML_element():
 	mLastAttrib(nullptr),
 	mContent(""),
 	mName(""),
+	mStartString("<"),
 	mSelfCloseString("/>")
 {
 
@@ -304,6 +306,37 @@ void XML_element::print(int tabs)
 		child = child->next();
 	}
 }
+std::string XML_element::to_xml(int level)
+{
+	std::string level_str = "";
+	for(int l = 0; l < level; ++l)
+		level_str += '\t';
+	std::string out = level_str + mStartString + mName;
+
+	XML_attribute* attrib = mFirstAttrib;
+	while(attrib) {
+		out += " " + attrib->name() + "=\"" + attrib->mValue + "\"";
+		attrib = attrib->next();
+	}
+
+	if(mClosingType == OPENED) {
+		out+=">";
+		out+=mContent;
+		XML_node* child = mFirstChild;
+		bool had_child = child;
+		while(child) {
+			out += "\n" + child->to_xml(level+1);
+			child = child->next();
+		}
+		if(had_child)
+			out += "\n" + level_str;
+		out += "</" + mName + ">";
+	} else {
+		out += mSelfCloseString;
+	}
+	
+	return out;
+}
 
 char* XML_comment::parse(char* it)
 {
@@ -329,6 +362,14 @@ void XML_comment::print(int tabs)
 			print_tabs(tabs+1);
 	}
 	std::cout<<"\n";
+}
+std::string XML_comment::to_xml(int level)
+{
+	std::string level_str = "";
+	for(int l = 0; l < level; ++l)
+		level_str += '\t';
+	
+	return level_str + "<!--" + mContent + "-->";
 }
 
 XML_document::XML_document():
@@ -405,4 +446,16 @@ void XML_document::print()
 		child->print();
 		child = child->next();
 	}
+}
+
+void XML_document::save(std::string const& filePath)
+{
+	std::ofstream stream(filePath);
+	XML_node* child = mFirstChild;
+	while(child) {
+		stream<<child->to_xml()<<"\n"<<std::endl;
+		child = child->next();
+	}
+
+	stream.close();
 }

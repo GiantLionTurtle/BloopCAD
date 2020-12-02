@@ -36,6 +36,7 @@ public:
 	XML_node* next() { return mNextNode; }
 
 	virtual void print(int tabs = 0) = 0;
+	virtual std::string to_xml(int level = 0) = 0;
 };
 
 class XML_attribute {
@@ -69,7 +70,7 @@ protected:
 	std::string mName;
 	std::string mContent;
 
-	std::string mSelfCloseString;
+	std::string mStartString, mSelfCloseString;
 public:
 	XML_element();
 
@@ -92,6 +93,7 @@ public:
 	virtual char* parse(char* it);
 
 	virtual void print(int tabs = 0);
+	virtual std::string to_xml(int level = 0);
 };
 
 class XML_comment : public XML_node {
@@ -102,11 +104,12 @@ public:
 
 	virtual char* parse(char* it);
 	virtual void print(int tabs = 0);
+	virtual std::string to_xml(int level = 0);
 };
 
 class XML_declaration : public XML_element {
 public:
-	XML_declaration() { mSelfCloseString = "?>"; }
+	XML_declaration() { mStartString = "<?"; mSelfCloseString = "?>"; }
 };
 
 class XML_document {
@@ -122,6 +125,7 @@ public:
 	void add_child(XML_node* at, XML_node* node);
 
 	void print();
+	void save(std::string const& filePath);
 };
 
 #endif
