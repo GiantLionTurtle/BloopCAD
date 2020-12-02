@@ -3,6 +3,9 @@
 #define XMLPARSER_HPP_
 
 #include <string>
+
+char* skip_white_spaces(char* it);
+
 class XML_document;
 class XML_element;
 
@@ -29,6 +32,7 @@ public:
 	void add_child(XML_node* at, XML_node* node);
 
 	static char* create_classified_node(char* it, XML_node** node);
+	virtual char* parse(char* it) = 0;
 
 	XML_node* prev() { return mPrevNode; }
 	XML_node* next() { return mNextNode; }
@@ -85,16 +89,19 @@ public:
 	char* parse_attributes(char* it);
 	char* parse_name(char* it);
 	char* check_endTag(char* it, const char* stop, int stop_len, bool& out);
-	char* parse(char* it);
+	virtual char* parse(char* it);
 
 	virtual void print(int tabs = 0);
 };
 
 class XML_comment : public XML_node {
+private:
+	std::string mContent;
 public:
 	XML_comment() {}
 
-	virtual void print(int tabs = 0) {}
+	virtual char* parse(char* it);
+	virtual void print(int tabs = 0);
 };
 
 class XML_document {

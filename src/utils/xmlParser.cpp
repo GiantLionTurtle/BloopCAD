@@ -1,5 +1,6 @@
 
 #include "xmlParser.hpp"
+
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
@@ -254,7 +255,6 @@ char* XML_element::parse(char* it)
 	if(mClosingType == OPENED) {
 		XML_node* node = nullptr;
 		do {
-			std::cout<<"it1: "<<it<<"\n";
 			it = skip_white_spaces(it);
 			char* it_tmp = it;
 			it = skip_to(it, '<');
@@ -262,21 +262,18 @@ char* XML_element::parse(char* it)
 				mContent += no_leading_nor_trailing_spaces(it_tmp, it);
 			}
 
-			std::cout<<"it2: "<<it<<"\n";
 			bool ex;
 			it = check_endTag(it, mName.c_str(), mName.length(), ex);
-			std::cout<<"it3: "<<it<<"\n";
 			if(ex) {
 				return it;
 			}
 			it = create_classified_node(it, &node);
-			std::cout<<"it4: "<<it<<"\n";
-			XML_element* elem = dynamic_cast<XML_element*>(node);
-			if(elem) {
-				it = elem->parse(it);
-				add_lastChild(elem);
+
+			if(node) {
+				it = node->parse(it);
+				add_lastChild(node);
 			}
-			std::cout<<"it5: "<<it<<"\n";
+			
 			it = skip_white_spaces(it);
 			it = check_endTag(it, mName.c_str(), mName.length(), ex);
 			if(ex) {
@@ -302,6 +299,32 @@ void XML_element::print(int tabs)
 		child->print(tabs+1);
 		child = child->next();
 	}
+}
+
+char* XML_comment::parse(char* it)
+{
+	int length = 0;
+	while(it+3+length && strncmp(it+length, "-->", 3) != 0) {
+		length++;
+	}
+	if(it) {
+		mContent = std::string(it, length);
+		it += length + 3;
+	}
+	return it;
+}
+
+void XML_comment::print(int tabs)
+{
+	print_tabs(tabs);
+	std::cout<<"Comment:\n";
+	print_tabs(tabs+1);
+	for(int i = 0; i < mContent.length(); ++i) {
+		std::cout<<mContent[i];
+		if(mContent[i] == '\n')
+			print_tabs(tabs+1);
+	}
+	std::cout<<"\n";
 }
 
 XML_document::XML_document():
