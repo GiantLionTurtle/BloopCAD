@@ -121,6 +121,9 @@ char* XML_node::create_classified_node(char* it, XML_node** node)
 	if(strncmp(it, "<!--", 4) == 0) {
 		it+=4;
 		*node = new XML_comment();
+	} else if(strncmp(it, "<?", 2) == 0) {
+		it+=2;
+		*node = new XML_declaration();
 	} else if(strncmp(it, "<", 1) == 0) {
 		it+=1;
 		*node = new XML_element();
@@ -142,7 +145,8 @@ XML_element::XML_element():
 	mFirstAttrib(nullptr),
 	mLastAttrib(nullptr),
 	mContent(""),
-	mName("")
+	mName(""),
+	mSelfCloseString("/>")
 {
 
 }
@@ -212,7 +216,7 @@ char* XML_element::parse_attributes(char* it)
 					currSegmentLength = 0;
 				}
 
-				if(*it == '/' && *(it+1) == '>') {
+				if(*it+mSelfCloseString.length() && strncmp(it, mSelfCloseString.c_str(), mSelfCloseString.length()) == 0) {
 					set_closingType(XML_element::CLOSED);
 					it+=2;
 					break;

@@ -4,8 +4,6 @@
 
 #include <string>
 
-char* skip_white_spaces(char* it);
-
 class XML_document;
 class XML_element;
 
@@ -63,13 +61,15 @@ public:
 class XML_element : public XML_node {
 public:
 	enum closing_types {CLOSED, OPENED};
-private:
+protected:
 	closing_types mClosingType;
 
 	XML_attribute* mFirstAttrib, * mLastAttrib;
 
 	std::string mName;
 	std::string mContent;
+
+	std::string mSelfCloseString;
 public:
 	XML_element();
 
@@ -102,6 +102,11 @@ public:
 
 	virtual char* parse(char* it);
 	virtual void print(int tabs = 0);
+};
+
+class XML_declaration : public XML_element {
+public:
+	XML_declaration() { mSelfCloseString = "?>"; }
 };
 
 class XML_document {
