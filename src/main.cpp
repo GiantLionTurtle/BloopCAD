@@ -1,6 +1,7 @@
 
 #include <utils/errorLogger.hpp>
 #include <preferences.hpp>
+#include <utils/conversionsUtils.hpp>
 
 #include "bloop.hpp"
 #include "workspaces/partDesign.hpp"

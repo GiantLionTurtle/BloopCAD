@@ -1,6 +1,7 @@
 set(utils_source_files
   mathUtils.cpp
   fileUtils.cpp
+  conversionsUtils.cpp
   xmlParser.cpp
   animatable.cpp
  )
