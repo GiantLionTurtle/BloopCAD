@@ -20,9 +20,7 @@
 int main (int argc, char *argv[])
 {
 	errorLogger::get_instance().init();
-
-	preferences::get_instance().set("background", glm::vec3(1.0f, 0.3f, 1.0f));
-	preferences::get_instance().set("cam_trans", (long)500);
+	preferences::get_instance().load_from_file("resources/configs/configs.xml");
 
 	auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
 	auto refBuilder = Gtk::Builder::create();

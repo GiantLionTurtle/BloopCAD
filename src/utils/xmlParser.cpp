@@ -116,6 +116,18 @@ void XML_node::add_child(XML_node* at, XML_node* node)
 		node->mParent = this;
 	}
 }
+XML_element* XML_node::get_child_by_name(std::string const& name)
+{
+	XML_node* node = mFirstChild;
+	while(node) {
+		XML_element* elem = dynamic_cast<XML_element*>(node);
+		if(elem && elem->name() == name) {
+			return elem;
+		} 
+		node = node->next();
+	}
+	return nullptr;
+}
 
 char* XML_node::create_classified_node(char* it, XML_node** node)
 {
@@ -186,6 +198,17 @@ void XML_element::add_attribute(XML_attribute* at, XML_attribute* attr)
 		attr->mPrevAttr = at;
 		attr->mParent = this;
 	}
+}
+XML_attribute* XML_element::get_attribute_by_name(std::string const& name)
+{
+	XML_attribute* attrib = mFirstAttrib;
+	while(attrib) {
+		if(attrib->name() == name) {
+			return attrib;
+		} 
+		attrib = attrib->next();
+	}
+	return nullptr;	
 }
 
 char* XML_element::parse_attributes(char* it)
@@ -437,6 +460,19 @@ void XML_document::add_child(XML_node* at, XML_node* node)
 		node->mParent = nullptr;
 		node->mDocument = this;
 	}
+}
+
+XML_element* XML_document::get_child_by_name(std::string const& name)
+{
+	XML_node* node = mFirstChild;
+	while(node) {
+		XML_element* elem = dynamic_cast<XML_element*>(node);
+		if(elem && elem->name() == name) {
+			return elem;
+		} 
+		node = node->next();
+	}
+	return nullptr;
 }
 
 void XML_document::print()

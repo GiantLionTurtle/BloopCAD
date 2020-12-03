@@ -9,7 +9,7 @@ std::string readFromFile(std::string const& filePath)
 {
 	std::ifstream stream(filePath);
 	if(!stream) {
-		LOG_ERROR("Could not open file \"" + filePath + "\"");
+		LOG_WARNING("Could not open file \"" + filePath + "\"");
 		return "";
 	}
 

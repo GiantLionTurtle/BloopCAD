@@ -54,13 +54,13 @@ private:
 };
 
 // Macro chooser inspired by https://stackoverflow.com/questions/3046889/optional-parameters-with-c-macros
-#define LOG_ERROR_EMPTY()				errorLogger::get_instance().log("ERROR", __PRETTY_FUNCTION__, __FILE__, __LINE__, "Unknown error."); exit(EXIT_FAILURE)
-#define LOG_ERROR_EXIT_FAILURE(msg) 	errorLogger::get_instance().log("ERROR", __PRETTY_FUNCTION__, __FILE__, __LINE__, msg); exit(EXIT_FAILURE)
-#define LOG_ERROR_CODE(msg, exitCode)	errorLogger::get_instance().log("ERROR", __PRETTY_FUNCTION__, __FILE__, __LINE__, msg); exit(exitCode)
+#define LOG_ERROR_EMPTY()				errorLogger::get_instance().log("ERROR", __FUNCTION__, __FILE__, __LINE__, "Unknown error."); exit(EXIT_FAILURE)
+#define LOG_ERROR_EXIT_FAILURE(msg) 	errorLogger::get_instance().log("ERROR", __FUNCTION__, __FILE__, __LINE__, msg); exit(EXIT_FAILURE)
+#define LOG_ERROR_CODE(msg, exitCode)	errorLogger::get_instance().log("ERROR", __FUNCTION__, __FILE__, __LINE__, msg); exit(exitCode)
 #define LOG_ERROR_CHOOSER(nothing, msg, exitCode, option, ...) option
 
 #define LOG_ERROR(...)				LOG_ERROR_CHOOSER(, ##__VA_ARGS__, LOG_ERROR_CODE(__VA_ARGS__), LOG_ERROR_EXIT_FAILURE(__VA_ARGS__), LOG_ERROR_EMPTY(__VA_ARGS__));
-#define LOG_WARNING(msg) 			errorLogger::get_instance().log("WARNING", __PRETTY_FUNCTION__, __FILE__, __LINE__, msg)
-#define BLOOP_MARKER				errorLogger::get_instance().log("MARKER", __PRETTY_FUNCTION__, __FILE__, __LINE__, "")
+#define LOG_WARNING(msg) 			errorLogger::get_instance().log("WARNING", __FUNCTION__, __FILE__, __LINE__, msg)
+#define BLOOP_MARKER				errorLogger::get_instance().log("MARKER", __FUNCTION__, __FILE__, __LINE__, "")
 
 #endif

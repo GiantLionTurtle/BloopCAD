@@ -159,7 +159,7 @@ void sketchDesign::finish()
 		mState->cam->orientation().get().y + diff_angle(mState->cam->orientation().get().y, orientation.y)
 	);
 	
-	long trans_time = preferences::get_instance().get_long("cam_trans");
+	long trans_time = preferences::get_instance().get_long("camtrans");
 
 	newState->cam->set(mState->cam);
 	newState->cam->transformation().rotation.set(

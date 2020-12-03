@@ -28,9 +28,14 @@ public:
 	void add_firstChild(XML_node* node);
 	void add_lastChild(XML_node* node);
 	void add_child(XML_node* at, XML_node* node);
+	XML_element* get_child_by_name(std::string const& name);
+
 
 	static char* create_classified_node(char* it, XML_node** node);
 	virtual char* parse(char* it) = 0;
+
+	XML_node* firstChild() {return mFirstChild; };
+	XML_node* lastChild() { return mLastChild; };
 
 	XML_node* prev() { return mPrevNode; }
 	XML_node* next() { return mNextNode; }
@@ -77,12 +82,16 @@ public:
 	void set_name(std::string name) { mName = name; }
 	std::string name() const { return mName; }
 
+	std::string content() const { return mContent; }
+
 	void set_closingType(closing_types type) { mClosingType = type; }
 	closing_types closingType() { return mClosingType; }
 
 	void add_firstAttribute(XML_attribute* attr);
 	void add_lastAttribute(XML_attribute* attr);
 	void add_attribute(XML_attribute* at, XML_attribute* attr);
+
+	XML_attribute* get_attribute_by_name(std::string const& name);
 
 	XML_attribute* firstAttribute() { return mFirstAttrib; }
 	XML_attribute* lastAttribute() { return mLastAttrib; }
@@ -123,6 +132,8 @@ public:
 	void add_firstChild(XML_node* node);
 	void add_lastChild(XML_node* node);
 	void add_child(XML_node* at, XML_node* node);
+
+	XML_element* get_child_by_name(std::string const& name);
 
 	void print();
 	void save(std::string const& filePath);

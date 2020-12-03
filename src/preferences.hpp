@@ -36,6 +36,9 @@ public:
 	float get_float(std::string const& param);
 	glm::vec3 get_vec3(std::string const& param);
 
+	void load_from_file(std::string const& filePath);
+	void clear();
+
 private:
 	preferences();
 
