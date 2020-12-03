@@ -72,6 +72,11 @@ glm::vec3 camera::right() const
 {
 	return model_inv() * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 }
+glm::vec3 camera::front() const
+{
+	return model_inv() * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
+}
+
 
 glm::vec3 cart_to_sphe(glm::vec3 cart)
 {

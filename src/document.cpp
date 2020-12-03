@@ -57,6 +57,7 @@ void document::do_realize()
 		set_workspace("partDesign");
 		if(mParentBloop->currentWorkspace())
 			mCurrentWorkspaceState->currentTool = mParentBloop->currentWorkspace()->defaultTool();
+		mCurrentWorkspaceState->target = mPart;
 	} catch(const Gdk::GLError& gle) {
 		LOG_ERROR("\ndomain: " + std::to_string(gle.domain()) + "\ncode: " + std::to_string(gle.code()) + "\nwhat: " + gle.what());
 	}
@@ -156,7 +157,7 @@ bool document::set_workspace()
 {
 	if(mCurrentWorkspaceState && mWorkspaceStates.find(mCurrentWorkspaceState->workspaceName) != mWorkspaceStates.end()) {
 		mCurrentWorkspaceState->cam->aspectRatio().set((float)get_width() / (float)get_height());
-		mCurrentWorkspaceState->target = mPart;
+		// mCurrentWorkspaceState->target = mPart;
 
 		mParentBloop->set_workspace(mCurrentWorkspaceState->workspaceName, mCurrentWorkspaceState);
 		return true;

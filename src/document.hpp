@@ -4,9 +4,7 @@
 
 #include <forward_bloop.hpp>
 #include <workspaces/workspace.hpp>
-#include <entities/entity.hpp>
-#include <entities/entitiesIndexer.hpp>
-#include <entities/plane_abstract.hpp>
+#include <entities/forward_entities.hpp>
 #include <tools/tool.hpp>
 #include <graphics_utils/frameBuffer.hpp>
 #include <actions/action.hpp>

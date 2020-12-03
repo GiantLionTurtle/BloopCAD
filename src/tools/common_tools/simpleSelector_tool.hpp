@@ -3,6 +3,7 @@
 #define SIMPLESELECTOR_TOOL_HPP_
 
 #include <tools/tool.hpp>
+#include <entities/forward_entities.hpp>
 
 class simpleSelector_tool : public tool_abstract {
 private:

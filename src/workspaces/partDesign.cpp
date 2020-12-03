@@ -12,7 +12,7 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 	workspace("partDesign_upperBar", builder, parent)
 {
 	mTools["startSketch"] 	= std::shared_ptr<tool_abstract>(new startSketch_tool(this));
-	mTools["extrusion"] 	= std::shared_ptr<tool_abstract>(new extrusion_tool(this));
+	// mTools["extrusion"] 	= std::shared_ptr<tool_abstract>(new extrusion_tool(this));
 	mDefaultTool = mTools.at("simpleSelector");
 
 	mButtons["startSketch"] = std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
@@ -52,9 +52,5 @@ void partDesign::startSketch()
 }
 void partDesign::extrusion()
 {
-	// set_tool_target<part>("extrusion");
-	// mParentBloop->currentDocument()->set_tool(mTools.at("extrusion"));
-	// mParentBloop->set_tool("extrusion");
-
 	LOG_WARNING("Extrusion not implemented yet");
 }

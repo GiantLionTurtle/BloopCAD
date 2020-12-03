@@ -31,7 +31,6 @@ protected:
 
 	std::map<std::string, std::shared_ptr<tool_abstract>> mTools;
 	std::shared_ptr<tool_abstract> mDefaultTool;
-	std::shared_ptr<entity> mTarget;
 
 	std::shared_ptr<workspaceState> mState;
 
@@ -43,8 +42,6 @@ public:
 	workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
 
 	bool invoke_from_key(unsigned int key, std::string& toolName);
-
-	void set_target(std::shared_ptr<entity> target) { mTarget = target; }
 
 	bool set_tool(std::string const& name);
 	void set_tool(std::shared_ptr<tool_abstract> tool_);

@@ -4,6 +4,7 @@
 #include <preferences.hpp>
 #include <utils/mathUtils.hpp>
 #include <actions/switchWorkspace_action.hpp>
+#include <tools/sketchDesign/line_tool.hpp>
 #include <bloop.hpp>
 
 sketchDesign::sketchDesign(bloop* parent) :
@@ -13,6 +14,8 @@ sketchDesign::sketchDesign(bloop* parent) :
 sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
 	workspace("sketchDesign_upperBar", builder, parent)
 {
+	mTools["line"] 	= std::shared_ptr<tool_abstract>(new line_tool(this));
+
 	mButtons["line"] 			= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
 	mButtons["rectangle"] 		= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
 	mButtons["circle"] 			= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
@@ -99,7 +102,7 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 
 void sketchDesign::line()
 {
-//	mParentBloop->set_tool("line");
+	set_tool("line");
 }
 void sketchDesign::rectangle()
 {

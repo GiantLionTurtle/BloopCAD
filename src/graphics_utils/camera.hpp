@@ -51,6 +51,7 @@ public:
 
 	glm::vec3 up() const;
 	glm::vec3 right() const;
+	glm::vec3 front() const;
 	
 	// animatable<glm::vec2>& sphere() { return mSphere; }
 	animatable<glm::vec3>& orientation() { return mOrientation; }

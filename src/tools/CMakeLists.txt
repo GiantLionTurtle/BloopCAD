@@ -2,6 +2,7 @@
 add_subdirectory(common_tools)
 add_subdirectory(navigation)
 add_subdirectory(partDesign)
+add_subdirectory(sketchDesign)
 
 set(tools_source_files
   tool.cpp)
@@ -14,4 +15,5 @@ target_link_libraries(tools
   common_tools
   navigation_tools
   partDesign_tools
+  sketchDesign_tools
   )

@@ -56,6 +56,7 @@ void startSketch_tool::start_sketch(std::shared_ptr<plane_abstract> sketchPlane,
 		std::shared_ptr<workspaceState> newState = mEnv->state()->doc->currentWorkspaceState();
 
 		newState->cam->set(mEnv->state()->cam);
+		newState->target = target->get_sketch();
 
 		float dot_right_v 	= glm::dot(camRight, sketchPlane->v());
 		float dot_up_v 		= glm::dot(camUp, sketchPlane->v());

@@ -3,6 +3,7 @@
 #define PLANESELECTOR_TOOL_HPP_
 
 #include "simpleSelector_tool.hpp"
+#include <entities/forward_entities.hpp>
 
 class planeSelector_tool : public simpleSelector_tool {
 private:

@@ -15,6 +15,7 @@ void createSketch_action::do_work()
 		mSketch->set_exists(true);
 	} else {
 		mSketch = std::shared_ptr<sketch>(new sketch(mSketchPlane, mTarget));
+		mTarget->add_sketch(mSketch);
 	}
 }
 void createSketch_action::undo_work()

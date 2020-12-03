@@ -1,5 +1,6 @@
 
 #include "part.hpp"
+#include <utils/errorLogger.hpp>
 
 part::part():
 	entitiesIndexer()
@@ -20,6 +21,24 @@ void part::init_scene()
 	add(mXY);
 	add(mYZ);
 	add(mZX);
+}
+
+void part::add_sketch(std::shared_ptr<sketch> sketch_)
+{
+	if(sketch_) {
+		mSketches.push_back(sketch_);
+	} else {
+		LOG_WARNING("Trying to add null sketch.");
+	}
+}
+std::shared_ptr<sketch> part::get_sketch(int ind)
+{
+	if(ind < 0 || ind >= mSketches.size()) {
+		if(mSketches.empty())
+			return nullptr;
+		return mSketches.back();
+	}
+	return mSketches[ind]; 
 }
 
 void part::draw_impl(std::shared_ptr<camera> cam)
