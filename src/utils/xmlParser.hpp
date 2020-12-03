@@ -18,7 +18,7 @@ protected:
 	XML_node* mFirstChild, * mLastChild;	// Handles for children linked chain
 public:
 	XML_node();
-	virtual ~XML_node() = default;
+	virtual ~XML_node();
 
 	void set_doc(XML_document* doc) { mDocument = doc; }
 
@@ -78,6 +78,7 @@ protected:
 	std::string mStartString, mSelfCloseString;
 public:
 	XML_element();
+	~XML_element();
 
 	void set_name(std::string name) { mName = name; }
 	std::string name() const { return mName; }
@@ -109,7 +110,8 @@ class XML_comment : public XML_node {
 private:
 	std::string mContent;
 public:
-	XML_comment() {}
+	XML_comment();
+	~XML_comment();
 
 	virtual char* parse(char* it);
 	virtual void print(int tabs = 0);
@@ -126,12 +128,16 @@ private:
 	XML_node* mFirstChild, * mLastChild;	// Handles for children linked chain
 public:
 	XML_document();
+	~XML_document();
 	
 	void parse(char* str);
 
 	void add_firstChild(XML_node* node);
 	void add_lastChild(XML_node* node);
 	void add_child(XML_node* at, XML_node* node);
+
+	XML_node* firstChild() { return mFirstChild; }
+	XML_node* lastChild() { return mLastChild; }
 
 	XML_element* get_child_by_name(std::string const& name);
 

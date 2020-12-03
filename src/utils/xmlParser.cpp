@@ -56,6 +56,15 @@ XML_node::XML_node():
 {
 	
 }
+XML_node::~XML_node()
+{
+	XML_node* child = firstChild();
+	while(child) {
+		XML_node* next = child->next();
+		delete child;
+		child = next;
+	}
+}
 
 void XML_node::unlink(XML_node* node)
 {
@@ -163,6 +172,15 @@ XML_element::XML_element():
 	mSelfCloseString("/>")
 {
 
+}
+XML_element::~XML_element()
+{
+	XML_attribute* attrib = firstAttribute();
+	while(attrib) {
+		XML_attribute* next = attrib->next();
+		delete attrib;
+		attrib = next;
+	}
 }
 
 void XML_element::add_firstAttribute(XML_attribute* attr)
@@ -361,6 +379,14 @@ std::string XML_element::to_xml(int level)
 	return out;
 }
 
+XML_comment::XML_comment()
+{
+
+}
+XML_comment::~XML_comment()
+{
+
+}
 char* XML_comment::parse(char* it)
 {
 	int length = 0;
@@ -400,6 +426,15 @@ XML_document::XML_document():
 	mLastChild(nullptr)
 {
 
+}
+XML_document::~XML_document()
+{
+	XML_node* child = firstChild();
+	while(child) {
+		XML_node* next = child->next();
+		delete child;
+		child = next;
+	}
 }
 
 void XML_document::parse(char* str)
