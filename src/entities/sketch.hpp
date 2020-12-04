@@ -16,7 +16,7 @@ public:
 	sketch(std::shared_ptr<plane_abstract> base_plane);
 	sketch(std::shared_ptr<plane_abstract> base_plane, std::shared_ptr<entitiesIndexer> indexer);
 
-    virtual bool is_sketch() { return true; }
+	std::shared_ptr<plane_abstract> basePlane() { return mBasePlane; }
 };
 
 #endif

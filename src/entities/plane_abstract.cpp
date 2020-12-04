@@ -3,27 +3,27 @@
 #include <iostream>
 
 plane_abstract::plane_abstract(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed) :
-    mOrigin(origin),
-    mV(v),
-    mW(w),
-    mDir(reversed ? -1.0f : 1.0f)
+	mOrigin(origin),
+	mV(v),
+	mW(w),
+	mDir(reversed ? -1.0f : 1.0f)
 {
 
 }
 
 plane_abstract plane_abstract::from_1Point2Vectors(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed)
 {
-    return plane_abstract(origin, v, w, reversed);
+	return plane_abstract(origin, v, w, reversed);
 }
 
 std::shared_ptr<plane_abstract> plane_abstract::from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed)
 {
-    return std::shared_ptr<plane_abstract>(new plane_abstract(origin, v, w, reversed));
+	return std::shared_ptr<plane_abstract>(new plane_abstract(origin, v, w, reversed));
 }
 
 float plane_abstract::dist(glm::vec3 const& point) const
 {
-    return std::abs(dist_signed(point));
+	return std::abs(dist_signed(point));
 }
 float plane_abstract::dist_signed(glm::vec3 const& point) const
 {
@@ -33,4 +33,12 @@ float plane_abstract::dist_signed(glm::vec3 const& point) const
 	float c = norm.z;
 	float d = -(a * mOrigin.x + b * mOrigin.x + c * mOrigin.z);
 	return (a * point.x + b * point.y + c * point.z + d) / std::sqrt(a*a + b*b + c*c) * mDir;
+}
+
+glm::vec3 plane_abstract::line_intersection(glm::vec3 const& point, glm::vec3 const& vec)
+{
+	// https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
+	float t = (glm::dot(glm::cross(mV, mW), (point - mOrigin))) / (glm::dot(-vec, glm::cross(mV, mW)));
+	std::cout<<"t="<<t<<"\n";
+	return point + vec * t;
 }

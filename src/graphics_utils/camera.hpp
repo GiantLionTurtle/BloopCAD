@@ -57,6 +57,7 @@ public:
 	animatable<glm::vec3>& orientation() { return mOrientation; }
 
 	// animatable<float>& FOV() { return mFOV; }
+	float FOV() const { return mFOV.get(); }
 	animatable<float>& zoom() { return mZoom; };
 	animatable<float>& aspectRatio() { return mAspectRatio; }
 	transform& transformation() { return mTransformation; }

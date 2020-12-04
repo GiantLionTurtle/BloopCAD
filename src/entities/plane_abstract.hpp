@@ -24,6 +24,8 @@ public:
 	float dist(glm::vec3 const& point) const;
 	float dist_signed(glm::vec3 const& point) const;
 
+	glm::vec3 line_intersection(glm::vec3 const& point, glm::vec3 const& vec);
+
 	bool inverted() const { return mDir < 0.0f; };
 
 	glm::vec3 origin() const { return mOrigin; }
