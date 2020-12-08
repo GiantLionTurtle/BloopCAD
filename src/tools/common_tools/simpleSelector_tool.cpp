@@ -48,6 +48,7 @@ std::shared_ptr<entity> simpleSelector_tool::entity_at_point(glm::vec2 point)
 glm::ivec3 simpleSelector_tool::id_at_point(glm::vec2 point)
 {
 	if(mEnv->state()) {
+		mEnv->state()->doc->make_glContext_current();
 		mEnv->state()->doc->selectionBuffer()->bind();
 		unsigned char data[4] = {0, 0, 0, 0};
 		GLCall(glReadPixels(point.x, point.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &data));

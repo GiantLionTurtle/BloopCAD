@@ -7,11 +7,9 @@ vertexArray::vertexArray()
 	GLCall(glGenVertexArrays(1, &mRendererID));
 	int id_c;
 	GLCall(glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &id_c));
-	std::cout<<"Creating vertex array #"<<id()<<" current = #"<<id_c<<"\n";
 }
 vertexArray::~vertexArray()
 {
-	LOG_WARNING("Deleting vertex array #" + std::to_string(id()));
 	GLCall(glDeleteVertexArrays(1, &mRendererID));
 }
 
@@ -33,7 +31,6 @@ void vertexArray::add_buffer(vertexBuffer const& vb, vertexBufferLayout const& l
 
 void vertexArray::bind() const
 {
-	// LOG_WARNING(std::to_string(mRendererID));
 	GLCall(glBindVertexArray(mRendererID));
 }
 void vertexArray::unbind() const
