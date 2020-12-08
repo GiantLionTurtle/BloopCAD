@@ -30,11 +30,16 @@ document::document(bloop* parent) :
 	preferences::get_instance().add_callback("background", [this](glm::vec3 color) { mBackgroundColor = color; });
 }
 
+void document::make_glContext_current()
+{
+	mViewport.make_current();
+}
+
 void document::do_realize()
 {
-	mViewPort.make_current();
+	mViewport.make_current();
 	try{
-		mViewPort.throw_if_error();
+		mViewport.throw_if_error();
 
 		GLCall(const GLubyte *renderer_type = glGetString(GL_RENDERER));
 		GLCall(const GLubyte *version = glGetString(GL_VERSION));
@@ -44,7 +49,7 @@ void document::do_realize()
 				std::cout << "Dimensions: " << get_width() << " x " << get_height() << std::endl;
 		}
 
-		mViewPort.set_has_depth_buffer(true);
+		mViewport.set_has_depth_buffer(true);
 		GLCall(glEnable(GL_MULTISAMPLE));
 		GLCall(glEnable(GL_DEPTH_TEST));
 		GLCall(glDepthFunc(GL_LESS)); 
@@ -64,10 +69,10 @@ void document::do_realize()
 }
 void document::do_unrealize()
 {
-	mViewPort.make_current();
+	mViewport.make_current();
 
 	try{
-		mViewPort.throw_if_error();
+		mViewport.throw_if_error();
 	} catch(const Gdk::GLError& gle) {
 		LOG_ERROR("\ndomain: " + std::to_string(gle.domain()) + "\ncode: " + std::to_string(gle.code()) + "\nwhat: " + gle.what());
 	}
@@ -76,7 +81,7 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 {
 	GLCall(glClearColor(mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, 1.0));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
+	
 	int initialFrameBuffer;
 	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &initialFrameBuffer); // TODO: check if this could change (if it does not, no need to do it every loop)
 
@@ -86,7 +91,9 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 		mPart->draw(mCurrentWorkspaceState->cam);
 
 		mSelectionBuffer->bind();
+
 		GLCall(glViewport(0, 0, get_width(), get_height()));
+
 		GLCall(glClearColor(0.0, 0.0, 0.0, 1.0));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 		mPart->draw_selection(mCurrentWorkspaceState->cam);
@@ -98,7 +105,7 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 gboolean document::frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock, gpointer data)
 {
     document* self = (document*) data;
-    self->mViewPort.queue_draw();
+    self->mViewport.queue_draw();
 
     return G_SOURCE_CONTINUE;
 }
@@ -113,7 +120,7 @@ void document::connect_signals()
 				| Gdk::STRUCTURE_MASK
 				| Gdk::SCROLL_MASK
 	);
-	mViewPort.add_events( Gdk::POINTER_MOTION_MASK
+	mViewport.add_events( Gdk::POINTER_MOTION_MASK
 						| Gdk::BUTTON_PRESS_MASK
 						| Gdk::BUTTON_RELEASE_MASK
 						| Gdk::KEY_PRESS_MASK
@@ -121,24 +128,24 @@ void document::connect_signals()
 						| Gdk::STRUCTURE_MASK
 						| Gdk::SCROLL_MASK);
 
-	mViewPort.signal_realize().connect(sigc::mem_fun(*this, &document::do_realize));
-	mViewPort.signal_unrealize().connect(sigc::mem_fun(*this, &document::do_unrealize), false);
-	mViewPort.signal_render().connect(sigc::mem_fun(*this, &document::do_render));
+	mViewport.signal_realize().connect(sigc::mem_fun(*this, &document::do_realize));
+	mViewport.signal_unrealize().connect(sigc::mem_fun(*this, &document::do_unrealize), false);
+	mViewport.signal_render().connect(sigc::mem_fun(*this, &document::do_render));
 	gtk_widget_add_tick_callback((GtkWidget*) this->gobj(),	document::frame_callback, this, NULL); // Couldn't find a c++-y way to do it
 
-	mViewPort.signal_key_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_key_press));
-	mViewPort.signal_key_release_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_key_release));
-	mViewPort.signal_scroll_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_scroll));
-	mViewPort.signal_motion_notify_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_move));
-	mViewPort.signal_button_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_button_press));
-	mViewPort.signal_button_release_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_button_release));
+	mViewport.signal_key_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_key_press));
+	mViewport.signal_key_release_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_key_release));
+	mViewport.signal_scroll_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_scroll));
+	mViewport.signal_motion_notify_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_move));
+	mViewport.signal_button_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_button_press));
+	mViewport.signal_button_release_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_button_release));
 
-	pack_end(mViewPort);
+	pack_end(mViewport);
 
-	mViewPort.set_can_focus(true);
-	mViewPort.grab_focus();
-	mViewPort.set_hexpand(true);
-	mViewPort.set_vexpand(true);
+	mViewport.set_can_focus(true);
+	mViewport.grab_focus();
+	mViewport.set_hexpand(true);
+	mViewport.set_vexpand(true);
 }
 
 bool document::set_workspace(std::string const& name) 

@@ -11,7 +11,7 @@ bool GLLogCall(std::string const& call, std::string const& file, std::string con
 
 #define GLASSERT_NO_SHOW(x) if(!(x)) std::cin.get();
 #define GLCall(x) GLClearErrors();\
-  x;\
-  GLASSERT_NO_SHOW(GLLogCall(#x, __FILE__, __FUNCTION__, __LINE__))
+	x;\
+	GLLogCall(#x, __FILE__, __FUNCTION__, __LINE__)
 
 #endif

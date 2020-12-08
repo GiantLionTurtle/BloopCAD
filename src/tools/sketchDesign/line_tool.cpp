@@ -36,7 +36,17 @@ bool line_tool::manage_button_press(GdkEventButton* event)
 			ray.z = -std::sqrt(1.0f - (ray.x * ray.x + ray.y * ray.y));
 			ray = cam->model_inv() * glm::vec4(ray, 0.0f);
 
-			std::cout<<"vec: "<<glm::to_string(target->basePlane()->line_intersection(mEnv->state()->cam->pos(), ray))<<"\n";
+			glm::vec3 pos_on_plane = target->basePlane()->line_intersection(mEnv->state()->cam->pos(), ray);
+			if(!started) {
+				startPos = pos_on_plane;
+				started = true;
+			} else {
+				endPos = pos_on_plane;
+				started = false;
+
+				mEnv->state()->doc->push_action(std::shared_ptr<action>(new addLine_action(
+					startPos, endPos, target, mEnv->state()->doc)));
+			}
 		}
 	}
 	return true;

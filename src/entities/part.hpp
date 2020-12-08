@@ -11,6 +11,8 @@
 
 #include <memory>
 
+class document;
+
 class part : public entity, public entitiesIndexer {
 private:
 	std::shared_ptr<plane> mXY, mYZ, mZX;

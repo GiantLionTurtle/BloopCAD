@@ -1,6 +1,8 @@
 
 #include "part.hpp"
 #include <utils/errorLogger.hpp>
+#include <entities/line.hpp>
+#include <actions/sketchDesign/addLine_action.hpp>
 
 part::part():
 	entitiesIndexer()
@@ -18,6 +20,8 @@ void part::init_scene()
 	mXY = plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	mYZ = plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), true);
 	mZX = plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	add(plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(-0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.5f)));
+
 	add(mXY);
 	add(mYZ);
 	add(mZX);
@@ -27,6 +31,7 @@ void part::add_sketch(std::shared_ptr<sketch> sketch_)
 {
 	if(sketch_) {
 		mSketches.push_back(sketch_);
+		add(sketch_);
 	} else {
 		LOG_WARNING("Trying to add null sketch.");
 	}
@@ -43,14 +48,12 @@ std::shared_ptr<sketch> part::get_sketch(int ind)
 
 void part::draw_impl(std::shared_ptr<camera> cam)
 {
-	mXY->draw(cam);
-	mYZ->draw(cam);
-	mZX->draw(cam);
+	for_each([cam](std::shared_ptr<entity> ent) { ent->draw(cam); });
+	// if(!mSketches.empty())
+		// mSketches.back()->draw(cam);
 }
 
 void part::draw_selection_impl(std::shared_ptr<camera> cam)
 {
-	mXY->draw_selection(cam);
-	mYZ->draw_selection(cam);
-	mZX->draw_selection(cam);
+	for_each([cam](std::shared_ptr<entity> ent) { ent->draw_selection(cam); });
 }

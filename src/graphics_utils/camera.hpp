@@ -45,6 +45,7 @@ public:
 	glm::mat4 model_inv() const;
 	glm::mat4 view() const;
 	glm::mat4 projection() const;
+	glm::mat4 mvp() const;
 
 	glm::vec3 pos() const;
 	glm::vec3 target() const;

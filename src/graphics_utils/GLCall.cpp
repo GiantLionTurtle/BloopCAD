@@ -11,6 +11,8 @@ bool GLLogCall(std::string const& call, std::string const& file, std::string con
 	if(GLenum error = glGetError()) {
 		errorLogger::get_instance().log("OpenGL error", file, function, line, "while calling " + call + ": " + std::to_string(error));
 		return false;
+	} else {
+		// errorLogger::get_instance().log("Called", file, function, line, call);
 	}
 	return true;
 }

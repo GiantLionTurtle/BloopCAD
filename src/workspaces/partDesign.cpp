@@ -3,6 +3,9 @@
 #include <bloop.hpp>
 
 #include <tools/partDesign/startSketch_tool.hpp>
+#include <entities/part.hpp>
+
+#include <memory>
 
 partDesign::partDesign(bloop* parent) :
 	workspace(parent)

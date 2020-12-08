@@ -1,5 +1,6 @@
 
 #include "entitiesIndexer.hpp"
+#include <utils/errorLogger.hpp>
 
 entitiesIndexer::entitiesIndexer():
 	mToFollow(nullptr),
@@ -21,11 +22,13 @@ void entitiesIndexer::add(std::shared_ptr<entity> elem)
 	if(!is_following()) {
 		incrementIndex(mHighestInd);
 		mEntities.push_back({mHighestInd, elem});
-		glm::vec3 ind_float = mHighestInd;
-		ind_float /= 255.0f;
-		elem->setSelectionColor(ind_float);
+		if(elem) {
+			glm::vec3 ind_float = mHighestInd;
+			ind_float /= 255.0f;
+			elem->setSelectionColor(ind_float);
+		}
 	} else {
-		mToFollow->add(elem);
+		mToFollow->add(nullptr);
 		mHighestInd = mToFollow->mHighestInd;
 		mEntities.push_back({mHighestInd, elem});
 	}
@@ -64,13 +67,15 @@ std::shared_ptr<entity> entitiesIndexer::operator[](glm::ivec3 const& ind) const
 void entitiesIndexer::for_each(std::function<void (std::shared_ptr<entity>, glm::ivec3)> func)
 {
 	for(size_t i = 0; i < mEntities.size(); ++i) {
-		func(std::get<1>(mEntities[i]), std::get<0>(mEntities[i]));
+		if(std::get<1>(mEntities[i]))
+			func(std::get<1>(mEntities[i]), std::get<0>(mEntities[i]));
 	}
 }
 void entitiesIndexer::for_each(std::function<void (std::shared_ptr<entity>)> func)
 {
 	for(size_t i = 0; i < mEntities.size(); ++i) {
-		func(std::get<1>(mEntities[i]));
+		if(std::get<1>(mEntities[i]))
+			func(std::get<1>(mEntities[i]));
 	}
 }
 

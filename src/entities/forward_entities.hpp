@@ -8,5 +8,6 @@ class part;
 class sketch;
 class plane_abstract;
 class plane;
+class line;
 
 #endif

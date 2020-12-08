@@ -43,10 +43,12 @@ private:
 	unsigned int mActionInd, mActionStackSize;
 
 	glm::vec3 mBackgroundColor;
-	Gtk::GLArea mViewPort;
+	Gtk::GLArea mViewport;
 	bloop* mParentBloop;
 public:
 	document(bloop* parent);
+
+	void make_glContext_current();
 
 	void do_realize();
 	void do_unrealize();

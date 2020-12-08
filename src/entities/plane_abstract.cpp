@@ -39,6 +39,5 @@ glm::vec3 plane_abstract::line_intersection(glm::vec3 const& point, glm::vec3 co
 {
 	// https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
 	float t = (glm::dot(glm::cross(mV, mW), (point - mOrigin))) / (glm::dot(-vec, glm::cross(mV, mW)));
-	std::cout<<"t="<<t<<"\n";
 	return point + vec * t;
 }

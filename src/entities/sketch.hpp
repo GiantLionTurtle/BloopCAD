@@ -17,6 +17,9 @@ public:
 	sketch(std::shared_ptr<plane_abstract> base_plane, std::shared_ptr<entitiesIndexer> indexer);
 
 	std::shared_ptr<plane_abstract> basePlane() { return mBasePlane; }
+protected:
+	virtual void draw_impl(std::shared_ptr<camera> cam);
+	virtual void draw_selection_impl(std::shared_ptr<camera> cam);
 };
 
 #endif

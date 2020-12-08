@@ -52,6 +52,10 @@ glm::mat4 camera::projection() const
 {
 	return glm::perspective(mFOV.get(), mAspectRatio.get(), 0.1f, 100.0f);
 }
+glm::mat4 camera::mvp() const
+{
+	return projection() * view() * model();
+}
 
 glm::vec3 camera::pos() const
 {
@@ -76,7 +80,6 @@ glm::vec3 camera::front() const
 {
 	return model_inv() * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
 }
-
 
 glm::vec3 cart_to_sphe(glm::vec3 cart)
 {

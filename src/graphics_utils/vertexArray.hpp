@@ -16,6 +16,8 @@ public:
 
   void bind() const;
   void unbind() const;
+
+  unsigned int id() const { return mRendererID; }
 };
 
 #endif

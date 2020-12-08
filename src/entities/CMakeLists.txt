@@ -3,6 +3,7 @@ set(entities_utils_source_files
   entitiesIndexer.cpp
   entity.cpp
   plane.cpp
+  line.cpp
   part.cpp
   sketch.cpp)
 

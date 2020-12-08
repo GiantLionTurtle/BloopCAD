@@ -13,6 +13,7 @@ plane::plane(plane_abstract const& plane_, std::string const& label) :
 	
 	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(mVertices, sizeof(glm::vec3) * 4));
 	mVA = std::shared_ptr<vertexArray>(new vertexArray());
+
 	vertexBufferLayout layout;
 	layout.add_proprety_float(3);
 	mVA->bind();
@@ -20,6 +21,9 @@ plane::plane(plane_abstract const& plane_, std::string const& label) :
 	mIB = std::shared_ptr<indexBuffer>(new indexBuffer(mIndices, 6));
 	mShader = shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/planeShader.frag");
 	mSelectionShader = shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/plainColor.frag");
+	mVA->unbind();
+	mVB->unbind();
+	mIB->unbind();
 }
 
 plane plane::from_1Point2Vectors(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed, std::string const& label)
@@ -34,12 +38,12 @@ std::shared_ptr<plane> plane::from_1Point2Vectors_ptr(glm::vec3 const& origin, g
 
 void plane::draw_impl(std::shared_ptr<camera> cam)
 {
+	// BLOOP_MARKER;
 	// TODO: make this less sketch?
 	GLCall(glDisable(GL_DEPTH_TEST));
 	mShader->bind();
 
 	glm::vec3 color;
-	// std::cout<<"Pos: "<<glm::to_string(cam->pos())<<"\n";
 	if(dist_signed(cam->pos()) >= 0) {
 		color = glm::vec3(0.34f, 0.17f, 0.05f);
 	} else {
@@ -48,8 +52,7 @@ void plane::draw_impl(std::shared_ptr<camera> cam)
 	if(selected()) 
 		color += glm::vec3(0.0f, 0.0f, 0.3f);
 	mShader->setUniform4f("u_Color", color.r, color.g, color.b, hovered() ? 0.7 : 0.5);
-	glm::mat4 mvp = (cam->projection() * cam->view() * cam->model());
-	mShader->setUniformMat4f("u_MVP", mvp);
+	mShader->setUniformMat4f("u_MVP", cam->mvp());
 	
 	mVA->bind();
 	mIB->bind();
@@ -57,6 +60,7 @@ void plane::draw_impl(std::shared_ptr<camera> cam)
 	GLCall(glDrawElements(GL_TRIANGLES, mIB->count(), GL_UNSIGNED_INT, nullptr));
 
 	mIB->unbind();
+	mVA->unbind();
 	mShader->unbind();
 
 	GLCall(glEnable(GL_DEPTH_TEST));
@@ -64,17 +68,19 @@ void plane::draw_impl(std::shared_ptr<camera> cam)
 
 void plane::draw_selection_impl(std::shared_ptr<camera> cam)
 {
+	// BLOOP_MARKER;
 	mSelectionShader->bind();
 
-	mShader->setUniform3f("u_Color", mSelectionColor.r, mSelectionColor.g, mSelectionColor.b);
-	mShader->setUniformMat4f("u_MVP", cam->projection() * cam->view() * cam->model());
+	mSelectionShader->setUniform3f("u_Color", mSelectionColor.r, mSelectionColor.g, mSelectionColor.b);
+	mSelectionShader->setUniformMat4f("u_MVP", cam->mvp());
 	mVA->bind();
 	mIB->bind();
 
 	GLCall(glDrawElements(GL_TRIANGLES, mIB->count(), GL_UNSIGNED_INT, nullptr));
 
 	mIB->unbind();
-	mShader->unbind();
+	mVA->unbind();
+	mSelectionShader->unbind();
 }
 
 void plane::init_buffers()

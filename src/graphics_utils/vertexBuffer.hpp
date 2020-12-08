@@ -14,7 +14,9 @@ public:
   void bind() const;
   void unbind() const;
 
-  unsigned int size();
+  unsigned int size() const { return mSize; }
+
+  unsigned int id() const { return mRendererID; }
 };
 
 #endif
