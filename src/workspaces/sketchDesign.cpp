@@ -12,10 +12,12 @@ sketchDesign::sketchDesign(bloop* parent) :
 {}
 
 sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
-	workspace("sketchDesign_upperBar", builder, parent)
-{
+	workspace("sketchDesign_upperBar", builder, parent) // Create base workspace with upper bar
+{	
+	// Create all the tools used in this workspace
 	mTools["line"] 	= std::shared_ptr<tool_abstract>(new line_tool(this));
 
+	// Initialize all buttons as 2 nullptr
 	mButtons["line"] 			= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
 	mButtons["rectangle"] 		= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
 	mButtons["circle"] 			= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
@@ -32,7 +34,7 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 
 	mButtons["sketchFinish"] = std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
 
-
+	// Load all buttons from the builder
 	bool all_btns_valid = true;
 	for(auto it = mButtons.begin(); it != mButtons.end(); ++it) {
 		builder->get_widget(it->first, std::get<0>(it->second));
@@ -42,7 +44,7 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 	}
 
 	if(all_btns_valid) {
-		try {
+		try { // Attempt to fetch all the buttons' icons
 			std::get<1>(mButtons.at("line")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/line.png", 60, 60));
 			std::get<1>(mButtons.at("rectangle")) 		= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/rectangle.png", 60, 60));
 			std::get<1>(mButtons.at("circle")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/circle.png", 60, 60));
@@ -63,7 +65,8 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 		} catch(const Gdk::PixbufError& ex) {
 			LOG_WARNING("Gtk pixbuf error: " + ex.what());
 		}
-		
+
+		// Set all the buttons' icons		
 		std::get<0>(mButtons.at("line"))->			set_image(*std::get<1>(mButtons.at("line")));
 		std::get<0>(mButtons.at("rectangle"))->		set_image(*std::get<1>(mButtons.at("rectangle")));
 		std::get<0>(mButtons.at("circle"))->		set_image(*std::get<1>(mButtons.at("circle")));
@@ -80,6 +83,8 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 
 		std::get<0>(mButtons.at("sketchFinish"))->set_image(*std::get<1>(mButtons.at("sketchFinish")));
 
+		
+		// Set all the buttons' callback
 		std::get<0>(mButtons.at("line"))->			signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::line));
 		std::get<0>(mButtons.at("rectangle"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::rectangle));
 		std::get<0>(mButtons.at("circle"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::circle));
@@ -152,18 +157,22 @@ void sketchDesign::equality()
 
 void sketchDesign::finish()
 {
-	mState->doc->push_action(std::shared_ptr<action>(new switchWorkspace_action(mState->doc, "partDesign")));
-	std::shared_ptr<workspaceState> newState = mState->doc->currentWorkspaceState();
+	mState->doc->push_action(std::shared_ptr<action>(new switchWorkspace_action(mState->doc, "partDesign"))); // Go to part design
+	std::shared_ptr<workspaceState> newState = mState->doc->currentWorkspaceState(); // Find the new part design camera
 
+	// Record the part design camera's transform
 	transform targetTransform = newState->cam->transformation();
 	glm::vec3 orientation = newState->cam->orientation().get();
+
+	// Compute the shortest path
 	glm::vec2 angles(
-		mState->cam->orientation().get().x + diff_angle(mState->cam->orientation().get().x, orientation.x), 
-		mState->cam->orientation().get().y + diff_angle(mState->cam->orientation().get().y, orientation.y)
+		mState->cam->orientation().get().x + diff_angles(mState->cam->orientation().get().x, orientation.x), 
+		mState->cam->orientation().get().y + diff_angles(mState->cam->orientation().get().y, orientation.y)
 	);
 	
-	long trans_time = preferences::get_instance().get_long("camtrans");
+	long trans_time = preferences::get_instance().get_long("camtrans"); // Fetch the desired transition length
 
+	// Set the part design camera to the sketch design camera position and start the animation to make it go to it's target
 	newState->cam->set(mState->cam);
 	newState->cam->transformation().rotation.set(
 		glm::angleAxis(angles.x, glm::vec3(1.0f, 0.0f, 0.0f)) * 

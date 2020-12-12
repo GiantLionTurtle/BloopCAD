@@ -13,6 +13,6 @@ std::string readFromFile(std::string const& filePath)
 		return "";
 	}
 
-	std::string str(std::istreambuf_iterator<char>(stream), {});
+	std::string str(std::istreambuf_iterator<char>(stream), {}); // Some stl wizardry
 	return str;
 }

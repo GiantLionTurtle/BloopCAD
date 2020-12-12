@@ -11,68 +11,159 @@
 #include <vector>
 #include <functional>
 
+// parameter_list is a helper definition to represent a string indexed cache list of parameters, which are a value and a list of callbacks
 template<typename eT>
 using parameter_list = std::map<std::string, std::pair<eT, std::vector<std::function<void(eT)>>>>;
 
+/*
+	@class preferences is the one go for customization, it is accessible everywhere in the program and
+	it currently supports 3 types of preferences ; long, float and vec3
+
+	@note : This class is a singletong
+*/
 class preferences {
 private:
-	parameter_list<long> mParams_long;
-	parameter_list<float> mParams_float;
-	parameter_list<glm::vec3> mParams_vec3;
+	parameter_list<long> mPrefs_long; 		// Long preferences
+	parameter_list<float> mPrefs_float; 	// Float preferences
+	parameter_list<glm::vec3> mPrefs_vec3;	// Vec3 preferences
 public:
-	preferences(const preferences&) = delete;
+	preferences(preferences const&) = delete; // As it is a singleton, the copy constructor is deleted
 
+	/*
+		@function get_instance gives access to the singleton instance
+
+		@return : The singleton instance
+	*/
 	static preferences& get_instance();
 
-	void set(std::string const& param, long val);
-	void set(std::string const& param, float val);
-	void set(std::string const& param, glm::vec3 val);
+	/*
+		@function set sets a named preference or creates it if it doesn't exist
 
-	void add_callback(std::string const& param, std::function<void(long)> func);
-	void add_callback(std::string const& param, std::function<void(float)> func);
-	void add_callback(std::string const& param, std::function<void(glm::vec3)> func);
+		@param pref : 	The name of the preference
+		@param val	:	The value to assign to the preference
+	*/
+	void set(std::string const& pref, long val);
+	void set(std::string const& pref, float val);
+	void set(std::string const& pref, glm::vec3 val);
 
-	long get_long(std::string const& param);
-	float get_float(std::string const& param);
-	glm::vec3 get_vec3(std::string const& param);
+	/*
+		@function add_callbacks adds a callback which will be invoked each time a particular preference is changed
 
+		@param pref : The preference to which to bind the callback
+		@param func	: The callback function
+	*/
+	void add_callback(std::string const& pref, std::function<void(long)> func);
+	void add_callback(std::string const& pref, std::function<void(float)> func);
+	void add_callback(std::string const& pref, std::function<void(glm::vec3)> func);
+
+	/*
+		@function get_long gives a preference value in the long register
+
+		@param pref : The name of the requested preference
+
+		@return : The value of the preference, or 0 if it doesn't exist 
+	*/
+	long get_long(std::string const& pref);
+	/*
+		@function get_float gives a preference value in the float register
+
+		@param pref : The name of the requested preference
+
+		@return : The value of the preference, or 0.0f if it doesn't exist 
+	*/
+	float get_float(std::string const& pref);
+	/*
+		@function get_vec3 gives a preference value in the vec3 register
+
+		@param pref : The name of the requested preference
+
+		@return : The value of the preference, or (0.0f, 0.0f, 0.0f) if it doesn't exist 
+	*/
+	glm::vec3 get_vec3(std::string const& pref);
+
+	/*
+		@function load_from_file loads a set of preferences from an xml file
+
+		@param filePath : The path to the xml file containing preferences
+
+		@note : The preferences must be children of a node called "configs", have a type attribute
+		and have their value as content. Vec3 are represented as values separeted by semicolons.
+		Something like this:
+
+		<configs>
+			<namedConfig1 type="long">23</namedConfig1>
+			<namedConfig2 type="float">0.5</namedConfig2>
+			<namedConfig3 type="vec3">0.6 ; 18 ; 20.2</namedConfig3>
+		</configs>
+	*/
 	void load_from_file(std::string const& filePath);
-	void clear();
 
+	/*
+		@function clear removes all preferences and callbacks
+	*/
+	void clear();
 private:
+	/*
+		@function preferences creates the preferences object, it is private so that
+		only one object can be created and accessed 
+	*/
 	preferences();
 
+	/*
+		@function add_callback_to_map adds a callback to a preference in a specified registery, 
+		if the preference is not found, it is created and initialized at 0
+
+		@param pref : 	The name of the preference to which to add the callback
+		@param map : 	The registery containing the preference
+		@param func : 	The callback to be added
+	*/
 	template<typename eT>
-	void add_callback_to_map(std::string const& param, parameter_list<eT>& map, std::function<void(eT)> func)
+	void add_callback_to_map(std::string const& pref, parameter_list<eT>& map, std::function<void(eT)> func)
 	{
-		if(map.find(param) != map.end()) {
-			std::get<1>(map.at(param)).push_back(func);
+		if(map.find(pref) != map.end()) {
+			std::get<1>(map.at(pref)).push_back(func); // Push the callback if the preference is found
 		} else {
-			map[param] = std::make_pair<eT, std::vector<std::function<void(eT)>>>(eT(0), {func});
+			map[pref] = std::make_pair<eT, std::vector<std::function<void(eT)>>>(eT(0), {func}); // Create the preference
 		}
 	}
 
+	/*
+		@function set_in_map sets a preference's value in a specified registery and calls each of it's callbacks, 
+		if the searched preference doesn't exist, it is created
+
+		@param pref : 	The name of the preference to set 
+		@param map : 	The registery containing the preference
+		@param val : 	The value to be assigned to the preference
+	*/
 	template<typename eT>
-	void set_in_map(std::string const& param, parameter_list<eT>& map, eT val)
+	void set_in_map(std::string const& pref, parameter_list<eT>& map, eT val)
 	{
-		if(map.find(param) != map.end()) {
-			std::vector<std::function<void(eT)>> funcs = std::get<1>(map.at(param));
-			for(size_t i = 0; i < funcs.size(); ++i) {
+		if(map.find(pref) != map.end()) {
+			std::vector<std::function<void(eT)>> funcs = std::get<1>(map.at(pref));
+			for(size_t i = 0; i < funcs.size(); ++i) { // Call each callback
 				funcs.at(i)(val);
 			}
 		} else {
-			map[param] = std::make_pair<eT, std::vector<std::function<void(eT)>>>(eT(0), {});
+			map[pref] = std::make_pair<eT, std::vector<std::function<void(eT)>>>(eT(0), {}); // create the preference
 		}
-		std::get<0>(map.at(param)) = val;
+		std::get<0>(map.at(pref)) = val; // Set the value
 	}
 
+	/*
+		@function find_in_map gives the value of a specified preference in a given registery
+
+		@param pref : 	The name of the preference of interest
+		@param map : 	The registery in which to search the preference
+		
+		@return : The value of the searched preference, or 0
+	*/
 	template<typename eT>
-	eT find_in_map(std::string const& param, parameter_list<eT>& map)
+	eT find_in_map(std::string const& pref, parameter_list<eT>& map)
 	{
-		if(map.find(param) != map.end()) {
-			return std::get<0>(map.at(param));
+		if(map.find(pref) != map.end()) {
+			return std::get<0>(map.at(pref)); // Get the value part of the preference
 		}
-		LOG_WARNING("Searched for parameter \"" + param + "\", there is no such parameter.");
+		LOG_WARNING("Searched for preference \"" + pref + "\", there is no such preference.");
 		return eT(0);
 	}
 };

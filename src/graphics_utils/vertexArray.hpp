@@ -5,19 +5,46 @@
 #include "vertexBuffer.hpp"
 #include "vertexBufferLayout.hpp"
 
+/*
+	@class vertexArray describes an abstraction of openGL's vertex arrays
+	@warning : Make sure that every function is called whithin the same openGL context
+*/
 class vertexArray {
 private:
-  unsigned int mRendererID;
+	unsigned int mRendererID; // The openGL handle to the vertex array
 public:
-  vertexArray();
-  ~vertexArray();
+	/*
+		@function vertexArray creates a vertexArray object
+	*/
+	vertexArray();
+	/*
+		@function ~vertexArray destroys a vertexArray object and cleanly handle the internal openGL stuff
+	*/
+	~vertexArray();
 
-  void add_buffer(vertexBuffer const& vb, vertexBufferLayout const& layout);
+	/*
+		@function add buffer adds a set of vertices to the vertex array
 
-  void bind() const;
-  void unbind() const;
+		@param vb : 	A vertexBuffer containing vertices data
+		@param layout : A vertexBufferLayout describing the data of the vertexBuffer
+	*/
+	void add_buffer(vertexBuffer const& vb, vertexBufferLayout const& layout);
 
-  unsigned int id() const { return mRendererID; }
+	/*
+		@function bind activates the vertexArray in openGL so that it can be used
+	*/
+	void bind() const;
+	/*
+		@function unbind desactivates the vertexArray in openGL so that it can't be used
+	*/
+	void unbind() const;
+
+	/*
+		@function id
+
+		@return : The openGL handle to the vertex array
+	*/
+	unsigned int id() const { return mRendererID; }
 };
 
 #endif

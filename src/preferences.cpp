@@ -11,47 +11,47 @@ preferences::preferences()
 
 preferences& preferences::get_instance()
 {
-	static preferences prefs;
+	static preferences prefs; // Only one instance will be created
 	return prefs;
 }
 
-void preferences::add_callback(std::string const& param, std::function<void(long)> func)
+void preferences::add_callback(std::string const& pref, std::function<void(long)> func)
 {
-	add_callback_to_map(param, mParams_long, func);
+	add_callback_to_map(pref, mPrefs_long, func); // Select the long map
 }
-void preferences::add_callback(std::string const& param, std::function<void(float)> func)
+void preferences::add_callback(std::string const& pref, std::function<void(float)> func)
 {
-	add_callback_to_map(param, mParams_float, func);
+	add_callback_to_map(pref, mPrefs_float, func); // Select the float map
 }
-void preferences::add_callback(std::string const& param, std::function<void(glm::vec3)> func)
+void preferences::add_callback(std::string const& pref, std::function<void(glm::vec3)> func)
 {
-	add_callback_to_map(param, mParams_vec3, func);
-}
-
-void preferences::set(std::string const& param, long val)
-{
-	set_in_map(param, mParams_long, val);
-}
-void preferences::set(std::string const& param, float val)
-{
-	set_in_map(param, mParams_float, val);
-}
-void preferences::set(std::string const& param, glm::vec3 val)
-{
-	set_in_map(param, mParams_vec3, val);
+	add_callback_to_map(pref, mPrefs_vec3, func); // Select the vec3 map
 }
 
-long preferences::get_long(std::string const& param)
+void preferences::set(std::string const& pref, long val)
 {
-	return find_in_map(param, mParams_long);
+	set_in_map(pref, mPrefs_long, val); // Select the long map
 }
-float preferences::get_float(std::string const& param)
+void preferences::set(std::string const& pref, float val)
 {
-	return find_in_map(param, mParams_float);
+	set_in_map(pref, mPrefs_float, val); // Select the float map
 }
-glm::vec3 preferences::get_vec3(std::string const& param)
+void preferences::set(std::string const& pref, glm::vec3 val)
 {
-	return find_in_map(param, mParams_vec3);
+	set_in_map(pref, mPrefs_vec3, val); // Select the vec3 map
+}
+
+long preferences::get_long(std::string const& pref)
+{
+	return find_in_map(pref, mPrefs_long); // Select the long map
+}
+float preferences::get_float(std::string const& pref)
+{
+	return find_in_map(pref, mPrefs_float); // Select the float map
+}
+glm::vec3 preferences::get_vec3(std::string const& pref)
+{
+	return find_in_map(pref, mPrefs_vec3); // Select the vec3 map
 }
 
 void preferences::load_from_file(std::string const& filePath)
@@ -65,14 +65,15 @@ void preferences::load_from_file(std::string const& filePath)
 	XML_document doc;
 	doc.parse(c_str);
 
-	XML_node* configs = doc.get_child_by_name("configs");
+	XML_node* configs = doc.get_child_by_name("configs"); // Find the configs node, it's children are the preferences
 	if(configs) {
 		XML_node* config = configs->firstChild();
-		while(config) {
+		while(config) { // Go through all of configs's children
 			XML_element* elem = dynamic_cast<XML_element*>(config);
-			if(elem) {
+			if(elem) { // Only the elements are valid preference
 				XML_attribute* type = elem->get_attribute_by_name("type");
 				if(type) {
+					// Index their type and set the corresponding registeries
 					if(type->value() == "float") {
 						set(elem->name(), string_to_float(elem->content()));
 					} else if(type->value() == "long") {
@@ -92,7 +93,8 @@ void preferences::load_from_file(std::string const& filePath)
 }
 void preferences::clear()
 {
-	mParams_float.clear();
-	mParams_long.clear();
-	mParams_vec3.clear();
+	// Clear everything, should there be a callback for destruction?
+	mPrefs_float.clear();
+	mPrefs_long.clear();
+	mPrefs_vec3.clear();
 }

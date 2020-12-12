@@ -19,11 +19,11 @@
 
 int main (int argc, char *argv[])
 {
-	errorLogger::get_instance().init();
-	preferences::get_instance().load_from_file("resources/configs/configs.xml");
+	errorLogger::get_instance().init(); // Init the error logger singleton
+	preferences::get_instance().load_from_file("resources/configs/configs.xml"); // Init the preferences service singleton
 
-	auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
-	auto refBuilder = Gtk::Builder::create();
+	auto app = Gtk::Application::create(argc, argv, ""); // Create an application 
+	auto refBuilder = Gtk::Builder::create(); // Gtk builder
 	try {
 		refBuilder->add_from_file("resources/GUI/design_documents.glade");
 	} catch(const Glib::FileError& ex) {
@@ -41,7 +41,7 @@ int main (int argc, char *argv[])
 	refBuilder->get_widget_derived("bloop", window);
 
 	if(window) {
-		return app->run(*window);
+		return app->run(*window); // Run the app
 	}
 
 	LOG_ERROR("Could not build window, returning early.");

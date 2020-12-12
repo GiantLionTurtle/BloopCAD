@@ -12,8 +12,7 @@ planeSelector_tool::planeSelector_tool(workspace* env):
 std::shared_ptr<entity> planeSelector_tool::entity_at_point(glm::vec2 point)
 {
     std::shared_ptr<entity> hovered_ent = primitive_entity_at_point(point);
-
-    if(hovered_ent && std::dynamic_pointer_cast<plane_abstract>(hovered_ent)) {
+    if(hovered_ent && std::dynamic_pointer_cast<plane_abstract>(hovered_ent)) { // Check if a dynamic cast is valid
         return hovered_ent;
     }
     return nullptr;

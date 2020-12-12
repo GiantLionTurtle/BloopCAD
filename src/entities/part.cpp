@@ -10,18 +10,28 @@ part::part():
 	init_scene();
 }
 part::part(std::shared_ptr<entitiesIndexer> indexer):
-	entitiesIndexer(indexer)
+	entitiesIndexer(indexer) // Follow that indexer
 {
 	init_scene();
 }
 
+
 void part::init_scene()
 {
-	mXY = plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	mYZ = plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), true);
-	mZX = plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	add(plane::from_1Point2Vectors_ptr(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(-0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.5f)));
+	// Maybe this whole function should just be in the constructor
 
+	// Create the 3 planes of the origin
+	mXY = std::shared_ptr<plane>(new plane(
+		plane_abstract::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f))));
+	mYZ = std::shared_ptr<plane>(new plane(
+		plane_abstract::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), true))); // Inverted due to openGL's z axis being kind of backward
+	mZX = std::shared_ptr<plane>(new plane(
+		plane_abstract::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f))));
+	
+	add(std::shared_ptr<plane>(new plane(
+		plane_abstract::from_1Point2Vectors(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(-0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.5f))))); // Temporary test plane
+
+	// Add the three points
 	add(mXY);
 	add(mYZ);
 	add(mZX);
@@ -38,6 +48,7 @@ void part::add_sketch(std::shared_ptr<sketch> sketch_)
 }
 std::shared_ptr<sketch> part::get_sketch(int ind)
 {
+	// It's kind of a funny behavior, I might change it to just return nullptr on out of bounds
 	if(ind < 0 || ind >= mSketches.size()) {
 		if(mSketches.empty())
 			return nullptr;
@@ -48,12 +59,10 @@ std::shared_ptr<sketch> part::get_sketch(int ind)
 
 void part::draw_impl(std::shared_ptr<camera> cam)
 {
-	for_each([cam](std::shared_ptr<entity> ent) { ent->draw(cam); });
-	// if(!mSketches.empty())
-		// mSketches.back()->draw(cam);
+	for_each([cam](std::shared_ptr<entity> ent) { ent->draw(cam); }); // Make the call for all components
 }
 
 void part::draw_selection_impl(std::shared_ptr<camera> cam)
 {
-	for_each([cam](std::shared_ptr<entity> ent) { ent->draw_selection(cam); });
+	for_each([cam](std::shared_ptr<entity> ent) { ent->draw_selection(cam); }); // Make the call for all components
 }

@@ -5,32 +5,59 @@
 #include <iostream>
 #include <fstream>
 
-//TODO: maybe redo whith inheritance of a logger class isntead of a switch
+/*
+	@class errorLogger logs messages in stream and or console streams
+
+	@note : This class is a singleton
+*/
 class errorLogger {
 private:
-	int mMode;
-	std::ofstream mFileStream;
+	int mMode; // How to log things
+	std::ofstream mFileStream; // File stream if needed
 public:
-	enum modes { CERR = 1 << 0, FILE = 1 << 1 };
+	enum modes { CERR = 1 << 0, FILE = 1 << 1 }; // All the possible modes	
 
 	errorLogger(const errorLogger&) = delete;
 
+	/*
+		@function get_instance gives the singleton instance
+
+		@return : The singleton instance
+	*/
 	static errorLogger& get_instance()
 	{
 		static errorLogger logger;
 		return logger;
 	}
 
+	/*
+		@function init inits the logger with console stream only
+	*/
 	void init()
 	{
 		mMode = modes::CERR;
 	}
-	void init(std::string filepath, bool print)		
+	/*
+		@function init inits the logger with a file stream and optionaly a console stream
+
+		@param filepath : 	The path to the file into which to stream
+		@param print : 		Whether or not to stream in the console
+	*/
+	void init(std::string const& filepath, bool print)		
 	{
 		mMode = print ? (modes::CERR | modes::FILE) : modes::FILE;
 		mFileStream = std::ofstream(filepath);
 	}
 
+	/*
+		@function log logs a message 
+		
+		@param what : 		The log type
+		@param file : 		The file where the log was called
+		@param function : 	The function that logged
+		@param line : 		The line at which the log was called
+		@param msg : 		The log message
+	*/
 	void log(std::string const& what, std::string const& file, std::string const& function, unsigned int line, std::string const& msg)
 	{
 		std::string log = what + ": in file \"" + file + "\" in function \"" + function + "\" at line " + std::to_string(line) + ": " + msg;
@@ -40,14 +67,23 @@ public:
 			ofstream_log(log);
 	}
 private:
+	/*
+		@function errorLogger creates the error logger
+	*/
 	errorLogger()
 	{}
 
-	void cerr_log(std::string log)
+	/*
+		@function cerr_log logs a string to the console
+	*/
+	void cerr_log(std::string const& log)
 	{
 		std::cerr << log << std::endl;
 	}
-	void ofstream_log(std::string log)
+	/*
+		@function ofstream_log logs a string to the file stream
+	*/
+	void ofstream_log(std::string const& log)
 	{
 		mFileStream << log << std::endl;
 	}

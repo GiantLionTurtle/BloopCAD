@@ -8,17 +8,17 @@
 addLine_action::addLine_action(glm::vec3 const& pointA, glm::vec3 const& pointB, std::shared_ptr<sketch> sketch_, document* doc):
 	mSketch(sketch_)
 {
-	doc->make_glContext_current();
-	mLine = line::from_2Points_ptr(pointA, pointB);
+	doc->make_glContext_current(); // The openGL context must be set to our rendering context, not an obscure gtk context
+	mLine = line::from_2Points_ptr(pointA, pointB); // Create said line
 	mSketch->add(mLine);
-	mLine->set_exists(false);
+	mLine->set_exists(false); // It should not exist until the action is consummed
 }
 
 void addLine_action::do_work()
 {
-	mLine->set_exists(true);
+	mLine->set_exists(true); // The line now exists
 }
 void addLine_action::undo_work()
 {
-	mLine->set_exists(false);
+	mLine->set_exists(false); // The line now doesn't exist, but is still available if needed
 }

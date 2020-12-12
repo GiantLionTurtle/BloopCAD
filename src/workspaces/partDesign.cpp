@@ -12,15 +12,18 @@ partDesign::partDesign(bloop* parent) :
 {}
 
 partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
-	workspace("partDesign_upperBar", builder, parent)
+	workspace("partDesign_upperBar", builder, parent) // Create base workspace with ui upper bar
 {
+	// Creat all the tools used in this workspace
 	mTools["startSketch"] 	= std::shared_ptr<tool_abstract>(new startSketch_tool(this));
 	// mTools["extrusion"] 	= std::shared_ptr<tool_abstract>(new extrusion_tool(this));
 	mDefaultTool = mTools.at("simpleSelector");
 
+	// Initialize all buttons as 2 nullptr
 	mButtons["startSketch"] = std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
 	mButtons["extrusion"] 	= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
 
+	// Load all buttons from the builder
 	bool all_btns_valid = true;
 	for(auto it = mButtons.begin(); it != mButtons.end(); ++it) {
 		builder->get_widget(it->first, std::get<0>(it->second));
@@ -30,7 +33,7 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 	}
 
 	if(all_btns_valid) {
-		try {
+		try { // Attempt to fetch all the buttons' icons
 			std::get<1>(mButtons.at("startSketch")) = new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/partDesign/buttons/startSketch_button.png", 60, 60));
 			std::get<1>(mButtons.at("extrusion")) 	= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/partDesign/buttons/extrusion_button.png", 60, 60));
 		} catch(const Glib::FileError& ex) {
@@ -38,10 +41,11 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 		} catch(const Gdk::PixbufError& ex) {
 			LOG_WARNING("Gtk pixbuf error: " + ex.what());
 		}
-		
+		// Set all the buttons' icons		
 		std::get<0>(mButtons.at("startSketch"))->	set_image(*std::get<1>(mButtons.at("startSketch")));
 		std::get<0>(mButtons.at("extrusion"))->		set_image(*std::get<1>(mButtons.at("extrusion")));
 
+		// Set all the buttons' callback
 		std::get<0>(mButtons.at("startSketch"))->	signal_clicked().connect(sigc::mem_fun(*this, &partDesign::startSketch));
 		std::get<0>(mButtons.at("extrusion"))->		signal_clicked().connect(sigc::mem_fun(*this, &partDesign::extrusion));
 	} else {

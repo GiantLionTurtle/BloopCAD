@@ -4,19 +4,43 @@
 
 #include <tools/tool.hpp>
 
+/*
+	@class orbit_tool describes the orbit function to rotate the camera around the center of the scene
+	@parent : tool_abstract
+*/
 class orbit_tool : public tool_abstract {
 private:
-	glm::vec2 prevPos;
-	bool is_moving;
-	glm::vec3 tmp_right;
+	glm::vec2 prevPos; // Helper record of the position of the mouse on the previous update
+	bool is_moving; // If the mouse is currently moving
 public:
+	/*
+		@function orbit_tool creates an orbit_tool object
+
+		@param env : The workspace owning the tool
+	*/
 	orbit_tool(workspace* env);
 
-	virtual void finish() { is_moving = false; }
+	/*
+		@function finish is an override to clean up after the tool stops being used (but not destroyed)
+	*/
+	virtual void finish();
+	/*
+		@function init is an override to prepare the tool to be used
+	*/
 	virtual void init();
-	virtual bool manage_key_press(GdkEventKey* event);
+
+	/*
+		@function manage_mouse_move moves the camera around if the right conditions are met
+
+		@param event : The event handed out by gtk
+	*/
 	virtual bool manage_mouse_move(GdkEventMotion* event);
-	virtual bool manage_button_release(GdkEventButton* event) { if(event->state & GDK_BUTTON1_MASK) finish(); return true; }
+	/*
+		@function manage_button_release calls finish if the middle mouse is released
+
+		@param event : The event handed out by gtk
+	*/
+	virtual bool manage_button_release(GdkEventButton* event);
 };
 
 #endif

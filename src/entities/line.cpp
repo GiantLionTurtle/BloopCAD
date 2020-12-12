@@ -20,7 +20,7 @@ line::line(glm::vec3 ptA, glm::vec3 ptB):
 	mShader = shader::fromFiles_ptr({
         {"resources/shaders/lineShader.vert", GL_VERTEX_SHADER},
         {"resources/shaders/lineShader.geom", GL_GEOMETRY_SHADER}, 
-        {"resources/shaders/lineShader.frag", GL_FRAGMENT_SHADER}});
+        {"resources/shaders/lineShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because line is expanded on the gpu
 }
 
 line line::from_2Points(glm::vec3 ptA, glm::vec3 ptB)
@@ -43,11 +43,12 @@ void line::draw_impl(std::shared_ptr<camera> cam)
 	
 	mVA->bind();
 
-	GLCall(glDrawArrays(GL_POINTS, 0, 2));
+	GLCall(glDrawArrays(GL_POINTS, 0, 2)); // No indexing needed, a line only has two vertices
 
     mVA->unbind();
 	mShader->unbind();
 }
+
 void line::draw_selection_impl(std::shared_ptr<camera> cam)
 {
 

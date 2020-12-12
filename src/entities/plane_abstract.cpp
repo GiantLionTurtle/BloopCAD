@@ -27,6 +27,7 @@ float plane_abstract::dist(glm::vec3 const& point) const
 }
 float plane_abstract::dist_signed(glm::vec3 const& point) const
 {
+	// straight from https://en.wikipedia.org/wiki/Plane_(geometry)
 	glm::vec3 norm = glm::cross(mV, mW);
 	float a = norm.x;
 	float b = norm.y;
@@ -37,7 +38,7 @@ float plane_abstract::dist_signed(glm::vec3 const& point) const
 
 glm::vec3 plane_abstract::line_intersection(glm::vec3 const& point, glm::vec3 const& vec)
 {
-	// https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
+	// straight from https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
 	float t = (glm::dot(glm::cross(mV, mW), (point - mOrigin))) / (glm::dot(-vec, glm::cross(mV, mW)));
 	return point + vec * t;
 }

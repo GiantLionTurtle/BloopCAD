@@ -5,8 +5,6 @@
 #include <tools/navigation/navigation.hpp>
 #include <tools/common_tools/simpleSelector_tool.hpp>
 
-int workspace::count = 0;
-
 workspace::workspace(bloop* parent) :
 	mParentBloop(parent),
 	mDefaultTool(nullptr)
@@ -16,12 +14,13 @@ workspace::workspace(bloop* parent) :
 
 workspace::workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
 	mParentBloop(parent),
-	id(++count),
 	mState(new workspaceState),
 	mDefaultTool(nullptr)
 {
+	// Create the upper bar with the builder
 	builder->get_widget(upperBarID, mUpperBar);
-	
+
+	// Create navigation/selection tools that are fairly common amongst workspaces
 	mTools["orbit"] 				= std::shared_ptr<tool_abstract>(new orbit_tool(this));
 	mTools["zoom"] 					= std::shared_ptr<tool_abstract>(new zoom_tool(this));
 	mTools["pan"] 					= std::shared_ptr<tool_abstract>(new pan_tool(this));
@@ -30,72 +29,73 @@ workspace::workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> c
 
 bool workspace::manage_key_press(GdkEventKey* event)
 {
-	if(event->keyval == GDK_KEY_Escape) {
+	if(event->keyval == GDK_KEY_Escape) { // Switch tool on escape, will be changed for multistate tools
 		if(mState && mState->currentTool) {
-			mState->currentTool->finish();
+			mState->currentTool->finish(); // Terminate the tool before switching to the default tool
 			set_tool(mDefaultTool);
 		}
 	} else if(mState && mState->currentTool) {
-		return mState->currentTool->manage_key_press(event);
+		return mState->currentTool->manage_key_press(event); // Just pass the event deeper
 	}
 	return true;
 }
 bool workspace::manage_key_release(GdkEventKey* event)
 {
 	if(mState && mState->currentTool) {
-		return mState->currentTool->manage_key_release(event);
+		return mState->currentTool->manage_key_release(event); // Just pass the event deeper
 	}
 	return true;
 }
 bool workspace::manage_mouse_move(GdkEventMotion* event)
 {
-	if(event->state & GDK_BUTTON2_MASK) {
-		set_tool_cursor(mTools.at("orbit"));
+	if(event->state & GDK_BUTTON2_MASK) { // Override the current tool and update the orbit
+		set_toolCursor(mTools.at("orbit"));
 		return mTools.at("orbit")->manage_mouse_move(event);
 	}
 
 	if(mState && mState->currentTool) {
-		return mState->currentTool->manage_mouse_move(event);
+		return mState->currentTool->manage_mouse_move(event); // Just pass the event deeper
 	}
 	return true;
 }
 bool workspace::manage_mouse_scroll(GdkEventScroll* event)
 {
-	return mTools.at("zoom")->manage_scroll(event);
+	return mTools.at("zoom")->manage_scroll(event); // The only tool that can be used with scroll is zoom
 }
 
 bool workspace::manage_button_press(GdkEventButton* event)
 {
 	if(mState && mState->currentTool) {
-		return mState->currentTool->manage_button_press(event);
+		return mState->currentTool->manage_button_press(event); // Just pass the event deeper
 	}
 	return true;
 }
 bool workspace::manage_button_release(GdkEventButton* event)
 {
-	if(event->state & GDK_BUTTON2_MASK) {
+	if(event->state & GDK_BUTTON2_MASK) { // Clean up the orbit override
 		mTools.at("orbit")->finish();
-		set_tool_cursor(mState->currentTool);
+		set_toolCursor(mState->currentTool);
 	}
 	if(mState && mState->currentTool) {
-		return mState->currentTool->manage_button_release(event);
+		return mState->currentTool->manage_button_release(event); // Just pass the event deeper
 	}
 	return true;
 }
 
-bool workspace::invoke_from_key(unsigned int key, std::string& toolName)
-{
-	if(mKey_invokes.find(key) != mKey_invokes.end()) {
-		toolName = mKey_invokes[key];
-		return true;
-	}
-	return false;
-}
+// bool workspace::invoke_from_key(unsigned int key, std::string& toolName)
+// {
+// 	if(mKey_invokes.find(key) != mKey_invokes.end()) {
+// 		toolName = mKey_invokes[key];
+// 		return true;
+// 	}
+// 	return false;
+// }
 
 bool workspace::set_tool(std::string const& name) 
 {	
+	// This function is a wrapper for the other set_tool that takes a shared pointer
 	if(mTools.find(name) != mTools.end()) {
-		set_tool(mTools.at(name));
+		set_tool(mTools.at(name)); 
 		return true;
 	} else {
 		LOG_WARNING("Trying to set \"" + name + "\" as current tool. There is no such tool.");
@@ -109,12 +109,14 @@ void workspace::set_tool(std::shared_ptr<tool_abstract> tool_)
 		return;
 	}
 	if(mState->currentTool)
-		mState->currentTool->finish();
+		mState->currentTool->finish(); // Terminate the current tool
+
+	// Set and setup the new tool
 	mState->currentTool = tool_;
 	mState->currentTool->init();
-	set_tool_cursor(mState->currentTool);
+	set_toolCursor(mState->currentTool);
 }
-void workspace::set_tool_cursor(std::shared_ptr<tool_abstract> tool_)
+void workspace::set_toolCursor(std::shared_ptr<tool_abstract> tool_)
 {
 	mParentBloop->set_cursor(tool_->cursor());
 }

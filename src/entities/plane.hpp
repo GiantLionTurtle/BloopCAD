@@ -11,30 +11,43 @@
 #include <string>
 #include <iostream>
 
+/*
+	@class plane describes a plane drawn on screen
+	@parent : entity
+	@parent : plane_abstract
+*/
 class plane : public entity, public plane_abstract {
 private:
-	const glm::vec3 mColorA = glm::vec3(1.0f, 0.0f, 0.95f), mColorB = glm::vec3(0.0f, 0.83f, 0.6f);
+	const glm::vec3 mColorA = glm::vec3(0.34f, 0.17f, 0.05f), 	// Both colors of a plane, depending on the side from which it is observed
+	mColorB = glm::vec3(0.15f, 0.0f, 0.25f); 					// Maybe it should be an option
 
-	glm::vec3 mVertices[4];
-	unsigned int mIndices[6], mOutlineIndices[8];
+	glm::vec3 mVertices[4];	// The four vertices of the rectangle that represents the plane
+	unsigned int mIndices[6], mOutlineIndices[8]; // The order in which to draw said vertices
 
-	std::shared_ptr<vertexBuffer> 	mVB;
-	std::shared_ptr<vertexArray> 	mVA;
-	std::shared_ptr<indexBuffer>	mIB, mOutlineIB;
-	std::shared_ptr<shader> 		mShader, mSelectionShader;
+	std::shared_ptr<vertexBuffer> 	mVB; // Handle to the vertices on the gpu
+	std::shared_ptr<vertexArray> 	mVA; // Handle to the configuration on the gpu
+	std::shared_ptr<indexBuffer>	mIB, mOutlineIB; // Handle to the indices to draw the rectangle on the gpu
+	std::shared_ptr<shader> 		mShader, mSelectionShader; // Both normal and selection shaders
 public:
+	/*
+		@function plane creates a plane 
+
+		@param plane_ : 				The underlaying plane abstraction
+		@param label [defaults to ""] : The label of the plane (not supported yet)
+	*/
 	plane(plane_abstract const& plane_, std::string const& label = "");
-
-	// static plane from_1Point1Vector(glm::vec3 origin, glm::vec3 n, std::string const& label);
-	static plane from_1Point2Vectors(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed = false, std::string const& label = "");
-	// static plane from_3Points(glm::vec3 origin, glm::vec3 pt1, glm::vec3 pt2, std::string const& label);
-
-	// static std::shared_ptr<plane> from_1Point1Vector_ptr(glm::vec3 origin, glm::vec3 n, std::string const& label);
-	static std::shared_ptr<plane> from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed = false, std::string const& label = "");
-	// static std::shared_ptr<plane> from_3Points_ptr(glm::vec3 origin, glm::vec3 pt1, glm::vec3 pt2, std::string const& label);
-
 protected:
+	/*
+		@function draw_impl draws the plane on screen
+
+		@param cam : The camera used for rendering
+	*/
 	virtual void draw_impl(std::shared_ptr<camera> cam);
+	/*
+		@function draw_selection_impl draws the plane in plain color on the selection buffer
+
+		@param cam : The camera used for rendering
+	*/
 	virtual void draw_selection_impl(std::shared_ptr<camera> cam);
 
 	void init_buffers();

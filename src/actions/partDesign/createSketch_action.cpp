@@ -6,21 +6,16 @@ createSketch_action::createSketch_action(std::shared_ptr<plane_abstract> sketchP
 	mTarget(target),
 	mSketch(nullptr)
 {
-
+	mSketch = std::shared_ptr<sketch>(new sketch(mSketchPlane, mTarget));
+	mSketch->set_exists(false); // It should not exist until the action is consumed
+	mTarget->add_sketch(mSketch);
 }
 
 void createSketch_action::do_work()
 {
-	if(mSketch) {
-		mSketch->set_exists(true);
-	} else {
-		mSketch = std::shared_ptr<sketch>(new sketch(mSketchPlane, mTarget));
-		mTarget->add_sketch(mSketch);
-	}
+	mSketch->set_exists(true); // The sketch now exists
 }
 void createSketch_action::undo_work()
 {
-	if(mSketch) {
-		mSketch->set_exists(false);
-	}
+	mSketch->set_exists(false); // The sketch now doesn't exist, it will not be saved, but if the action is re-done it is still available
 }

@@ -10,12 +10,12 @@ entity::entity():
 
 void entity::draw(std::shared_ptr<camera> cam)
 {
-	if(exists() && (visible() || selected()))
+	if(exists() && (visible() || selected())) // Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
 		draw_impl(cam);
 }
 void entity::draw_selection(std::shared_ptr<camera> cam)
 {
-	if(exists() && (visible() || selected()))
+	if(exists() && (visible() || selected())) // Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
 		draw_selection_impl(cam);
 }
 
