@@ -44,7 +44,7 @@ public:
 
 		@param label_ : The label to be set
 	*/
-	void set_label(std::string const& label_) { mLabel->set_text(label); }
+	void set_label(std::string const& label_) { mLabel->set_text(label_); }
 	/*
 		@function label 
 

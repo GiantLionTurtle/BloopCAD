@@ -1,6 +1,7 @@
 
 #include "plane_abstract.hpp"
 #include <iostream>
+#include <glm/gtx/string_cast.hpp>
 
 plane_abstract::plane_abstract(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed) :
 	mOrigin(origin),
@@ -28,12 +29,18 @@ float plane_abstract::dist(glm::vec3 const& point) const
 float plane_abstract::dist_signed(glm::vec3 const& point) const
 {
 	// straight from https://en.wikipedia.org/wiki/Plane_(geometry)
-	glm::vec3 norm = glm::cross(mV, mW);
+
+	// Convert to point normal form
+	glm::vec3 norm = glm::normalize(glm::cross(mV, mW)) * mDir;
+
+	// Create the parameters of the point normal form
 	float a = norm.x;
 	float b = norm.y;
 	float c = norm.z;
-	float d = -(a * mOrigin.x + b * mOrigin.x + c * mOrigin.z);
-	return (a * point.x + b * point.y + c * point.z + d) / std::sqrt(a*a + b*b + c*c) * mDir;
+	float d = -(a * mOrigin.x + b * mOrigin.y + c * mOrigin.z);
+
+	// Apply the point normal to point distance formula
+	return (a * point.x + b * point.y + c * point.z + d);
 }
 
 glm::vec3 plane_abstract::line_intersection(glm::vec3 const& point, glm::vec3 const& vec)
