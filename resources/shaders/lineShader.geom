@@ -41,24 +41,32 @@
 // }
 
 #version 330 core
-layout (points) in;
-layout (triangle_strip, max_vertices = 5) out;
+layout (lines) in;
+//layout (triangle_strip, max_vertices = 10) out;
+layout (lines) out;
 
-void build_house(vec4 position)
-{    
-    gl_Position = position + vec4(-0.2, -0.2, 0.0, 0.0);    // 1:bottom-left
-    EmitVertex();   
-    gl_Position = position + vec4( 0.2, -0.2, 0.0, 0.0);    // 2:bottom-right
-    EmitVertex();
-    gl_Position = position + vec4(-0.2,  0.2, 0.0, 0.0);    // 3:top-left
-    EmitVertex();
-    gl_Position = position + vec4( 0.2,  0.2, 0.0, 0.0);    // 4:top-right
-    EmitVertex();
-    gl_Position = position + vec4( 0.0,  0.4, 0.0, 0.0);    // 5:top
-    EmitVertex();
-    EndPrimitive();
-}
+uniform float u_AspectRatio;
 
-void main() {    
-    build_house(gl_in[0].gl_Position);
+void main() 
+{
+	/*
+	vec2 direction = normalize(gl_in[0].gl_Position - gl_in[1].gl_Position);
+	vec2 normal = vec2(-direction.y, direction.x * u_AspectRatio);
+
+	gl_Position = gl_in[0].gl_Position + vec4(normal * 0.2, 0, 0);
+	EmitVertex();
+	gl_Position = gl_in[0].gl_Position - vec4(normal * 0.2, 0, 0);
+	EmitVertex();
+
+	gl_Position = gl_in[1].gl_Position + vec4(normal * 0.2, 0, 0);
+	EmitVertex();
+	gl_Position = gl_in[1].gl_Position - vec4(normal * 0.2, 0, 0);
+	EmitVertex();
+
+	EndPrimitive();
+	*/
+	gl_Position = gl_in[0].gl_Position;
+	EmitVertex();
+	gl_Position = gl_in[1].gl_Position;
+	EmitVertex();
 }  

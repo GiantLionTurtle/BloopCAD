@@ -44,6 +44,8 @@ public:
 		@return : The openGL handle of the buffer
 	*/
 	unsigned int id() const { return mRendererID; }
+
+	void set(void const* data, unsigned int size_);
 };
 
 #endif

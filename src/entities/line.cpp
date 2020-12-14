@@ -33,17 +33,32 @@ std::shared_ptr<line> line::from_2Points_ptr(glm::vec3 ptA, glm::vec3 ptB)
     return std::shared_ptr<line>(new line(ptA, ptB));
 }
 
+void line::update_VB()
+{
+    glm::vec3 tmp[2] = {mPointA, mPointB};
+	mVB->bind();
+	mVB->set(tmp, sizeof(glm::vec3) * 2);
+	mVB->unbind();
+}
+
 void line::draw_impl(std::shared_ptr<camera> cam)
 {
 	mShader->bind();
 	mShader->setUniform4f("u_Color", mColor.r, mColor.g, mColor.b, 1.0f);
-    mShader->setUniform2f("u_Viewport", 100, 100);
+    // mShader->setUniform1f("u_AspectRatio", cam->aspectRatio().get());
+
 	glm::mat4 mvp = (cam->projection() * cam->view() * cam->model());
+
+	// glm::vec4 pA = mvp * glm::vec4(mPointA, 1.0f);
+	// pA /= pA.w;
+	// glm::vec4 pB = mvp * glm::vec4(mPointB, 1.0f);
+	// pB /= pB.w;
+	// std::cout<<"Pos: "<<glm::to_string(pA)<<",  "<<glm::to_string(pB)<<"\n";
 	mShader->setUniformMat4f("u_MVP", mvp);
 	
 	mVA->bind();
 
-	GLCall(glDrawArrays(GL_POINTS, 0, 2)); // No indexing needed, a line only has two vertices
+	GLCall(glDrawArrays(GL_LINES, 0, 2)); // No indexing needed, a line only has two vertices
 
     mVA->unbind();
 	mShader->unbind();

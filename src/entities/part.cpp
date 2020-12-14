@@ -29,7 +29,7 @@ void part::init_scene()
 		plane_abstract::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f))));
 	
 	add(std::shared_ptr<plane>(new plane(
-		plane_abstract::from_1Point2Vectors(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(-0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.5f))))); // Temporary test plane
+		plane_abstract::from_1Point2Vectors(glm::vec3(-3.0f, 0.5f, 0.0f), glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.5f, 0.0f))))); // Temporary test plane
 
 	// Add the three points
 	add(mXY);

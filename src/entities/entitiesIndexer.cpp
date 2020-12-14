@@ -57,6 +57,13 @@ std::shared_ptr<entity> entitiesIndexer::get(glm::ivec3 const& ind) const
 	}
 	return std::shared_ptr<entity>(nullptr); // No entity was found
 }
+std::shared_ptr<entity> entitiesIndexer::get_last() const
+{
+	if(mEntities.empty())
+		return nullptr;
+	return std::get<1>(mEntities.back());
+}
+
 std::shared_ptr<entity> entitiesIndexer::operator[](size_t ind) const
 {
 	return get(ind);

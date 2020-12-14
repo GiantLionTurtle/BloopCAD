@@ -17,13 +17,13 @@ document::document(bloop* parent) :
 	// Create the workspace states, their cameras and all
 	mWorkspaceStates["partDesign"] 			= std::shared_ptr<workspaceState>(new workspaceState);
 	mWorkspaceStates.at("partDesign")->cam 	= std::shared_ptr<camera>(new camera(glm::vec3(0.0f, 0.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), 1.0f));
-	mWorkspaceStates.at("partDesign")->cam->orientation() += glm::vec3(0.615480037895f, -M_PI_4, 0.0f);
+	// mWorkspaceStates.at("partDesign")->cam->orientation() += glm::vec3(0.615480037895f, -M_PI_4, 0.0f);
 
 	mWorkspaceStates.at("partDesign")->doc 	= this;
 	mWorkspaceStates.at("partDesign")->workspaceName = "partDesign";
 
 	mWorkspaceStates["sketchDesign"] 		= std::shared_ptr<workspaceState>(new workspaceState);
-	mWorkspaceStates.at("sketchDesign")->cam = std::shared_ptr<camera>(new camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(45.0f), 1.0f));
+	mWorkspaceStates.at("sketchDesign")->cam = std::shared_ptr<camera>(new camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), 1.0f));
 	mWorkspaceStates.at("sketchDesign")->doc = this;
 	mWorkspaceStates.at("sketchDesign")->workspaceName = "sketchDesign";
 

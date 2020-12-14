@@ -70,6 +70,13 @@ public:
 	std::shared_ptr<entity> get(glm::ivec3 const& ind) const;
 
 	/*
+		@function get_last returns the last element added
+
+		@return : The last entity of the list
+	*/
+	std::shared_ptr<entity> get_last() const;
+
+	/*
 		@operator [] is a wrapper for the get function
 	*/
 	std::shared_ptr<entity> operator[](size_t ind) const;

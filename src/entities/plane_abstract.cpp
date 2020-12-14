@@ -9,7 +9,11 @@ plane_abstract::plane_abstract(glm::vec3 const& origin, glm::vec3 const& v, glm:
 	mW(w),
 	mDir(reversed ? -1.0f : 1.0f)
 {
-
+	if(mOrigin != glm::vec3(0.0f, 0.0f, 0.0f)) {
+		glm::vec3 pt = mOrigin + mV - mW;
+		std::cout<<"Pt: "<<glm::to_string(pt)<<"\n";
+		std::cout<<"vec: "<<glm::to_string(glm::normalize(glm::vec3(0.0f, 0.0f, 8.0f) - pt))<<"\n";
+	}
 }
 
 plane_abstract plane_abstract::from_1Point2Vectors(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed)

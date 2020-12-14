@@ -30,3 +30,12 @@ void vertexBuffer::unbind() const
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 #endif
 }
+
+void vertexBuffer::set(void const* data, unsigned int size_)
+{
+	if(size_ == mSize) {
+		GLCall(glBufferData(GL_ARRAY_BUFFER, size_, data, GL_STATIC_DRAW)); // The draw mode might become an option eventually
+	} else {
+		LOG_WARNING("Cannot dynamically reallocate buffers yet...");
+	}
+}

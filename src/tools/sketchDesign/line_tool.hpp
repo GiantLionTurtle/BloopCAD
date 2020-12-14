@@ -39,6 +39,8 @@ public:
 		@param event : The button press event handed by gtk
 	*/
 	virtual bool manage_button_press(GdkEventButton* event);
+private:
+	glm::vec3 pos_on_plane(glm::vec2 mousePos);
 };
 
 #endif

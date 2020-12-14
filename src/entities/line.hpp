@@ -25,12 +25,14 @@ public:
 		@return : The start point of the line
 	*/
 	glm::vec3 pointA() const { return mPointA; }
+	void set_pointA(glm::vec3 ptA) { mPointA = ptA; }
 	/*
 		@function pointB is a getter for the end point of the line
 
 		@return : The end point of the line
 	*/
 	glm::vec3 pointB() const { return mPointB; }
+	void set_pointB(glm::vec3 ptB) { mPointB = ptB; }
 };
 
 /*
@@ -74,6 +76,8 @@ public:
 		return : A pointer to the constructed line
 	*/
 	static std::shared_ptr<line> from_2Points_ptr(glm::vec3 ptA, glm::vec3 ptB);
+
+	void update_VB();
 protected:
 	/*
 		@function draw_impl draws the line on screen
