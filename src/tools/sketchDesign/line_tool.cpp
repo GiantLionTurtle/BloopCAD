@@ -72,7 +72,7 @@ glm::vec3 line_tool::pos_on_plane(glm::vec2 mousePos)
 		std::shared_ptr<camera> cam = mEnv->state()->cam; // For ease of writing
 		
 		float screen_dist = 1.0f / std::tan(cam->FOV() / 2.0f);
-		float half_screenWidth = cam->aspectRatio().get();
+		float half_screenWidth = cam->aspectRatio();
 		glm::vec3 pos_on_screen(map((float)mousePos.x, 0.0f, (float)mEnv->state()->doc->get_width(), -half_screenWidth, half_screenWidth),
 								map((float)mousePos.y, (float)mEnv->state()->doc->get_height(), 0.0f, -1.0f, 1.0f), 
 								-screen_dist);

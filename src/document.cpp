@@ -16,14 +16,14 @@ document::document(bloop* parent) :
 
 	// Create the workspace states, their cameras and all
 	mWorkspaceStates["partDesign"] 			= std::shared_ptr<workspaceState>(new workspaceState);
-	mWorkspaceStates.at("partDesign")->cam 	= std::shared_ptr<camera>(new camera(glm::vec3(0.0f, 0.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), 1.0f));
+	mWorkspaceStates.at("partDesign")->cam 	= std::shared_ptr<camera>(new camera(glm::vec3(0.0f, 0.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f)));
 	mWorkspaceStates.at("partDesign")->cam->orientation() += glm::vec3(0.615480037895f, -M_PI_4, 0.0f);
 
 	mWorkspaceStates.at("partDesign")->doc 	= this;
 	mWorkspaceStates.at("partDesign")->workspaceName = "partDesign";
 
 	mWorkspaceStates["sketchDesign"] 		= std::shared_ptr<workspaceState>(new workspaceState);
-	mWorkspaceStates.at("sketchDesign")->cam = std::shared_ptr<camera>(new camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), 1.0f));
+	mWorkspaceStates.at("sketchDesign")->cam = std::shared_ptr<camera>(new camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f)));
 	mWorkspaceStates.at("sketchDesign")->doc = this;
 	mWorkspaceStates.at("sketchDesign")->workspaceName = "sketchDesign";
 
@@ -89,6 +89,7 @@ void document::do_unrealize()
 bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 {
 	// Background draw
+	GLCall(glViewport(0, 0, get_width(), get_height()));
 	GLCall(glClearColor(mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, 1.0));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	
@@ -169,7 +170,7 @@ bool document::set_workspace(std::string const& name)
 {
 	if(mWorkspaceStates.find(name) != mWorkspaceStates.end()) {
 		mCurrentWorkspaceState = mWorkspaceStates[name];
-		mCurrentWorkspaceState->cam->aspectRatio().set((float)get_width() / (float)get_height()); // The dimensions might have changed, who knows?
+		mCurrentWorkspaceState->cam->viewport().set(glm::vec2((float)get_width(), (float)get_height())); // The dimensions might have changed, who knows?
 
 		mParentBloop->set_workspace(name, mCurrentWorkspaceState); // Enforce change of workspace
 		return true;
@@ -180,7 +181,7 @@ bool document::set_workspace(std::string const& name)
 bool document::set_workspace() 
 {
 	if(mCurrentWorkspaceState && mWorkspaceStates.find(mCurrentWorkspaceState->workspaceName) != mWorkspaceStates.end()) {
-		mCurrentWorkspaceState->cam->aspectRatio().set((float)get_width() / (float)get_height());
+		mCurrentWorkspaceState->cam->viewport().set(glm::vec2((float)get_width(), (float)get_height()));
 
 		mParentBloop->set_workspace(mCurrentWorkspaceState->workspaceName, mCurrentWorkspaceState); // Enforce workspace choice
 		return true;

@@ -42,7 +42,7 @@ public:
 */
 class line : public entity, public line_abstract {
 private:
-	const glm::vec3 mColor = glm::vec3(1.0f, 0.0f, 0.0f); // Line colors
+	const glm::vec3 mColor = glm::vec3(0.0f, 0.89f, 0.725f); // Line colors
 
 	glm::vec3 mVertices[2]; // The vertices describing the line
 

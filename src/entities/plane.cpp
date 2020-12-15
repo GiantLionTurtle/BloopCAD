@@ -64,7 +64,7 @@ void plane::draw_selection_impl(std::shared_ptr<camera> cam)
 	// No need to disable depth buffer, the quads have to obstruct each others
 	mSelectionShader->bind();
 
-	mSelectionShader->setUniform3f("u_Color", mSelectionColor.r, mSelectionColor.g, mSelectionColor.b);
+	mSelectionShader->setUniform3f("u_Color", mSelectionColor);
 	mSelectionShader->setUniformMat4f("u_MVP", cam->mvp());
 	mVA->bind();
 	mIB->bind();

@@ -196,6 +196,13 @@ public:
 	*/
 	void setUniform2f(std::string const& name, float v0, float v1);
 	/*
+		@function setUniform2f sets a vec2 float uniform variable at a location
+
+		@param name : 	The name of the uniform
+		@param vec2 : 	The vec2 to be set
+	*/
+	void setUniform2f(std::string const& name, glm::vec2 vec2);
+	/*
 		@function setUniform3f sets a vec3 float uniform variable at a location
 
 		@param name : 	The name of the uniform
@@ -204,6 +211,13 @@ public:
 		@param v2 : 	The third value of the vec3 to be set
 	*/
 	void setUniform3f(std::string const& name, float v0, float v1, float v2);
+	/*
+		@function setUniform3f sets a vec3 float uniform variable at a location
+
+		@param name : 	The name of the uniform
+		@param vec3 : 	The vec3 to be set
+	*/
+	void setUniform3f(std::string const& name, glm::vec3 vec3);
 	/*
 		@function setUniform4f sets a vec4 float uniform variable at a location
 
@@ -214,6 +228,14 @@ public:
 		@param v3 : 	The fourth value of the vec4 to be set
 	*/
 	void setUniform4f(std::string const& name, float v0, float v1, float v2, float v3);
+	/*
+		@function setUniform4f sets a vec4 float uniform variable at a location
+
+		@param name : 	The name of the uniform
+		@param vec4 : 	The vec4 to be set
+	*/
+	void setUniform4f(std::string const& name, glm::vec4 vec3);
+
 	/*
 		@function setUniformMat4f sets a Mat4 float uniform variable at a location
 

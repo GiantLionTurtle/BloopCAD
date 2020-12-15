@@ -8,13 +8,13 @@
 #include <glm/ext/quaternion_trigonometric.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-camera::camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float FOV_, float aspectRatio_):
+camera::camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float FOV_, glm::vec2 viewport_):
 	mPos(cartesianCoords),
 	mTarget(target),
 	mOrientation(glm::vec3(0.0f, 0.0f, 0.0f)),
 	mZoom(1.0f),
 	mFOV(FOV_),
-	mAspectRatio(aspectRatio_),
+	mViewport(viewport_),
 	mTransformation{glm::vec3(0.0f, 0.0f, 0.0f)/*No translation*/, 
 		glm::vec3(1.0f, 1.0f, 1.0f)/*Scale of 100%*/, 
 		glm::quat(1.0f, 0.0f, 0.0f, 0.0f)/*No rotation with unit quaternion*/}
@@ -46,7 +46,7 @@ glm::mat4 camera::view() const
 glm::mat4 camera::projection() const
 {
 	// 0.1f for the close plane and 100.0f for the far plane are arbitrary, they are subject to change
-	return glm::perspective(mFOV.get(), mAspectRatio.get(), 0.1f, 100.0f);
+	return glm::perspective(mFOV.get(), aspectRatio(), 0.1f, 100.0f);
 }
 glm::mat4 camera::mvp() const
 {
@@ -83,8 +83,8 @@ void camera::set(std::shared_ptr<camera> other)
 
 	mZoom.set(other->mZoom.get());
 	mFOV.set(other->mFOV.get());
-	mAspectRatio.set(other->mAspectRatio.get());
-	
+	mViewport.set(other->mViewport.get());
+
 	mTransformation.rotation.set(other->mTransformation.rotation.get());
 	mTransformation.translation.set(other->mTransformation.translation.get());
 	mTransformation.scale.set(other->mTransformation.scale.get());
@@ -133,7 +133,7 @@ void camera::update()
 {
 	mTarget.update();
 	mZoom.update();	
-	mAspectRatio.update();
+	mViewport.update();
 	mTransformation.translation.update();
 
 	if(mTransformation.rotation.steady()) { // Do update the quaternion rotation if it is not in the middle of an interpolation

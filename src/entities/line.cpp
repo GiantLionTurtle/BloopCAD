@@ -45,15 +45,12 @@ void line::draw_impl(std::shared_ptr<camera> cam)
 {
 	mShader->bind();
 	mShader->setUniform4f("u_Color", mColor.r, mColor.g, mColor.b, 1.0f);
-    // mShader->setUniform1f("u_AspectRatio", cam->aspectRatio().get());
+    mShader->setUniform2f("u_Viewport", cam->viewport().get());
+    mShader->setUniform1f("u_LineWidth", 30);
 
 	glm::mat4 mvp = (cam->projection() * cam->view() * cam->model());
 
-	// glm::vec4 pA = mvp * glm::vec4(mPointA, 1.0f);
-	// pA /= pA.w;
-	// glm::vec4 pB = mvp * glm::vec4(mPointB, 1.0f);
-	// pB /= pB.w;
-	// std::cout<<"Pos: "<<glm::to_string(pA)<<",  "<<glm::to_string(pB)<<"\n";
+	// std::cout<<"Pts: "<<glm::to_string(mvp * glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f))<<" - "<<glm::to_string(mvp * glm::vec4(1.0f, -1.0f, 0.0f, 1.0f))<<"\n";
 	mShader->setUniformMat4f("u_MVP", mvp);
 	
 	mVA->bind();

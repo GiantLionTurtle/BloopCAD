@@ -37,7 +37,7 @@ protected:
 
 	animatable<float> mZoom; 		// The overall zoom (unused and not supported for now)
 	animatable<float> mFOV; 		// The field of view of the camera
-	animatable<float> mAspectRatio;	// The aspect ratio of the rendering area
+	animatable<glm::vec2> mViewport;		// The viewport dimensions 
 	transform mTransformation;		// The transformation of the model
 public:
 	/*
@@ -46,9 +46,9 @@ public:
 		@param cartesianCoords : 	The position of the camera in the world
 		@param target :				The position of the target of the camera in the world
 		@param FOV_ :				The field of view of the camera
-		@param aspectRatio_ : 		The aspect ratio of the drawing area
+		@param viewport_ : 			The dimensions the drawing area
 	*/
-	camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float FOV_, float aspectRatio_);
+	camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float FOV_, glm::vec2 viewport_);
 
 	/*
 		@function model
@@ -131,12 +131,15 @@ public:
 		@return : The zoom of the camera as an animatable
 	*/
 	animatable<float>& zoom() { return mZoom; };
+
+	animatable<glm::vec2>& viewport() { return mViewport; };
 	/*
 		@function aspectRatio
 
 		@return : The aspectRatio of the drawing area
 	*/
-	animatable<float>& aspectRatio() { return mAspectRatio; }
+	float aspectRatio() const { return mViewport.get().x / mViewport.get().y; }
+
 	/*
 		@function transformation
 
