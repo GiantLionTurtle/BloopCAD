@@ -29,6 +29,7 @@ void line::update_VB()
 	mVB->bind();
 	mVB->set(tmp, sizeof(glm::vec3) * 2);
 	mVB->unbind();
+	set_require_redraw();
 }
 
 void line::draw_impl(std::shared_ptr<camera> cam)

@@ -141,6 +141,7 @@ bool entity::exists() const
 void entity::add(std::shared_ptr<entity> elem)
 {
 	if(elem) {
+		set_require_redraw();
 		elem->set_parent(this);
 		mChildren.push_back({*highestInd, elem});
 
