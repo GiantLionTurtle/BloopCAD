@@ -97,9 +97,6 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 	int initialFrameBuffer;
 	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &initialFrameBuffer); // TODO: check if this could change (if it does not, no need to do it every loop)
 
-	// Update the camera for animations and whatnot
-	mCurrentWorkspaceState->cam->update();
-
 	if(mPart) {
 		// Draw the part
 		mPart->draw(mCurrentWorkspaceState->cam);
@@ -119,7 +116,14 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 gboolean document::frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock, gpointer data)
 {
     document* self = (document*) data;
-    self->mViewport.queue_draw();
+	// Update the camera for animations and whatnot
+	self->mCurrentWorkspaceState->cam->update();
+	camState cmSt = self->mCurrentWorkspaceState->cam->state();
+
+	if(self->mCurrentCamState != cmSt) {
+		self->mCurrentCamState = cmSt;
+		self->mViewport.queue_draw();
+	}
 
     return G_SOURCE_CONTINUE;
 }

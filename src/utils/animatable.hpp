@@ -98,7 +98,7 @@ public:
 	/*
 		@function steady tells if the animation has ended 
 	*/
-	bool steady()
+	bool steady() const
 	{
 		return mAnimationEnded;
 	}

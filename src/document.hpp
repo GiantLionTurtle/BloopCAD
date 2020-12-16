@@ -58,6 +58,8 @@ private:
 	glm::vec3 mBackgroundColor; // The rendering background color
 	Gtk::GLArea mViewport; // The rendering widget
 	bloop* mParentBloop; // The bloop window owning the document
+
+	camState mCurrentCamState;
 public:
 	/*
 		@function document creates an empty and mostly unitialized document 

@@ -44,13 +44,18 @@ void line::update_VB()
 void line::draw_impl(std::shared_ptr<camera> cam)
 {
 	mShader->bind();
-	mShader->setUniform4f("u_Color", mColor.r, mColor.g, mColor.b, 1.0f);
+	glm::vec4 color = glm::vec4(mColor, 1.0f);
+	if(hovered()) {
+		color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	} else if(selected()) {
+		color = glm::vec4(0.0f, 0.8, 0.2, 1.0f);
+	}
+	mShader->setUniform4f("u_Color", color);
     mShader->setUniform2f("u_Viewport", cam->viewport().get());
     mShader->setUniform1f("u_LineWidth", 30);
 
 	glm::mat4 mvp = (cam->projection() * cam->view() * cam->model());
 
-	// std::cout<<"Pts: "<<glm::to_string(mvp * glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f))<<" - "<<glm::to_string(mvp * glm::vec4(1.0f, -1.0f, 0.0f, 1.0f))<<"\n";
 	mShader->setUniformMat4f("u_MVP", mvp);
 	
 	mVA->bind();
@@ -63,5 +68,19 @@ void line::draw_impl(std::shared_ptr<camera> cam)
 
 void line::draw_selection_impl(std::shared_ptr<camera> cam)
 {
+	mShader->bind();
+	mShader->setUniform4f("u_Color", mSelectionColor.r, mSelectionColor.g, mSelectionColor.b, 1.0f);
+    mShader->setUniform2f("u_Viewport", cam->viewport().get());
+    mShader->setUniform1f("u_LineWidth", 30);
 
+	glm::mat4 mvp = (cam->projection() * cam->view() * cam->model());
+
+	mShader->setUniformMat4f("u_MVP", mvp);
+	
+	mVA->bind();
+
+	GLCall(glDrawArrays(GL_LINES, 0, 2)); // No indexing needed, a line only has two vertices
+
+    mVA->unbind();
+	mShader->unbind();
 }

@@ -8,6 +8,20 @@
 #include <glm/ext/quaternion_trigonometric.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
+void print_state(camState const& st)
+{
+	std::cout<<glm::to_string(st.pos)<<" - "<<glm::to_string(st.up)<<" - "<<glm::to_string(st.right);
+}
+
+bool operator !=(camState const& st1, camState const& st2) 
+{
+	return st1.pos != st2.pos || st1.up != st2.up || st1.right != st2.right;
+}
+bool operator ==(camState const& st1, camState const& st2) 
+{
+	return st1.pos == st2.pos && st1.up == st2.up && st1.right == st2.right;
+}
+
 camera::camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float FOV_, glm::vec2 viewport_):
 	mPos(cartesianCoords),
 	mTarget(target),
@@ -154,6 +168,18 @@ bool camera::flipped() const
 	if(mod_angle < 0)
 		mod_angle += M_PI * 2.0f;
 	return (mod_angle > M_PI / 2.0f && mod_angle < M_PI * 3.0f / 2.0f);
+}
+
+bool camera::steady() const 
+{
+	return 	mPos.steady() &&  mTarget.steady() && mOrientation.steady() && 
+			mZoom.steady() &&  mFOV.steady() && mViewport.steady() && 
+			mTransformation.rotation.steady() && mTransformation.scale.steady() && mTransformation.translation.steady();
+}
+
+camState camera::state() const 
+{
+	return { pos(), up(), right() };
 }
 
 void camera::update_rotation(glm::vec3 const& orientation, unsigned int duration_ms)

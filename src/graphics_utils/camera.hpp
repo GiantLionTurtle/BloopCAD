@@ -27,8 +27,12 @@ struct transform {
 	@struct camState is a helper struct to help describe a camera at a given orientation
 */
 struct camState {
-	glm::vec3 up, right;
+	glm::vec3 pos, up, right;
 };
+
+void print_state(camState const& st);
+bool operator !=(camState const& st1, camState const& st2);
+bool operator ==(camState const& st1, camState const& st2);
 
 class camera {
 protected:
@@ -181,6 +185,10 @@ public:
 		@return : Whether or not the camera is upside down
 	*/
 	bool flipped() const;
+
+	bool steady() const;
+
+	camState state() const;
 private:
 	/*
 		@function update_rotation updates the rotation quaternion with an orientation

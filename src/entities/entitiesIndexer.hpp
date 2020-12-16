@@ -96,6 +96,9 @@ public:
 		@return : Wheter or not the indexer is following another indexer
 	*/
 	bool is_following() const { return (bool)mToFollow; }
+
+	void set_require_redraw(bool require);
+	bool require_redraw() const;
 private:
 	/*
 		@function compare_indices makes a comparison between two 3 ints indices
