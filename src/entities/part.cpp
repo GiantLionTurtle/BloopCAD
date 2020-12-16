@@ -4,13 +4,12 @@
 #include <entities/line.hpp>
 #include <actions/sketchDesign/addLine_action.hpp>
 
-part::part():
-	entitiesIndexer()
+part::part()
 {
 	init_scene();
 }
-part::part(std::shared_ptr<entitiesIndexer> indexer):
-	entitiesIndexer(indexer) // Follow that indexer
+part::part(entity* parent):
+	entity(parent)
 {
 	init_scene();
 }

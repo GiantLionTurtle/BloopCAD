@@ -6,7 +6,7 @@ createSketch_action::createSketch_action(std::shared_ptr<plane_abstract> sketchP
 	mTarget(target),
 	mSketch(nullptr)
 {
-	mSketch = std::shared_ptr<sketch>(new sketch(mSketchPlane, mTarget));
+	mSketch = std::shared_ptr<sketch>(new sketch(mSketchPlane, mTarget.get()));
 	mSketch->set_exists(false); // It should not exist until the action is consumed
 	mTarget->add_sketch(mSketch);
 }

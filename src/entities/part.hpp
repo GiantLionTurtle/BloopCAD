@@ -3,7 +3,6 @@
 #define PART_HPP_
 
 #include "entity.hpp"
-#include "entitiesIndexer.hpp"
 
 #include "plane_abstract.hpp"
 #include "plane.hpp"
@@ -16,9 +15,8 @@ class document; // The forward declaration of document is needed for pointer dec
 /*
 	@class part describes a part, which is composed of sub entities and sketches
 	@parent : entity
-	@parent : entitiesIndexer
 */
-class part : public entity, public entitiesIndexer {
+class part : public entity {
 private:
 	std::shared_ptr<plane> mXY, mYZ, mZX; // Origin planes
 	std::vector<std::shared_ptr<sketch>> mSketches; // Sketches drawn in the part
@@ -28,11 +26,11 @@ public:
 	*/
 	part();
 	/*
-		@function part creates an empty part that follows another entitiesIndexer
+		@function part creates an empty part that is owned by another entity
 
-		@param indexer : Other entitiesIndexer to follow
+		@param parent : The parent entity to follow
 	*/
-	part(std::shared_ptr<entitiesIndexer> indexer);
+	part(entity* parent);
 
 	/*
 		@function init_scene sets up the scene by :

@@ -3,14 +3,13 @@
 #include <utils/errorLogger.hpp>
 
 sketch::sketch(std::shared_ptr<plane_abstract> base_plane):
-    mBasePlane(base_plane),
-    entitiesIndexer()
+    mBasePlane(base_plane)
 {
 
 }
-sketch::sketch(std::shared_ptr<plane_abstract> base_plane, std::shared_ptr<entitiesIndexer> indexer):
+sketch::sketch(std::shared_ptr<plane_abstract> base_plane, entity* parent):
     mBasePlane(base_plane),
-    entitiesIndexer(indexer) // Follow that indexer
+    entity(parent) // Follow that entity
 {
 
 }

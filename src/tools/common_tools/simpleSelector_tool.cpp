@@ -61,7 +61,7 @@ glm::ivec3 simpleSelector_tool::id_at_point(glm::vec2 point)
 std::shared_ptr<entity> simpleSelector_tool::primitive_entity_at_point(glm::vec2 point)
 {
 	if(mEnv->state()) {
-		return mEnv->state()->doc->indexer()->get(id_at_point(point)); // The indexer is the current thing that is worked on in the document
+		return mEnv->state()->target->get(id_at_point(point)); // The indexer is the current thing that is worked on in the document
 	}
 	return nullptr;
 }

@@ -1,6 +1,5 @@
 set(entities_utils_source_files
   plane_abstract.cpp
-  entitiesIndexer.cpp
   entity.cpp
   plane.cpp
   line.cpp

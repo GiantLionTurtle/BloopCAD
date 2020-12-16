@@ -132,12 +132,7 @@ public:
 		@return : The part that is worked on in the document, as a part
 	*/
 	std::shared_ptr<part> target() { return mPart; }
-	/*
-		@function indexer
-
-		@return : The part that is worked on in the document, as an entities indexer
-	*/
-	std::shared_ptr<entitiesIndexer> indexer() { return mPart; }
+	
 	/*
 		@function selectionBuffer
 

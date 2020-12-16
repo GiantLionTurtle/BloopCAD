@@ -3,7 +3,6 @@
 #define SKETCH_HPP_
 
 #include "entity.hpp"
-#include "entitiesIndexer.hpp"
 #include "plane_abstract.hpp"
 
 #include <memory>
@@ -12,9 +11,8 @@
 /*
 	@class sketch describes a sketch which is a bunch of geometries with constraints
 	@parent : entity
-	@parent : entitiesIndexer
 */
-class sketch : public entity, public entitiesIndexer {
+class sketch : public entity {
 private:
 	std::shared_ptr<plane_abstract> mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
 public:
@@ -28,9 +26,9 @@ public:
 		@function sketch creates a sketch
 
 		@param base_plane : The plane onto which everything is constructed in the sketch
-		@param indexer : 	An indexer to follow, likely the part onto which it is added
+		@param parent : 	An entity that contains this sketch
 	*/
-	sketch(std::shared_ptr<plane_abstract> base_plane, std::shared_ptr<entitiesIndexer> indexer);
+	sketch(std::shared_ptr<plane_abstract> base_plane, entity* parent);
 
 	/*
 		@function basePlane

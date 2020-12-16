@@ -5,8 +5,8 @@
 #include <forward_bloop.hpp>
 #include <graphics_utils/camera.hpp>
 #include <tools/tool.hpp>
-#include <entities/entitiesIndexer.hpp>
 #include <graphics_utils/frameBuffer.hpp>
+#include <entities/forward_entities.hpp>
 
 #include <gtkmm.h>
 
