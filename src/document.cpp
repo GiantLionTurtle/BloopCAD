@@ -10,7 +10,8 @@
 document::document(bloop* parent) :
 	mParentBloop(parent),
 	mCurrentWorkspaceState(nullptr),
-	mBackgroundColor(0.0f, 0.0f, 0.0f)
+	mBackgroundColor(0.0f, 0.0f, 0.0f),
+	mFrameId(1)
 {
 	connect_signals();
 
@@ -99,18 +100,19 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 
 	if(mPart) {
 		// Draw the part
-		mPart->draw(mCurrentWorkspaceState->cam);
+		mPart->draw(mCurrentWorkspaceState->cam, mFrameId);
 
 		// Draw the selection shadows of the part
 		mSelectionBuffer->bind();
 		GLCall(glViewport(0, 0, get_width(), get_height()));
 		GLCall(glClearColor(0.0, 0.0, 0.0, 1.0));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-		mPart->draw_selection(mCurrentWorkspaceState->cam);
+		mPart->draw_selection(mCurrentWorkspaceState->cam, mFrameId);
 		
 		// Clean up
 		mSelectionBuffer->unbind(initialFrameBuffer);
 	}
+	mFrameId++;
 	return true;
 }
 gboolean document::frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock, gpointer data)

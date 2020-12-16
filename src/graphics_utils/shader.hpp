@@ -35,6 +35,8 @@ class shader {
 private:
 	unsigned int mRendererID; // The openGL handle to the shader
 	std::unordered_map<std::string, int> mUniformCache; // A cache to remember the uniform locations and hopefully save time when setting uniforms
+
+	int mLastUsedAtFrame;
 public:
 	/*
 		@function shader creates a shader from raw source with only vertex and fragment shader in the pipeline
@@ -243,6 +245,9 @@ public:
 		@param matrix : 	The matrix to be set (as a glm::mat4)
 	*/
 	void setUniformMat4f(std::string const& name, glm::mat4 const& matrix);
+
+	int lastUsed() const { return mLastUsedAtFrame; }
+	void set_used(int frame) { mLastUsedAtFrame = frame; };
 private:
 	/*
 		@function getUniformLocation retrieves the location of a uniform variable within a shader program

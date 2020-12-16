@@ -1,6 +1,7 @@
 set(graphics_utils_source_files
   GLCall.cpp
   shader.cpp
+  shadersPool.cpp
   vertexBuffer.cpp
   vertexBufferLayout.cpp
   indexBuffer.cpp

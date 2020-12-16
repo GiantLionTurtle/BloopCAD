@@ -1,6 +1,8 @@
 
 #include "plane.hpp"
+
 #include <graphics_utils/GLCall.hpp>
+#include <graphics_utils/shadersPool.hpp>
 
 plane::plane(plane_abstract const& plane_, std::string const& label) :
 	plane_abstract(plane_),
@@ -21,8 +23,16 @@ plane::plane(plane_abstract const& plane_, std::string const& label) :
 	mIB = std::shared_ptr<indexBuffer>(new indexBuffer(mIndices, 6));
 
 	// Create the shaders
-	mShader = shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/planeShader.frag");
-	mSelectionShader = shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/plainColor.frag");
+	mShader = shadersPool::get_instance().get("plane");
+	if(!mShader) {
+		mShader = shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/planeShader.frag");
+		shadersPool::get_instance().add("plane", mShader);
+	}
+	mSelectionShader = shadersPool::get_instance().get("plane_sel");
+	if(!mSelectionShader) {
+		mSelectionShader = shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/plainColor.frag");
+		shadersPool::get_instance().add("plane_sel", mSelectionShader);
+	}
 
 	// Clean up (somewhat unecessary)
 	mVA->unbind();
@@ -30,7 +40,7 @@ plane::plane(plane_abstract const& plane_, std::string const& label) :
 	mIB->unbind();
 }
 
-void plane::draw_impl(std::shared_ptr<camera> cam)
+void plane::draw_impl(std::shared_ptr<camera> cam, int frame)
 {
 	// TODO: make this less sketch?
 	GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad
@@ -45,7 +55,11 @@ void plane::draw_impl(std::shared_ptr<camera> cam)
 	if(selected()) 
 		color += glm::vec3(0.0f, 0.0f, 0.3f); // Make it blue-er if selected
 	mShader->setUniform4f("u_Color", color.r, color.g, color.b, hovered() ? 0.7 : 0.5);
-	mShader->setUniformMat4f("u_MVP", cam->mvp());
+
+	if(mShader->lastUsed() != frame) {
+		mShader->setUniformMat4f("u_MVP", cam->mvp());
+		mShader->set_used(frame);
+	}
 	
 	mVA->bind();
 	mIB->bind();
@@ -59,13 +73,18 @@ void plane::draw_impl(std::shared_ptr<camera> cam)
 	GLCall(glEnable(GL_DEPTH_TEST));
 }
 
-void plane::draw_selection_impl(std::shared_ptr<camera> cam)
+void plane::draw_selection_impl(std::shared_ptr<camera> cam, int frame)
 {
 	// No need to disable depth buffer, the quads have to obstruct each others
 	mSelectionShader->bind();
 
 	mSelectionShader->setUniform3f("u_Color", mSelectionColor);
-	mSelectionShader->setUniformMat4f("u_MVP", cam->mvp());
+
+	if(mSelectionShader->lastUsed() != frame) {
+		mSelectionShader->setUniformMat4f("u_MVP", cam->mvp());
+		mSelectionShader->set_used(frame);
+	}
+
 	mVA->bind();
 	mIB->bind();
 

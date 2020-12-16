@@ -6,16 +6,23 @@
 #include <fstream>
 #include <filesystem>
 
-shader::shader(std::string const& vertexShaderSource, std::string const& fragmentShaderSource)
+shader::shader(std::string const& vertexShaderSource, std::string const& fragmentShaderSource):
+	mLastUsedAtFrame(0)
 {
 	mRendererID = createShader(vertexShaderSource, fragmentShaderSource);
 }
 shader::shader(unsigned int id) :
-	mRendererID(id)
-{}
+	mRendererID(id),
+	mLastUsedAtFrame(0)
+{
+
+}
 shader::shader() :
-	mRendererID(0)
-{}
+	mRendererID(0),
+	mLastUsedAtFrame(0)
+{
+	
+}
 shader::~shader()
 {
 	if(valid()) {

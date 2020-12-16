@@ -41,14 +41,16 @@ protected:
 		@function draw_impl draws the part on screen, it calls draw on all it's components
 
 		@param cam : The camera used for rendering
+		@param frame : 	The current frame id
 	*/
-	virtual void draw_impl(std::shared_ptr<camera> cam);
+	virtual void draw_impl(std::shared_ptr<camera> cam, int frame);
 	/*
 		@function draw_selection_impl draws the part on the selection buffer, it calls draw_selection on all it's components
 
 		@param cam : The camera used for rendering
+		@param frame : 	The current frame id
 	*/
-	virtual void draw_selection_impl(std::shared_ptr<camera> cam);
+	virtual void draw_selection_impl(std::shared_ptr<camera> cam, int frame);
 };
 
 #endif

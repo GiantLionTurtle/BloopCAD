@@ -30,17 +30,17 @@ entity::entity(entity* parent):
 
 }
 
-void entity::draw(std::shared_ptr<camera> cam)
+void entity::draw(std::shared_ptr<camera> cam, int frame)
 {
 	if(exists() && (visible() || selected())) { // Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
 		mRequire_redraw = false;
-		draw_impl(cam);
+		draw_impl(cam, frame);
 	}
 }
-void entity::draw_selection(std::shared_ptr<camera> cam)
+void entity::draw_selection(std::shared_ptr<camera> cam, int frame)
 {
 	if(exists() && (visible() || selected())) // Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
-		draw_selection_impl(cam);
+		draw_selection_impl(cam, frame);
 }
 
 void entity::set_selected(bool select) 

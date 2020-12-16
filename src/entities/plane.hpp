@@ -41,14 +41,16 @@ protected:
 		@function draw_impl draws the plane on screen
 
 		@param cam : The camera used for rendering
+		@param frame : 	The current frame id
 	*/
-	virtual void draw_impl(std::shared_ptr<camera> cam);
+	virtual void draw_impl(std::shared_ptr<camera> cam, int frame);
 	/*
 		@function draw_selection_impl draws the plane in plain color on the selection buffer
 
 		@param cam : The camera used for rendering
+		@param frame : 	The current frame id
 	*/
-	virtual void draw_selection_impl(std::shared_ptr<camera> cam);
+	virtual void draw_selection_impl(std::shared_ptr<camera> cam, int frame);
 
 	void init_buffers();
 };

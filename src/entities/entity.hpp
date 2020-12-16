@@ -53,15 +53,17 @@ public:
 	/*
 		@function draw draws the entity
 
-		@param cam : The camera used for rendering
+		@param cam : 	The camera used for rendering
+		@param frame : 	The current frame id
 	*/
-	void draw(std::shared_ptr<camera> cam);
+	void draw(std::shared_ptr<camera> cam, int frame);
 	/*
 		@function draw draws the entity with it's plain selection color
 
-		@param cam : The camera used for rendering
+		@param cam : 	The camera used for rendering
+		@param frame : 	The current frame id
 	*/
-	void draw_selection(std::shared_ptr<camera> cam);
+	void draw_selection(std::shared_ptr<camera> cam, int frame);
 
 	/*
 		@function set_selected sets the selected
@@ -222,16 +224,18 @@ protected:
 	/*
 		@function draw_impl is an overiddable function for children classes to draw themselves
 
-		@param cam : The camera used for rendering
+		@param cam : 	The camera used for rendering
+		@param frame : 	The current frame id
 	*/
-	virtual void draw_impl(std::shared_ptr<camera> cam) {};
+	virtual void draw_impl(std::shared_ptr<camera> cam, int frame) {};
 	/*
 		@function draw_selection_impl is an overiddable function for children classes to draw themselves 
 		in plain color on the selection buffer
 
-		@param cam : The camera used for rendering
+		@param cam : 	The camera used for rendering
+		@param frame : 	The current frame id
 	*/	
-	virtual void draw_selection_impl(std::shared_ptr<camera> cam) {};
+	virtual void draw_selection_impl(std::shared_ptr<camera> cam, int frame) {};
 
 	/*
 		@function compare_indices makes a comparison between two 3 ints indices

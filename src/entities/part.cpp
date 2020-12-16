@@ -57,12 +57,12 @@ std::shared_ptr<sketch> part::get_sketch(int ind)
 	return mSketches[ind]; 
 }
 
-void part::draw_impl(std::shared_ptr<camera> cam)
+void part::draw_impl(std::shared_ptr<camera> cam, int frame)
 {
-	for_each([cam](std::shared_ptr<entity> ent) { ent->draw(cam); }); // Make the call for all components
+	for_each([cam, frame](std::shared_ptr<entity> ent) { ent->draw(cam, frame); }); // Make the call for all components
 }
 
-void part::draw_selection_impl(std::shared_ptr<camera> cam)
+void part::draw_selection_impl(std::shared_ptr<camera> cam, int frame)
 {
-	for_each([cam](std::shared_ptr<entity> ent) { ent->draw_selection(cam); }); // Make the call for all components
+	for_each([cam, frame](std::shared_ptr<entity> ent) { ent->draw_selection(cam, frame); }); // Make the call for all components
 }

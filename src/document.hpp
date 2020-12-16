@@ -57,6 +57,7 @@ private:
 
 	glm::vec3 mBackgroundColor; // The rendering background color
 	Gtk::GLArea mViewport; // The rendering widget
+	int mFrameId; // The current frame id, it is NOT garanteed to be unique
 	bloop* mParentBloop; // The bloop window owning the document
 
 	camState mCurrentCamState;
@@ -132,7 +133,7 @@ public:
 		@return : The part that is worked on in the document, as a part
 	*/
 	std::shared_ptr<part> target() { return mPart; }
-	
+
 	/*
 		@function selectionBuffer
 
