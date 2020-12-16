@@ -53,29 +53,9 @@ public:
 	/*
 		@function line creates a line 
 
-		@param ptA : The start point of the line
-		@param ptB : The end point of the line
+		@param baseLine : The underlying line of the graphical entity
 	*/
-	line(glm::vec3 ptA, glm::vec3 ptB);
-
-	/*
-		@function from_2Points creates a line
-
-		@param ptA : The start point of the line
-		@param ptB : The end point of the line
-
-		return : The constructed line
-	*/
-	static line from_2Points(glm::vec3 ptA, glm::vec3 ptB);
-	/*
-		@function from_2Points_ptr creates a line
-
-		@param ptA : The start point of the line
-		@param ptB : The end point of the line
-
-		return : A pointer to the constructed line
-	*/
-	static std::shared_ptr<line> from_2Points_ptr(glm::vec3 ptA, glm::vec3 ptB);
+	line(line_abstract const& baseLine);
 
 	void update_VB();
 protected:

@@ -32,8 +32,11 @@ protected:
 	int mState;	// The state of the entity, described by the above flags
 	glm::vec3 mSelectionColor; // The color of the entity on the selection buffer
 
+	bool mRequire_redraw;
+
 	std::vector<std::pair<glm::ivec3, std::shared_ptr<entity>>> mChildren; // The entities container
 	glm::ivec3 mHighestInd; // The current highest 3 ints index
+	glm::ivec3* highestInd;
 	entity* mParent;
 public:
 	/*
@@ -211,8 +214,10 @@ public:
 	*/
 	bool is_following() const { if(mParent) return true; return false; }
 
-	void set_require_redraw(bool require);
-	bool require_redraw() const;
+	void set_require_redraw();
+	bool require_redraw() const { return mRequire_redraw; };
+
+	void set_parent(entity* parent);
 protected:
 	/*
 		@function draw_impl is an overiddable function for children classes to draw themselves

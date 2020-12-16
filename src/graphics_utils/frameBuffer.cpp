@@ -4,6 +4,9 @@
 frameBuffer::frameBuffer(unsigned int width, unsigned int height):
 	mTexture(width, height, GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST, 4) // No need to get fancy with interpolation, it will likely be the exact same size as the screen
 {
+#ifdef BLOOP_TEST_SELCTIONCOLORS_ON_MAINBUFFER
+#warning "Selection colors will be drawn on main buffer" // Do nothing to keeep it on the main frame buffer (screen)
+#else
 	int initialFrameBuffer; // Record the context's frame buffer
 	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &initialFrameBuffer);
 
@@ -35,6 +38,7 @@ frameBuffer::frameBuffer(unsigned int width, unsigned int height):
 	
 	// Clean up
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, initialFrameBuffer));
+#endif
 }
 frameBuffer::~frameBuffer()
 {

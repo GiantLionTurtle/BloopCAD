@@ -6,7 +6,7 @@
 
 #include "GLCall.hpp"
 
-//#define BLOOP_TEST_SELCTIONCOLORS_ON_MAINBUFFER // Used to debug the selection buffer by rendering to the screen
+// #define BLOOP_TEST_SELCTIONCOLORS_ON_MAINBUFFER // Used to debug the selection buffer by rendering to the screen
 
 /*
     @class frameBuffer describes an abstraction of a GL_FRAMEBUFFER specifically to use it as a selection buffer

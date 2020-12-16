@@ -1,13 +1,15 @@
 
 #include "entity.hpp"
 
+#include <utils/errorLogger.hpp>
+
 entity::entity(): 
 	mState(BLOOP_ENTITY_EXISTS_FLAG),
 	mSelectionColor(0.0f, 0.0f, 0.0f),
 	mHighestInd(0, 0, 0),
 	mParent(nullptr)
 {
-
+	highestInd = new glm::ivec3(mHighestInd);
 }
 entity::entity(glm::ivec3 startInd): 
 	mState(BLOOP_ENTITY_EXISTS_FLAG),
@@ -15,12 +17,14 @@ entity::entity(glm::ivec3 startInd):
 	mHighestInd(startInd),
 	mParent(nullptr)
 {
-
+	highestInd = new glm::ivec3(mHighestInd);
+	set_selectionColor(glm::vec3(startInd) / 255.0f);
 }
 entity::entity(entity* parent): 
 	mState(BLOOP_ENTITY_EXISTS_FLAG),
 	mSelectionColor(0.0f, 0.0f, 0.0f),
 	mHighestInd(parent->mHighestInd),
+	highestInd(parent->highestInd),
 	mParent(parent)
 {
 
@@ -28,8 +32,10 @@ entity::entity(entity* parent):
 
 void entity::draw(std::shared_ptr<camera> cam)
 {
-	if(exists() && (visible() || selected())) // Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
+	if(exists() && (visible() || selected())) { // Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
+		mRequire_redraw = false;
 		draw_impl(cam);
+	}
 }
 void entity::draw_selection(std::shared_ptr<camera> cam)
 {
@@ -37,6 +43,17 @@ void entity::draw_selection(std::shared_ptr<camera> cam)
 		draw_selection_impl(cam);
 }
 
+void entity::set_selected(bool select) 
+{ 	
+	if(exists()) {
+		set_require_redraw();
+		if(select) {
+			mState |= BLOOP_ENTITY_SELECTED_FLAG;
+		} else {
+			mState &= ~BLOOP_ENTITY_SELECTED_FLAG;
+		}		
+	}
+}
 void entity::select() 
 { 
 	if(exists()) // TODO: Are all these if(exists()) {} overkill?
@@ -46,16 +63,6 @@ void entity::unselect()
 { 
 	if(exists())
 		set_selected(false); 
-}
-void entity::set_selected(bool select) 
-{ 	
-	if(exists()) {
-		if(select) {
-			mState |= BLOOP_ENTITY_SELECTED_FLAG;
-		} else {
-			mState &= ~BLOOP_ENTITY_SELECTED_FLAG;
-		}		
-	}
 }
 bool entity::selected() const
 { 	
@@ -67,6 +74,7 @@ bool entity::selected() const
 void entity::set_hover(bool hover) 
 { 	
 	if(exists()) {
+		set_require_redraw();
 		if(hover) {
 			mState |= BLOOP_ENTITY_HOVERED_FLAG;
 		} else {
@@ -84,6 +92,7 @@ bool entity::hovered() const
 void entity::set_hidden(bool hidden)
 {
 	if(exists()) {
+		set_require_redraw();
 		if(hidden) {
 			mState |= BLOOP_ENTITY_HIDDEN_FLAG;
 		} else {
@@ -113,6 +122,7 @@ bool entity::visible() const
 void entity::set_exists(bool exists_) 
 { 
 	if(exists_) {
+		set_require_redraw();
 		mState |= BLOOP_ENTITY_EXISTS_FLAG;
 	} else {
 		mState &= ~BLOOP_ENTITY_EXISTS_FLAG;
@@ -130,18 +140,10 @@ bool entity::exists() const
 
 void entity::add(std::shared_ptr<entity> elem)
 {
-	if(!is_following()) { // It is alone, it has to deal with all the indexing stuff
-		increment_index(mHighestInd); // Create a new index
-		mChildren.push_back({mHighestInd, elem});
-		if(elem) { // Operations on a nullptr are rarelly a good plan
-			glm::vec3 ind_float = mHighestInd;
-			ind_float /= 255.0f;
-			elem->set_selectionColor(ind_float);
-		}
-	} else { // Let the indexer that is followed deal with the indexing 
-		mParent->add(nullptr); // The followed should not have access to our entity, slot is reserved by pushing a nullptr
-		mHighestInd = mParent->mHighestInd; // Take the followed's last index
-		mChildren.push_back({mHighestInd, elem});
+	if(elem) {
+		elem->set_parent(this);
+		mChildren.push_back({*highestInd, elem});
+
 	}
 }
 
@@ -151,18 +153,22 @@ std::shared_ptr<entity> entity::get(size_t ind) const
 }
 std::shared_ptr<entity> entity::get(glm::ivec3 const& ind) const
 {
-	// Naive binary search within our list
-	int upperBound = mChildren.size(), lowerBound = 0;
-	while(upperBound > lowerBound) {
-		int middle_ind = (upperBound - lowerBound) / 2 + lowerBound; // The int rounding should give consistent results
-		int direction = compare_indices(ind, std::get<0>(mChildren[middle_ind]));
-		if(direction == 1) {
-			lowerBound = middle_ind;
-		} else if(direction == -1) {
-			upperBound = middle_ind;
-		} else {
-			return std::get<1>(mChildren[middle_ind]);
+	if(ind != glm::ivec3(0, 0, 0)) {
+		// Naive binary search within our list
+		int upperBound = mChildren.size(), lowerBound = 0;
+		while(upperBound > lowerBound) {
+			int middle_ind = (upperBound - lowerBound) / 2 + lowerBound; // The int rounding should give consistent results
+			int direction = compare_indices(ind, std::get<0>(mChildren[middle_ind]));
+			if(direction == 1) {
+				lowerBound = middle_ind;
+			} else if(direction == -1) {
+				upperBound = middle_ind;
+			} else {
+				return std::get<1>(mChildren[middle_ind]);
+			}
 		}
+
+		LOG_WARNING("Could not find children entity at index: " + glm::to_string(ind));
 	}
 	return std::shared_ptr<entity>(nullptr); // No entity was found
 }
@@ -197,6 +203,32 @@ void entity::for_each(std::function<void (std::shared_ptr<entity>)> func)
 	}
 }
 
+void entity::set_require_redraw()
+{
+	if(mParent) {
+		mParent->set_require_redraw();
+	} else {
+		mRequire_redraw = true;
+	}
+}
+
+void entity::set_parent(entity* parent)
+{
+	if(mParent) {
+		// TODO: detach the entity
+	}
+	if(!parent) {
+		*highestInd = mHighestInd;
+	} else {
+		highestInd = parent->highestInd;
+	}
+	mParent = parent;
+	increment_index(*highestInd);
+	glm::vec3 ind_float = *highestInd;
+	ind_float /= 255.0f;
+	set_selectionColor(ind_float);
+	for_each([this](std::shared_ptr<entity> child) {child->set_parent(this);});
+}
 
 int entity::compare_indices(glm::ivec3 const& a, glm::ivec3 const& b)
 {

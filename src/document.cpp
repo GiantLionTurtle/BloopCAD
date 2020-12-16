@@ -120,7 +120,7 @@ gboolean document::frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock,
 	self->mCurrentWorkspaceState->cam->update();
 	camState cmSt = self->mCurrentWorkspaceState->cam->state();
 
-	if(self->mCurrentCamState != cmSt) {
+	if(self->mCurrentCamState != cmSt || self->target()->require_redraw()) {
 		self->mCurrentCamState = cmSt;
 		self->mViewport.queue_draw();
 	}

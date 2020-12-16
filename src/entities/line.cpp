@@ -2,8 +2,8 @@
 #include "line.hpp"
 #include <graphics_utils/GLCall.hpp>
 
-line::line(glm::vec3 ptA, glm::vec3 ptB):
-    line_abstract(ptA, ptB),
+line::line(line_abstract const& baseLine):
+    line_abstract(baseLine),
 	mVB(nullptr),
 	mVA(nullptr)
 {	
@@ -21,16 +21,6 @@ line::line(glm::vec3 ptA, glm::vec3 ptB):
         {"resources/shaders/lineShader.vert", GL_VERTEX_SHADER},
         {"resources/shaders/lineShader.geom", GL_GEOMETRY_SHADER}, 
         {"resources/shaders/lineShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because line is expanded on the gpu
-}
-
-line line::from_2Points(glm::vec3 ptA, glm::vec3 ptB)
-{
-    return line(ptA, ptB);
-}
-
-std::shared_ptr<line> line::from_2Points_ptr(glm::vec3 ptA, glm::vec3 ptB)
-{
-    return std::shared_ptr<line>(new line(ptA, ptB));
 }
 
 void line::update_VB()

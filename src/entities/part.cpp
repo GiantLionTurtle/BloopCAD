@@ -4,7 +4,8 @@
 #include <entities/line.hpp>
 #include <actions/sketchDesign/addLine_action.hpp>
 
-part::part()
+part::part():
+	entity(glm::ivec3(200, 0, 1))
 {
 	init_scene();
 }

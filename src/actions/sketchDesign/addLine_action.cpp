@@ -9,7 +9,7 @@ addLine_action::addLine_action(glm::vec3 const& pointA, glm::vec3 const& pointB,
 	mSketch(sketch_)
 {
 	doc->make_glContext_current(); // The openGL context must be set to our rendering context, not an obscure gtk context
-	mLine = line::from_2Points_ptr(pointA, pointB); // Create said line
+	mLine = std::shared_ptr<line>(new line(line_abstract(pointA, pointB))); // Create said line
 	mSketch->add(mLine);
 	mLine->set_exists(false); // It should not exist until the action is consummed
 }
