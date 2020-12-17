@@ -99,8 +99,12 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &initialFrameBuffer); // TODO: check if this could change (if it does not, no need to do it every loop)
 
 	if(mPart) {
+		GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad
+
 		// Draw the part
 		mPart->draw(mCurrentWorkspaceState->cam, mFrameId);
+		
+		GLCall(glEnable(GL_DEPTH_TEST));
 
 		// Draw the selection shadows of the part
 		mSelectionBuffer->bind();

@@ -19,7 +19,7 @@ void main()
 	vec2 pos_screen1 = gl_in[1].gl_Position.xy / gl_in[1].gl_Position.w * aspectVec;
 
 	vec2 direction = normalize(pos_screen1 - pos_screen0);
-	vec2 normal = (vec2(-direction.y, direction.x) / u_Viewport) * (u_LineWidth/u_Feather);
+	vec2 normal = (vec2(-direction.y, direction.x) / u_Viewport) * (u_LineWidth/(1-u_Feather));
 	vec2 norm_normal = normalize(normal);
 
 	frag.normal = norm_normal;

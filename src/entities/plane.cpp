@@ -43,7 +43,7 @@ plane::plane(plane_abstract const& plane_, std::string const& label) :
 void plane::draw_impl(std::shared_ptr<camera> cam, int frame)
 {
 	// TODO: make this less sketch?
-	GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad
+	// GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad
 	mShader->bind();
 
 	glm::vec3 color;
@@ -70,7 +70,7 @@ void plane::draw_impl(std::shared_ptr<camera> cam, int frame)
 	mIB->unbind();
 	mVA->unbind();
 	mShader->unbind();
-	GLCall(glEnable(GL_DEPTH_TEST));
+	// GLCall(glEnable(GL_DEPTH_TEST));
 }
 
 void plane::draw_selection_impl(std::shared_ptr<camera> cam, int frame)

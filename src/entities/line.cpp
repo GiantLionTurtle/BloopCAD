@@ -49,7 +49,7 @@ void line::draw_impl(std::shared_ptr<camera> cam, int frame)
 	}
 	mShader->setUniform4f("u_Color", color);
     mShader->setUniform1f("u_LineWidth", 30);
-	mShader->setUniform1f("u_Feather", 0.4);
+	mShader->setUniform1f("u_Feather", 0.6);
 
 	if(mShader->lastUsed() != frame) {
 		mShader->setUniformMat4f("u_MVP", cam->mvp());
