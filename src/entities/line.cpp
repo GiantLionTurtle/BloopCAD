@@ -49,6 +49,7 @@ void line::draw_impl(std::shared_ptr<camera> cam, int frame)
 	}
 	mShader->setUniform4f("u_Color", color);
     mShader->setUniform1f("u_LineWidth", 30);
+	mShader->setUniform1f("u_Feather", 0.4);
 
 	if(mShader->lastUsed() != frame) {
 		mShader->setUniformMat4f("u_MVP", cam->mvp());
@@ -69,6 +70,7 @@ void line::draw_selection_impl(std::shared_ptr<camera> cam, int frame)
 	mShader->bind();
 	mShader->setUniform4f("u_Color", mSelectionColor.r, mSelectionColor.g, mSelectionColor.b, 1.0f);
     mShader->setUniform1f("u_LineWidth", 30);
+	mShader->setUniform1f("u_Feather", 1.0);
 
 	if(mShader->lastUsed() != frame) {
 		mShader->setUniformMat4f("u_MVP", cam->mvp());
