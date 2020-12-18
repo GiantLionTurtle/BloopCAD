@@ -28,14 +28,14 @@ public:
 		@return : The start point of the line
 	*/
 	point_abstract pointA() const { return *mPointA; }
-	void set_pointA(point_abstract ptA) { mPointA->set_pos(ptA); }
+	virtual void set_pointA(point_abstract ptA) { mPointA->set_pos(ptA); }
 	/*
 		@function pointB is a getter for the end point of the line
 
 		@return : The end point of the line
 	*/
 	point_abstract pointB() const { return *mPointB; }
-	void set_pointB(point_abstract ptB) { mPointB->set_pos(ptB); }
+	virtual void set_pointB(point_abstract ptB) { mPointB->set_pos(ptB); }
 };
 
 #endif

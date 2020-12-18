@@ -32,6 +32,19 @@ line::line(line_abstract const& baseLine):
 	add(std::shared_ptr<entity>(dynamic_cast<point*>(mPointB)));
 }
 
+void line::set_pointA(point_abstract ptA)
+{
+	mRequire_VBUpdate = true;
+	set_require_redraw();
+	mPointA->set_pos(ptA);
+}
+void line::set_pointB(point_abstract ptB)
+{
+	mRequire_VBUpdate = true;
+	set_require_redraw();
+	mPointB->set_pos(ptB);
+}
+
 void line::update_VB()
 {
 	glm::vec3 tmp[2] = {mPointA->pos(), mPointB->pos()};
@@ -43,6 +56,10 @@ void line::update_VB()
 
 void line::draw_impl(std::shared_ptr<camera> cam, int frame)
 {
+	if(mRequire_VBUpdate) {
+		update_VB();
+		mRequire_VBUpdate = false;
+	}
 	mShader->bind();
 	glm::vec4 color = glm::vec4(mColor, 1.0f);
 	if(hovered()) {

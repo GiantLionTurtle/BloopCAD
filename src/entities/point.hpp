@@ -10,14 +10,17 @@
 class point : public entity, public point_abstract {
 private:
 	const glm::vec3 mColor = glm::vec3(1.0f, 0.0f, 0.0f); // Point colors
-	glm::vec3 mPrevPos;
 
 	std::shared_ptr<vertexBuffer> 	mVB; // The vertex buffer to contain the vertices on the gpu
+	bool mRequire_VBUpdate;
 	std::shared_ptr<vertexArray> 	mVA; // The vertex array to contain the attributes on the gpu
 	std::shared_ptr<shader> 		mShader, mSelectionShader; // Both shaders to draw the point and it's selection 
 public:
 	point(point_abstract const& basePoint);
 	~point() {}
+
+	virtual void set_pos(glm::vec3 pos);
+	virtual void set_pos(point_abstract const& other);
 
 	void update_VB();
 protected:

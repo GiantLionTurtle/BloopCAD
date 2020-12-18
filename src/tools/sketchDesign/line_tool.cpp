@@ -31,7 +31,6 @@ bool line_tool::manage_mouse_move(GdkEventMotion* event)
 			if(currLine) {
 				currLine->set_pointB(pos_on_plane(glm::vec2(event->x, event->y)));
 				mEnv->state()->doc->make_glContext_current();
-				currLine->update_VB();
 			}
 		}
 	}

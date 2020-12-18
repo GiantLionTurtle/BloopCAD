@@ -7,9 +7,9 @@
 point::point(point_abstract const& basePoint):
 	point_abstract(basePoint),
 	mVB(nullptr),
-	mVA(nullptr)
+	mVA(nullptr),
+	mRequire_VBUpdate(false)
 {	
-	mPrevPos = mPos;
 	mVA = std::shared_ptr<vertexArray>(new vertexArray());
 	vertexBufferLayout layout;
 	layout.add_proprety_float(3);
@@ -28,6 +28,19 @@ point::point(point_abstract const& basePoint):
 	}
 }
 
+void point::set_pos(glm::vec3 pos)
+{
+	mRequire_VBUpdate = true;
+	set_require_redraw();
+	mPos = pos;
+}
+void point::set_pos(point_abstract const& other)
+{
+	mRequire_VBUpdate = true;
+	set_require_redraw();
+	mPos = other.pos();
+}
+
 void point::update_VB()
 {
 	mVB->bind();
@@ -38,8 +51,9 @@ void point::update_VB()
 
 void point::draw_impl(std::shared_ptr<camera> cam, int frame)
 {
-	if(mPos != mPrevPos) { // very sketch
+	if(mRequire_VBUpdate) { // very sketch
 		update_VB();
+		mRequire_VBUpdate = false;
 	}
 	mShader->bind();
 	glm::vec4 color = glm::vec4(mColor, 1.0f);
@@ -49,6 +63,7 @@ void point::draw_impl(std::shared_ptr<camera> cam, int frame)
 		color = glm::vec4(0.0f, 0.8, 0.2, 1.0f);
 	}
 	mShader->setUniform4f("u_Color", color);
+	mShader->setUniform1f("u_Radius", 30);
 	// mShader->setUniform1f("u_Feather", 0.6);
 
 	if(mShader->lastUsed() != frame) {
@@ -69,6 +84,7 @@ void point::draw_selection_impl(std::shared_ptr<camera> cam, int frame)
 {
 	mShader->bind();
 	mShader->setUniform4f("u_Color", mSelectionColor.r, mSelectionColor.g, mSelectionColor.b, 1.0f);
+	mShader->setUniform1f("u_Radius", 30);
 	// mShader->setUniform1f("u_Feather", 0.0);
 
 	if(mShader->lastUsed() != frame) {

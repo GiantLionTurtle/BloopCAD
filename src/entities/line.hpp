@@ -18,6 +18,7 @@ private:
 	glm::vec3 mVertices[2]; // The vertices describing the line
 	
 	std::shared_ptr<vertexBuffer> 	mVB; // The vertex buffer to contain the vertices on the gpu
+	bool mRequire_VBUpdate;
 	std::shared_ptr<vertexArray> 	mVA; // The vertex array to contain the attributes on the gpu
 	std::shared_ptr<shader> 		mShader, mSelectionShader; // Both shaders to draw the line and it's selection (curently the normal shader is used for selection with 0 feather)
 public:
@@ -27,6 +28,9 @@ public:
 		@param baseLine : The underlying line of the graphical entity
 	*/
 	line(line_abstract const& baseLine);
+
+	virtual void set_pointA(point_abstract ptA);
+	virtual void set_pointB(point_abstract ptB);
 
 	void update_VB();
 protected:

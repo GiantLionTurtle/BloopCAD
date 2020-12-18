@@ -12,8 +12,8 @@ public:
     virtual ~point_abstract() {};
 
 	glm::vec3 pos() const { return mPos; }
-	void set_pos(glm::vec3 pos) { mPos = pos; }
-	void set_pos(point_abstract const& other) { mPos = other.mPos; }
+	virtual void set_pos(glm::vec3 pos) { mPos = pos; }
+	virtual void set_pos(point_abstract const& other) { mPos = other.mPos; }
 };
 
 
