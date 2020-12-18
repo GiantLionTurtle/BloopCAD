@@ -1,7 +1,7 @@
 
 #version 330 core
 layout (lines) in;
-layout (triangle_strip, max_vertices = 10) out;
+layout (triangle_strip, max_vertices = 4) out;
 
 uniform vec2 u_Viewport;
 uniform float u_LineWidth;

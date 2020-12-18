@@ -5,7 +5,7 @@
 #include <graphics_utils/shadersPool.hpp>
 
 line::line(line_abstract const& baseLine):
-    line_abstract(baseLine),
+	line_abstract(new point(baseLine.pointA()), new point(baseLine.pointB())),
 	mVB(nullptr),
 	mVA(nullptr)
 {	
@@ -15,23 +15,26 @@ line::line(line_abstract const& baseLine):
 	layout.add_proprety_float(3);
 	mVA->bind();
 
-    glm::vec3 tmp[2] = {mPointA, mPointB};
+	glm::vec3 tmp[2] = {mPointA->pos(), mPointB->pos()};
 	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(tmp, sizeof(glm::vec3) * 2));
 	mVA->add_buffer(*mVB.get(), layout);
 
 	mShader = shadersPool::get_instance().get("line");
 	if(!mShader) {
 		mShader = shader::fromFiles_ptr({
-        {"resources/shaders/lineShader.vert", GL_VERTEX_SHADER},
-        {"resources/shaders/lineShader.geom", GL_GEOMETRY_SHADER}, 
-        {"resources/shaders/lineShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because line is expanded on the gpu
+		{"resources/shaders/lineShader.vert", GL_VERTEX_SHADER},
+		{"resources/shaders/lineShader.geom", GL_GEOMETRY_SHADER}, 
+		{"resources/shaders/lineShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because line is expanded on the gpu
 		shadersPool::get_instance().add("line", mShader);
 	}
+	
+	add(std::shared_ptr<entity>(dynamic_cast<point*>(mPointA)));
+	add(std::shared_ptr<entity>(dynamic_cast<point*>(mPointB)));
 }
 
 void line::update_VB()
 {
-    glm::vec3 tmp[2] = {mPointA, mPointB};
+	glm::vec3 tmp[2] = {mPointA->pos(), mPointB->pos()};
 	mVB->bind();
 	mVB->set(tmp, sizeof(glm::vec3) * 2);
 	mVB->unbind();
@@ -48,7 +51,7 @@ void line::draw_impl(std::shared_ptr<camera> cam, int frame)
 		color = glm::vec4(0.0f, 0.8, 0.2, 1.0f);
 	}
 	mShader->setUniform4f("u_Color", color);
-    mShader->setUniform1f("u_LineWidth", 30);
+	mShader->setUniform1f("u_LineWidth", 30);
 	mShader->setUniform1f("u_Feather", 0.6);
 
 	if(mShader->lastUsed() != frame) {
@@ -61,7 +64,7 @@ void line::draw_impl(std::shared_ptr<camera> cam, int frame)
 
 	GLCall(glDrawArrays(GL_LINES, 0, 2)); // No indexing needed, a line only has two vertices
 
-    mVA->unbind();
+	mVA->unbind();
 	mShader->unbind();
 }
 
@@ -69,8 +72,8 @@ void line::draw_selection_impl(std::shared_ptr<camera> cam, int frame)
 {
 	mShader->bind();
 	mShader->setUniform4f("u_Color", mSelectionColor.r, mSelectionColor.g, mSelectionColor.b, 1.0f);
-    mShader->setUniform1f("u_LineWidth", 30);
-	mShader->setUniform1f("u_Feather", 1.0);
+	mShader->setUniform1f("u_LineWidth", 30);
+	mShader->setUniform1f("u_Feather", 0.0);
 
 	if(mShader->lastUsed() != frame) {
 		mShader->setUniformMat4f("u_MVP", cam->mvp());
@@ -82,6 +85,6 @@ void line::draw_selection_impl(std::shared_ptr<camera> cam, int frame)
 
 	GLCall(glDrawArrays(GL_LINES, 0, 2)); // No indexing needed, a line only has two vertices
 
-    mVA->unbind();
+	mVA->unbind();
 	mShader->unbind();
 }
