@@ -3,13 +3,15 @@
 #define LINE_ABSTRACT_HPP_
 
 #include "point_abstract.hpp"
+#include "svgEntity.hpp"
+
 #include <glm/glm.hpp>
 #include <iostream>
 
 /*
 	@class line_abstract is an abstract representation of a line
 */
-class line_abstract {
+class line_abstract : public svgEntity {
 protected:
 	point_abstract* mPointA, *mPointB; // Both points that describe the line in 3d space
 public:
@@ -36,6 +38,8 @@ public:
 	*/
 	point_abstract pointB() const { return *mPointB; }
 	virtual void set_pointB(point_abstract ptB) { mPointB->set_pos(ptB); }
+
+	virtual XML_element* to_svg(plane_abstract* drawingPlane, glm::vec2 &min, glm::vec2 &max);
 };
 
 #endif

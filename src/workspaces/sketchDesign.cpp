@@ -5,6 +5,8 @@
 #include <utils/mathUtils.hpp>
 #include <actions/switchWorkspace_action.hpp>
 #include <tools/sketchDesign/line_tool.hpp>
+#include <utils/xmlParser.hpp>
+#include <entities/svgEntity.hpp>
 #include <bloop.hpp>
 
 sketchDesign::sketchDesign(bloop* parent) :
@@ -33,6 +35,8 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 	mButtons["coincidence"] 		= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
 	mButtons["equality"] 			= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
 
+	mButtons["to_svg"] = std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
+
 	mButtons["sketchFinish"] = std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
 
 	// Load all buttons from the builder
@@ -60,6 +64,8 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 			std::get<1>(mButtons.at("coincidence")) 		= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/constraints/coincidence.png", 30, 30));
 			std::get<1>(mButtons.at("equality")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/constraints/equality.png", 30, 30));
 
+			std::get<1>(mButtons.at("to_svg")) = new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/to_svg.png", 60, 60));			
+
 			std::get<1>(mButtons.at("sketchFinish")) = new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/sketchFinish.png", 60, 60));			
 		} catch(const Glib::FileError& ex) {
 			LOG_WARNING("Glib file error: " + ex.what());
@@ -82,6 +88,8 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 		std::get<0>(mButtons.at("coincidence"))->		set_image(*std::get<1>(mButtons.at("coincidence")));
 		std::get<0>(mButtons.at("equality"))->			set_image(*std::get<1>(mButtons.at("equality")));
 
+		std::get<0>(mButtons.at("to_svg"))->set_image(*std::get<1>(mButtons.at("to_svg")));
+
 		std::get<0>(mButtons.at("sketchFinish"))->set_image(*std::get<1>(mButtons.at("sketchFinish")));
 
 		
@@ -98,6 +106,8 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 		std::get<0>(mButtons.at("parallelism"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::parallelism));
 		std::get<0>(mButtons.at("coincidence"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::coincidence));
 		std::get<0>(mButtons.at("equality"))->			signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::equality));
+
+		std::get<0>(mButtons.at("to_svg"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::to_svg));
 
 		std::get<0>(mButtons.at("sketchFinish"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::finish));
 
@@ -154,6 +164,32 @@ void sketchDesign::coincidence()
 void sketchDesign::equality()
 {
 //	mParentBloop->set_tool("equality");
+}
+
+void sketchDesign::to_svg()
+{
+	XML_document svgDoc;
+	XML_declaration* dec = new XML_declaration;
+	dec->add_lastAttribute(new XML_attribute("version", "1.0"));
+	dec->add_lastAttribute(new XML_attribute("encoding", "utf-8"));
+	svgDoc.add_lastChild(dec);
+	XML_element* svg = new XML_element("svg");
+	svgDoc.add_lastChild(svg);
+	glm::vec2 min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max()), max(std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
+	if(mState && mState->target) {
+		mState->target->for_each([&svg, &min, &max, this](std::shared_ptr<entity> ent) {
+			std::shared_ptr<svgEntity> svgEnt = std::dynamic_pointer_cast<svgEntity>(ent);
+			std::shared_ptr<sketch> sk = std::dynamic_pointer_cast<sketch>(mState->target);
+			if(svgEnt && sk) {
+				svg->add_lastChild(svgEnt->to_svg(sk->basePlane().get(), min, max));
+			}
+		});
+	}
+	svg->set_attribute("width", "800");
+	svg->set_attribute("height", "600");
+	svg->set_attribute("viewbox", std::to_string(min.x) + " " + std::to_string(min.y) + " " + std::to_string(max.x-min.x) + " " + std::to_string(max.y-min.y));
+	std::cout<<"Saving sketch in output.svg!\n";
+	svgDoc.save("output.svg");
 }
 
 void sketchDesign::finish()

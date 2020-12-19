@@ -105,6 +105,11 @@ public:
 	void equality();
 
 	/*
+		@function to_svg saves the sketch as an svg file
+	*/
+	void to_svg();
+
+	/*
 		@function finish exits the sketch workspace
 	*/
 	void finish();

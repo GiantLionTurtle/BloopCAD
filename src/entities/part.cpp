@@ -19,7 +19,7 @@ part::part(entity* parent):
 void part::init_scene()
 {
 	// Maybe this whole function should just be in the constructor
-
+	
 	// Create the 3 planes of the origin
 	mXY = std::shared_ptr<plane>(new plane(
 		plane_abstract::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f))));

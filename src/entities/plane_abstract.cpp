@@ -49,3 +49,9 @@ glm::vec3 plane_abstract::line_intersection(glm::vec3 const& point, glm::vec3 co
 	float t = (glm::dot(glm::cross(mV, mW), (point - mOrigin))) / (glm::dot(-vec, glm::cross(mV, mW)));
 	return point + vec * t;
 }
+
+glm::vec2 plane_abstract::point_on_plane(glm::vec3 const& point)
+{
+	glm::vec3 pt_around_origin = point - mOrigin;
+	return glm::vec2(glm::dot(mV, pt_around_origin), glm::dot(mW, pt_around_origin));
+}

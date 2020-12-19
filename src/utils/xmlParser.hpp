@@ -152,6 +152,7 @@ public:
 		(it has no position in a linked list and is not owned)
 	*/
 	XML_attribute();
+	XML_attribute(std::string const& name_, std::string const& value_);
 
 	/*
 		@function prev
@@ -211,6 +212,8 @@ public:
 		all pointers are se to nullptr
 	*/
 	XML_element();
+	XML_element(std::string const& name_);
+
 	/*
 		@function ~XML_element destroys an xml element object by deleting it's attribute and letting the 
 		XML_node destructor take care of the rest
@@ -229,6 +232,8 @@ public:
 		@return : The element's text content
 	*/
 	std::string content() const { return mContent; }
+
+	void set_attribute(std::string const& name, std::string const& value);
 
 	/*
 		@function set_name sets the element's name
@@ -336,6 +341,8 @@ public:
 	*/
 	virtual char* parse(char* it);
 
+	void deduce_closingType();
+
 	/*
 		@function print is an overrided function to print the element with all it's attributes
 		and children. It is not printed as formal xml
@@ -405,7 +412,7 @@ public:
 	/*
 		@function XML_declaration creates an XML_declaration object with the appropriate markup strings
 	*/
-	XML_declaration() { mStartString = "<?"; mSelfCloseString = "?>"; }
+	XML_declaration(): XML_element("xml") { mStartString = "<?"; mSelfCloseString = "?>"; }
 };
 
 /*

@@ -193,17 +193,38 @@ XML_attribute::XML_attribute():
 {
 
 }
+XML_attribute::XML_attribute(std::string const& name_, std::string const& value_):
+	mPrevAttr(nullptr),
+	mNextAttr(nullptr),
+	mName(name_),
+	mValue(value_)
+{
+
+}
 
 XML_element::XML_element():
 	mFirstAttrib(nullptr),
 	mLastAttrib(nullptr),
 	mContent(""),
-	mName(""),
+	mName("unamednode"),
+	mClosingType(OPENED),
 	mStartString("<"), // Simple opening sequence
 	mSelfCloseString("/>") // Simple closing sequence
 {
 
 }
+XML_element::XML_element(std::string const& name_):
+	mFirstAttrib(nullptr),
+	mLastAttrib(nullptr),
+	mContent(""),
+	mName(name_),
+	mClosingType(OPENED),
+	mStartString("<"), // Simple opening sequence
+	mSelfCloseString("/>") // Simple closing sequence
+{
+
+}
+
 XML_element::~XML_element()
 {
 	XML_attribute* attrib = firstAttribute();
@@ -213,6 +234,21 @@ XML_element::~XML_element()
 		attrib = next;
 	}
 }
+
+void XML_element::set_attribute(std::string const& name, std::string const& value)
+{
+	XML_attribute* attrib = firstAttribute();
+	while(attrib) { // Iterate through all attribute
+		if(attrib->name() == name) {
+			attrib->set_value(value);
+			return;
+		}
+		attrib = attrib->next();;
+	}
+	XML_attribute* newattrib = new XML_attribute(name, value);
+	add_lastAttribute(newattrib);
+}
+
 
 void XML_element::add_firstAttribute(XML_attribute* attrib)
 {
@@ -364,6 +400,15 @@ char* XML_element::parse(char* it)
 	return it;
 }
 
+void XML_element::deduce_closingType()
+{
+	if(mFirstChild == nullptr) {
+		mClosingType = CLOSED;
+	} else {
+		mClosingType = OPENED;
+	}
+}
+
 void XML_element::print(int tabs)
 {
 	print_tabs(tabs);
@@ -382,6 +427,8 @@ void XML_element::print(int tabs)
 }
 std::string XML_element::to_xml(int level)
 {
+	deduce_closingType();
+
 	std::string level_str = ""; // Helper string to do all the tabulations
 	for(int l = 0; l < level; ++l)
 		level_str += '\t';
