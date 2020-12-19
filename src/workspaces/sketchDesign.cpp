@@ -16,6 +16,7 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 {	
 	// Create all the tools used in this workspace
 	mTools["line"] 	= std::shared_ptr<tool_abstract>(new line_tool(this));
+	mDefaultTool = mTools.at("simpleSelector");
 
 	// Initialize all buttons as 2 nullptr
 	mButtons["line"] 			= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);

@@ -19,7 +19,7 @@ bool simpleSelector_tool::manage_button_press(GdkEventButton* event)
 		// it hands over the shift&ctrl
 		mEnv->state()->doc->toggle_select(
 			id_at_point(glm::vec2(event->x, mEnv->state()->doc->get_height() - event->y)), 
-			{mEnv->state()->cam->up(), mEnv->state()->cam->right()},
+			mEnv->state()->cam->state(),
 			event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK);		
 	}
 	return true;
@@ -61,7 +61,7 @@ glm::ivec3 simpleSelector_tool::id_at_point(glm::vec2 point)
 std::shared_ptr<entity> simpleSelector_tool::primitive_entity_at_point(glm::vec2 point)
 {
 	if(mEnv->state()) {
-		return mEnv->state()->target->get(id_at_point(point)); // The indexer is the current thing that is worked on in the document
+		return mEnv->state()->doc->target()->get(id_at_point(point)); // The indexer is the current thing that is worked on in the document
 	}
 	return nullptr;
 }

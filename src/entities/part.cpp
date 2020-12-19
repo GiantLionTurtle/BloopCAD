@@ -5,7 +5,7 @@
 #include <actions/sketchDesign/addLine_action.hpp>
 
 part::part():
-	entity(glm::ivec3(200, 0, 1))
+	entity(glm::ivec3(0, 0, 1))
 {
 	init_scene();
 }

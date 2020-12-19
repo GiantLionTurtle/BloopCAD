@@ -83,7 +83,7 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	show_all();	// Make sure nothing is hidden for some reason
 }
 
-void bloop::set_workspace(std::string const& name, std::shared_ptr<workspaceState> state)
+std::shared_ptr<workspace> bloop::set_workspace(std::string const& name, std::shared_ptr<workspaceState> state)
 {
 	if(mWorkspaces.find(name) != mWorkspaces.end()) {
 		mUI_upperBar->set_visible_child(*mWorkspaces.at(name)->upperBar()); // Update the upper bar
@@ -91,9 +91,11 @@ void bloop::set_workspace(std::string const& name, std::shared_ptr<workspaceStat
 		mCurrentWorkspace->set_state(state); // Whoopsie, this surely should be fetching a new state from the document. TODO: Fix this please
 		if(mNavigationBar) // Notify the navigation bar
 			mNavigationBar->set_workspace(mCurrentWorkspace);
-	} else {
-		LOG_WARNING("Trying to set workspace to \"" + name + "\". No such workspace exist.");
+		return mCurrentWorkspace;
 	}
+	
+	LOG_WARNING("Trying to set workspace to \"" + name + "\". No such workspace exist.");
+	return nullptr;
 }
 
 bool bloop::manage_key_press(GdkEventKey* event)

@@ -57,6 +57,7 @@ void plane::draw_impl(std::shared_ptr<camera> cam, int frame)
 	mShader->setUniform4f("u_Color", color.r, color.g, color.b, hovered() ? 0.7 : 0.5);
 
 	if(mShader->lastUsed() != frame) {
+		// std::cout<<"Frame: "<<frame<<"\n";
 		mShader->setUniformMat4f("u_MVP", cam->mvp());
 		mShader->set_used(frame);
 	}

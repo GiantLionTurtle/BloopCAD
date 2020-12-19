@@ -23,12 +23,17 @@ switchWorkspace_action::switchWorkspace_action(document* doc, std::string const&
 
 void switchWorkspace_action::do_work()
 {
-	if(mValid) 
-		mDoc->set_workspace(mTargetWorkspaceName);
+	if(mValid) {
+		std::shared_ptr<workspace> space = mDoc->set_workspace(mTargetWorkspaceName);
+		if(space) 
+			space->set_tool(space->defaultTool());
+	}
 }
 void switchWorkspace_action::undo_work()
 {
 	if(mValid) {
-		mDoc->set_workspace(mInitWorkspaceName);
+		std::shared_ptr<workspace> space = mDoc->set_workspace(mInitWorkspaceName);
+		if(space) 
+			space->set_tool(space->defaultTool());
 	}
 }

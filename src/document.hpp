@@ -102,15 +102,15 @@ public:
 
 		@param name : The name of the wanted workspace
 
-		@return : Whether or not the worspace exists
+		@return : The set workspace, or nullptr 
 	*/
-	bool set_workspace(std::string const& name);
+	std::shared_ptr<workspace> set_workspace(std::string const& name);
 	/*
 		@function set_workspace enforces the current workspace in the bloop window
 
-		@return : If the operation was successful 
+		@return : The set workspace, or nullptr 
 	*/
-	bool set_workspace();
+	std::shared_ptr<workspace> set_workspace();
 	/*
 		@function has_workspace tells if a named workspace is available
 

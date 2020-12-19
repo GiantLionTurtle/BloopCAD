@@ -176,27 +176,25 @@ void document::connect_signals()
 	mViewport.set_vexpand(true);
 }
 
-bool document::set_workspace(std::string const& name) 
+std::shared_ptr<workspace> document::set_workspace(std::string const& name) 
 {
 	if(mWorkspaceStates.find(name) != mWorkspaceStates.end()) {
 		mCurrentWorkspaceState = mWorkspaceStates[name];
 		mCurrentWorkspaceState->cam->viewport().set(glm::vec2((float)get_width(), (float)get_height())); // The dimensions might have changed, who knows?
 
-		mParentBloop->set_workspace(name, mCurrentWorkspaceState); // Enforce change of workspace
-		return true;
+		return mParentBloop->set_workspace(name, mCurrentWorkspaceState); // Enforce change of workspace
 	}
-	return false;
+	return nullptr;
 }
 
-bool document::set_workspace() 
+std::shared_ptr<workspace> document::set_workspace() 
 {
 	if(mCurrentWorkspaceState && mWorkspaceStates.find(mCurrentWorkspaceState->workspaceName) != mWorkspaceStates.end()) {
 		mCurrentWorkspaceState->cam->viewport().set(glm::vec2((float)get_width(), (float)get_height()));
 
-		mParentBloop->set_workspace(mCurrentWorkspaceState->workspaceName, mCurrentWorkspaceState); // Enforce workspace choice
-		return true;
+		return mParentBloop->set_workspace(mCurrentWorkspaceState->workspaceName, mCurrentWorkspaceState); // Enforce workspace choice
 	}
-	return false;
+	return nullptr;
 }
 bool document::has_workspace(std::string const& name)
 {

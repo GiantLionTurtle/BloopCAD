@@ -108,8 +108,10 @@ public:
 
 		@param name : 	The name of the workspace to use
 		@param state : 	The state of the loaded workspace
+
+		@return : The set workspace or nullptr
 	*/
-	void set_workspace(std::string const& name, std::shared_ptr<workspaceState> state);
+	std::shared_ptr<workspace> set_workspace(std::string const& name, std::shared_ptr<workspaceState> state);
 
 	/*
 		@function manage_key_press takes the current document's key press event
