@@ -63,7 +63,7 @@ void point::draw_impl(std::shared_ptr<camera> cam, int frame)
 		color = glm::vec4(0.0f, 0.8, 0.2, 1.0f);
 	}
 	mShader->setUniform4f("u_Color", color);
-	mShader->setUniform1f("u_Radius", 30);
+	mShader->setUniform1f("u_Radius", 5);
 	// mShader->setUniform1f("u_Feather", 0.6);
 
 	if(mShader->lastUsed() != frame) {
@@ -84,7 +84,7 @@ void point::draw_selection_impl(std::shared_ptr<camera> cam, int frame)
 {
 	mShader->bind();
 	mShader->setUniform4f("u_Color", mSelectionColor.r, mSelectionColor.g, mSelectionColor.b, 1.0f);
-	mShader->setUniform1f("u_Radius", 30);
+	mShader->setUniform1f("u_Radius", 5);
 	// mShader->setUniform1f("u_Feather", 0.0);
 
 	if(mShader->lastUsed() != frame) {
