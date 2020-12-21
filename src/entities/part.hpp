@@ -8,9 +8,12 @@
 #include "plane.hpp"
 #include "sketch.hpp"
 
+#include <gtkmm.h>
+
 #include <memory>
 
 class document; // The forward declaration of document is needed for pointer declaration
+class modelColumns;
 
 /*
 	@class part describes a part, which is composed of sub entities and sketches
@@ -20,6 +23,10 @@ class part : public entity {
 private:
 	std::shared_ptr<plane> mXY, mYZ, mZX; // Origin planes
 	std::vector<std::shared_ptr<sketch>> mSketches; // Sketches drawn in the part
+
+	modelColumns* mColumns;
+	Glib::RefPtr<Gtk::TreeStore> mRefTreeModel;
+	Gtk::TreeModel::Row mRow;
 public:
 	/*
 		@function part creates an empty part
@@ -37,6 +44,12 @@ public:
 		*creating the origin planes
 	*/
 	virtual void init_scene();
+
+	void set_tree(modelColumns* columns, Gtk::TreeModel::Row row, Glib::RefPtr<Gtk::TreeStore> treeModel);
+
+	void add_child_to_tree(std::shared_ptr<entity> child);
+
+	virtual void add(std::shared_ptr<entity> elem);
 
 	/*
 		@function add_sketch adds a sketch to the list

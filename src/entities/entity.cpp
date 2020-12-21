@@ -18,7 +18,7 @@ entity::entity(glm::ivec3 startInd):
 	mParent(nullptr)
 {
 	highestInd = new glm::ivec3(mHighestInd);
-	set_selectionColor(glm::vec3(startInd) / 255.0f);
+	set_selectionID(startInd);
 }
 entity::entity(entity* parent): 
 	mState(BLOOP_ENTITY_EXISTS_FLAG),
@@ -228,9 +228,7 @@ void entity::set_parent(entity* parent)
 	}
 	mParent = parent;
 	increment_index(*highestInd);
-	glm::vec3 ind_float = *highestInd;
-	ind_float /= 255.0f;
-	set_selectionColor(ind_float);
+	set_selectionID(*highestInd);
 	for_each([this](std::shared_ptr<entity> child) {child->set_parent(this);});
 }
 

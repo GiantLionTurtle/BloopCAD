@@ -35,7 +35,7 @@ public:
 		@param plane_ : 				The underlaying plane abstraction
 		@param label [defaults to ""] : The label of the plane (not supported yet)
 	*/
-	plane(plane_abstract const& plane_, std::string const& label = "");
+	plane(plane_abstract const& plane_);
 protected:
 	/*
 		@function draw_impl draws the plane on screen

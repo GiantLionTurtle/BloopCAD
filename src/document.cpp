@@ -13,8 +13,6 @@ document::document(bloop* parent) :
 	mBackgroundColor(0.0f, 0.0f, 0.0f),
 	mFrameId(1)
 {
-	connect_signals();
-
 	// Create the workspace states, their cameras and all
 	mWorkspaceStates["partDesign"] 			= std::shared_ptr<workspaceState>(new workspaceState);
 	mWorkspaceStates.at("partDesign")->cam 	= std::shared_ptr<camera>(new camera(glm::vec3(0.0f, 0.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f)));
@@ -31,6 +29,17 @@ document::document(bloop* parent) :
 	// Now any part of the program can change the background color hehehe
 	mBackgroundColor = preferences::get_instance().get_vec3("background");
 	preferences::get_instance().add_callback("background", [this](glm::vec3 color) { mBackgroundColor = color; });
+
+
+	//Create the Tree model:
+	mSideBar = new Gtk::TreeView();
+	mTreeModel = Gtk::TreeStore::create(mColumns);
+	mSideBar->set_model(mTreeModel);
+
+	//Add the TreeView's view columns:
+	mSideBar->append_column("Name", mColumns.mColName);
+
+	connect_signals();	
 }
 
 void document::make_glContext_current()
@@ -65,12 +74,18 @@ void document::do_realize()
 		
 		// Create an empty part. This surely should be in the constructor right?
 		mPart = std::shared_ptr<part>(new part());
+		//Fill the TreeView's model
+		Gtk::TreeModel::Row row = *(mTreeModel->append());
+		row[mColumns.mColName] = mPart->name();
+		mPart->set_tree(&mColumns, row, mTreeModel);
 
 		// Start with the part design workspace
 		set_workspace("partDesign");
 		// Setyp tools and all
 		if(mParentBloop->currentWorkspace())
 			mCurrentWorkspaceState->currentTool = mParentBloop->currentWorkspace()->defaultTool();
+		
+		mParentBloop->set_sideBar(mSideBar);
 
 		// Setup target
 		mCurrentWorkspaceState->target = mPart;
@@ -134,6 +149,16 @@ gboolean document::frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock,
     return G_SOURCE_CONTINUE;
 }
 
+void document::on_treeview_row_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* /* column */)
+{
+	Gtk::TreeModel::iterator iter = mTreeModel->get_iter(path);
+	if(iter) {
+		Gtk::TreeModel::Row row = *iter;
+		std::shared_ptr<entity> ent = row[mColumns.mPtr];
+		this->toggle_select(ent->selectionID(), mCurrentCamState, false);
+	}
+}
+
 void document::connect_signals()
 {
 	// Is the double add_events really needed??
@@ -166,6 +191,9 @@ void document::connect_signals()
 	mViewport.signal_motion_notify_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_move));
 	mViewport.signal_button_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_button_press));
 	mViewport.signal_button_release_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_button_release));
+
+	mSideBar->signal_row_activated().connect(sigc::mem_fun(*this, &document::on_treeview_row_activated));
+	mSideBar->set_activate_on_single_click(true);
 
 	pack_end(mViewport);
 

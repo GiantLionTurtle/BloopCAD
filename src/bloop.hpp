@@ -70,7 +70,7 @@ private:
 	std::shared_ptr<compositeCursor> mCursor; // The current cursor
 	Gtk::Image* mHomePage, *mIcon; // Program icon and home page image (the latter will not be a thing)
 	Gtk::Notebook* mDocumentIndexer; // The widget containing the document rendering
-	Gtk::Stack* mUI_upperBar, *mSideBar; // A stack of all the workspaces upper bars and side bars
+	Gtk::Stack* mUI_upperBar, *mSideBar; // A stack of all the workspaces upper bars and all the documents' side bars
 	Gtk::Overlay* mHome; // The home screen overlay (I guess that it could go with the document's)
 	navigationBar* mNavigationBar; // The side navigation bar
 
@@ -112,6 +112,9 @@ public:
 		@return : The set workspace or nullptr
 	*/
 	std::shared_ptr<workspace> set_workspace(std::string const& name, std::shared_ptr<workspaceState> state);
+
+	bool add_in_treeView(entity* add, entity* to);
+	void set_sideBar(Gtk::Widget* to_show);
 
 	/*
 		@function manage_key_press takes the current document's key press event

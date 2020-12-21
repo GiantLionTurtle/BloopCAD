@@ -9,7 +9,7 @@ line::line(line_abstract const& baseLine):
 	mVB(nullptr),
 	mVA(nullptr)
 {	
-
+	set_name("line");	
 	mVA = std::shared_ptr<vertexArray>(new vertexArray());
 	vertexBufferLayout layout;
 	layout.add_proprety_float(3);

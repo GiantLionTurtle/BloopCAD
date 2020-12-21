@@ -52,6 +52,11 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	if(mDocumentIndexer) {
 		// Warning: this is for testing purposes.
 		mDocuments.push_back(std::make_tuple(tabButton("Document"), Gtk::Overlay(), std::shared_ptr<document>(new document(this))));
+		if(mSideBar) {
+			mSideBar->add(*std::get<2>(mDocuments.back())->sideBar());
+		} else {
+			LOG_ERROR("Could not build side bar.");
+		}
 		mDocumentIndexer->append_page(std::get<1>(mDocuments.back()), std::get<0>(mDocuments.back()));
 		//mDocumentIndexer->set_tab_reorderable(std::get<1>(mDocuments.back()));
 
@@ -96,6 +101,15 @@ std::shared_ptr<workspace> bloop::set_workspace(std::string const& name, std::sh
 	
 	LOG_WARNING("Trying to set workspace to \"" + name + "\". No such workspace exist.");
 	return nullptr;
+}
+
+bool add_in_treeView(entity* add, entity* to)
+{
+	
+}
+void bloop::set_sideBar(Gtk::Widget* to_show)
+{
+	mSideBar->set_visible_child(*to_show);
 }
 
 bool bloop::manage_key_press(GdkEventKey* event)

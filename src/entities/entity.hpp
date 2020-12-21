@@ -30,9 +30,12 @@
 class entity {
 protected:
 	int mState;	// The state of the entity, described by the above flags
+	glm::ivec3 mSelectionID;
 	glm::vec3 mSelectionColor; // The color of the entity on the selection buffer
 
 	bool mRequire_redraw;
+
+	std::string mName;
 
 	std::vector<std::pair<glm::ivec3, std::shared_ptr<entity>>> mChildren; // The entities container
 	glm::ivec3 mHighestInd; // The current highest 3 ints index
@@ -152,17 +155,18 @@ public:
 	*/
 	int state() const { return mState; }
 
-	/*
-		@function set_selectionColor sets the color used to render on the selection buffer
-	*/
-	void set_selectionColor(glm::vec3 color) { mSelectionColor = color; }
+	glm::ivec3 selectionID() const { return mSelectionID; }
+	void set_selectionID(glm::ivec3 id) { mSelectionID = id; mSelectionColor = mSelectionID; mSelectionColor /= 255.0f; }
 
-		/*
+	std::string name() const { return mName; }
+	void set_name(std::string const& name_) { mName = name_; }
+
+	/*
 		@function add adds an element to the indexer and increments the index
 
 		@param elem : The element to add
 	*/
-	void add(std::shared_ptr<entity> elem);
+	virtual void add(std::shared_ptr<entity> elem);
 
 	/*
 		@function is the size getter

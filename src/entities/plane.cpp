@@ -4,13 +4,14 @@
 #include <graphics_utils/GLCall.hpp>
 #include <graphics_utils/shadersPool.hpp>
 
-plane::plane(plane_abstract const& plane_, std::string const& label) :
+plane::plane(plane_abstract const& plane_) :
 	plane_abstract(plane_),
 	mVB(nullptr),
 	mVA(nullptr),
 	mIB(nullptr),
 	mOutlineIB(nullptr)
 {
+	set_name("plane");
 	init_buffers(); // Set all the vertices to the right values
 	
 	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(mVertices, sizeof(glm::vec3) * 4)); // Upload the vertices

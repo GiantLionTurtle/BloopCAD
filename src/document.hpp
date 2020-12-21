@@ -38,6 +38,20 @@ struct selection {
 	{}
 };
 
+//Tree model columns:
+class modelColumns : public Gtk::TreeModel::ColumnRecord
+{
+public:
+	modelColumns()
+	{ 
+		add(mColName); 
+		add(mPtr); 
+	}
+
+	Gtk::TreeModelColumn<Glib::ustring> mColName;
+	Gtk::TreeModelColumn<std::shared_ptr<entity>> mPtr;
+};
+
 /*
 	@class document represents a document that the user is working with
 	@parent Gtk::Box
@@ -59,8 +73,12 @@ private:
 	Gtk::GLArea mViewport; // The rendering widget
 	int mFrameId; // The current frame id, it is NOT garanteed to be unique
 	bloop* mParentBloop; // The bloop window owning the document
-
 	camState mCurrentCamState;
+
+
+	Gtk::TreeView* mSideBar;
+	modelColumns mColumns;
+	Glib::RefPtr<Gtk::TreeStore> mTreeModel;
 public:
 	/*
 		@function document creates an empty and mostly unitialized document 
@@ -92,10 +110,15 @@ public:
 		@function frame_callback calls the rendering loop on at a fixed interval
 	*/
 	static gboolean frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock, gpointer data);
+	
+	void on_treeview_row_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column);
+	
 	/*
 		@function connect_signals connects the viewport events to bloop's callbacks
 	*/
 	void connect_signals();
+
+	Gtk::TreeView* sideBar() const { return mSideBar; }
 
 	/*
 		@function set_workspace sets the current workspace to a named workspace
