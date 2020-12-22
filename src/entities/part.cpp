@@ -77,11 +77,8 @@ void part::add(std::shared_ptr<entity> elem)
 void part::add_sketch(std::shared_ptr<sketch> sketch_)
 {
 	if(sketch_) {
-		BLOOP_MARKER;
 		mSketches.push_back(sketch_);
-		BLOOP_MARKER;
 		add(sketch_);
-		BLOOP_MARKER;
 	} else {
 		LOG_WARNING("Trying to add null sketch.");
 	}

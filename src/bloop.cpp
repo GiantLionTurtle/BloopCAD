@@ -103,10 +103,6 @@ std::shared_ptr<workspace> bloop::set_workspace(std::string const& name, std::sh
 	return nullptr;
 }
 
-bool add_in_treeView(entity* add, entity* to)
-{
-	
-}
 void bloop::set_sideBar(Gtk::Widget* to_show)
 {
 	mSideBar->set_visible_child(*to_show);

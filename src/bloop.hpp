@@ -113,7 +113,6 @@ public:
 	*/
 	std::shared_ptr<workspace> set_workspace(std::string const& name, std::shared_ptr<workspaceState> state);
 
-	bool add_in_treeView(entity* add, entity* to);
 	void set_sideBar(Gtk::Widget* to_show);
 
 	/*

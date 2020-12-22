@@ -7,6 +7,13 @@
 
 #include "entities/part.hpp"
 
+void customRenderer::render_vfunc(const ::Cairo::RefPtr< ::Cairo::Context>& cr, Gtk::Widget& widget, 
+const Gdk::Rectangle& background_area, const Gdk::Rectangle& cell_area, Gtk::CellRendererState flags)
+{
+	std::cout<<(get_state(widget, flags) & GTK_CELL_RENDERER_PRELIT)<<"\n";//<<",  "<<GTK_CELL_RENDERER_PRELIT<<"\n";
+	Gtk::CellRendererText::render_vfunc(cr, widget, background_area, cell_area, flags);
+}
+
 document::document(bloop* parent) :
 	mParentBloop(parent),
 	mCurrentWorkspaceState(nullptr),
@@ -37,7 +44,14 @@ document::document(bloop* parent) :
 	mSideBar->set_model(mTreeModel);
 
 	//Add the TreeView's view columns:
-	mSideBar->append_column("Name", mColumns.mColName);
+	
+	mSideBar->append_column(mColumn);
+	mTreeCellRenderer = new customRenderer;
+	mColumn.pack_start(*mTreeCellRenderer);
+	mColumn.set_title("Name");
+	mColumn.add_attribute(*mTreeCellRenderer, "text", 0);
+	mColumn.set_cell_data_func(*mTreeCellRenderer, sigc::mem_fun(*this, &document::on_treeview_renderCell));
+	// mSideBar->append_column("Ptr", mColumns.mPtr);
 
 	connect_signals();	
 }
@@ -147,6 +161,17 @@ gboolean document::frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock,
 	}
 
     return G_SOURCE_CONTINUE;
+}
+
+void document::on_treeview_renderCell(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter)
+{
+	std::cout<<"Render cell!\n";
+	Gtk::TreeModel::Row row = *iter;
+	// cell->get_state();
+	
+	// if(cell->get_state(nullptr) & GTK_CELL_RENDERER_PRELIT) {
+	// 	std::cout<<"Prelight!\n";
+	// }
 }
 
 void document::on_treeview_row_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* /* column */)

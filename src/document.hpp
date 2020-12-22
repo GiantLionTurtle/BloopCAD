@@ -48,8 +48,17 @@ public:
 		add(mPtr); 
 	}
 
-	Gtk::TreeModelColumn<Glib::ustring> mColName;
+	Gtk::TreeModelColumn<std::string> mColName;
 	Gtk::TreeModelColumn<std::shared_ptr<entity>> mPtr;
+};
+
+class customRenderer : public Gtk::CellRendererText {
+private:
+
+public:
+    // virtual void render_vfunc(const ::Cairo::RefPtr< ::Cairo::Context>& cr, Widget& widget, const Gdk::Rectangle& background_area, const Gdk::Rectangle& cell_area, CellRendererState flags);
+
+	virtual void render_vfunc(const ::Cairo::RefPtr< ::Cairo::Context>& cr, Gtk::Widget& widget, const Gdk::Rectangle& background_area, const Gdk::Rectangle& cell_area, Gtk::CellRendererState flags);
 };
 
 /*
@@ -78,6 +87,8 @@ private:
 
 	Gtk::TreeView* mSideBar;
 	modelColumns mColumns;
+	Gtk::CellRendererText* mTreeCellRenderer;
+	Gtk::TreeViewColumn mColumn;
 	Glib::RefPtr<Gtk::TreeStore> mTreeModel;
 public:
 	/*
@@ -111,6 +122,7 @@ public:
 	*/
 	static gboolean frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock, gpointer data);
 	
+	void on_treeview_renderCell(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
 	void on_treeview_row_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column);
 	
 	/*
