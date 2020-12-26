@@ -6,7 +6,8 @@ set(entities_utils_source_files
   line.cpp
   point.cpp
   part.cpp
-  sketch.cpp)
+  sketch.cpp
+  entityView.cpp)
 
 add_library(entities ${entities_utils_source_files})
 

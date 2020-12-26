@@ -1,7 +1,7 @@
 
 #include "part.hpp"
 
-#include <document.hpp>
+#include "entityView.hpp"
 #include <utils/errorLogger.hpp>
 #include <entities/line.hpp>
 #include <actions/sketchDesign/addLine_action.hpp>

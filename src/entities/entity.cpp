@@ -1,7 +1,7 @@
 
 #include "entity.hpp"
 
-#include <document.hpp>
+#include "entityView.hpp"
 #include <utils/errorLogger.hpp>
 
 entity::entity(): 
