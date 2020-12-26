@@ -114,7 +114,8 @@ public:
 	std::shared_ptr<workspace> set_workspace(std::string const& name, std::shared_ptr<workspaceState> state);
 
 	void set_sideBar(Gtk::Widget* to_show);
-
+	void add_sideBar(Gtk::Widget* sideBar);
+	
 	/*
 		@function manage_key_press takes the current document's key press event
 		and redirects it to the current workspace

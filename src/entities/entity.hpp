@@ -16,6 +16,8 @@
 #include <memory>
 #include <functional>
 
+class entityHandle;
+
 /*
 	@define BLOOP_ENTITY_ describe state flags for an entity
 */
@@ -41,6 +43,8 @@ protected:
 	glm::ivec3 mHighestInd; // The current highest 3 ints index
 	glm::ivec3* highestInd;
 	entity* mParent;
+
+	entityHandle* mHandle;
 public:
 	/*
 		@function entity creates an empty entity with reasonable state defaults:
@@ -160,6 +164,9 @@ public:
 
 	std::string name() const { return mName; }
 	void set_name(std::string const& name_) { mName = name_; }
+
+	entityHandle* handle() const { return mHandle; }
+	virtual void set_handle(entityHandle* handle_) { mHandle = handle_; }
 
 	/*
 		@function add adds an element to the indexer and increments the index

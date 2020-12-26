@@ -7,17 +7,13 @@
 #include <actions/sketchDesign/addLine_action.hpp>
 
 part::part():
-	entity(glm::ivec3(0, 0, 1)),
-	mColumns(nullptr),
-	mRefTreeModel(nullptr)
+	entity(glm::ivec3(0, 0, 1))
 {
 	init_scene();
 	set_name("Part");
 }
 part::part(entity* parent):
-	entity(parent),
-	mColumns(nullptr),
-	mRefTreeModel(nullptr)
+	entity(parent)
 {
 	init_scene();
 	set_name("Part");
@@ -38,6 +34,7 @@ void part::init_scene()
 	mZX = std::shared_ptr<plane>(new plane(
 		plane_abstract::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f))));
 	mZX->set_name("ZX plane");
+
 	add(std::shared_ptr<plane>(new plane(
 		plane_abstract::from_1Point2Vectors(glm::vec3(-3.0f, 0.5f, 0.0f), glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.5f, 0.0f))))); // Temporary test plane
 
@@ -47,31 +44,22 @@ void part::init_scene()
 	add(mZX);
 }
 
-void part::set_tree(modelColumns* columns, Gtk::TreeModel::Row row, Glib::RefPtr<Gtk::TreeStore> treeModel)
+void part::set_handle(entityHandle* handle_)
 {
-	// TODO: add cleanup if those are already set
-	mColumns = columns;
-	mRefTreeModel = treeModel;
-	mRow = row;
-
-	for_each([this](std::shared_ptr<entity> ent) {
-		add_child_to_tree(ent);
-	});
-}
-
-void part::add_child_to_tree(std::shared_ptr<entity> child)
-{
-	Gtk::TreeModel::Row childrow = *(mRefTreeModel->append(mRow.children()));
-	childrow[mColumns->mColName] = child->name();
-	childrow[mColumns->mPtr] = child;
+	mHandle = handle_;
+	for(int i = 0; i < mChildren.size(); ++i) {
+		if(std::get<1>(mChildren[i])->handle())
+			delete std::get<1>(mChildren[i])->handle();
+		std::get<1>(mChildren[i])->set_handle(new entityHandle(std::get<1>(mChildren[i]), mHandle->view(), mHandle));
+	}
 }
 
 void part::add(std::shared_ptr<entity> elem)
 {
-	if(mColumns && elem) {
-		add_child_to_tree(elem);
-	}
 	entity::add(elem);
+	if(elem && mHandle) {
+		elem->set_handle(new entityHandle(elem, mHandle->view(), mHandle));
+	}
 }
 
 void part::add_sketch(std::shared_ptr<sketch> sketch_)

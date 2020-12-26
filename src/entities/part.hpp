@@ -23,10 +23,6 @@ class part : public entity {
 private:
 	std::shared_ptr<plane> mXY, mYZ, mZX; // Origin planes
 	std::vector<std::shared_ptr<sketch>> mSketches; // Sketches drawn in the part
-
-	modelColumns* mColumns;
-	Glib::RefPtr<Gtk::TreeStore> mRefTreeModel;
-	Gtk::TreeModel::Row mRow;
 public:
 	/*
 		@function part creates an empty part
@@ -45,9 +41,7 @@ public:
 	*/
 	virtual void init_scene();
 
-	void set_tree(modelColumns* columns, Gtk::TreeModel::Row row, Glib::RefPtr<Gtk::TreeStore> treeModel);
-
-	void add_child_to_tree(std::shared_ptr<entity> child);
+	virtual void set_handle(entityHandle* handle_);
 
 	virtual void add(std::shared_ptr<entity> elem);
 

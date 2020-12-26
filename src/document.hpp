@@ -38,27 +38,61 @@ struct selection {
 	{}
 };
 
-//Tree model columns:
-class modelColumns : public Gtk::TreeModel::ColumnRecord
-{
-public:
-	modelColumns()
-	{ 
-		add(mColName); 
-		add(mPtr); 
-	}
+class document;
+class entityView;
 
-	Gtk::TreeModelColumn<std::string> mColName;
-	Gtk::TreeModelColumn<std::shared_ptr<entity>> mPtr;
+class entityHandle : public Gtk::EventBox {
+private:
+	Gtk::Box mBody;
+	Gtk::Label mCollapser, mContent;
+	Gtk::EventBox mCollapserEvents;
+
+	std::shared_ptr<entity> mEntity;
+	entityHandle* mParent;
+	std::vector<entityHandle*> mChildren;
+	entityView* mView;
+
+	bool mCollapsed;
+	int mLevel;
+	bool mSelected;
+public:
+	entityHandle(std::shared_ptr<entity> ent, entityView* view, entityHandle* parent);
+	entityHandle(); // for root handles
+
+	bool set_hover(GdkEventCrossing* event);
+	bool unset_hover(GdkEventCrossing* event);
+
+	bool manage_collapse(GdkEventButton* event);
+	bool select(GdkEventButton* event);
+
+	int count_upTo(entityHandle* child);
+	int count_all();
+
+	entityHandle* parent() const { return mParent; }
+	void set_parent(entityHandle* parent_) { mParent = parent_; }
+
+	entityView* view() { return mView; };
+	void set_view(entityView* view_) { mView = view_;}
+
+	void set_selected(bool selected);
+
+	// void add_child(entityHandle* handle);
 };
 
-class customRenderer : public Gtk::CellRendererText {
+class entityView : public Gtk::Box {
 private:
-
+	Gtk::Button btn;
+	entityHandle mRootHandle;
+	std::vector<entityHandle*> mHandles;
+	document* mDoc;
 public:
-    // virtual void render_vfunc(const ::Cairo::RefPtr< ::Cairo::Context>& cr, Widget& widget, const Gdk::Rectangle& background_area, const Gdk::Rectangle& cell_area, CellRendererState flags);
+	entityView(document* doc);
+	~entityView();
 
-	virtual void render_vfunc(const ::Cairo::RefPtr< ::Cairo::Context>& cr, Gtk::Widget& widget, const Gdk::Rectangle& background_area, const Gdk::Rectangle& cell_area, Gtk::CellRendererState flags);
+	void add_handle(entityHandle* handle, int at);
+
+	entityHandle& root() { return mRootHandle; };
+	document* doc() { return mDoc; }
 };
 
 /*
@@ -85,11 +119,7 @@ private:
 	camState mCurrentCamState;
 
 
-	Gtk::TreeView* mSideBar;
-	modelColumns mColumns;
-	Gtk::CellRendererText* mTreeCellRenderer;
-	Gtk::TreeViewColumn mColumn;
-	Glib::RefPtr<Gtk::TreeStore> mTreeModel;
+	entityView* mSideBar;
 public:
 	/*
 		@function document creates an empty and mostly unitialized document 
@@ -130,7 +160,7 @@ public:
 	*/
 	void connect_signals();
 
-	Gtk::TreeView* sideBar() const { return mSideBar; }
+	entityView* sideBar() const { return mSideBar; }
 
 	/*
 		@function set_workspace sets the current workspace to a named workspace
@@ -231,6 +261,8 @@ public:
 		@param additive : 	If the toggle behavior is additive (e.g. ctrl + select)
 	*/
 	void toggle_select(glm::ivec3 id, camState cam, bool additive);
+
+	void toggle_select(std::shared_ptr<entity> ent, bool additive);
 };
 
 #endif

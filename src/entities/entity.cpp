@@ -1,13 +1,15 @@
 
 #include "entity.hpp"
 
+#include <document.hpp>
 #include <utils/errorLogger.hpp>
 
 entity::entity(): 
 	mState(BLOOP_ENTITY_EXISTS_FLAG),
 	mSelectionColor(0.0f, 0.0f, 0.0f),
 	mHighestInd(0, 0, 0),
-	mParent(nullptr)
+	mParent(nullptr),
+	mHandle(nullptr)
 {
 	highestInd = new glm::ivec3(mHighestInd);
 }
@@ -15,7 +17,8 @@ entity::entity(glm::ivec3 startInd):
 	mState(BLOOP_ENTITY_EXISTS_FLAG),
 	mSelectionColor(0.0f, 0.0f, 0.0f),
 	mHighestInd(startInd),
-	mParent(nullptr)
+	mParent(nullptr),
+	mHandle(nullptr)
 {
 	highestInd = new glm::ivec3(mHighestInd);
 	set_selectionID(startInd);
@@ -25,7 +28,8 @@ entity::entity(entity* parent):
 	mSelectionColor(0.0f, 0.0f, 0.0f),
 	mHighestInd(parent->mHighestInd),
 	highestInd(parent->highestInd),
-	mParent(parent)
+	mParent(parent),
+	mHandle(nullptr)
 {
 
 }
@@ -54,6 +58,10 @@ void entity::set_selected(bool select)
 			mState |= BLOOP_ENTITY_SELECTED_FLAG;
 		} else {
 			mState &= ~BLOOP_ENTITY_SELECTED_FLAG;
+		}
+
+		if(mHandle) {
+			mHandle->set_selected(select);
 		}		
 	}
 }

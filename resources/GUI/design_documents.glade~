@@ -2,19 +2,6 @@
 <!-- Generated with glade 3.36.0 -->
 <interface>
   <requires lib="gtk+" version="3.22"/>
-  <object class="GtkTreeView">
-    <property name="visible">True</property>
-    <property name="can_focus">True</property>
-    <child internal-child="selection">
-      <object class="GtkTreeSelection"/>
-    </child>
-    <child>
-      <object class="GtkTreeViewColumn">
-        <property name="title" translatable="yes">Part</property>
-        <property name="clickable">True</property>
-      </object>
-    </child>
-  </object>
   <object class="GtkWindow" id="bloop">
     <property name="can_focus">False</property>
     <property name="window_position">mouse</property>
@@ -48,8 +35,31 @@
               <object class="GtkStack" id="sideBar">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="hhomogeneous">False</property>
+                <property name="vhomogeneous">False</property>
                 <child>
-                  <placeholder/>
+                  <object class="GtkBox" id="testBox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkButton">
+                        <property name="label" translatable="yes">button</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="name">page0</property>
+                    <property name="title" translatable="yes">page0</property>
+                  </packing>
                 </child>
               </object>
               <packing>

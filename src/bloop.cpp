@@ -23,6 +23,12 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 {
 	maximize(); // Go maximized, it deserves it
 
+	Glib::RefPtr<Gtk::CssProvider> css = Gtk::CssProvider::create();
+	if(!css->load_from_path("resources/GUI/style.css"))
+		LOG_WARNING("Could not load styling info.");
+	get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+	get_style_context()->add_class("bloop");
+
 	// Create all possible workspaces
 	mWorkspaces["home"]			= std::shared_ptr<workspace>(new home(builder, this));
 	mWorkspaces["sketchDesign"] = std::shared_ptr<workspace>(new sketchDesign(builder, this));
@@ -53,7 +59,7 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 		// Warning: this is for testing purposes.
 		mDocuments.push_back(std::make_tuple(tabButton("Document"), Gtk::Overlay(), std::shared_ptr<document>(new document(this))));
 		if(mSideBar) {
-			mSideBar->add(*std::get<2>(mDocuments.back())->sideBar());
+			// mSideBar->add(*std::get<2>(mDocuments.back())->sideBar());
 		} else {
 			LOG_ERROR("Could not build side bar.");
 		}
@@ -106,6 +112,11 @@ std::shared_ptr<workspace> bloop::set_workspace(std::string const& name, std::sh
 void bloop::set_sideBar(Gtk::Widget* to_show)
 {
 	mSideBar->set_visible_child(*to_show);
+}
+void bloop::add_sideBar(Gtk::Widget* sideBar) 
+{
+	mSideBar->add(*sideBar, "part");
+	show_all();
 }
 
 bool bloop::manage_key_press(GdkEventKey* event)

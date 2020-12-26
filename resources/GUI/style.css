@@ -1,0 +1,16 @@
+
+.bloop {
+    /* background: rgb(155, 0, 142); */
+}
+
+.hovered {
+    background: rgb(202, 79, 192);
+}
+
+.selected {
+    background: rgb(202, 16, 187);
+}
+
+.entityView {
+    background: rgb(155, 0, 142);
+} 

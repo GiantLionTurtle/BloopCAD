@@ -7,11 +7,169 @@
 
 #include "entities/part.hpp"
 
-void customRenderer::render_vfunc(const ::Cairo::RefPtr< ::Cairo::Context>& cr, Gtk::Widget& widget, 
-const Gdk::Rectangle& background_area, const Gdk::Rectangle& cell_area, Gtk::CellRendererState flags)
+entityHandle::entityHandle(std::shared_ptr<entity> ent, entityView* view, entityHandle* parent):
+	mEntity(ent),
+	mView(view),
+	mParent(parent),
+	mCollapsed(true)
 {
-	std::cout<<(get_state(widget, flags) & GTK_CELL_RENDERER_PRELIT)<<"\n";//<<",  "<<GTK_CELL_RENDERER_PRELIT<<"\n";
-	Gtk::CellRendererText::render_vfunc(cr, widget, background_area, cell_area, flags);
+	if(mView) {
+		if(!mParent)
+			mParent = &mView->root();
+		
+		mParent->mChildren.push_back(this);
+		mView->add_handle(this, mParent->count_upTo(this));
+	}
+	mLevel = mParent->mLevel + 1;
+
+	mBody.set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+	mCollapser.set_margin_left(15 + 15 * mLevel);
+	mCollapser.set_label("+");
+	mCollapser.set_padding(5, 0);
+
+	mContent.set_padding(5, 0);
+	if(mEntity) {
+		mContent.set_label(mEntity->name());
+	} else {
+		mContent.set_label("Error, null entity.");
+	}
+	mContent.set_margin_left(5);
+
+	mCollapserEvents.add(mCollapser);
+	
+	mBody.pack_start(mCollapserEvents, false, true);
+	mBody.pack_start(mContent, false, true);
+
+	add_events(	  Gdk::POINTER_MOTION_MASK
+				| Gdk::BUTTON_PRESS_MASK
+				| Gdk::BUTTON_RELEASE_MASK
+				| Gdk::KEY_PRESS_MASK
+				| Gdk::KEY_RELEASE_MASK
+				| Gdk::STRUCTURE_MASK
+				| Gdk::SCROLL_MASK
+				| Gdk::ENTER_NOTIFY_MASK
+				| Gdk::LEAVE_NOTIFY_MASK);
+	
+	
+	add(mBody);
+
+	mCollapserEvents.signal_button_press_event().connect(sigc::mem_fun(*this, &entityHandle::manage_collapse));
+	
+	signal_enter_notify_event().connect(sigc::mem_fun(*this, &entityHandle::set_hover));
+	signal_leave_notify_event().connect(sigc::mem_fun(*this, &entityHandle::unset_hover));
+	signal_button_press_event().connect(sigc::mem_fun(*this, &entityHandle::select));
+	show_all();
+}
+entityHandle::entityHandle():
+	mEntity(nullptr),
+	mView(nullptr),
+	mParent(nullptr),
+	mLevel(-1)
+{
+
+}
+
+bool entityHandle::manage_collapse(GdkEventButton* event)
+{
+	std::cout<<"Collapsing!\n";
+	if(mCollapsed) {
+		mCollapser.set_label("-");
+	} else {
+		mCollapser.set_label("+");
+	}
+
+	mCollapsed = !mCollapsed;
+	return true;
+}
+
+bool entityHandle::select(GdkEventButton* event)
+{
+	if(mView && mView->doc() && mEntity)
+		mView->doc()->toggle_select(mEntity, event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK);
+	return true;
+}
+
+bool entityHandle::set_hover(GdkEventCrossing* event)
+{
+	get_style_context()->add_class("hovered");
+	if(mEntity)
+		mEntity->set_hover(true);
+	return true;
+}
+bool entityHandle::unset_hover(GdkEventCrossing* event)
+{
+	get_style_context()->remove_class("hovered");
+	if(mEntity)
+		mEntity->set_hover(false);
+	return true;
+}
+
+int entityHandle::count_upTo(entityHandle* child)
+{
+	int runningSum = (mParent ? mParent->count_upTo(this)+1 : 0);
+	for(int i = 0; i < mChildren.size(); ++i) {
+		if(mChildren[i] == child)
+			break;
+		runningSum += mChildren[i]->count_all();		
+	}	
+	return runningSum;
+}
+int entityHandle::count_all()
+{
+	int runningSum = 1;
+	for(int i = 0; i < mChildren.size(); ++i) {
+		runningSum += mChildren[i]->count_all();
+	}
+	return runningSum;
+}
+
+void entityHandle::set_selected(bool selected)
+{
+	mSelected = selected;
+	if(mSelected) {
+		get_style_context()->add_class("selected");
+	} else {
+		get_style_context()->remove_class("selected");
+	}
+}
+
+entityView::entityView(document* doc):
+	mRootHandle(),
+	mDoc(doc)
+{
+	add_events(	  Gdk::POINTER_MOTION_MASK
+				| Gdk::BUTTON_PRESS_MASK
+				| Gdk::BUTTON_RELEASE_MASK
+				| Gdk::KEY_PRESS_MASK
+				| Gdk::KEY_RELEASE_MASK
+				| Gdk::STRUCTURE_MASK
+				| Gdk::SCROLL_MASK
+				| Gdk::ENTER_NOTIFY_MASK
+				| Gdk::LEAVE_NOTIFY_MASK);
+
+	set_homogeneous(false);
+
+	set_orientation(Gtk::ORIENTATION_VERTICAL);
+
+	get_style_context()->add_class("entityView");
+}
+entityView::~entityView()
+{
+	for(int i = 0; i < mHandles.size(); ++i) {
+		delete mHandles[i];
+	}
+}
+
+void entityView::add_handle(entityHandle* handle, int at)
+{
+	if(!handle->parent()) {
+		handle->set_parent(&mRootHandle);
+	}
+	
+	mHandles.push_back(handle);
+	pack_start(*handle, false, true);
+	reorder_child(*handle, at);
+	set_visible();
 }
 
 document::document(bloop* parent) :
@@ -20,6 +178,7 @@ document::document(bloop* parent) :
 	mBackgroundColor(0.0f, 0.0f, 0.0f),
 	mFrameId(1)
 {
+	connect_signals();	
 	// Create the workspace states, their cameras and all
 	mWorkspaceStates["partDesign"] 			= std::shared_ptr<workspaceState>(new workspaceState);
 	mWorkspaceStates.at("partDesign")->cam 	= std::shared_ptr<camera>(new camera(glm::vec3(0.0f, 0.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f)));
@@ -36,24 +195,7 @@ document::document(bloop* parent) :
 	// Now any part of the program can change the background color hehehe
 	mBackgroundColor = preferences::get_instance().get_vec3("background");
 	preferences::get_instance().add_callback("background", [this](glm::vec3 color) { mBackgroundColor = color; });
-
-
-	//Create the Tree model:
-	mSideBar = new Gtk::TreeView();
-	mTreeModel = Gtk::TreeStore::create(mColumns);
-	mSideBar->set_model(mTreeModel);
-
-	//Add the TreeView's view columns:
-	
-	mSideBar->append_column(mColumn);
-	mTreeCellRenderer = new customRenderer;
-	mColumn.pack_start(*mTreeCellRenderer);
-	mColumn.set_title("Name");
-	mColumn.add_attribute(*mTreeCellRenderer, "text", 0);
-	mColumn.set_cell_data_func(*mTreeCellRenderer, sigc::mem_fun(*this, &document::on_treeview_renderCell));
-	// mSideBar->append_column("Ptr", mColumns.mPtr);
-
-	connect_signals();	
+	mSideBar = new entityView(this);
 }
 
 void document::make_glContext_current()
@@ -88,10 +230,6 @@ void document::do_realize()
 		
 		// Create an empty part. This surely should be in the constructor right?
 		mPart = std::shared_ptr<part>(new part());
-		//Fill the TreeView's model
-		Gtk::TreeModel::Row row = *(mTreeModel->append());
-		row[mColumns.mColName] = mPart->name();
-		mPart->set_tree(&mColumns, row, mTreeModel);
 
 		// Start with the part design workspace
 		set_workspace("partDesign");
@@ -99,6 +237,8 @@ void document::do_realize()
 		if(mParentBloop->currentWorkspace())
 			mCurrentWorkspaceState->currentTool = mParentBloop->currentWorkspace()->defaultTool();
 		
+		mPart->set_handle(new entityHandle(mPart, mSideBar, &mSideBar->root()));
+		mParentBloop->add_sideBar(mSideBar);
 		mParentBloop->set_sideBar(mSideBar);
 
 		// Setup target
@@ -163,27 +303,6 @@ gboolean document::frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock,
     return G_SOURCE_CONTINUE;
 }
 
-void document::on_treeview_renderCell(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter)
-{
-	std::cout<<"Render cell!\n";
-	Gtk::TreeModel::Row row = *iter;
-	// cell->get_state();
-	
-	// if(cell->get_state(nullptr) & GTK_CELL_RENDERER_PRELIT) {
-	// 	std::cout<<"Prelight!\n";
-	// }
-}
-
-void document::on_treeview_row_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* /* column */)
-{
-	Gtk::TreeModel::iterator iter = mTreeModel->get_iter(path);
-	if(iter) {
-		Gtk::TreeModel::Row row = *iter;
-		std::shared_ptr<entity> ent = row[mColumns.mPtr];
-		this->toggle_select(ent->selectionID(), mCurrentCamState, false);
-	}
-}
-
 void document::connect_signals()
 {
 	// Is the double add_events really needed??
@@ -216,9 +335,6 @@ void document::connect_signals()
 	mViewport.signal_motion_notify_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_move));
 	mViewport.signal_button_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_button_press));
 	mViewport.signal_button_release_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_button_release));
-
-	mSideBar->signal_row_activated().connect(sigc::mem_fun(*this, &document::on_treeview_row_activated));
-	mSideBar->set_activate_on_single_click(true);
 
 	pack_end(mViewport);
 
@@ -334,4 +450,9 @@ void document::toggle_select(glm::ivec3 id, camState cam, bool additive)
 			clear_selection();
 		}
 	}
+}
+
+void document::toggle_select(std::shared_ptr<entity> ent, bool additive)
+{
+	toggle_select(ent->selectionID(), mCurrentCamState, additive);
 }
