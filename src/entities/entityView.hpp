@@ -22,7 +22,6 @@ private:
 
 	bool mCollapsed;
 	int mLevel;
-	bool mSelected;
 public:
 	entityHandle(std::shared_ptr<entity> ent, entityView* view, entityHandle* parent);
 	entityHandle(); // for root handles
@@ -33,7 +32,6 @@ public:
 	bool manage_collapse(GdkEventButton* event);
 	void collapse();
 	void expend();
-	
 	void hide_rec();
 	void show_rec();
 
@@ -49,6 +47,9 @@ public:
 	void set_view(entityView* view_) { mView = view_;}
 
 	void set_selected(bool selected);
+	void set_hovered(bool hovered);
+
+	void add_child(entityHandle* child);
 };
 
 class entityView : public Gtk::Box {

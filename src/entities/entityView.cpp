@@ -13,15 +13,16 @@ entityHandle::entityHandle(std::shared_ptr<entity> ent, entityView* view, entity
 		if(!mParent)
 			mParent = &mView->root();
 		
-		mParent->mChildren.push_back(this);
+		mParent->add_child(this);
 		mView->add_handle(this, mParent->count_upTo(this));
 	}
 	mLevel = mParent->mLevel + 1;
 
 	mBody.set_orientation(Gtk::ORIENTATION_HORIZONTAL);
 	mCollapser.set_margin_left(15 + 15 * mLevel);
-	mCollapser.set_label("-");
+	mCollapser.set_label("");
 	mCollapser.set_padding(5, 0);
+	mCollapser.set_max_width_chars(15);
 
 	mContent.set_padding(5, 0);
 	if(mEntity) {
@@ -68,6 +69,9 @@ entityHandle::entityHandle():
 
 bool entityHandle::manage_collapse(GdkEventButton* event)
 {
+	if(mChildren.empty())
+		return true;
+	
 	if(!mCollapsed) {
 		collapse();
 	} else {
@@ -121,14 +125,12 @@ bool entityHandle::select(GdkEventButton* event)
 
 bool entityHandle::set_hover(GdkEventCrossing* event)
 {
-	get_style_context()->add_class("hovered");
 	if(mEntity)
 		mEntity->set_hover(true);
 	return true;
 }
 bool entityHandle::unset_hover(GdkEventCrossing* event)
 {
-	get_style_context()->remove_class("hovered");
 	if(mEntity)
 		mEntity->set_hover(false);
 	return true;
@@ -155,12 +157,27 @@ int entityHandle::count_all()
 
 void entityHandle::set_selected(bool selected)
 {
-	mSelected = selected;
-	if(mSelected) {
+	if(mEntity->selected()) {
 		get_style_context()->add_class("selected");
 	} else {
 		get_style_context()->remove_class("selected");
 	}
+}
+void entityHandle::set_hovered(bool hovered)
+{
+	if(mEntity->hovered()) {
+		get_style_context()->add_class("hovered");
+	} else {
+		get_style_context()->remove_class("hovered");
+	}
+}
+
+void entityHandle::add_child(entityHandle* child)
+{
+	if(mChildren.empty()) {
+		mCollapser.set_label("-");
+	}
+	mChildren.push_back(child);
 }
 
 entityView::entityView(document* doc):
@@ -178,9 +195,8 @@ entityView::entityView(document* doc):
 				| Gdk::LEAVE_NOTIFY_MASK);
 
 	set_homogeneous(false);
-
 	set_orientation(Gtk::ORIENTATION_VERTICAL);
-
+	
 	get_style_context()->add_class("entityView");
 }
 entityView::~entityView()

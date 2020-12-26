@@ -13,4 +13,5 @@
 
 .entityView {
     background: rgb(155, 0, 142);
+    min-width: 200px;
 } 
