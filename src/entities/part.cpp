@@ -36,15 +36,19 @@ void part::init_scene()
 	mZX->set_name("ZX plane");
 
 	mOrigin = std::shared_ptr<folder>(new folder("origin"));
-	// mOrigin->add(mXY);
-	// mOrigin->add(mYZ);
-	// mOrigin->add(mZX);
+	
+	add(mOrigin);
+	mOrigin->add(mXY);
+	mOrigin->add(mYZ);
+	mOrigin->add(mZX);
 
-	// add(mOrigin);
+	// std::cout<<glm::to_string(mXY->selectionID())<<"\n";
+	// std::cout<<glm::to_string(mYZ->selectionID())<<"\n";
+	// std::cout<<glm::to_string(mZX->selectionID())<<"\n";
 
-	add(mXY);
-	add(mYZ);
-	add(mZX);
+	// add(mXY);
+	// add(mYZ);
+	// add(mZX);
 
 	add(std::shared_ptr<plane>(new plane(
 		plane_abstract::from_1Point2Vectors(glm::vec3(-3.0f, 0.5f, 0.0f), glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.5f, 0.0f))))); // Temporary test plane
@@ -54,12 +58,14 @@ void part::set_handle(entityHandle* handle_)
 {
 	mHandle = handle_;
 	for(int i = 0; i < mChildren.size(); ++i) {
-		if(std::get<1>(mChildren[i])->handle())
-			delete std::get<1>(mChildren[i])->handle();
-		std::get<1>(mChildren[i])->set_handle(new entityHandle(std::get<1>(mChildren[i]), mHandle->view(), mHandle));
+		if(std::get<2>(mChildren[i])) {
+			if(std::get<1>(mChildren[i])->handle())
+				delete std::get<1>(mChildren[i])->handle();
+		
+			std::get<1>(mChildren[i])->set_handle(new entityHandle(std::get<1>(mChildren[i]), mHandle->view(), mHandle));
+		}
 	}
 }
-
 void part::add(std::shared_ptr<entity> elem)
 {
 	entity::add(elem);

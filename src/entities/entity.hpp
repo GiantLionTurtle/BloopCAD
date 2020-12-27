@@ -15,6 +15,7 @@
 #include <vector>
 #include <memory>
 #include <functional>
+#include <tuple>
 
 class entityHandle;
 
@@ -39,7 +40,7 @@ protected:
 
 	std::string mName;
 
-	std::vector<std::pair<glm::ivec3, std::shared_ptr<entity>>> mChildren; // The entities container
+	std::vector<std::tuple<glm::ivec3, std::shared_ptr<entity>, bool>> mChildren; // The entities container
 	glm::ivec3 mHighestInd; // The current highest 3 ints index
 	glm::ivec3* highestInd;
 	entity* mParent;
@@ -263,6 +264,8 @@ protected:
 		@param ind [out] : A reference to the index to increment
 	*/
 	static void increment_index(glm::ivec3 &ind);
+
+	void add_child(glm::ivec3 id, std::shared_ptr<entity> child, bool first = false);
 };
 
 #endif

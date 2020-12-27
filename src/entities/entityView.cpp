@@ -12,7 +12,6 @@ entityHandle::entityHandle(std::shared_ptr<entity> ent, entityView* view, entity
 	if(mView) {
 		if(!mParent)
 			mParent = &mView->root();
-		
 		mParent->add_child(this);
 		mView->add_handle(this, mParent->count_upTo(this));
 	}
@@ -85,7 +84,7 @@ void entityHandle::collapse()
 	mCollapsed = true;
 	mCollapser.set_label("+");
 	for(int i = 0; i < mChildren.size(); ++i) {
-		mChildren[i]->hide();
+		mChildren[i]->hide_rec();
 	}
 }
 void entityHandle::expend()
@@ -93,7 +92,7 @@ void entityHandle::expend()
 	mCollapsed = false;
 	mCollapser.set_label("-");
 	for(int i = 0; i < mChildren.size(); ++i) {
-		mChildren[i]->show();
+		mChildren[i]->show_rec();
 	}
 }
 
@@ -103,7 +102,7 @@ void entityHandle::hide_rec()
 	for(int i = 0; i < mChildren.size(); ++i) {
 		mChildren[i]->hide_rec();
 	}
-	show_all();
+	// show_all();
 }
 void entityHandle::show_rec()
 {
@@ -113,7 +112,7 @@ void entityHandle::show_rec()
 			mChildren[i]->show_rec();
 		}
 	}
-	show_all();
+	// show_all();
 }
 
 bool entityHandle::select(GdkEventButton* event)
@@ -184,6 +183,7 @@ void entityHandle::add_child(entityHandle* child)
 	if(mChildren.empty()) {
 		mCollapser.set_label("-");
 	}
+
 	mChildren.push_back(child);
 }
 

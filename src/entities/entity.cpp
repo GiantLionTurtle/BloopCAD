@@ -156,8 +156,7 @@ void entity::add(std::shared_ptr<entity> elem)
 	if(elem) {
 		set_require_redraw();
 		elem->set_parent(this);
-		mChildren.push_back({*highestInd, elem});
-
+		add_child(*highestInd, elem, true);
 	}
 }
 
@@ -264,4 +263,11 @@ void entity::increment_index(glm::ivec3 &ind)
 		}
 		break;		
 	}
+}
+
+void entity::add_child(glm::ivec3 id, std::shared_ptr<entity> elem, bool first)
+{
+	mChildren.push_back({id, elem, first});
+	if(mParent)
+		mParent->add_child(id, elem);
 }

@@ -30,6 +30,7 @@ public:
 		@function part creates an empty part
 	*/
 	part();
+
 	/*
 		@function part creates an empty part that is owned by another entity
 
