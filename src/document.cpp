@@ -185,7 +185,7 @@ std::shared_ptr<workspace> document::set_workspace(std::string const& name)
 	if(mWorkspaceStates.find(name) != mWorkspaceStates.end()) {
 		mCurrentWorkspaceState = mWorkspaceStates[name];
 		mCurrentWorkspaceState->cam->viewport().set(glm::vec2((float)get_width(), (float)get_height())); // The dimensions might have changed, who knows?
-
+		mSideBar->set_workspaceState(mCurrentWorkspaceState);
 		return mParentBloop->set_workspace(name, mCurrentWorkspaceState); // Enforce change of workspace
 	}
 	return nullptr;
@@ -195,6 +195,7 @@ std::shared_ptr<workspace> document::set_workspace()
 {
 	if(mCurrentWorkspaceState && mWorkspaceStates.find(mCurrentWorkspaceState->workspaceName) != mWorkspaceStates.end()) {
 		mCurrentWorkspaceState->cam->viewport().set(glm::vec2((float)get_width(), (float)get_height()));
+		mSideBar->set_workspaceState(mCurrentWorkspaceState);
 
 		return mParentBloop->set_workspace(mCurrentWorkspaceState->workspaceName, mCurrentWorkspaceState); // Enforce workspace choice
 	}

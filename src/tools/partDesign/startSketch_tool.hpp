@@ -4,6 +4,8 @@
 
 #include <tools/common_tools/planeSelector_tool.hpp>
 
+struct camState;
+
 /*
 	@class startSketch_tool describes the tool used to create a sketch in a part by selecting a plane
 	@parent : planeSelector_tool
@@ -31,17 +33,18 @@ public:
 		@param event : The button press handed by gtk
 	*/
    	virtual bool manage_button_press(GdkEventButton* event);
+
+	virtual void notify_selectedEntity(std::shared_ptr<entity> ent);
 private:
 	/*
 		@function start_sketch is the core of the tool, it creates a sketch with a plane and a camera state
 		it will try to make the pick and invert the w and v vectors of the base plane for the sketch plane 
 		to best fit the camera and spare unecesary movements
 
-		@param sketchPlane : 	The plane on which the plane will sit
-		@param camUp : 			The up vector of the camera selecting the plane
-		@param camRight : 		The right vector of the camera selecting the plane
+		@param sketchPlane :	The plane on which the plane will sit
+		@param camState_ : 		The state of the camera at selection time
 	*/
-	void start_sketch(std::shared_ptr<plane_abstract> sketchPlane, glm::vec3 camUp, glm::vec3 camRight);
+	void start_sketch(std::shared_ptr<plane_abstract> sketchPlane, camState const& camState_);
 };
 
 #endif

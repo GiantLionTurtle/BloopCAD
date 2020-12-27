@@ -3,6 +3,7 @@
 #define ENTITYVIEW_HPP_
 
 #include "entity.hpp"
+#include <workspaces/workspace.hpp>
 
 #include <gtkmm.h>
 
@@ -54,7 +55,8 @@ public:
 
 class entityView : public Gtk::Box {
 private:
-	Gtk::Button btn;
+	std::shared_ptr<workspaceState> mCurrentWorkspaceState;
+
 	entityHandle mRootHandle;
 	std::vector<entityHandle*> mHandles;
 	document* mDoc;
@@ -66,6 +68,9 @@ public:
 
 	entityHandle& root() { return mRootHandle; };
 	document* doc() { return mDoc; }
+
+	std::shared_ptr<workspaceState> currentWorkspaceState() const { return mCurrentWorkspaceState; }
+	void set_workspaceState(std::shared_ptr<workspaceState> workspaceState_) { mCurrentWorkspaceState = workspaceState_; };
 };
 
 #endif

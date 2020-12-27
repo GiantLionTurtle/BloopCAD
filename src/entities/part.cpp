@@ -35,13 +35,19 @@ void part::init_scene()
 		plane_abstract::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f))));
 	mZX->set_name("ZX plane");
 
-	add(std::shared_ptr<plane>(new plane(
-		plane_abstract::from_1Point2Vectors(glm::vec3(-3.0f, 0.5f, 0.0f), glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.5f, 0.0f))))); // Temporary test plane
+	mOrigin = std::shared_ptr<folder>(new folder("origin"));
+	// mOrigin->add(mXY);
+	// mOrigin->add(mYZ);
+	// mOrigin->add(mZX);
 
-	// Add the three points
+	// add(mOrigin);
+
 	add(mXY);
 	add(mYZ);
 	add(mZX);
+
+	add(std::shared_ptr<plane>(new plane(
+		plane_abstract::from_1Point2Vectors(glm::vec3(-3.0f, 0.5f, 0.0f), glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.5f, 0.0f))))); // Temporary test plane
 }
 
 void part::set_handle(entityHandle* handle_)

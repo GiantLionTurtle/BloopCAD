@@ -3,6 +3,7 @@
 #define PART_HPP_
 
 #include "entity.hpp"
+#include "folder.hpp"
 
 #include "plane_abstract.hpp"
 #include "plane.hpp"
@@ -22,6 +23,7 @@ class modelColumns;
 class part : public entity {
 private:
 	std::shared_ptr<plane> mXY, mYZ, mZX; // Origin planes
+	std::shared_ptr<folder> mOrigin;
 	std::vector<std::shared_ptr<sketch>> mSketches; // Sketches drawn in the part
 public:
 	/*

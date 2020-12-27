@@ -17,6 +17,9 @@ public:
 		@param env : The workspace owning the tool
 	*/
     planeSelector_tool(workspace* env);
+    virtual ~planeSelector_tool() {};
+
+    virtual bool should_hover(std::shared_ptr<entity> ent);
 
     /*
         @function entity_at_point is an override of the parent's entity_at_point to filter out non planes
@@ -24,6 +27,8 @@ public:
         @param point : The point on screen to evaluate
     */
    	virtual std::shared_ptr<entity> entity_at_point(glm::vec2 point);
+protected:
+    bool entity_valid(std::shared_ptr<entity> ent);
 };
 
 #endif

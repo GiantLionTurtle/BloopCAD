@@ -118,15 +118,22 @@ void entityHandle::show_rec()
 
 bool entityHandle::select(GdkEventButton* event)
 {
-	if(mView && mView->doc() && mEntity)
+	if(mView && mView->doc() && mEntity && mEntity->hovered()) {
 		mView->doc()->toggle_select(mEntity, event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK);
+		if(mEntity->selected() && mView->currentWorkspaceState()) {
+			mView->currentWorkspaceState()->currentTool->notify_selectedEntity(mEntity);
+		} 
+	}
 	return true;
 }
 
 bool entityHandle::set_hover(GdkEventCrossing* event)
 {
-	if(mEntity)
+	if(mEntity && mView) {
+		if(mView->currentWorkspaceState() && mView->currentWorkspaceState()->currentTool && !mView->currentWorkspaceState()->currentTool->should_hover(mEntity))
+			return true;
 		mEntity->set_hover(true);
+	}
 	return true;
 }
 bool entityHandle::unset_hover(GdkEventCrossing* event)
@@ -181,6 +188,7 @@ void entityHandle::add_child(entityHandle* child)
 }
 
 entityView::entityView(document* doc):
+	mCurrentWorkspaceState(nullptr),
 	mRootHandle(),
 	mDoc(doc)
 {

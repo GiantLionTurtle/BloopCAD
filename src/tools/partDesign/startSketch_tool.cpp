@@ -31,7 +31,7 @@ void startSketch_tool::init()
 			selection sel = mEnv->state()->doc->selection_at(0);
 			std::shared_ptr<plane_abstract> sketchPlane = std::dynamic_pointer_cast<plane_abstract>(sel.ent);
 			if(sketchPlane) {
-				start_sketch(sketchPlane, sel.camSt.up, sel.camSt.right);
+				start_sketch(sketchPlane, sel.camSt);
 			}
 		}
 	}
@@ -43,13 +43,19 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 		// If the hovered entity is a plane, start sketch
 		std::shared_ptr<plane_abstract> sketchPlane = std::dynamic_pointer_cast<plane_abstract>(entity_at_point(glm::vec2(event->x, mEnv->state()->doc->get_height() - event->y)));
 		if(sketchPlane) {
-			start_sketch(sketchPlane, mEnv->state()->cam->up(), mEnv->state()->cam->right());
+			start_sketch(sketchPlane, mEnv->state()->cam->state());
 		}
 	}
 	return true;
 }
 
-void startSketch_tool::start_sketch(std::shared_ptr<plane_abstract> sketchPlane, glm::vec3 camUp, glm::vec3 camRight)
+void startSketch_tool::notify_selectedEntity(std::shared_ptr<entity> ent)
+{
+	if(mEnv->state() && entity_valid(ent))
+		start_sketch(std::dynamic_pointer_cast<plane_abstract>(ent), mEnv->state()->cam->state());
+}
+
+void startSketch_tool::start_sketch(std::shared_ptr<plane_abstract> sketchPlane, camState const& camState_)
 {
 	std::shared_ptr<part> target = std::dynamic_pointer_cast<part>(mEnv->state()->target); // Aquire the part that is worked on
 	if(target) {
@@ -60,18 +66,18 @@ void startSketch_tool::start_sketch(std::shared_ptr<plane_abstract> sketchPlane,
 		newState->cam->set(mEnv->state()->cam); // Set sketch camera to part camera for seemless transition
 		newState->target = target->get_sketch(); // Set the state's target to the new sketch
 
-		float dot_right_v 	= glm::dot(camRight, sketchPlane->v()); // How similar is the camRight to the v vector?
-		float dot_up_v 		= glm::dot(camUp, sketchPlane->v()); // How similar is the camUp to the v vector?
+		float dot_right_v 	= glm::dot(camState_.right, sketchPlane->v()); // How similar is the camRight to the v vector?
+		float dot_up_v 		= glm::dot(camState_.up, sketchPlane->v()); // How similar is the camUp to the v vector?
 
 		glm::vec3 right_plane, up_plane; // The v & w vectors that will be used for the sketch's plane
 
 		// Decide which of the camera vectors will be assigned to which of the plane's vectors
 		if(std::abs(dot_right_v) < std::abs(dot_up_v)) {
-			right_plane = sketchPlane->w() * glm::sign(glm::dot(camRight, sketchPlane->w())); // Invert it or not
+			right_plane = sketchPlane->w() * glm::sign(glm::dot(camState_.right, sketchPlane->w())); // Invert it or not
 			up_plane = sketchPlane->v() * glm::sign(dot_up_v); // Invert it or not
 		} else {
 			right_plane = sketchPlane->v() * glm::sign(dot_right_v); // Invert it or not
-			up_plane = sketchPlane->w() * glm::sign(glm::dot(camUp, sketchPlane->w())); // Invert it or not
+			up_plane = sketchPlane->w() * glm::sign(glm::dot(camState_.up, sketchPlane->w())); // Invert it or not
 		}
 		newState->cam->go_to(sketchPlane->origin(), up_plane, right_plane, preferences::get_instance().get_long("camtrans")); // Tell the camera where to move and for how long
 		newState->doc->clear_selection();
