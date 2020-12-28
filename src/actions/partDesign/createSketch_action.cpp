@@ -11,11 +11,13 @@ createSketch_action::createSketch_action(std::shared_ptr<plane_abstract> sketchP
 	mTarget->add_sketch(mSketch);
 }
 
-void createSketch_action::do_work()
+bool createSketch_action::do_work()
 {
 	mSketch->set_exists(true); // The sketch now exists
+	return true;
 }
-void createSketch_action::undo_work()
+bool createSketch_action::undo_work()
 {
 	mSketch->set_exists(false); // The sketch now doesn't exist, it will not be saved, but if the action is re-done it is still available
+	return true;
 }

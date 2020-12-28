@@ -29,11 +29,11 @@ public:
 	/*
 		@function do_work switches to desired workspace if it exists
 	*/
-	virtual void do_work();
+	virtual bool do_work();
 	/*
 		@function undo_work revert back to the initial workspace
 	*/
-	virtual void undo_work();
+	virtual bool undo_work();
 };
 
 #endif

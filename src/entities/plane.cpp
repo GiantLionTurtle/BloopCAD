@@ -55,7 +55,7 @@ void plane::draw_impl(std::shared_ptr<camera> cam, int frame)
 	}
 	if(selected()) 
 		color += glm::vec3(0.0f, 0.0f, 0.3f); // Make it blue-er if selected
-	mShader->setUniform4f("u_Color", color.r, color.g, color.b, hovered() ? 0.7 : 0.5);
+	mShader->setUniform4f("u_Color", color.r, color.g, color.b, hovered() ? 0.5 : 0.3);
 
 	if(mShader->lastUsed() != frame) {
 		// std::cout<<"Frame: "<<frame<<"\n";

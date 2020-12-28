@@ -34,11 +34,11 @@ public:
 	/*
 		@function do_work activates the created line
 	*/
-	virtual void do_work();
+	virtual bool do_work();
 	/*
 		@function undo_work desactivates the created line
 	*/
-	virtual void undo_work();
+	virtual bool undo_work();
 };
 
 #endif

@@ -3,7 +3,7 @@
 
 #include <preferences.hpp>
 #include <utils/mathUtils.hpp>
-#include <actions/switchWorkspace_action.hpp>
+#include <actions/common/switchWorkspace_action.hpp>
 #include <tools/sketchDesign/line_tool.hpp>
 #include <utils/xmlParser.hpp>
 #include <entities/svgEntity.hpp>

@@ -14,11 +14,13 @@ addLine_action::addLine_action(glm::vec3 const& pointA, glm::vec3 const& pointB,
 	mLine->set_exists(false); // It should not exist until the action is consummed
 }
 
-void addLine_action::do_work()
+bool addLine_action::do_work()
 {
 	mLine->set_exists(true); // The line now exists
+	return false;
 }
-void addLine_action::undo_work()
+bool addLine_action::undo_work()
 {
 	mLine->set_exists(false); // The line now doesn't exist, but is still available if needed
+	return true;
 }

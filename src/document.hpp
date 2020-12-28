@@ -54,7 +54,7 @@ private:
 	std::shared_ptr<frameBuffer> mSelectionBuffer; // The buffer onto which render the selection colors
 
 	std::vector<std::shared_ptr<action>> mActionStack; // The stack of actions done in the document
-	unsigned int mActionInd, mActionStackSize; // Metrics for the action stack
+	int mActionInd, mCurrentActionInd, mActionStackSize; // Metrics for the action stack
 
 	glm::vec3 mBackgroundColor; // The rendering background color
 	Gtk::GLArea mViewport; // The rendering widget
@@ -170,6 +170,8 @@ public:
 		@param amount [defaults to 1] : The number of step to take toward the past
 	*/
 	void rewind_action_index(unsigned int amount = 1);
+
+	void update_actionStack();
 
 	/*
 		@function selection_size 

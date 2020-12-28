@@ -11,7 +11,10 @@ document::document(bloop* parent) :
 	mParentBloop(parent),
 	mCurrentWorkspaceState(nullptr),
 	mBackgroundColor(0.0f, 0.0f, 0.0f),
-	mFrameId(1)
+	mFrameId(1),
+	mActionStackSize(0),
+	mActionInd(0),
+	mCurrentActionInd(0)
 {
 	connect_signals();	
 	// Create the workspace states, their cameras and all
@@ -126,6 +129,9 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 gboolean document::frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock, gpointer data)
 {
     document* self = (document*) data;
+
+	self->update_actionStack();
+
 	// Update the camera for animations and whatnot
 	self->mCurrentWorkspaceState->cam->update();
 	camState cmSt = self->mCurrentWorkspaceState->cam->state();
@@ -219,26 +225,35 @@ void document::push_action(std::shared_ptr<action> to_push)
 		mActionStack.push_back(to_push);
 	}
 
-	to_push->do_work(); // Do the action 
-
+	if(to_push->do_work())
+		mCurrentActionInd++;
 	// Housekeeping incrementations
 	mActionInd++;
 	mActionStackSize++;
 }
 void document::advance_action_index(unsigned int amount)
 {
-	for(unsigned int i = 0; i < amount; ++i) {
-		if((mActionInd + 1) < mActionStackSize) { // Check if there is an action after the current one
-			mActionStack[mActionInd++]->do_work(); // Do the action
-		}
-	}
+	mActionInd += amount;
+	if(mActionInd >= mActionStackSize)
+		mActionInd = mActionStackSize-1;
 }
 void document::rewind_action_index(unsigned int amount)
 {
-	for(unsigned int i = 0; i < amount; ++i) {
-		if((mActionInd) > 0) { // Check if there is an action to undo
-			mActionStack[mActionInd--]->undo_work(); // Undo the action
+	mActionInd -= amount;
+	if(mActionInd < 0)
+		mActionInd = 0;
+}
+
+void document::update_actionStack()
+{
+	if(mCurrentActionInd < mActionInd) {
+		if(mActionStack[mCurrentActionInd]->do_work()) {
+			mCurrentActionInd++;
+			std::cout<<"Done action\n";
 		}
+	} else if(mCurrentActionInd > mActionInd) {
+		if(mActionStack[mCurrentActionInd]->undo_work())
+			mCurrentActionInd--;
 	}
 }
 

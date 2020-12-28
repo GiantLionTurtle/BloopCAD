@@ -30,11 +30,11 @@ public:
 	/*
 		@function do_work activates the created sketch
 	*/
-	virtual void do_work();
+	virtual bool do_work();
 	/*
 		@function undo_work desactivate the created sketch
 	*/
-	virtual void undo_work();
+	virtual bool undo_work();
 };
 
 #endif

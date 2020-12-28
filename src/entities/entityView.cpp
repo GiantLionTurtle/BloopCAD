@@ -102,7 +102,6 @@ void entityHandle::hide_rec()
 	for(int i = 0; i < mChildren.size(); ++i) {
 		mChildren[i]->hide_rec();
 	}
-	// show_all();
 }
 void entityHandle::show_rec()
 {
@@ -112,7 +111,6 @@ void entityHandle::show_rec()
 			mChildren[i]->show_rec();
 		}
 	}
-	// show_all();
 }
 
 bool entityHandle::select(GdkEventButton* event)

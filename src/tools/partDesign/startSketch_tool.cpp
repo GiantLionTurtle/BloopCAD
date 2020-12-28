@@ -7,7 +7,7 @@
 #include <entities/part.hpp>
 
 #include <actions/partDesign/createSketch_action.hpp>
-#include <actions/switchWorkspace_action.hpp>
+#include <actions/common/switchWorkspace_action.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
 startSketch_tool::startSketch_tool(workspace* env):
@@ -79,6 +79,8 @@ void startSketch_tool::start_sketch(std::shared_ptr<plane_abstract> sketchPlane,
 			right_plane = sketchPlane->v() * glm::sign(dot_right_v); // Invert it or not
 			up_plane = sketchPlane->w() * glm::sign(glm::dot(camState_.up, sketchPlane->w())); // Invert it or not
 		}
+
+
 		newState->cam->go_to(sketchPlane->origin(), up_plane, right_plane, preferences::get_instance().get_long("camtrans")); // Tell the camera where to move and for how long
 		newState->doc->clear_selection();
 	}
