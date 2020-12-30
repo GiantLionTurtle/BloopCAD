@@ -4,6 +4,7 @@
 #include <preferences.hpp>
 #include <utils/mathUtils.hpp>
 #include <actions/common/switchWorkspace_action.hpp>
+#include <actions/common/moveCamera_action.hpp>
 #include <tools/sketchDesign/line_tool.hpp>
 #include <utils/xmlParser.hpp>
 #include <entities/svgEntity.hpp>
@@ -197,24 +198,8 @@ void sketchDesign::finish()
 	mState->doc->push_action(std::shared_ptr<action>(new switchWorkspace_action(mState->doc, "partDesign"))); // Go to part design
 	std::shared_ptr<workspaceState> newState = mState->doc->currentWorkspaceState(); // Find the new part design camera
 
-	// Record the part design camera's transform
-	transform targetTransform = newState->cam->transformation();
-	glm::vec3 orientation = newState->cam->orientation().get();
-
-	// Compute the shortest path
-	glm::vec2 angles(
-		mState->cam->orientation().get().x + diff_angles(mState->cam->orientation().get().x, orientation.x), 
-		mState->cam->orientation().get().y + diff_angles(mState->cam->orientation().get().y, orientation.y)
-	);
-	
-	long trans_time = preferences::get_instance().get_long("camtrans"); // Fetch the desired transition length
-
-	// Set the part design camera to the sketch design camera position and start the animation to make it go to it's target
+	// // Record the part design camera's state
+	camState targetState = newState->cam->state();
 	newState->cam->set(mState->cam);
-	newState->cam->transformation().rotation.set(
-		glm::angleAxis(angles.x, glm::vec3(1.0f, 0.0f, 0.0f)) * 
-		glm::angleAxis(angles.y, glm::vec3(0.0f, 1.0f, 0.0f)), trans_time);
-	newState->cam->orientation().set(glm::vec3(angles.x, angles.y, 0.0f));
-	newState->cam->transformation().translation.set(targetTransform.translation.get(), trans_time);
-	newState->cam->transformation().scale.set(targetTransform.scale.get(), trans_time);
+	mState->doc->push_action(std::shared_ptr<action>(new moveCamera_action(newState->cam, targetState, preferences::get_instance().get_long("camtrans")))); // Go to part design
 }

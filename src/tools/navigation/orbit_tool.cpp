@@ -38,10 +38,10 @@ bool orbit_tool::manage_mouse_move(GdkEventMotion* event)
 		if(is_moving) {
 			glm::vec2 abs_mov = (pos-prevPos) * 0.005f; // Arbitrary scaling of the movement
 			std::shared_ptr<camera> cam = mEnv->state()->cam; // Convenience temporary
-			cam->orientation() += glm::vec3(
+			cam->set_orientation(cam->orientation() + glm::vec3(
 				-abs_mov.y, 
 				(cam->flipped() ? -abs_mov.x : abs_mov.x), // When flipped, the rotation around the y axis is flipped for usage consistency
-				0.0f);
+				0.0f));
 		} else {
 			is_moving = true; // Moving begun, there is one recorded point
 		}

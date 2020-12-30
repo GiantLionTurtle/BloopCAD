@@ -10,16 +10,16 @@
 
 void print_state(camState const& st)
 {
-	std::cout<<glm::to_string(st.pos)<<" - "<<glm::to_string(st.up)<<" - "<<glm::to_string(st.right);
+	std::cout<<glm::to_string(st.pos)<<" - "<<glm::to_string(st.right)<<" - "<<glm::to_string(st.up);
 }
 
 bool operator !=(camState const& st1, camState const& st2) 
 {
-	return st1.pos != st2.pos || st1.up != st2.up || st1.right != st2.right;
+	return st1.pos != st2.pos || st1.right != st2.right|| st1.up != st2.up;
 }
 bool operator ==(camState const& st1, camState const& st2) 
 {
-	return st1.pos == st2.pos && st1.up == st2.up && st1.right == st2.right;
+	return st1.pos == st2.pos && st1.right == st2.right && st1.up == st2.up;
 }
 
 camera::camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float FOV_, glm::vec2 viewport_):
@@ -38,29 +38,22 @@ camera::camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float 
 
 glm::mat4 camera::model() const
 {
-	// The order is important!
-	return 
-	glm::translate(glm::mat4(1.0f), mTransformation.translation.get()) * 
-	glm::toMat4(mTransformation.rotation.get()) *
-	glm::scale(glm::mat4(1.0f), mTransformation.scale.get());
+	return model(mTransformation);
 }
 glm::mat4 camera::model_inv() const
 {
 	// The order is important! - it is the inverse of the model's order
-	return 
-	glm::scale(glm::mat4(1.0f), 1.0f/mTransformation.scale.get()) * 
-	glm::toMat4(glm::inverse(mTransformation.rotation.get())) *
-	glm::translate(glm::mat4(1.0f), -mTransformation.translation.get());
+	return model_inv(mTransformation);
 }
 glm::mat4 camera::view() const
 {
 	// Here the "real" pos and target are used, not the computed ones
-	return glm::lookAt(mPos.get(), mTarget.get(), glm::vec3(0.0f, 1.0f, 0.0f));
+	return glm::lookAt(mPos, mTarget, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 glm::mat4 camera::projection() const
 {
 	// 0.1f for the close plane and 100.0f for the far plane are arbitrary, they are subject to change
-	return glm::perspective(mFOV.get(), aspectRatio(), 0.1f, 100.0f);
+	return glm::perspective(mFOV, aspectRatio(), 0.1f, 100.0f);
 }
 glm::mat4 camera::mvp() const
 {
@@ -69,11 +62,15 @@ glm::mat4 camera::mvp() const
 
 glm::vec3 camera::pos() const
 {
-	return model_inv() * glm::vec4(mPos.get(), 1.0f); // Apply the inverse transform to the "real" position
+	return model_inv() * glm::vec4(mPos, 1.0f); // Apply the inverse transform to the "real" position
+}
+glm::vec3 camera::predictedPos(transform trans) const
+{
+	return model_inv(trans) * glm::vec4(mPos, 1.0f);
 }
 glm::vec3 camera::target() const
 {
-	return model_inv() * glm::vec4(mTarget.get(), 1.0f); // Apply the inverse transform to the "real" target
+	return model_inv() * glm::vec4(mTarget, 1.0f); // Apply the inverse transform to the "real" target
 }
 
 glm::vec3 camera::up() const
@@ -91,100 +88,53 @@ glm::vec3 camera::front() const
 
 void camera::set(std::shared_ptr<camera> other)
 {
-	mPos.set(other->mPos.get());
-	mTarget.set(other->mTarget.get());
-	mOrientation.set(other->mOrientation.get());
+	mPos = other->mPos;
+	mTarget = other->mTarget;
+	mOrientation = other->mOrientation;
 
-	mZoom.set(other->mZoom.get());
-	mFOV.set(other->mFOV.get());
-	mViewport.set(other->mViewport.get());
+	mZoom = other->mZoom;
+	mFOV = other->mFOV;
+	mViewport = other->mViewport;
 
-	mTransformation.rotation.set(other->mTransformation.rotation.get());
-	mTransformation.translation.set(other->mTransformation.translation.get());
-	mTransformation.scale.set(other->mTransformation.scale.get());
-}
-
-void camera::go_to(glm::vec3 target_, glm::vec3 up_, glm::vec3 right_)
-{
-	go_to(target_, up_, right_, 0); // This will make the animatable set directly
-}
-
-void camera::go_to(glm::vec3 target_, glm::vec3 up_, glm::vec3 right_, unsigned int duration)
-{
-	// This is still somewhat messy, it probably won't stay in this class or in this form
-
-	glm::vec3 targetBack = glm::normalize(glm::cross(right_, up_)); // Opposite of the front that has it will have in the end
-	glm::vec3 natBack(0.0f, 0.0f, 1.0f); // Inverse of the "real front"
-	glm::vec3 deltaBacks = targetBack-natBack; 
-
-	// Calculate the orientation based on the difference between the target and "current" backs
-	float angle_x = std::asin(deltaBacks.y);
-	float angle_y = -std::asin(deltaBacks.x);
-	if(flipped()) {
-		if(targetBack.z < 0.0f) {
-			angle_x = M_PI - angle_x;
-		} else {
-			angle_x = M_PI * 2.0f - angle_x;
-		}
-		angle_y = -angle_y;
-	} else {
-		if(targetBack.z < 0.0f) {
-			angle_y = M_PI - angle_y;
-		} 
-	}
-
-	glm::vec3 angles(
-		mOrientation.get().x + diff_angles(mOrientation.get().x, angle_x), 
-		mOrientation.get().y + diff_angles(mOrientation.get().y, angle_y),
-		0.0f
-	);
-	
-	update_rotation(angles, duration); // Set the quaternion to the computed orientation
-	mOrientation.set(glm::vec3(angles.x, angles.y, 0.0f)); // Set it directly to prevent deadlock
-}
-
-void camera::update()
-{
-	mTarget.update();
-	mZoom.update();	
-	mViewport.update();
-	mTransformation.translation.update();
-
-	if(mTransformation.rotation.steady()) { // Do update the quaternion rotation if it is not in the middle of an interpolation
-		mOrientation.update();
-		update_rotation(mOrientation.get());
-	} else { // The camera is performing an interpolation between rotations, do not override the quaternion
-		mTransformation.rotation.update();
-	}
-
-	// TODO: change position, fov and scale in a way that makes sense and is coherent
-	mTransformation.scale.set(glm::vec3(mZoom, mZoom, mZoom));
+	mTransformation.rotation = other->mTransformation.rotation;
+	mTransformation.translation = other->mTransformation.translation;
+	mTransformation.scale = other->mTransformation.scale;
 }
 
 bool camera::flipped() const
 {
 	// The camera is flipped it's rotation around the x axis is between 90 and 270 degrees
-	float mod_angle = std::fmod(mOrientation.get().x, M_PI * 2.0f);
+	float mod_angle = std::fmod(mOrientation.x, M_PI * 2.0f);
 	if(mod_angle < 0)
 		mod_angle += M_PI * 2.0f;
 	return (mod_angle > M_PI / 2.0f && mod_angle < M_PI * 3.0f / 2.0f);
 }
 
-bool camera::steady() const 
-{
-	return 	mPos.steady() &&  mTarget.steady() && mOrientation.steady() && 
-			mZoom.steady() &&  mFOV.steady() && mViewport.steady() && 
-			mTransformation.rotation.steady() && mTransformation.scale.steady() && mTransformation.translation.steady();
-}
-
 camState camera::state() const 
 {
-	return { pos(), up(), right() };
+	return { pos(), right(), up() };
 }
 
-void camera::update_rotation(glm::vec3 const& orientation, unsigned int duration_ms)
+void camera::orientation_to_rotation(glm::vec3 const& orientation, glm::quat& quaternion)
 {
 	// Create the quaternion 
-	mTransformation.rotation.set(	glm::angleAxis(orientation.x, glm::vec3(1.0f, 0.0f, 0.0f)) * 
-									glm::angleAxis(orientation.y, glm::vec3(0.0f, 1.0f, 0.0f)), duration_ms);
+	quaternion = 	glm::angleAxis(orientation.x, glm::vec3(1.0f, 0.0f, 0.0f)) * 
+					glm::angleAxis(orientation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+}
+
+glm::mat4 camera::model(transform transf) const
+{
+	// The order matters!
+	return 
+	glm::toMat4(transf.rotation) *
+	glm::translate(glm::mat4(1.0f), transf.translation) * 
+	glm::scale(glm::mat4(1.0f), transf.scale);
+}
+glm::mat4 camera::model_inv(transform transf) const
+{
+	// The order matters! - it is the inverse of the model's order
+	return 
+	glm::scale(glm::mat4(1.0f), 1.0f/transf.scale) * 
+	glm::translate(glm::mat4(1.0f), -transf.translation) *
+	glm::toMat4(glm::inverse(transf.rotation));
 }

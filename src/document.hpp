@@ -203,7 +203,7 @@ public:
 		@function toggle_select manages the selection buffer with a toggle of an entity@
 
 		@param id : 		The selection id of the entity to toggle
-		@param camState : 	The state of the camera at the moment of calling
+		@param cam : 		The state of the camera at the moment of calling
 		@param additive : 	If the toggle behavior is additive (e.g. ctrl + select)
 	*/
 	void toggle_select(glm::ivec3 id, camState cam, bool additive);

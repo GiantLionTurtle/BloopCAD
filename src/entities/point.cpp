@@ -68,7 +68,7 @@ void point::draw_impl(std::shared_ptr<camera> cam, int frame)
 
 	if(mShader->lastUsed() != frame) {
 		mShader->setUniformMat4f("u_MVP", cam->mvp());
-		mShader->setUniform2f("u_Viewport", cam->viewport().get());
+		mShader->setUniform2f("u_Viewport", cam->viewport());
 		mShader->set_used(frame);
 	}
 
@@ -89,7 +89,7 @@ void point::draw_selection_impl(std::shared_ptr<camera> cam, int frame)
 
 	if(mShader->lastUsed() != frame) {
 		mShader->setUniformMat4f("u_MVP", cam->mvp());
-		mShader->setUniform2f("u_Viewport", cam->viewport().get());
+		mShader->setUniform2f("u_Viewport", cam->viewport());
 		mShader->set_used(frame);
 	}
 	

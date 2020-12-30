@@ -17,7 +17,7 @@ addLine_action::addLine_action(glm::vec3 const& pointA, glm::vec3 const& pointB,
 bool addLine_action::do_work()
 {
 	mLine->set_exists(true); // The line now exists
-	return false;
+	return true;
 }
 bool addLine_action::undo_work()
 {

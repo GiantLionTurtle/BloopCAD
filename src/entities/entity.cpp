@@ -204,14 +204,14 @@ std::shared_ptr<entity> entity::operator[](glm::ivec3 const& ind) const
 void entity::for_each(std::function<void (std::shared_ptr<entity>, glm::ivec3)> func)
 {
 	for(size_t i = 0; i < mChildren.size(); ++i) {
-		if(std::get<1>(mChildren[i])) // TODO: should nullptr be allowed to be given to function?
+		if(std::get<2>(mChildren[i]) && std::get<1>(mChildren[i])) // TODO: should nullptr be allowed to be given to function?
 			func(std::get<1>(mChildren[i]), std::get<0>(mChildren[i]));
 	}
 }
 void entity::for_each(std::function<void (std::shared_ptr<entity>)> func)
 {
 	for(size_t i = 0; i < mChildren.size(); ++i) {
-		if(std::get<1>(mChildren[i])) // TODO: should nullptr be allowed to be given to function?
+		if(std::get<2>(mChildren[i]) && std::get<1>(mChildren[i])) // TODO: should nullptr be allowed to be given to function?
 			func(std::get<1>(mChildren[i]));
 	}
 }
