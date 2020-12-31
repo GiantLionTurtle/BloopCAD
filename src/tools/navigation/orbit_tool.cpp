@@ -1,7 +1,7 @@
 
 #include "orbit_tool.hpp"
 
-#include <preferences.hpp>
+#include <utils/preferences.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 

@@ -116,9 +116,10 @@ void entityHandle::show_rec()
 bool entityHandle::select(GdkEventButton* event)
 {
 	if(mView && mView->doc() && mEntity && mEntity->hovered()) {
-		mView->doc()->toggle_select(mEntity, event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK);
-		if(mEntity->selected() && mView->currentWorkspaceState()) {
-			mView->currentWorkspaceState()->currentTool->notify_selectedEntity(mEntity);
+		if(event->type != GDK_2BUTTON_PRESS || (event->type == GDK_2BUTTON_PRESS && !mEntity->selected()))
+			mView->doc()->toggle_select(mEntity, event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK);
+		if(event->type == GDK_2BUTTON_PRESS && mView->currentWorkspaceState()) {
+			mView->currentWorkspaceState()->currentTool->act_on_entity(mEntity);
 		} 
 	}
 	return true;

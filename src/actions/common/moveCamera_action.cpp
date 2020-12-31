@@ -3,6 +3,7 @@
 
 #include <utils/mathUtils.hpp>
 #include <utils/errorLogger.hpp>
+#include <utils/preferences.hpp>
 
 #include <glm/gtx/vector_angle.hpp>
 
@@ -16,6 +17,36 @@ moveCamera_action::moveCamera_action(std::shared_ptr<camera> cam, camState targe
 	mScale(glm::vec3(1.0f))
 {
 
+}
+
+std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	std::shared_ptr<plane_abstract> toFace, float dist_to_plane, 
+																				camState const& camSt, std::shared_ptr<camera> cam)
+{
+	float dot_right_v 	= glm::dot(camSt.right, toFace->v()); // How similar is the camRight to the v vector?
+	float dot_up_v 		= glm::dot(camSt.up, toFace->v()); // How similar is the camUp to the v vector?
+	float dot_right_w 	= glm::dot(camSt.right, toFace->w());
+	float dot_up_w 		= glm::dot(camSt.up, toFace->w());
+
+	glm::vec3 right_plane, up_plane; // The v & w vectors that will be used for the sketch's plane
+	glm::vec3 v_plane, w_plane;
+
+
+	// Decide which of the camera vectors will be assigned to which of the plane's vectors
+	if(std::abs(dot_right_w) > std::abs(dot_right_v) && std::abs(dot_right_w) > std::abs(dot_up_w)) {
+		right_plane =  toFace->w() * (dot_right_w < 0.0f ? -1.0f : 1.0f); // Invert it or not
+		up_plane =  toFace->v() * (dot_up_v < 0.0f ? -1.0f : 1.0f); // Invert it or not
+	} else {
+		right_plane =  toFace->v() * (dot_right_v < 0.0f ? -1.0f : 1.0f); // Invert it or not
+		up_plane =  toFace->w() * (dot_up_w < 0.0f ? -1.0f : 1.0f); // Invert it or not
+	}
+	camState targetCamState = {  toFace->origin() + glm::normalize(glm::cross(right_plane, up_plane)) * dist_to_plane, right_plane, up_plane };
+	return std::shared_ptr<action>(new moveCamera_action(cam, 
+	targetCamState, 
+	preferences::get_instance().get_long("camtrans")));
+}
+std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	std::shared_ptr<plane_abstract> toFace, float dist_to_plane, std::shared_ptr<camera> cam)
+{
+	return create_from_facingPlane(toFace, dist_to_plane, cam->state(), cam);
 }
 
 bool moveCamera_action::do_work()
@@ -54,44 +85,6 @@ bool moveCamera_action::move_camera()
 	}
 	return false;
 }
-
-// void moveCamera_action::compute_animatables(camState const& state)
-// {
-// 	// This is still somewhat messy, it probably won't stay in this class or in this form
-// 	glm::vec3 targetBack = glm::normalize(glm::cross(state.right, state.up)); // Opposite of the front that has it will have in the end
-// 	glm::vec3 natBack(0.0f, 0.0f, 1.0f); // Inverse of the "real front"
-// 	glm::vec3 deltaBacks = targetBack-natBack; 
-
-// 	// Calculate the orientation based on the difference between the target and "current" backs
-// 	float angle_x = std::asin(deltaBacks.y);
-// 	float angle_y = -std::asin(deltaBacks.x);
-// 	if(mCamera->flipped()) {
-// 		if(targetBack.z < 0.0f) {
-// 			angle_x = M_PI - angle_x;
-// 		} else {
-// 			angle_x = M_PI * 2.0f - angle_x;
-// 		}
-// 		angle_y = -angle_y;
-// 	} else {
-// 		if(targetBack.z < 0.0f) {
-// 			angle_y = M_PI - angle_y;
-// 		} 
-// 	}
-
-// 	mFinalOrientation = glm::vec3(
-// 		mCamera->orientation().x + diff_angles(mCamera->orientation().x, angle_x), 
-// 		mCamera->orientation().y + diff_angles(mCamera->orientation().y, angle_y),
-// 		0.0f
-// 	);
-	
-// 	glm::quat rotation;
-// 	camera::orientation_to_rotation(mFinalOrientation, rotation); // Set the quaternion to the computed orientation
-// 	mRotation.set(mCamera->transformation().rotation);
-// 	mRotation.set(rotation, mDuration);
-// 	// mTranslation.set(glm::vec3(mCamera->transformation().translation));
-// 	// mTranslation.set(mCamera->transformation().translation-state.pos, mDuration);
-// 	mScale.set(glm::vec3(1.0f));
-// }
 
 void moveCamera_action::compute_animatables(camState const& state)
 {

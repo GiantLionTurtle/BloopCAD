@@ -1,7 +1,7 @@
 
 #include "document.hpp"
 
-#include <preferences.hpp>
+#include <utils/preferences.hpp>
 #include "bloop.hpp"
 #include "graphics_utils/GLCall.hpp"
 

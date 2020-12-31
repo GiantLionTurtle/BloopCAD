@@ -1,7 +1,8 @@
 
 #include "partDesign.hpp"
-#include <bloop.hpp>
 
+#include <bloop.hpp>
+#include <tools/partDesign/partDesignDefault_tool.hpp>
 #include <tools/partDesign/startSketch_tool.hpp>
 #include <entities/part.hpp>
 
@@ -16,8 +17,9 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 {
 	// Creat all the tools used in this workspace
 	mTools["startSketch"] 	= std::shared_ptr<tool_abstract>(new startSketch_tool(this));
+	mTools["default"]		= std::shared_ptr<tool_abstract>(new partDesignDefault_tool(this));
 	// mTools["extrusion"] 	= std::shared_ptr<tool_abstract>(new extrusion_tool(this));
-	mDefaultTool = mTools.at("simpleSelector");
+	mDefaultTool = mTools.at("default");
 
 	// Initialize all buttons as 2 nullptr
 	mButtons["startSketch"] = std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);

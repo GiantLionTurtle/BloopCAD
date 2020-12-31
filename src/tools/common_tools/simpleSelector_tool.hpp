@@ -18,6 +18,7 @@ public:
 		@param env : The workspace owning the tool
 	*/
 	simpleSelector_tool(workspace* env);
+	virtual ~simpleSelector_tool() {};
 
 	/*
 		@function manage_button_press manages selection when clicking at a point on screen

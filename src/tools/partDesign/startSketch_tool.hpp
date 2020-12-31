@@ -34,7 +34,7 @@ public:
 	*/
    	virtual bool manage_button_press(GdkEventButton* event);
 
-	virtual void notify_selectedEntity(std::shared_ptr<entity> ent);
+	virtual void act_on_entity(std::shared_ptr<entity> ent);
 private:
 	/*
 		@function start_sketch is the core of the tool, it creates a sketch with a plane and a camera state

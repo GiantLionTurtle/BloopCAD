@@ -1,7 +1,7 @@
 
 #include "startSketch_tool.hpp"
 
-#include <preferences.hpp>
+#include <utils/preferences.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <entities/part.hpp>
@@ -50,7 +50,7 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 	return true;
 }
 
-void startSketch_tool::notify_selectedEntity(std::shared_ptr<entity> ent)
+void startSketch_tool::act_on_entity(std::shared_ptr<entity> ent)
 {
 	if(mEnv->state() && entity_valid(ent))
 		start_sketch(std::dynamic_pointer_cast<plane_abstract>(ent), mEnv->state()->cam->state());
@@ -67,27 +67,7 @@ void startSketch_tool::start_sketch(std::shared_ptr<plane_abstract> sketchPlane,
 		newState->cam->set(mEnv->state()->cam); // Set sketch camera to part camera for seemless transition
 		newState->target = target->get_sketch(); // Set the state's target to the new sketch
 
-		float dot_right_v 	= glm::dot(camState_.right, sketchPlane->v()); // How similar is the camRight to the v vector?
-		float dot_up_v 		= glm::dot(camState_.up, sketchPlane->v()); // How similar is the camUp to the v vector?
-		float dot_right_w 	= glm::dot(camState_.right, sketchPlane->w());
-		float dot_up_w 		= glm::dot(camState_.up, sketchPlane->w());
-
-		glm::vec3 right_plane, up_plane; // The v & w vectors that will be used for the sketch's plane
-		glm::vec3 v_plane, w_plane;
-
-
-		// Decide which of the camera vectors will be assigned to which of the plane's vectors
-		if(std::abs(dot_right_w) > std::abs(dot_right_v) && std::abs(dot_right_w) > std::abs(dot_up_w)) {
-			right_plane = sketchPlane->w() * (dot_right_w < 0.0f ? -1.0f : 1.0f); // Invert it or not
-			up_plane = sketchPlane->v() * (dot_up_v < 0.0f ? -1.0f : 1.0f); // Invert it or not
-		} else {
-			right_plane = sketchPlane->v() * (dot_right_v < 0.0f ? -1.0f : 1.0f); // Invert it or not
-			up_plane = sketchPlane->w() * (dot_up_w < 0.0f ? -1.0f : 1.0f); // Invert it or not
-		}
 		newState->doc->clear_selection();
-		camState targetCamState = { sketchPlane->origin() + glm::normalize(glm::cross(right_plane, up_plane)) * 8.0f, right_plane, up_plane };
-		mEnv->state()->doc->push_action(std::shared_ptr<action>(new moveCamera_action(newState->cam, 
-		targetCamState, 
-		preferences::get_instance().get_long("camtrans"))));
+		mEnv->state()->doc->push_action(moveCamera_action::create_from_facingPlane(sketchPlane, 8.0, camState_, newState->cam));
 	}
 }

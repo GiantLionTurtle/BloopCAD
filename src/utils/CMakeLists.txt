@@ -4,6 +4,7 @@ set(utils_source_files
   conversionsUtils.cpp
   xmlParser.cpp
   animatable.cpp
+  preferences.cpp
  )
 
 add_library(utils ${utils_source_files})

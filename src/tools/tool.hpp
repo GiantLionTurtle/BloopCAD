@@ -96,7 +96,7 @@ public:
 	*/
 	std::shared_ptr<compositeCursor> cursor() const { return mCursor; };
 
-	virtual void notify_selectedEntity(std::shared_ptr<entity> ent) {};
+	virtual void act_on_entity(std::shared_ptr<entity> ent) {};
 	virtual bool should_hover(std::shared_ptr<entity> ent) { return true; }
 };
 

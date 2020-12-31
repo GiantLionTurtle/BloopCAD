@@ -1,7 +1,7 @@
 
 #include "sketchDesign.hpp"
 
-#include <preferences.hpp>
+#include <utils/preferences.hpp>
 #include <utils/mathUtils.hpp>
 #include <actions/common/switchWorkspace_action.hpp>
 #include <actions/common/moveCamera_action.hpp>
