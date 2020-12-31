@@ -31,13 +31,11 @@ point::point(point_abstract const& basePoint):
 void point::set_pos(glm::vec3 pos)
 {
 	mRequire_VBUpdate = true;
-	set_require_redraw();
 	mPos = pos;
 }
 void point::set_pos(point_abstract const& other)
 {
 	mRequire_VBUpdate = true;
-	set_require_redraw();
 	mPos = other.pos();
 }
 

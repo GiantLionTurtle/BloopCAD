@@ -94,6 +94,12 @@ void document::do_unrealize()
 		LOG_ERROR("\ndomain: " + std::to_string(gle.domain()) + "\ncode: " + std::to_string(gle.code()) + "\nwhat: " + gle.what());
 	}
 }
+void document::do_resize(int width, int height)
+{
+	// TODO: manage selection frame buffer?
+	if(mCurrentWorkspaceState)
+		mCurrentWorkspaceState->cam->viewport() = glm::vec2((float)width, (float)height); // The dimensions might have changed, who knows?
+}
 bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 {
 	// Background draw
@@ -163,6 +169,7 @@ void document::connect_signals()
 	// Standard things needed to init and render the document
 	mViewport.signal_realize().connect(sigc::mem_fun(*this, &document::do_realize));
 	mViewport.signal_unrealize().connect(sigc::mem_fun(*this, &document::do_unrealize), false);
+	mViewport.signal_resize().connect(sigc::mem_fun(*this, &document::do_resize));
 	mViewport.signal_render().connect(sigc::mem_fun(*this, &document::do_render));
 	gtk_widget_add_tick_callback((GtkWidget*) this->gobj(),	document::frame_callback, this, NULL); // Couldn't find a c++-y way to do it
 

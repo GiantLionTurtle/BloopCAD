@@ -9,7 +9,7 @@
 
 class point : public entity, public point_abstract {
 private:
-	const glm::vec3 mColor = glm::vec3(1.0f, 0.0f, 0.0f); // Point colors
+	const glm::vec3 mColor = glm::vec3(0.0f, 0.89f, 0.725f); // Point color
 
 	std::shared_ptr<vertexBuffer> 	mVB; // The vertex buffer to contain the vertices on the gpu
 	bool mRequire_VBUpdate;

@@ -86,6 +86,7 @@ public:
 		@function do_unrealize unrealizes the viewport
 	*/
 	void do_unrealize();
+	void do_resize(int width, int height);
 	/*
 		@function do_render is the main rendering loop, entities draw themselves
 		and their selection shadows in this function
