@@ -1,4 +1,4 @@
-set(entities_utils_source_files
+set(entities_source_files
   plane_abstract.cpp
   entity.cpp
   plane.cpp
@@ -10,7 +10,7 @@ set(entities_utils_source_files
   folder.cpp
   entityView.cpp)
 
-add_library(entities ${entities_utils_source_files})
+add_library(entities ${entities_source_files})
 
 target_link_libraries(entities
 	graphics_utils

@@ -18,5 +18,3 @@ link_directories(
 
 add_subdirectory(vendor)
 add_subdirectory(src)
-
-#file(COPY ${CMAKE_SOURCE_DIR}/resources/ DESTINATION ${PROJECT_BINARY_DIR}/resources/)
