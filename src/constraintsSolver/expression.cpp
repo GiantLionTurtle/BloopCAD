@@ -3,10 +3,34 @@
 #include <utils/errorLogger.hpp>
 #include <cmath>
 
-expression_ptr expConst::one(new expression_const(1.0f));;
-expression_ptr expConst::two(new expression_const(2.0f));;
+expression_ptr expConst::zero(new expression_const(0.0f));
+expression_ptr expConst::one(new expression_const(1.0f));
+expression_ptr expConst::two(new expression_const(2.0f));
 expression_ptr expConst::pi(new expression_const(M_PI));
 expression_ptr expConst::pi2(new expression_const(M_PI_2));
+
+variable::variable()
+{
+
+}
+variable::variable(std::string name_, float val_):
+	mName(name_),
+	mVal(val_)
+{
+
+}
+
+expression_ptr variable::expr()
+{
+	return expression_ptr(new expression_variable(this->shared_from_this()));
+}
+
+expression::expression():
+	mParam(nullptr)
+{
+
+}
+
 
 bool expression::unary(operationType op)
 {
@@ -40,24 +64,50 @@ binary_expression::binary_expression(expression_ptr left, expression_ptr right):
 /* -------------- Const -------------- */
 expression_const::expression_const(float val)
 {
-	mParam = val;
+	mParam = variable_ptr(new variable("", val));
 	mOp = operationType::CONST;
 }
 
 float expression_const::eval()
 {
-	return mParam;
+	return mParam->val();
 }
 expression_ptr expression_const::derivative()
 {
-	return 0;
+	return expConst::zero;
 }
 
 std::string expression_const::to_string()
 {
-	return std::to_string(mParam);
+	return std::to_string(mParam->val());
 }
 /* -------------- End const -------------- */
+/* -------------- Variable -------------- */
+expression_variable::expression_variable(float val)
+{
+	mParam = variable_ptr(new variable);
+	mOp = operationType::VARIABLE;
+}
+expression_variable::expression_variable(variable_ptr var)
+{
+	mParam = var;
+	mOp = operationType::VARIABLE;
+}
+
+float expression_variable::eval()
+{
+	return mParam->val();
+}
+expression_ptr expression_variable::derivative()
+{
+	return expConst::one;
+}
+
+std::string expression_variable::to_string()
+{
+	return mParam->name();// + "[" + std::to_string(mParam->val()) + "]";
+}
+/* -------------- End variable -------------- */
 
 /* -------------- Plus -------------- */
 expression_plus::expression_plus(expression_ptr operand):
@@ -398,7 +448,7 @@ float expression_pow::eval()
 }
 expression_ptr expression_pow::derivative()
 {
-	return mRight * pow(mLeft, mRight - expConst::one);
+	return mRight * pow(mLeft, mRight->eval() - 1.0f) * mLeft->derivative();
 }
 
 std::string expression_pow::to_string()
@@ -480,4 +530,10 @@ expression_ptr atan2(expression_ptr left, expression_ptr right)
 expression_ptr cot(expression_ptr exp)
 {
 	return expression_ptr(new expression_cot(exp));
+}
+
+std::ostream& operator <<(std::ostream& os, expression_ptr exp)
+{
+	os<<exp->to_string();
+	return os;
 }

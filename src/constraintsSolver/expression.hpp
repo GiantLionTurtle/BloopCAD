@@ -6,15 +6,36 @@
 #include <string>
 
 class expression;
+class variable;
 using expression_ptr = std::shared_ptr<expression>;
+using variable_ptr = std::shared_ptr<variable>;
+
+class variable : public std::enable_shared_from_this<variable> {
+private:
+	std::string mName;
+	float mVal;
+public:
+	variable();
+	variable(std::string name_, float val_);
+
+	expression_ptr expr();
+
+	std::string name() const { return mName; }
+	void set_name(std::string name_) { mName = name_; }
+
+	float val() const { return mVal; }
+	void set_val(float val_) { mVal = val_;}
+};
 
 class expression {
 public:
-	enum operationType { UNKNOWN, CONST, ADD, SUBSTR, MULT, DIV, PLUS, MINUS, POW, SIN, COS, TAN, ASIN, ACOS, ATAN2, CSC, SEC, COT };
+	enum operationType { UNKNOWN, VARIABLE, CONST, ADD, SUBSTR, MULT, DIV, PLUS, MINUS, POW, SIN, COS, TAN, ASIN, ACOS, ATAN2, CSC, SEC, COT };
 protected:
 	operationType mOp;
-	float mParam;
+	variable_ptr mParam;
 public:
+	expression();
+
 	virtual float eval() = 0;
 	virtual expression_ptr derivative() = 0;
 
@@ -42,6 +63,17 @@ public:
 class expression_const : public expression {
 public:
 	expression_const(float val);
+
+	virtual float eval();
+	virtual expression_ptr derivative();
+
+	virtual std::string to_string();
+};
+
+class expression_variable : public expression {
+public:
+	expression_variable(float val);
+	expression_variable(variable_ptr var);
 
 	virtual float eval();
 	virtual expression_ptr derivative();
@@ -226,8 +258,11 @@ expression_ptr tan(expression_ptr exp);
 expression_ptr atan2(expression_ptr left, expression_ptr right);
 expression_ptr cot(expression_ptr exp);
 
+std::ostream& operator <<(std::ostream& os, expression_ptr exp);
+
 class expConst {
 public:
+	static expression_ptr zero;
 	static expression_ptr one;
 	static expression_ptr two;
 	static expression_ptr pi;
