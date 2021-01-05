@@ -31,6 +31,10 @@ expression::expression():
 
 }
 
+expression_ptr expression::d()
+{
+	return derivative();
+}
 
 bool expression::unary(operationType op)
 {

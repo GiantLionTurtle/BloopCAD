@@ -38,6 +38,7 @@ public:
 
 	virtual float eval() = 0;
 	virtual expression_ptr derivative() = 0;
+	expression_ptr d();
 
 	virtual std::string to_string() = 0;
 private:
