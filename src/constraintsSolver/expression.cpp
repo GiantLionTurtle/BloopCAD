@@ -1,21 +1,36 @@
 
 #include "expression.hpp"
+
 #include <utils/errorLogger.hpp>
+#include "equationsSystem.hpp"
+
 #include <cmath>
 
 expression_ptr expConst::zero(new expression_const(0.0f));
 expression_ptr expConst::one(new expression_const(1.0f));
 expression_ptr expConst::two(new expression_const(2.0f));
+expression_ptr expConst::e(new expression_const(M_E));
 expression_ptr expConst::pi(new expression_const(M_PI));
 expression_ptr expConst::pi2(new expression_const(M_PI_2));
 
-variable::variable()
+variable::variable():
+	mName(""),
+	mVal(0.0f),
+	mFixed(false)
+{
+
+}
+variable::variable(std::string name_):
+	mName(name_),
+	mVal(0.0f),
+	mFixed(false)
 {
 
 }
 variable::variable(std::string name_, float val_):
 	mName(name_),
-	mVal(val_)
+	mVal(val_),
+	mFixed(true)
 {
 
 }
@@ -70,6 +85,11 @@ expression_const::expression_const(float val)
 {
 	mParam = variable_ptr(new variable("", val));
 	mOp = operationType::CONST;
+}
+
+expression_ptr expression_const::make(float val)
+{
+	return expression_ptr(new expression_const(val));
 }
 
 float expression_const::eval()
@@ -426,7 +446,10 @@ expression_div::expression_div(expression_ptr left, expression_ptr right):
 
 float expression_div::eval()
 {
-	return mLeft->eval() / mRight->eval();
+	float right_val = mRight->eval();
+	if(std::abs(right_val) < equationsSystem::kEpsilon)
+		right_val = 1.0f;
+	return mLeft->eval() / right_val;
 }
 expression_ptr expression_div::derivative()
 {
@@ -461,6 +484,96 @@ std::string expression_pow::to_string()
 }
 /* -------------- End pow -------------- */
 
+/* -------------- Exp -------------- */
+expression_exp::expression_exp(expression_ptr base, expression_ptr exponent):
+	binary_expression(base, exponent)
+{
+	mOp = operationType::EXP;
+}
+
+float expression_exp::eval()
+{
+	return std::pow(mLeft->eval(), mRight->eval());
+}
+expression_ptr expression_exp::derivative()
+{
+	if(mLeft->fixed()) {
+		return exp(mLeft, mRight) * ln(mLeft) * mRight->derivative();
+	} else {
+		return exp(mLeft, mRight) * (ln(mLeft) * mRight)->derivative();
+	}
+}
+
+std::string expression_exp::to_string()
+{
+	return  "(" + mLeft->to_string() + "^" + mRight->to_string() + ")";
+}
+/* -------------- End exp -------------- */
+/* -------------- Exp_e -------------- */
+expression_exp_e::expression_exp_e(expression_ptr exponent):
+	unary_expression(exponent)
+{
+	mOp = operationType::EXP;
+}
+
+float expression_exp_e::eval()
+{
+	return std::pow(M_E, mOperand->eval());
+}
+expression_ptr expression_exp_e::derivative()
+{
+	return exp(mOperand) * mOperand->derivative();
+}
+
+std::string expression_exp_e::to_string()
+{
+	return  "e^" + mOperand->to_string();
+}
+/* -------------- End exp_e -------------- */
+/* -------------- Log -------------- */
+expression_log::expression_log(expression_ptr base, expression_ptr arg):
+	binary_expression(base, arg)
+{
+	mOp = operationType::LOG;
+}
+
+float expression_log::eval()
+{
+	return std::log(mRight->eval()) / std::log(mLeft->eval());
+}
+expression_ptr expression_log::derivative()
+{
+	return expConst::one / (mRight * ln(mLeft)) * mRight->derivative();
+}
+
+std::string expression_log::to_string()
+{
+	return  "log[" + mLeft->to_string() + "](" + mRight->to_string() + ")";
+}
+/* -------------- End log -------------- */
+/* -------------- Ln -------------- */
+expression_ln::expression_ln(expression_ptr arg):
+	unary_expression(arg)
+{
+	mOp = operationType::LOG;
+}
+
+float expression_ln::eval()
+{
+	return std::log(mOperand->eval());
+}
+expression_ptr expression_ln::derivative()
+{
+	return exp(mOperand) * mOperand->derivative();
+}
+
+std::string expression_ln::to_string()
+{
+	return  "ln(" + mOperand->to_string() + ")";
+}
+/* -------------- End ln -------------- */
+
+
 expression_ptr operator+(expression_ptr left, expression_ptr right)
 {
 	return expression_ptr(new expression_add(left, right));
@@ -477,13 +590,47 @@ expression_ptr operator/(expression_ptr left, expression_ptr right)
 {
 	return expression_ptr(new expression_div(left, right));
 }
-expression_ptr operator+(expression_ptr exp)
+
+expression_ptr operator+(float left, expression_ptr right)
 {
-	return expression_ptr(new expression_plus(exp));
+	return expression_const::make(left) + right;
 }
-expression_ptr operator-(expression_ptr exp)
+expression_ptr operator-(float left, expression_ptr right)
 {
-	return expression_ptr(new expression_minus(exp));
+	return expression_const::make(left) - right;
+}
+expression_ptr operator*(float left, expression_ptr right)
+{
+	return expression_const::make(left) * right;
+}
+expression_ptr operator/(float left, expression_ptr right)
+{
+	return expression_const::make(left) / right;
+}
+expression_ptr operator+(expression_ptr left, float right)
+{
+	return left + expression_const::make(right);
+}
+expression_ptr operator-(expression_ptr left, float right)
+{
+	return left - expression_const::make(right);
+}
+expression_ptr operator*(expression_ptr left, float right)
+{
+	return left * expression_const::make(right);
+}
+expression_ptr operator/(expression_ptr left, float right)
+{
+	return left / expression_const::make(right);
+}
+
+expression_ptr operator+(expression_ptr expr)
+{
+	return expression_ptr(new expression_plus(expr));
+}
+expression_ptr operator-(expression_ptr expr)
+{
+	return expression_ptr(new expression_minus(expr));
 }
 
 expression_ptr pow(expression_ptr base, expression_ptr power)
@@ -494,50 +641,67 @@ expression_ptr pow(expression_ptr base, float power)
 {
 	return pow(base, expression_ptr(new expression_const(power)));
 }
-expression_ptr sqrt(expression_ptr exp)
+expression_ptr sqrt(expression_ptr expr)
 {
-	return pow(exp, 0.5f);
+	return pow(expr, 0.5f);
 }
 
-expression_ptr sin(expression_ptr exp)
+expression_ptr sin(expression_ptr expr)
 {
-	return expression_ptr(new expression_sin(exp));
+	return expression_ptr(new expression_sin(expr));
 }
-expression_ptr asin(expression_ptr exp)
+expression_ptr asin(expression_ptr expr)
 {
-	return expression_ptr(new expression_asin(exp));
+	return expression_ptr(new expression_asin(expr));
 }
-expression_ptr csc(expression_ptr exp)
+expression_ptr csc(expression_ptr expr)
 {
-	return expression_ptr(new expression_csc(exp));
+	return expression_ptr(new expression_csc(expr));
 }
-expression_ptr cos(expression_ptr exp)
+expression_ptr cos(expression_ptr expr)
 {
-	return expression_ptr(new expression_cos(exp));
+	return expression_ptr(new expression_cos(expr));
 }
-expression_ptr acos(expression_ptr exp)
+expression_ptr acos(expression_ptr expr)
 {
-	return expression_ptr(new expression_acos(exp));
+	return expression_ptr(new expression_acos(expr));
 }
-expression_ptr sec(expression_ptr exp)
+expression_ptr sec(expression_ptr expr)
 {
-	return expression_ptr(new expression_sec(exp));
+	return expression_ptr(new expression_sec(expr));
 }
-expression_ptr tan(expression_ptr exp)
+expression_ptr tan(expression_ptr expr)
 {
-	return expression_ptr(new expression_tan(exp));
+	return expression_ptr(new expression_tan(expr));
 }
 expression_ptr atan2(expression_ptr left, expression_ptr right)
 {
 	return expression_ptr(new expression_atan2(left, right));
 }
-expression_ptr cot(expression_ptr exp)
+expression_ptr cot(expression_ptr expr)
 {
-	return expression_ptr(new expression_cot(exp));
+	return expression_ptr(new expression_cot(expr));
 }
 
-std::ostream& operator <<(std::ostream& os, expression_ptr exp)
+expression_ptr exp(expression_ptr base, expression_ptr exponent)
 {
-	os<<exp->to_string();
+	return expression_ptr(new expression_exp(base, exponent));
+}
+expression_ptr exp(expression_ptr exponent)
+{
+	return expression_ptr(new expression_exp_e(exponent));
+}
+expression_ptr log(expression_ptr base, expression_ptr arg)
+{
+	return expression_ptr(new expression_log(base, arg));
+}
+expression_ptr ln(expression_ptr arg)
+{
+	return expression_ptr(new expression_ln(arg));
+}
+
+std::ostream& operator <<(std::ostream& os, expression_ptr expr)
+{
+	os<<expr->to_string();
 	return os;
 }
