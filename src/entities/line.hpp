@@ -3,7 +3,7 @@
 #define LINE_HPP_
 
 #include <entities/entity.hpp>
-#include "line_abstract.hpp"
+#include "geometry/line_abstract.hpp"
 #include "point.hpp"
 
 /*

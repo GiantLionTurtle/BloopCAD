@@ -1,8 +1,9 @@
+add_subdirectory(geometry)
+#add_subdirectory(sketchEntities)
+
 set(entities_source_files
-  plane_abstract.cpp
   entity.cpp
   plane.cpp
-  line_abstract.cpp
   line.cpp
   point.cpp
   part.cpp
@@ -13,5 +14,7 @@ set(entities_source_files
 add_library(entities ${entities_source_files})
 
 target_link_libraries(entities
+  geometry
+  constraintsSolver
 	graphics_utils
   )

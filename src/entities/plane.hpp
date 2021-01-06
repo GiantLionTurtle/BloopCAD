@@ -3,7 +3,7 @@
 #define PLANE_HPP_
 
 #include "entity.hpp"
-#include "plane_abstract.hpp"
+#include "geometry/plane_abstract.hpp"
 
 #include <glm/glm.hpp>
 

@@ -3,7 +3,7 @@
 #define CREATESKETCH_ACRION_HPP_
 
 #include <actions/action.hpp>
-#include <entities/plane_abstract.hpp>
+#include <entities/geometry/plane_abstract.hpp>
 #include <entities/part.hpp>
 #include <entities/sketch.hpp>
 

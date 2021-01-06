@@ -20,6 +20,13 @@ variable::variable():
 {
 
 }
+variable::variable(double val_, bool fixed_):
+	mName(""),
+	mVal(val_),
+	mFixed(fixed_)
+{
+
+}
 variable::variable(std::string name_):
 	mName(name_),
 	mVal(0.0f),

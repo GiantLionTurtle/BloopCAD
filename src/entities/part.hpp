@@ -5,7 +5,6 @@
 #include "entity.hpp"
 #include "folder.hpp"
 
-#include "plane_abstract.hpp"
 #include "plane.hpp"
 #include "sketch.hpp"
 

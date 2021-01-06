@@ -3,7 +3,7 @@
 #define POINT_HPP_
 
 #include "entity.hpp"
-#include "point_abstract.hpp"
+#include "geometry/point_abstract.hpp"
 
 #include <glm/glm.hpp>
 

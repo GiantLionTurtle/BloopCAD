@@ -7,7 +7,9 @@
 #include <glm/glm.hpp>
 
 class expressionVector3;
+class variableVector3;
 using expressionVector3_ptr = std::shared_ptr<expressionVector3>;
+using variableVector3_ptr = std::shared_ptr<variableVector3>;
 
 // TODO: make it a specilization of a glm vector?
 class expressionVector3 {
@@ -17,10 +19,24 @@ public:
 	expressionVector3(expression_ptr x_, expression_ptr y_, expression_ptr z_);
 };
 
+class variableVector3 {
+public:
+	variable_ptr x, y, z;
+public:
+	variableVector3(variable_ptr x_, variable_ptr y_, variable_ptr z_);
+	variableVector3(glm::vec3 vec);
+
+	glm::vec3 get() const;
+	void set(glm::vec3 const& vec);
+
+	void operator=(glm::vec3 const& vec);
+};
+
 // functions are declared outside so that the api resemble glm's
 float length(expressionVector3_ptr vec);
 expressionVector3_ptr normalize(expressionVector3_ptr vec);
 
+/* --------------------- Expression vec --------------------- */
 expressionVector3_ptr operator+(expressionVector3_ptr left, expressionVector3_ptr right);
 expressionVector3_ptr operator-(expressionVector3_ptr left, expressionVector3_ptr right);
 expressionVector3_ptr operator*(expressionVector3_ptr left, expressionVector3_ptr right);

@@ -3,7 +3,7 @@
 #define SVGENTITY_HPP_
 
 #include <utils/xmlParser.hpp>
-#include <entities/plane_abstract.hpp>
+#include <entities/geometry/plane_abstract.hpp>
 
 class svgEntity {
 public:

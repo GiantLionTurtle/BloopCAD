@@ -3,7 +3,7 @@
 #define LINE_ABSTRACT_HPP_
 
 #include "point_abstract.hpp"
-#include "svgEntity.hpp"
+#include "../svgEntity.hpp"
 
 #include <glm/glm.hpp>
 #include <iostream>

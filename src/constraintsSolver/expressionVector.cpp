@@ -9,6 +9,36 @@ expressionVector3::expressionVector3(expression_ptr x_, expression_ptr y_, expre
 
 }
 
+variableVector3::variableVector3(variable_ptr x_, variable_ptr y_, variable_ptr z_):
+	x(x_),
+	y(y_),
+	z(z_)
+{
+
+}
+variableVector3::variableVector3(glm::vec3 vec):
+	x(new variable((double)vec.x)),
+	y(new variable((double)vec.y)),
+	z(new variable((double)vec.z))
+{
+
+}
+
+glm::vec3 variableVector3::get() const
+{
+	return glm::vec3(x->val(), y->val(), z->val());
+}
+void variableVector3::set(glm::vec3 const& vec)
+{
+	x->set_val(vec.x);
+	y->set_val(vec.y);
+	z->set_val(vec.z);
+}
+void variableVector3::operator=(glm::vec3 const& vec)
+{
+	set(vec);
+}
+
 float length(expressionVector3_ptr vec)
 {
 	return glm::length(glm::vec3(vec->x->eval(), vec->y->eval(), vec->z->eval()));

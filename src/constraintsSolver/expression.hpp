@@ -17,6 +17,7 @@ private:
 	bool mFixed;
 public:
 	variable();
+	variable(double val_, bool fixed_ = true);
 	variable(std::string name_);
 	variable(std::string name_, double val_, bool fixed_ = true);
 

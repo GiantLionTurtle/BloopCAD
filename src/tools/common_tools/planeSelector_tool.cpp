@@ -1,6 +1,6 @@
 
 #include "planeSelector_tool.hpp"
-#include <entities/plane_abstract.hpp>
+#include <entities/geometry/plane_abstract.hpp>
 #include <entities/entity.hpp>
 
 planeSelector_tool::planeSelector_tool(workspace* env):

@@ -15,7 +15,7 @@ point::point(point_abstract const& basePoint):
 	layout.add_proprety_float(3);
 	mVA->bind();
 
-	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(&mPos[0], sizeof(glm::vec3)));
+	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(&mPos->get()[0], sizeof(glm::vec3)));
 	mVA->add_buffer(*mVB.get(), layout);
 
 	mShader = shadersPool::get_instance().get("point");
@@ -31,18 +31,18 @@ point::point(point_abstract const& basePoint):
 void point::set_pos(glm::vec3 pos)
 {
 	mRequire_VBUpdate = true;
-	mPos = pos;
+	mPos->set(pos);
 }
 void point::set_pos(point_abstract const& other)
 {
 	mRequire_VBUpdate = true;
-	mPos = other.pos();
+	mPos->set(other.pos());
 }
 
 void point::update_VB()
 {
 	mVB->bind();
-	mVB->set(&mPos[0], sizeof(glm::vec3));
+	mVB->set(&mPos->get()[0], sizeof(glm::vec3));
 	mVB->unbind();
 	set_require_redraw();
 }

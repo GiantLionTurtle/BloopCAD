@@ -5,7 +5,7 @@
 #include <actions/action.hpp>
 #include <graphics_utils/camera.hpp>
 #include <utils/animatable.hpp>
-#include <entities/plane_abstract.hpp>
+#include <entities/geometry/plane_abstract.hpp>
 
 class moveCamera_action : public action {
 private:
