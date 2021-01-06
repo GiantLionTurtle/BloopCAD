@@ -27,10 +27,10 @@ variable::variable(std::string name_):
 {
 
 }
-variable::variable(std::string name_, float val_):
+variable::variable(std::string name_, double val_, bool fixed_):
 	mName(name_),
 	mVal(val_),
-	mFixed(true)
+	mFixed(fixed_)
 {
 
 }
@@ -81,18 +81,18 @@ binary_expression::binary_expression(expression_ptr left, expression_ptr right):
 }
 
 /* -------------- Const -------------- */
-expression_const::expression_const(float val)
+expression_const::expression_const(double val)
 {
 	mParam = variable_ptr(new variable("", val));
 	mOp = operationType::CONST;
 }
 
-expression_ptr expression_const::make(float val)
+expression_ptr expression_const::make(double val)
 {
 	return expression_ptr(new expression_const(val));
 }
 
-float expression_const::eval()
+double expression_const::eval()
 {
 	return mParam->val();
 }
@@ -107,7 +107,7 @@ std::string expression_const::to_string()
 }
 /* -------------- End const -------------- */
 /* -------------- Variable -------------- */
-expression_variable::expression_variable(float val)
+expression_variable::expression_variable(double val)
 {
 	mParam = variable_ptr(new variable);
 	mOp = operationType::VARIABLE;
@@ -118,18 +118,22 @@ expression_variable::expression_variable(variable_ptr var)
 	mOp = operationType::VARIABLE;
 }
 
-float expression_variable::eval()
+double expression_variable::eval()
 {
 	return mParam->val();
 }
 expression_ptr expression_variable::derivative()
 {
+	if(mParam->fixed())
+		return expConst::zero;
 	return expConst::one;
 }
 
 std::string expression_variable::to_string()
 {
-	return mParam->name();// + "[" + std::to_string(mParam->val()) + "]";
+	if(mParam->fixed())
+		return std::to_string(mParam->val());
+	return mParam->name();
 }
 /* -------------- End variable -------------- */
 
@@ -140,7 +144,7 @@ expression_plus::expression_plus(expression_ptr operand):
 	mOp = operationType::PLUS;
 }
 
-float expression_plus::eval()
+double expression_plus::eval()
 {
 	return mOperand->eval();
 }
@@ -162,7 +166,7 @@ expression_minus::expression_minus(expression_ptr operand):
 	mOp = operationType::MINUS;
 }
 
-float expression_minus::eval()
+double expression_minus::eval()
 {
 	return -mOperand->eval();
 }
@@ -184,7 +188,7 @@ expression_sin::expression_sin(expression_ptr operand):
 	mOp = operationType::SIN;
 }
 
-float expression_sin::eval()
+double expression_sin::eval()
 {
 	return std::sin(mOperand->eval());
 }
@@ -205,7 +209,7 @@ expression_asin::expression_asin(expression_ptr operand):
 	mOp = operationType::ASIN;
 }
 
-float expression_asin::eval()
+double expression_asin::eval()
 {
 	return std::asin(mOperand->eval());
 }
@@ -226,7 +230,7 @@ expression_csc::expression_csc(expression_ptr operand):
 	mOp = operationType::CSC;
 }
 
-float expression_csc::eval()
+double expression_csc::eval()
 {
 	return 1.0f / std::sin(mOperand->eval());
 }
@@ -248,7 +252,7 @@ expression_cos::expression_cos(expression_ptr operand):
 	mOp = operationType::COS;
 }
 
-float expression_cos::eval()
+double expression_cos::eval()
 {
 	return std::cos(mOperand->eval());
 }
@@ -269,7 +273,7 @@ expression_acos::expression_acos(expression_ptr operand):
 	mOp = operationType::ACOS;
 }
 
-float expression_acos::eval()
+double expression_acos::eval()
 {
 	return std::acos(mOperand->eval());
 }
@@ -290,7 +294,7 @@ expression_sec::expression_sec(expression_ptr operand):
 	mOp = operationType::SEC;
 }
 
-float expression_sec::eval()
+double expression_sec::eval()
 {
 	return 1.0f / std::cos(mOperand->eval());
 }
@@ -312,7 +316,7 @@ expression_tan::expression_tan(expression_ptr operand):
 	mOp = operationType::TAN;
 }
 
-float expression_tan::eval()
+double expression_tan::eval()
 {
 	return std::tan(mOperand->eval());
 }
@@ -333,7 +337,7 @@ expression_atan2::	expression_atan2(expression_ptr left, expression_ptr right):
 	mOp = operationType::ATAN2;
 }
 
-float expression_atan2::eval()
+double expression_atan2::eval()
 {
 	return std::atan2(mLeft->eval(), mRight->eval());
 }
@@ -354,7 +358,7 @@ expression_cot::expression_cot(expression_ptr operand):
 	mOp = operationType::COT;
 }
 
-float expression_cot::eval()
+double expression_cot::eval()
 {
 	return 1.0f / std::tan(mOperand->eval());
 }
@@ -377,7 +381,7 @@ expression_add::expression_add(expression_ptr left, expression_ptr right):
 	mOp = operationType::ADD;
 }
 
-float expression_add::eval()
+double expression_add::eval()
 {
 	return mLeft->eval() + mRight->eval();
 }
@@ -399,7 +403,7 @@ expression_substr::expression_substr(expression_ptr left, expression_ptr right):
 	mOp = operationType::SUBSTR;
 }
 
-float expression_substr::eval()
+double expression_substr::eval()
 {
 	return mLeft->eval() - mRight->eval();
 }
@@ -422,7 +426,7 @@ expression_mult::expression_mult(expression_ptr left, expression_ptr right):
 	mOp = operationType::MULT;
 }
 
-float expression_mult::eval()
+double expression_mult::eval()
 {
 	return mLeft->eval() * mRight->eval();
 }
@@ -444,9 +448,9 @@ expression_div::expression_div(expression_ptr left, expression_ptr right):
 	mOp = operationType::DIV;
 }
 
-float expression_div::eval()
+double expression_div::eval()
 {
-	float right_val = mRight->eval();
+	double right_val = mRight->eval();
 	if(std::abs(right_val) < equationsSystem::kEpsilon)
 		right_val = 1.0f;
 	return mLeft->eval() / right_val;
@@ -469,7 +473,7 @@ expression_pow::expression_pow(expression_ptr base, expression_ptr power):
 	mOp = operationType::POW;
 }
 
-float expression_pow::eval()
+double expression_pow::eval()
 {
 	return std::pow(mLeft->eval(), mRight->eval());
 }
@@ -491,7 +495,7 @@ expression_exp::expression_exp(expression_ptr base, expression_ptr exponent):
 	mOp = operationType::EXP;
 }
 
-float expression_exp::eval()
+double expression_exp::eval()
 {
 	return std::pow(mLeft->eval(), mRight->eval());
 }
@@ -516,7 +520,7 @@ expression_exp_e::expression_exp_e(expression_ptr exponent):
 	mOp = operationType::EXP;
 }
 
-float expression_exp_e::eval()
+double expression_exp_e::eval()
 {
 	return std::pow(M_E, mOperand->eval());
 }
@@ -537,7 +541,7 @@ expression_log::expression_log(expression_ptr base, expression_ptr arg):
 	mOp = operationType::LOG;
 }
 
-float expression_log::eval()
+double expression_log::eval()
 {
 	return std::log(mRight->eval()) / std::log(mLeft->eval());
 }
@@ -558,7 +562,7 @@ expression_ln::expression_ln(expression_ptr arg):
 	mOp = operationType::LOG;
 }
 
-float expression_ln::eval()
+double expression_ln::eval()
 {
 	return std::log(mOperand->eval());
 }
@@ -591,35 +595,35 @@ expression_ptr operator/(expression_ptr left, expression_ptr right)
 	return expression_ptr(new expression_div(left, right));
 }
 
-expression_ptr operator+(float left, expression_ptr right)
+expression_ptr operator+(double left, expression_ptr right)
 {
 	return expression_const::make(left) + right;
 }
-expression_ptr operator-(float left, expression_ptr right)
+expression_ptr operator-(double left, expression_ptr right)
 {
 	return expression_const::make(left) - right;
 }
-expression_ptr operator*(float left, expression_ptr right)
+expression_ptr operator*(double left, expression_ptr right)
 {
 	return expression_const::make(left) * right;
 }
-expression_ptr operator/(float left, expression_ptr right)
+expression_ptr operator/(double left, expression_ptr right)
 {
 	return expression_const::make(left) / right;
 }
-expression_ptr operator+(expression_ptr left, float right)
+expression_ptr operator+(expression_ptr left, double right)
 {
 	return left + expression_const::make(right);
 }
-expression_ptr operator-(expression_ptr left, float right)
+expression_ptr operator-(expression_ptr left, double right)
 {
 	return left - expression_const::make(right);
 }
-expression_ptr operator*(expression_ptr left, float right)
+expression_ptr operator*(expression_ptr left, double right)
 {
 	return left * expression_const::make(right);
 }
-expression_ptr operator/(expression_ptr left, float right)
+expression_ptr operator/(expression_ptr left, double right)
 {
 	return left / expression_const::make(right);
 }
@@ -637,7 +641,7 @@ expression_ptr pow(expression_ptr base, expression_ptr power)
 {
 	return expression_ptr(new expression_pow(base, power));
 }
-expression_ptr pow(expression_ptr base, float power)
+expression_ptr pow(expression_ptr base, double power)
 {
 	return pow(base, expression_ptr(new expression_const(power)));
 }
