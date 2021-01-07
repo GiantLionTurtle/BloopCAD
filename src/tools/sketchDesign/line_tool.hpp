@@ -4,6 +4,9 @@
 
 #include <tools/tool.hpp>
 
+#include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
+#include <entities/geometry/plane_abstract.hpp>
+
 #include <glm/glm.hpp>
 
 /*
@@ -12,7 +15,7 @@
 */
 class line_tool : public tool_abstract {
 private:
-	glm::vec3 startPos, endPos; // start and end pos of the line
+	std::shared_ptr<sketchPoint> startPos, endPos; // start and end pos of the line
 	bool started; // Whether or not the drawing of the line has started
 public:
 	/*
@@ -40,7 +43,7 @@ public:
 	*/
 	virtual bool manage_button_press(GdkEventButton* event);
 private:
-	glm::vec3 pos_on_plane(glm::vec2 mousePos);
+	glm::vec2 pos_on_plane(std::shared_ptr<plane_abstract> plane_, glm::vec2 mousePos);
 };
 
 #endif

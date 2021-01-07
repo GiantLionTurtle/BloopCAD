@@ -5,16 +5,27 @@
 #include <graphics_utils/shadersPool.hpp>
 
 line::line(line_abstract const& baseLine):
-	line_abstract(new point(baseLine.pointA()), new point(baseLine.pointB()))
+	line_abstract(baseLine)
 {	
-	set_name("line");	
+	std::shared_ptr<point> pointA_as_drawable = std::dynamic_pointer_cast<point>(mPointA);
+	std::shared_ptr<point> pointB_as_drawable = std::dynamic_pointer_cast<point>(mPointB);
+	if(!pointA_as_drawable) {
+		pointA_as_drawable = std::shared_ptr<point>(new point(baseLine.pointA()));
+		mPointA = pointA_as_drawable;
+	}
+	if(!pointB_as_drawable) {
+		pointB_as_drawable = std::shared_ptr<point>(new point(baseLine.pointB()));
+		mPointB = pointB_as_drawable;
+	}
+
+	set_name("line");
 	mVA = std::shared_ptr<vertexArray>(new vertexArray());
 	vertexBufferLayout layout;
 	layout.add_proprety_float(3);
 	mVA->bind();
 
-	glm::vec3 tmp[2] = {mPointA->pos(), mPointB->pos()};
-	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(tmp, sizeof(glm::vec3) * 2));
+	glm::vec3 tmp[2] = {mPointA->pos_vec(), mPointB->pos_vec()};
+	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(&tmp[0], sizeof(glm::vec3) * 2));
 	mVA->add_buffer(*mVB.get(), layout);
 
 	mShader = shadersPool::get_instance().get("line");
@@ -26,17 +37,17 @@ line::line(line_abstract const& baseLine):
 		shadersPool::get_instance().add("line", mShader);
 	}
 	
-	add(std::shared_ptr<entity>(dynamic_cast<point*>(mPointA)));
-	add(std::shared_ptr<entity>(dynamic_cast<point*>(mPointB)));
+	add(pointA_as_drawable);
+	add(pointB_as_drawable);
 }
 
-void line::set_pointA(point_abstract ptA)
+void line::set_pointA(std::shared_ptr<point_abstract> ptA)
 {
 	mRequire_VBUpdate = true;
 	set_require_redraw();
 	mPointA->set_pos(ptA);
 }
-void line::set_pointB(point_abstract ptB)
+void line::set_pointB(std::shared_ptr<point_abstract> ptB)
 {
 	mRequire_VBUpdate = true;
 	set_require_redraw();
@@ -45,18 +56,17 @@ void line::set_pointB(point_abstract ptB)
 
 void line::update_VB()
 {
-	glm::vec3 tmp[2] = {mPointA->pos(), mPointB->pos()};
+	mRequire_VBUpdate = false;
+	glm::vec3 tmp[2] = {mPointA->pos_vec(), mPointB->pos_vec()};
 	mVB->bind();
-	mVB->set(tmp, sizeof(glm::vec3) * 2);
+	mVB->set(&tmp[0], sizeof(glm::vec3) * 2);
 	mVB->unbind();
 }
 
 void line::draw_impl(std::shared_ptr<camera> cam, int frame)
 {
-	if(mRequire_VBUpdate) {
+	if(mRequire_VBUpdate)
 		update_VB();
-		mRequire_VBUpdate = false;
-	}
 	mShader->bind();
 	glm::vec4 color = glm::vec4(mColor, 1.0f);
 	if(hovered()) {

@@ -3,8 +3,6 @@
 
 #include "entityView.hpp"
 #include <utils/errorLogger.hpp>
-#include <entities/line.hpp>
-#include <actions/sketchDesign/addLine_action.hpp>
 
 part::part():
 	entity(glm::ivec3(0, 0, 1))

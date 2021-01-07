@@ -134,8 +134,8 @@ bool entity::visible() const
 
 void entity::set_exists(bool exists_) 
 { 
+	set_require_redraw();
 	if(exists_) {
-		set_require_redraw();
 		mState |= BLOOP_ENTITY_EXISTS_FLAG;
 	} else {
 		mState &= ~BLOOP_ENTITY_EXISTS_FLAG;

@@ -7,41 +7,36 @@
 point::point(point_abstract const& basePoint):
 	point_abstract(basePoint)
 {	
-	mVA = std::shared_ptr<vertexArray>(new vertexArray());
-	vertexBufferLayout layout;
-	layout.add_proprety_float(3);
-	mVA->bind();
-
-	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(&mPos->get()[0], sizeof(glm::vec3)));
-	mVA->add_buffer(*mVB.get(), layout);
-
-	mShader = shadersPool::get_instance().get("point");
-	if(!mShader) {
-		mShader = shader::fromFiles_ptr({
-		{"resources/shaders/pointShader.vert", GL_VERTEX_SHADER},
-		{"resources/shaders/pointShader.geom", GL_GEOMETRY_SHADER}, 
-		{"resources/shaders/pointShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because point is expanded on the gpu
-		shadersPool::get_instance().add("point", mShader);
-	}
+	create();
+}
+point::point(std::shared_ptr<point_abstract> basePoint):
+	point_abstract(basePoint->pos_var())
+{
+	create();
 }
 
 void point::set_pos(glm::vec3 pos)
 {
 	mRequire_VBUpdate = true;
+	set_require_redraw();
 	mPos->set(pos);
 }
 void point::set_pos(point_abstract const& other)
 {
 	mRequire_VBUpdate = true;
-	mPos->set(other.pos());
+	set_require_redraw();
+	mPos->set(other.pos_vec());
 }
 
 void point::update_VB()
 {
 	mVB->bind();
-	mVB->set(&mPos->get()[0], sizeof(glm::vec3));
+	glm::vec3 pos_tmp = pos_vec();
+	mVB->set(&pos_tmp[0], sizeof(glm::vec3));
 	mVB->unbind();
 	set_require_redraw();
+	if(mParent)
+            mParent->notify_childUpdate();
 }
 
 void point::draw_impl(std::shared_ptr<camera> cam, int frame)
@@ -94,4 +89,25 @@ void point::draw_selection_impl(std::shared_ptr<camera> cam, int frame)
 
 	mVA->unbind();
 	mShader->unbind();
+}
+
+void point::create()
+{
+	mVA = std::shared_ptr<vertexArray>(new vertexArray());
+	vertexBufferLayout layout;
+	layout.add_proprety_float(3);
+	mVA->bind();
+
+	glm::vec3 pos_tmp = pos_vec();
+	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(&pos_tmp[0], sizeof(glm::vec3)));
+	mVA->add_buffer(*mVB.get(), layout);
+
+	mShader = shadersPool::get_instance().get("point");
+	if(!mShader) {
+		mShader = shader::fromFiles_ptr({
+		{"resources/shaders/pointShader.vert", GL_VERTEX_SHADER},
+		{"resources/shaders/pointShader.geom", GL_GEOMETRY_SHADER}, 
+		{"resources/shaders/pointShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because point is expanded on the gpu
+		shadersPool::get_instance().add("point", mShader);
+	}
 }

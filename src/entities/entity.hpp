@@ -229,7 +229,9 @@ public:
 	bool is_following() const { if(mParent) return true; return false; }
 
 	void set_require_redraw();
-	bool require_redraw() const { return mRequire_redraw; };
+	bool require_redraw() const { return mRequire_redraw; }
+
+	virtual void notify_childUpdate() {}
 
 	void set_parent(entity* parent);
 protected:

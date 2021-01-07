@@ -79,7 +79,8 @@ public:
 	*/
 	glm::vec3 line_intersection(glm::vec3 const& point, glm::vec3 const& vec);
 
-	glm::vec2 point_on_plane(glm::vec3 const& point);
+	glm::vec2 point_3d_to_2d(glm::vec3 const& point);
+	glm::vec3 point_2d_to_3d(glm::vec2 const& point);
 
 	/*
 		@function inverted tells if the plane has a manual inversion applied

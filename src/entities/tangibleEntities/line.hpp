@@ -2,8 +2,8 @@
 #ifndef LINE_HPP_
 #define LINE_HPP_
 
-#include "geometricEntity.hpp"
-#include "geometry/line_abstract.hpp"
+#include "tangibleEntity.hpp"
+#include <entities/geometry/line_abstract.hpp>
 #include "point.hpp"
 
 /*
@@ -11,7 +11,7 @@
 	@parent : entity
 	@parent : line_abstract
 */
-class line : public geometricEntity, public line_abstract {
+class line : public tangibleEntity, public line_abstract {
 private:	
 	const glm::vec3 mColor = glm::vec3(0.0f, 0.89f, 0.725f); // Line color
 	glm::vec3 mVertices[2]; // The vertices describing the line
@@ -22,9 +22,10 @@ public:
 		@param baseLine : The underlying line of the graphical entity
 	*/
 	line(line_abstract const& baseLine);
+	virtual ~line() {}
 
-	virtual void set_pointA(point_abstract ptA);
-	virtual void set_pointB(point_abstract ptB);
+	virtual void set_pointA(std::shared_ptr<point_abstract> ptA);
+	virtual void set_pointB(std::shared_ptr<point_abstract> ptB);
 
 	virtual void update_VB();
 protected:

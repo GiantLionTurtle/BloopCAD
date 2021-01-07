@@ -5,7 +5,7 @@
 #include "entity.hpp"
 #include "folder.hpp"
 
-#include "plane.hpp"
+#include "tangibleEntities/plane.hpp"
 #include "sketch.hpp"
 
 #include <gtkmm.h>

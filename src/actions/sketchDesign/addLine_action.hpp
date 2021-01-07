@@ -29,7 +29,8 @@ public:
 		@param sketch_ : 	The containing sketch
 		@param document : 	The containing document 
 	*/
-	addLine_action(glm::vec3 const& pointA, glm::vec3 const& pointB, std::shared_ptr<sketch> sketch_, document* doc);
+	addLine_action(glm::vec2 const& pointA, glm::vec2 const& pointB, std::shared_ptr<sketch> sketch_, document* doc);
+	addLine_action(std::shared_ptr<point_abstract> pointA, std::shared_ptr<point_abstract> pointB, std::shared_ptr<sketch> sketch_, document* doc);
 
 	/*
 		@function do_work activates the created line

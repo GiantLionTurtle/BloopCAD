@@ -1,12 +1,13 @@
 
 #include "line_abstract.hpp"
 
-line_abstract::line_abstract(point_abstract ptA, point_abstract ptB)
+line_abstract::line_abstract(point_abstract ptA, point_abstract ptB):
+	mPointA(std::shared_ptr<point_abstract>(new point_abstract(ptA))),
+	mPointB(std::shared_ptr<point_abstract>(new point_abstract(ptB)))
 {
-	mPointA = new point_abstract(ptA);
-    mPointB = new point_abstract(ptB);
+
 }
-line_abstract::line_abstract(point_abstract* ptA, point_abstract* ptB):
+line_abstract::line_abstract(std::shared_ptr<point_abstract> ptA, std::shared_ptr<point_abstract> ptB):
 	mPointA(ptA),
 	mPointB(ptB)
 {
@@ -15,8 +16,8 @@ line_abstract::line_abstract(point_abstract* ptA, point_abstract* ptB):
 
 XML_element* line_abstract::to_svg(plane_abstract* drawingPlane, glm::vec2 &min, glm::vec2 &max)
 {
-	glm::vec2 ptA = drawingPlane->point_on_plane(mPointA->pos());
-	glm::vec2 ptB = drawingPlane->point_on_plane(mPointB->pos());
+	glm::vec2 ptA = drawingPlane->point_3d_to_2d(mPointA->pos_vec());
+	glm::vec2 ptB = drawingPlane->point_3d_to_2d(mPointB->pos_vec());
 	ptA.y = -ptA.y;
 	ptB.y = -ptB.y;
 	

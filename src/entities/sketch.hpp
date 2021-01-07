@@ -3,7 +3,7 @@
 #define SKETCH_HPP_
 
 #include "entity.hpp"
-#include "geometry/plane_abstract.hpp"
+#include <entities/geometry/plane_abstract.hpp>
 
 #include <memory>
 #include <vector>

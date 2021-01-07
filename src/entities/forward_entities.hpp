@@ -10,6 +10,9 @@ class part;
 class sketch;
 class plane_abstract;
 class plane;
+class line_abstract;
 class line;
+class point_abstract;
+class point;
 
 #endif
