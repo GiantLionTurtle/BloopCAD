@@ -5,10 +5,7 @@
 #include <graphics_utils/shadersPool.hpp>
 
 point::point(point_abstract const& basePoint):
-	point_abstract(basePoint),
-	mVB(nullptr),
-	mVA(nullptr),
-	mRequire_VBUpdate(false)
+	point_abstract(basePoint)
 {	
 	mVA = std::shared_ptr<vertexArray>(new vertexArray());
 	vertexBufferLayout layout;

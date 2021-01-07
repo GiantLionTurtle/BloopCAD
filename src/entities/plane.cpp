@@ -5,11 +5,7 @@
 #include <graphics_utils/shadersPool.hpp>
 
 plane::plane(plane_abstract const& plane_) :
-	plane_abstract(plane_),
-	mVB(nullptr),
-	mVA(nullptr),
-	mIB(nullptr),
-	mOutlineIB(nullptr)
+	plane_abstract(plane_)
 {
 	set_name("plane");
 	init_buffers(); // Set all the vertices to the right values
@@ -34,11 +30,14 @@ plane::plane(plane_abstract const& plane_) :
 		mSelectionShader = shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/plainColor.frag");
 		shadersPool::get_instance().add("plane_sel", mSelectionShader);
 	}
+}
 
-	// Clean up (somewhat unecessary)
-	mVA->unbind();
+void plane::update_VB()
+{
+	init_buffers();
+	mVB->bind();
+	mVB->set(mVertices, sizeof(glm::vec3) * 4);
 	mVB->unbind();
-	mIB->unbind();
 }
 
 void plane::draw_impl(std::shared_ptr<camera> cam, int frame)

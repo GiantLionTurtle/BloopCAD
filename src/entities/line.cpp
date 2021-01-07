@@ -5,9 +5,7 @@
 #include <graphics_utils/shadersPool.hpp>
 
 line::line(line_abstract const& baseLine):
-	line_abstract(new point(baseLine.pointA()), new point(baseLine.pointB())),
-	mVB(nullptr),
-	mVA(nullptr)
+	line_abstract(new point(baseLine.pointA()), new point(baseLine.pointB()))
 {	
 	set_name("line");	
 	mVA = std::shared_ptr<vertexArray>(new vertexArray());

@@ -2,7 +2,7 @@
 #ifndef PLANE_HPP_
 #define PLANE_HPP_
 
-#include "entity.hpp"
+#include "geometricEntity.hpp"
 #include "geometry/plane_abstract.hpp"
 
 #include <glm/glm.hpp>
@@ -16,18 +16,13 @@
 	@parent : entity
 	@parent : plane_abstract
 */
-class plane : public entity, public plane_abstract {
+class plane : public geometricEntity, public plane_abstract {
 private:
 	const glm::vec3 mColorA = glm::vec3(0.34f, 0.17f, 0.05f), 	// Both colors of a plane, depending on the side from which it is observed
 	mColorB = glm::vec3(0.15f, 0.0f, 0.25f); 					// Maybe it should be an option
 
 	glm::vec3 mVertices[4];	// The four vertices of the rectangle that represents the plane
-	unsigned int mIndices[6], mOutlineIndices[8]; // The order in which to draw said vertices
-
-	std::shared_ptr<vertexBuffer> 	mVB; // Handle to the vertices on the gpu
-	std::shared_ptr<vertexArray> 	mVA; // Handle to the configuration on the gpu
-	std::shared_ptr<indexBuffer>	mIB, mOutlineIB; // Handle to the indices to draw the rectangle on the gpu
-	std::shared_ptr<shader> 		mShader, mSelectionShader; // Both normal and selection shaders
+	unsigned int mIndices[6];
 public:
 	/*
 		@function plane creates a plane 
@@ -36,6 +31,8 @@ public:
 		@param label [defaults to ""] : The label of the plane (not supported yet)
 	*/
 	plane(plane_abstract const& plane_);
+
+	virtual void update_VB();
 protected:
 	/*
 		@function draw_impl draws the plane on screen
