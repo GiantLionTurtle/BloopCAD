@@ -30,9 +30,8 @@ std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	std::shared_
 	glm::vec3 right_plane, up_plane; // The v & w vectors that will be used for the sketch's plane
 	glm::vec3 v_plane, w_plane;
 
-
 	// Decide which of the camera vectors will be assigned to which of the plane's vectors
-	if(std::abs(dot_right_w) > std::abs(dot_right_v) && std::abs(dot_right_w) > std::abs(dot_up_w)) {
+	if(std::abs(dot_right_w) > std::abs(dot_right_v) && (std::abs(dot_right_w) > std::abs(dot_up_w) || std::abs(dot_right_v) < std::abs(dot_up_v))) {
 		right_plane =  toFace->w() * (dot_right_w < 0.0f ? -1.0f : 1.0f); // Invert it or not
 		up_plane =  toFace->v() * (dot_up_v < 0.0f ? -1.0f : 1.0f); // Invert it or not
 	} else {
@@ -89,8 +88,10 @@ bool moveCamera_action::move_camera()
 void moveCamera_action::compute_animatables(camState const& state)
 {
 	float angle_x, angle_y;
-
-	angle_x = std::acos(glm::dot(state.up, glm::vec3(0.0f, 1.0f, 0.0f)));//glm::orientedAngle(state.up, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	camState currState = mCamera->state();
+	glm::vec3 refX = glm::vec3(1.0f, 0.0f, 0.0f);
+	
+	angle_x = glm::orientedAngle(state.up, glm::vec3(0.0f, 1.0f, 0.0f), refX);
 	angle_y = glm::orientedAngle(state.right, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	mFinalOrientation = glm::vec3(
@@ -106,6 +107,6 @@ void moveCamera_action::compute_animatables(camState const& state)
 
 	transform transf { glm::vec3(0.0f), glm::vec3(1.0f), rotation };
 	mTranslation.set(glm::vec3(mCamera->transformation().translation));
-	mTranslation.set(-(state.pos-mCamera->predictedPos(transf)), mDuration);
+	// mTranslation.set(-(state.pos-mCamera->predictedPos(transf)), mDuration);
 	mScale.set(glm::vec3(1.0f));
 }

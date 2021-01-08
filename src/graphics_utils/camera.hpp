@@ -31,6 +31,7 @@ struct camState {
 };
 
 void print_state(camState const& st);
+std::ostream& operator<<(std::ostream &os, camState const& st);
 bool operator !=(camState const& st1, camState const& st2);
 bool operator ==(camState const& st1, camState const& st2);
 
