@@ -89,10 +89,14 @@ void moveCamera_action::compute_animatables(camState const& state)
 {
 	float angle_x, angle_y;
 	camState currState = mCamera->state();
-	glm::vec3 refX = glm::vec3(1.0f, 0.0f, 0.0f);
 	
-	angle_x = glm::orientedAngle(state.up, glm::vec3(0.0f, 1.0f, 0.0f), refX);
 	angle_y = glm::orientedAngle(state.right, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	bool revertX = 	(camera::flipped(state) && state.pos.y > 0. && state.pos.x > 0) ||
+					(std::abs(angle_y) >= M_PI_2);
+	glm::vec3 refX = glm::vec3(revertX ? -1.0f : 1.0f, 0.0f, 0.0f);
+
+	angle_x = glm::orientedAngle(state.up, glm::vec3(0.0f, 1.0f, 0.0f), refX);
 
 	mFinalOrientation = glm::vec3(
 		mCamera->orientation().x + diff_angles(mCamera->orientation().x, angle_x), 

@@ -167,6 +167,8 @@ public:
 	*/
 	bool flipped() const;
 
+	static bool flipped(camState state_);
+
 	camState state() const;
 
 	static void orientation_to_rotation(glm::vec3 const& orientation, glm::quat& quaternion);

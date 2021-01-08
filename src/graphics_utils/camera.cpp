@@ -111,7 +111,13 @@ bool camera::flipped() const
 	float mod_angle = std::fmod(mOrientation.x, M_PI * 2.0f);
 	if(mod_angle < 0)
 		mod_angle += M_PI * 2.0f;
+
 	return (mod_angle > M_PI / 2.0f && mod_angle < M_PI * 3.0f / 2.0f);
+}
+
+bool camera::flipped(camState state_)
+{
+	return state_.up.y < 0.0f;
 }
 
 camState camera::state() const 
