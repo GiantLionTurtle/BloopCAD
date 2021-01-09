@@ -5,7 +5,7 @@
 #include <entities/part.hpp>
 #include <entities/tangibleEntities/line.hpp>
 #include <entities/sketch.hpp>
-#include <actions/sketchDesign/addLine_action.hpp>
+#include <actions/sketchDesign/addEntity_action.hpp>
 #include <utils/mathUtils.hpp>
 
 #include <glm/gtx/quaternion.hpp>
@@ -28,12 +28,15 @@ bool line_tool::manage_mouse_move(GdkEventMotion* event)
 		return true;
 	}
 	if(started) {
-		std::shared_ptr<sketch> target = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);		
+		sketch_ptr target = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);		
 		if(!target) {
 			LOG_WARNING("No valid target.");
 			return true;
 		}
-		endPos->set_pos(pos_on_plane(target->basePlane(), glm::vec2(event->x, event->y)));
+		camera_ptr cam = mEnv->state()->cam; // For ease of writing
+		plane_abstract_ptr pl = target->basePlane();
+		glm::vec2 line_pos = pl->point_3d_to_2d(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
+		mEndPos->set_pos(line_pos);	
 	}
 	return true;
 }
@@ -46,40 +49,29 @@ bool line_tool::manage_button_press(GdkEventButton* event)
 		LOG_WARNING("No valid state.");
 		return true;
 	}
-	std::shared_ptr<camera> cam = mEnv->state()->cam; // For ease of writing
 	
-	std::shared_ptr<sketch> target = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);		
+	sketch_ptr target = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);		
 	if(!target) {
 		LOG_WARNING("No valid target.");
 		return true;
 	}
+
 	// Find where the ray intersectpos_on_plane
-	glm::vec2 line_pos = pos_on_plane(target->basePlane(), glm::vec2(event->x, event->y));
+	camera_ptr cam = mEnv->state()->cam; // For ease of writing
+	plane_abstract_ptr pl = target->basePlane();
+	glm::vec2 line_pos = pl->point_3d_to_2d(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 
 	if(!started) {
 		mEnv->state()->doc->make_glContext_current();
-		startPos = std::shared_ptr<sketchPoint>(new sketchPoint(target->basePlane(), line_pos));
-		endPos = std::shared_ptr<sketchPoint>(new sketchPoint(target->basePlane(), line_pos));
+		mStartPos = sketchPoint_ptr(new sketchPoint(pl, line_pos));
+		mEndPos = sketchPoint_ptr(new sketchPoint(pl, line_pos));
+		mLine = std::make_shared<line>(line_abstract(mStartPos, mEndPos));
 		started = true;
-		mEnv->state()->doc->push_action(std::shared_ptr<action>(new addLine_action(
-			startPos, endPos, target, mEnv->state()->doc))); // Doc is passed to activate glContext
+
+		mEnv->state()->doc->push_action(std::make_shared<addEntity_action>(mLine, target)); // Doc is passed to activate glContext
 	} else {
-		endPos->set_pos(line_pos);
+		mEndPos->set_pos(line_pos);
 		started = false;
 	}
 	return true;
-}
-
-glm::vec2 line_tool::pos_on_plane(std::shared_ptr<plane_abstract> plane_, glm::vec2 mousePos)
-{
-	std::shared_ptr<camera> cam = mEnv->state()->cam; // For ease of writing
-	
-	float screen_dist = 1.0f / std::tan(cam->FOV() / 2.0f);
-	float half_screenWidth = cam->aspectRatio();
-	glm::vec3 pos_on_screen(map((float)mousePos.x, 0.0f, (float)mEnv->state()->doc->get_width(), -half_screenWidth, half_screenWidth),
-							map((float)mousePos.y, (float)mEnv->state()->doc->get_height(), 0.0f, -1.0f, 1.0f), 
-							-screen_dist);
-	glm::vec3 ray = cam->model_inv() * glm::vec4(glm::normalize(pos_on_screen), 0.0f);
-	glm::vec3 inter = plane_->line_intersection(cam->pos(), ray);
-	return plane_->point_3d_to_2d(inter);
 }

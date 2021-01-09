@@ -3,7 +3,8 @@
 #define PLANESELECTOR_TOOL_HPP_
 
 #include "simpleSelector_tool.hpp"
-#include <entities/forward_entities.hpp>
+#include <entities/entity.hpp>
+#include <entities/geometry/plane_abstract.hpp>
 
 /*
     @class planeSelector_tool describes a selector tool that only select entities that can be reduced to plane_abstract
@@ -19,16 +20,16 @@ public:
     planeSelector_tool(workspace* env);
     virtual ~planeSelector_tool() {};
 
-    virtual bool should_hover(std::shared_ptr<entity> ent);
+    virtual bool should_hover(entity_ptr ent);
 
     /*
         @function entity_at_point is an override of the parent's entity_at_point to filter out non planes
 
         @param point : The point on screen to evaluate
     */
-   	virtual std::shared_ptr<entity> entity_at_point(glm::vec2 point);
+   	virtual entity_ptr entity_at_point(glm::vec2 point);
 protected:
-    bool entity_valid(std::shared_ptr<entity> ent);
+    bool entity_valid(entity_ptr ent);
 };
 
 #endif

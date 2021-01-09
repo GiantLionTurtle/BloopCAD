@@ -63,21 +63,16 @@ void zoom_tool::zoom(glm::vec2 origin, float amount)
 {
 	// The goal of this function is to scale the model and translate it so that the scale origin appears fixed
 	float scale = 1.0f + amount;
-	std::shared_ptr<camera> cam = mEnv->state()->cam;
+	camera_ptr cam = mEnv->state()->cam;
 	
-	float screen_dist = 1.0f / std::tan(cam->FOV() / 2.0f);
-	float half_screenWidth = cam->aspectRatio();
-	glm::vec3 pos_on_screen(map((float)origin.x, 0.0f, (float)mEnv->state()->doc->get_width(), -half_screenWidth, half_screenWidth),
-							map((float)origin.y, (float)mEnv->state()->doc->get_height(), 0.0f, -1.0f, 1.0f), 
-							-screen_dist);
-	glm::vec3 ray1 = cam->model_inv() * glm::vec4(glm::normalize(pos_on_screen), 0.0f);
+	glm::vec3 ray1 = cam->cast_ray(origin);
 
 	glm::vec4 model_pos1 = cam->model() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	plane_abstract pl1(glm::vec3(model_pos1), cam->right(), cam->up());
 	glm::vec3 inter1 = pl1.line_intersection(cam->pos(), ray1);
 	cam->transformation().scale *= scale;
 
-	glm::vec3 ray2 = cam->model_inv() * glm::vec4(glm::normalize(pos_on_screen), 0.0f);
+	glm::vec3 ray2 = cam->cast_ray(origin);
 
 	glm::vec4 model_pos2 = cam->model() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	plane_abstract pl2(glm::vec3(model_pos2), cam->right(), cam->up());

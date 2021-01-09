@@ -40,7 +40,7 @@ bool pan_tool::manage_mouse_move(GdkEventMotion* event)
 		if(is_moving) {
 			glm::vec2 abs_mov(pos.x-prevPos.x, pos.y-prevPos.y);
 			float speed_ratio = (float)mEnv->state()->cam->zoom() * 0.002f; // Since the zoom of the camera isn't really retrievable yet, this is just an arbitrary factor * 1.0f
-			std::shared_ptr<camera> cam = mEnv->state()->cam;
+			camera_ptr cam = mEnv->state()->cam;
 			cam->internalPos() -= glm::vec3(abs_mov * speed_ratio, 0.0f);
 			// cam->transformation().translation += (speed_ratio * abs_mov.x * cam->right() + speed_ratio * abs_mov.y * cam->up()); // Move the model (no need to get fancy, it moves according to the "real position of the camera")
 		} else {

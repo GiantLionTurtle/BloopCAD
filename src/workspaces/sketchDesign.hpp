@@ -32,10 +32,12 @@ public:
 
 	/*
 		@function line invokes the line tool
-
-		@note : This tool doesn't work yet
 	*/
 	void line();
+	/*
+		@function line invokes the line tool
+	*/
+	void point();
 	/*
 		@function rectangle invokes the rectangle tool
 

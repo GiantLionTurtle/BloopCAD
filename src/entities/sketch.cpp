@@ -2,23 +2,23 @@
 #include "sketch.hpp"
 #include <utils/errorLogger.hpp>
 
-sketch::sketch(std::shared_ptr<plane_abstract> base_plane):
+sketch::sketch(plane_abstract_ptr base_plane):
     mBasePlane(base_plane)
 {
     set_name("sketch");
 }
-sketch::sketch(std::shared_ptr<plane_abstract> base_plane, entity* parent):
+sketch::sketch(plane_abstract_ptr base_plane, entity* parent):
     mBasePlane(base_plane),
     entity(parent) // Follow that entity
 {
     set_name("sketch");
 }
 
-void sketch::draw_impl(std::shared_ptr<camera> cam, int frame)
+void sketch::draw_impl(camera_ptr cam, int frame)
 {
 
 }
-void sketch::draw_selection_impl(std::shared_ptr<camera> cam, int frame)
+void sketch::draw_selection_impl(camera_ptr cam, int frame)
 {
 
 }

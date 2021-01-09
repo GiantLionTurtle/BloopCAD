@@ -69,7 +69,7 @@ void part::set_handle(entityHandle* handle_)
 		}
 	}
 }
-void part::add(std::shared_ptr<entity> elem)
+void part::add(entity_ptr elem)
 {
 	entity::add(elem);
 	if(elem && mHandle) {
@@ -77,7 +77,7 @@ void part::add(std::shared_ptr<entity> elem)
 	}
 }
 
-void part::add_sketch(std::shared_ptr<sketch> sketch_)
+void part::add_sketch(sketch_ptr sketch_)
 {
 	if(sketch_) {
 		mSketches.push_back(sketch_);
@@ -86,7 +86,7 @@ void part::add_sketch(std::shared_ptr<sketch> sketch_)
 		LOG_WARNING("Trying to add null sketch.");
 	}
 }
-std::shared_ptr<sketch> part::get_sketch(int ind)
+sketch_ptr part::get_sketch(int ind)
 {
 	// It's kind of a funny behavior, I might change it to just return nullptr on out of bounds
 	if(ind < 0 || ind >= mSketches.size()) {
@@ -97,12 +97,12 @@ std::shared_ptr<sketch> part::get_sketch(int ind)
 	return mSketches[ind]; 
 }
 
-void part::draw_impl(std::shared_ptr<camera> cam, int frame)
+void part::draw_impl(camera_ptr cam, int frame)
 {
 
 }
 
-void part::draw_selection_impl(std::shared_ptr<camera> cam, int frame)
+void part::draw_selection_impl(camera_ptr cam, int frame)
 {
 
 }

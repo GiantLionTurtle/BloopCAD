@@ -27,7 +27,7 @@ bool simpleSelector_tool::manage_button_press(GdkEventButton* event)
 bool simpleSelector_tool::manage_mouse_move(GdkEventMotion* event) 
 {
 	if(mEnv->state()) {
-		std::shared_ptr<entity> ent = entity_at_point(glm::vec2(event->x, mEnv->state()->doc->get_height() - event->y));
+		entity_ptr ent = entity_at_point(glm::vec2(event->x, mEnv->state()->doc->get_height() - event->y));
 		// Toggle hovering
 		if(ent != mCurrentHover) {
 			if(mCurrentHover) {
@@ -42,7 +42,7 @@ bool simpleSelector_tool::manage_mouse_move(GdkEventMotion* event)
 	return true;
 }
 
-std::shared_ptr<entity> simpleSelector_tool::entity_at_point(glm::vec2 point)
+entity_ptr simpleSelector_tool::entity_at_point(glm::vec2 point)
 {
 	return primitive_entity_at_point(point); // No filter applied, it is a simpleSelector
 }
@@ -58,7 +58,7 @@ glm::ivec3 simpleSelector_tool::id_at_point(glm::vec2 point)
 	}
 	return glm::vec3(0, 0, 0); // (0, 0, 0) is the same as the background, so it will be interpreted as nullptr
 }
-std::shared_ptr<entity> simpleSelector_tool::primitive_entity_at_point(glm::vec2 point)
+entity_ptr simpleSelector_tool::primitive_entity_at_point(glm::vec2 point)
 {
 	if(mEnv->state()) {
 		return mEnv->state()->doc->target()->get(id_at_point(point)); // The indexer is the current thing that is worked on in the document

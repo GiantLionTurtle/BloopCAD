@@ -7,7 +7,7 @@
 
 #include <glm/gtx/vector_angle.hpp>
 
-moveCamera_action::moveCamera_action(std::shared_ptr<camera> cam, camState target, long duration_ms):
+moveCamera_action::moveCamera_action(camera_ptr cam, camState target, long duration_ms):
 	mCamera(cam),
 	mTargetState({target.pos, glm::normalize(target.right), glm::normalize(target.up)}),
 	mStarted(false),
@@ -19,8 +19,8 @@ moveCamera_action::moveCamera_action(std::shared_ptr<camera> cam, camState targe
 
 }
 
-std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	std::shared_ptr<plane_abstract> toFace, float dist_to_plane, 
-																				camState const& camSt, std::shared_ptr<camera> cam)
+std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	plane_abstract_ptr toFace, float dist_to_plane, 
+																				camState const& camSt, camera_ptr cam)
 {
 	float dot_right_v 	= glm::dot(camSt.right, toFace->v()); // How similar is the camRight to the v vector?
 	float dot_up_v 		= glm::dot(camSt.up, toFace->v()); // How similar is the camUp to the v vector?
@@ -43,7 +43,7 @@ std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	std::shared_
 	targetCamState, 
 	preferences::get_instance().get_long("camtrans")));
 }
-std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	std::shared_ptr<plane_abstract> toFace, float dist_to_plane, std::shared_ptr<camera> cam)
+std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	plane_abstract_ptr toFace, float dist_to_plane, camera_ptr cam)
 {
 	return create_from_facingPlane(toFace, dist_to_plane, cam->state(), cam);
 }

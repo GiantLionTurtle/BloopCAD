@@ -35,14 +35,14 @@ protected:
 		@param cam : 	The camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	virtual void draw_impl(std::shared_ptr<camera> cam, int frame);
+	virtual void draw_impl(camera_ptr cam, int frame);
 	/*
 		@function draw_selection_impl draws the line in plain color on the selection buffer
 
 		@param cam : The camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	virtual void draw_selection_impl(std::shared_ptr<camera> cam, int frame);
+	virtual void draw_selection_impl(camera_ptr cam, int frame);
 };
 
 #endif

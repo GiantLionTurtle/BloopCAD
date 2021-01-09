@@ -39,7 +39,7 @@ void point::update_VB()
             mParent->notify_childUpdate();
 }
 
-void point::draw_impl(std::shared_ptr<camera> cam, int frame)
+void point::draw_impl(camera_ptr cam, int frame)
 {
 	if(mRequire_VBUpdate) { // very sketch
 		update_VB();
@@ -70,7 +70,7 @@ void point::draw_impl(std::shared_ptr<camera> cam, int frame)
 	mShader->unbind();
 }
 
-void point::draw_selection_impl(std::shared_ptr<camera> cam, int frame)
+void point::draw_selection_impl(camera_ptr cam, int frame)
 {
 	mShader->bind();
 	mShader->setUniform4f("u_Color", mSelectionColor.r, mSelectionColor.g, mSelectionColor.b, 1.0f);

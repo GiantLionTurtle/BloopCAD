@@ -16,7 +16,7 @@ private:
 	Gtk::Label mCollapser, mContent;
 	Gtk::EventBox mCollapserEvents;
 
-	std::shared_ptr<entity> mEntity;
+	entity_ptr mEntity;
 	entityHandle* mParent;
 	std::vector<entityHandle*> mChildren;
 	entityView* mView;
@@ -24,7 +24,7 @@ private:
 	bool mCollapsed;
 	int mLevel;
 public:
-	entityHandle(std::shared_ptr<entity> ent, entityView* view, entityHandle* parent);
+	entityHandle(entity_ptr ent, entityView* view, entityHandle* parent);
 	entityHandle(); // for root handles
 
 	bool set_hover(GdkEventCrossing* event);

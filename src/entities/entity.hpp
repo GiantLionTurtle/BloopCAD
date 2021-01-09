@@ -17,7 +17,10 @@
 #include <functional>
 #include <tuple>
 
+class entity;
 class entityHandle;
+
+using entity_ptr = std::shared_ptr<entity>;
 
 /*
 	@define BLOOP_ENTITY_ describe state flags for an entity
@@ -40,7 +43,7 @@ protected:
 
 	std::string mName;
 
-	std::vector<std::tuple<glm::ivec3, std::shared_ptr<entity>, bool>> mChildren; // The entities container
+	std::vector<std::tuple<glm::ivec3, entity_ptr, bool>> mChildren; // The entities container
 	glm::ivec3 mHighestInd; // The current highest 3 ints index
 	glm::ivec3* highestInd;
 	entity* mParent;
@@ -64,14 +67,14 @@ public:
 		@param cam : 	The camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	void draw(std::shared_ptr<camera> cam, int frame);
+	void draw(camera_ptr cam, int frame);
 	/*
 		@function draw draws the entity with it's plain selection color
 
 		@param cam : 	The camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	void draw_selection(std::shared_ptr<camera> cam, int frame);
+	void draw_selection(camera_ptr cam, int frame);
 
 	/*
 		@function set_selected sets the selected
@@ -174,7 +177,7 @@ public:
 
 		@param elem : The element to add
 	*/
-	virtual void add(std::shared_ptr<entity> elem);
+	virtual void add(entity_ptr elem);
 
 	/*
 		@function is the size getter
@@ -190,7 +193,7 @@ public:
 
 		@return : The entity at a peculiar linear index, it it exists
 	*/
-	std::shared_ptr<entity> get(size_t ind) const;
+	entity_ptr get(size_t ind) const;
 	/*
 		@function get gives access to the indexer at a 3 ints index
 
@@ -198,28 +201,28 @@ public:
 
 		@return : The entity at a peculiar linear index, it it exists
 	*/
-	std::shared_ptr<entity> get(glm::ivec3 const& ind) const;
+	entity_ptr get(glm::ivec3 const& ind) const;
 
 	/*
 		@function get_last returns the last element added
 
 		@return : The last entity of the list
 	*/
-	std::shared_ptr<entity> get_last() const;
+	entity_ptr get_last() const;
 
 	/*
 		@operator [] is a wrapper for the get function
 	*/
-	std::shared_ptr<entity> operator[](size_t ind) const;
-	std::shared_ptr<entity> operator[](glm::ivec3 const& ind) const;
+	entity_ptr operator[](size_t ind) const;
+	entity_ptr operator[](glm::ivec3 const& ind) const;
 
 	/*
 		@function for_each applies a function to all entities stored
 
-		@param func : The function to apply. It takes a std::shared_ptr<entity> and optionaly a glm::ivec3 index
+		@param func : The function to apply. It takes a entity_ptr and optionaly a glm::ivec3 index
 	*/
-	void for_each(std::function<void (std::shared_ptr<entity>, glm::ivec3)> func);
-	void for_each(std::function<void (std::shared_ptr<entity>)> func);
+	void for_each(std::function<void (entity_ptr, glm::ivec3)> func);
+	void for_each(std::function<void (entity_ptr)> func);
 
 	/*
 		@function is_following
@@ -241,7 +244,7 @@ protected:
 		@param cam : 	The camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	virtual void draw_impl(std::shared_ptr<camera> cam, int frame) {};
+	virtual void draw_impl(camera_ptr cam, int frame) {};
 	/*
 		@function draw_selection_impl is an overiddable function for children classes to draw themselves 
 		in plain color on the selection buffer
@@ -249,7 +252,7 @@ protected:
 		@param cam : 	The camera used for rendering
 		@param frame : 	The current frame id
 	*/	
-	virtual void draw_selection_impl(std::shared_ptr<camera> cam, int frame) {};
+	virtual void draw_selection_impl(camera_ptr cam, int frame) {};
 
 	/*
 		@function compare_indices makes a comparison between two 3 ints indices
@@ -267,7 +270,7 @@ protected:
 	*/
 	static void increment_index(glm::ivec3 &ind);
 
-	void add_child(glm::ivec3 id, std::shared_ptr<entity> child, bool first = false);
+	void add_child(glm::ivec3 id, entity_ptr child, bool first = false);
 };
 
 #endif

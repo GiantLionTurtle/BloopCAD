@@ -30,7 +30,7 @@ void startSketch_tool::init()
 		// Check if there is only one item in the document's selection stack and if it is a plane, use it
 		if(mEnv->state()->doc->selection_size() == 1) {
 			selection sel = mEnv->state()->doc->selection_at(0);
-			std::shared_ptr<plane_abstract> sketchPlane = std::dynamic_pointer_cast<plane_abstract>(sel.ent);
+			plane_abstract_ptr sketchPlane = std::dynamic_pointer_cast<plane_abstract>(sel.ent);
 			if(sketchPlane) {
 				start_sketch(sketchPlane, sel.camSt);
 			}
@@ -42,7 +42,7 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 {
 	if(mEnv->state()) {
 		// If the hovered entity is a plane, start sketch
-		std::shared_ptr<plane_abstract> sketchPlane = std::dynamic_pointer_cast<plane_abstract>(entity_at_point(glm::vec2(event->x, mEnv->state()->doc->get_height() - event->y)));
+		plane_abstract_ptr sketchPlane = std::dynamic_pointer_cast<plane_abstract>(entity_at_point(glm::vec2(event->x, mEnv->state()->doc->get_height() - event->y)));
 		if(sketchPlane) {
 			start_sketch(sketchPlane, mEnv->state()->cam->state());
 		}
@@ -50,13 +50,13 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 	return true;
 }
 
-void startSketch_tool::act_on_entity(std::shared_ptr<entity> ent)
+void startSketch_tool::act_on_entity(entity_ptr ent)
 {
 	if(mEnv->state() && entity_valid(ent))
 		start_sketch(std::dynamic_pointer_cast<plane_abstract>(ent), mEnv->state()->cam->state());
 }
 
-void startSketch_tool::start_sketch(std::shared_ptr<plane_abstract> sketchPlane, camState const& camState_)
+void startSketch_tool::start_sketch(plane_abstract_ptr sketchPlane, camState const& camState_)
 {
 	std::shared_ptr<part> target = std::dynamic_pointer_cast<part>(mEnv->state()->target); // Aquire the part that is worked on
 	if(target) {

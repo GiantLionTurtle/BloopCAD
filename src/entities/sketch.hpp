@@ -8,34 +8,37 @@
 #include <memory>
 #include <vector>
 
+class sketch;
+using sketch_ptr = std::shared_ptr<sketch>;
+
 /*
 	@class sketch describes a sketch which is a bunch of geometries with constraints
 	@parent : entity
 */
 class sketch : public entity {
 private:
-	std::shared_ptr<plane_abstract> mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
+	plane_abstract_ptr mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
 public:
 	/*
 		@function sketch creates a sketch
 
 		@param base_plane : The plane onto which everything is constructed in the sketch
 	*/
-	sketch(std::shared_ptr<plane_abstract> base_plane);
+	sketch(plane_abstract_ptr base_plane);
 	/*
 		@function sketch creates a sketch
 
 		@param base_plane : The plane onto which everything is constructed in the sketch
 		@param parent : 	An entity that contains this sketch
 	*/
-	sketch(std::shared_ptr<plane_abstract> base_plane, entity* parent);
+	sketch(plane_abstract_ptr base_plane, entity* parent);
 
 	/*
 		@function basePlane
 
 		@return : The base plane of the sketch
 	*/
-	std::shared_ptr<plane_abstract> basePlane() { return mBasePlane; }
+	plane_abstract_ptr basePlane() { return mBasePlane; }
 protected:
 	/*
 		@function draw_impl draws the part on screen, it calls draw on all it's components
@@ -43,14 +46,14 @@ protected:
 		@param cam : The camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	virtual void draw_impl(std::shared_ptr<camera> cam, int frame);
+	virtual void draw_impl(camera_ptr cam, int frame);
 	/*
 		@function draw_selection_impl draws the part on the selection buffer, it calls draw_selection on all it's components
 
 		@param cam : The camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	virtual void draw_selection_impl(std::shared_ptr<camera> cam, int frame);
+	virtual void draw_selection_impl(camera_ptr cam, int frame);
 };
 
 #endif

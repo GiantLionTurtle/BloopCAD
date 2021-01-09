@@ -17,9 +17,9 @@ plane_abstract plane_abstract::from_1Point2Vectors(glm::vec3 const& origin, glm:
 	return plane_abstract(origin, v, w, reversed);
 }
 
-std::shared_ptr<plane_abstract> plane_abstract::from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed)
+plane_abstract_ptr plane_abstract::from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed)
 {
-	return std::shared_ptr<plane_abstract>(new plane_abstract(origin, v, w, reversed));
+	return plane_abstract_ptr(new plane_abstract(origin, v, w, reversed));
 }
 
 float plane_abstract::dist(glm::vec3 const& point) const

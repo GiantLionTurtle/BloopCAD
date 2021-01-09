@@ -9,7 +9,7 @@
 
 class moveCamera_action : public action {
 private:
-	std::shared_ptr<camera> mCamera;
+	camera_ptr mCamera;
 	camState mInitState, mTargetState;
 	bool mStarted;
 	animatable<glm::quat> mRotation;
@@ -18,11 +18,11 @@ private:
 	glm::vec3 mFinalOrientation;
 	long mDuration;
 public:
-	moveCamera_action(std::shared_ptr<camera> cam, camState target, long duration_ms);
+	moveCamera_action(camera_ptr cam, camState target, long duration_ms);
 
-	static std::shared_ptr<action> create_from_facingPlane(	std::shared_ptr<plane_abstract> toFace, float dist_to_plane, 
-															camState const& camSt, std::shared_ptr<camera> cam);
-	static std::shared_ptr<action> create_from_facingPlane(std::shared_ptr<plane_abstract> toFace, float dist_to_plane, std::shared_ptr<camera> cam);
+	static std::shared_ptr<action> create_from_facingPlane(	plane_abstract_ptr toFace, float dist_to_plane, 
+															camState const& camSt, camera_ptr cam);
+	static std::shared_ptr<action> create_from_facingPlane(plane_abstract_ptr toFace, float dist_to_plane, camera_ptr cam);
 
 	virtual bool do_work();
 	virtual bool undo_work();

@@ -10,7 +10,7 @@ public:
 
 	virtual void set_handle(entityHandle* handle_);
 	
-	virtual void add(std::shared_ptr<entity> elem);
+	virtual void add(entity_ptr elem);
 };
 
 #endif

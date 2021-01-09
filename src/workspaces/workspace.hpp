@@ -6,7 +6,7 @@
 #include <graphics_utils/camera.hpp>
 #include <tools/tool.hpp>
 #include <graphics_utils/frameBuffer.hpp>
-#include <entities/forward_entities.hpp>
+#include <entities/entity.hpp>
 
 #include <gtkmm.h>
 
@@ -21,8 +21,8 @@
 */
 struct workspaceState {
 	document* doc; // The document owning the state
-	std::shared_ptr<entity> target; // The target entity of the workspace
-	std::shared_ptr<camera> cam; // The camera rendering the scene for that workspace in the doc
+	entity_ptr target; // The target entity of the workspace
+	camera_ptr cam; // The camera rendering the scene for that workspace in the doc
 	std::shared_ptr<tool_abstract> currentTool; // The tool being used by the workspace in the doc
 	std::string workspaceName; // The name of the workspace it is describing
 };

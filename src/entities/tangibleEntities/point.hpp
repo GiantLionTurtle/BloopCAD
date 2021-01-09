@@ -20,8 +20,8 @@ public:
 
 	virtual void update_VB();
 protected:
-	void draw_impl(std::shared_ptr<camera> cam, int frame);
-	void draw_selection_impl(std::shared_ptr<camera> cam, int frame);
+	void draw_impl(camera_ptr cam, int frame);
+	void draw_selection_impl(camera_ptr cam, int frame);
 
 	void create();
 };

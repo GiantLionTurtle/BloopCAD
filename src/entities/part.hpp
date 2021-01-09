@@ -23,7 +23,7 @@ class part : public entity {
 private:
 	std::shared_ptr<plane> mXY, mYZ, mZX; // Origin planes
 	std::shared_ptr<folder> mOrigin;
-	std::vector<std::shared_ptr<sketch>> mSketches; // Sketches drawn in the part
+	std::vector<sketch_ptr> mSketches; // Sketches drawn in the part
 public:
 	/*
 		@function part creates an empty part
@@ -45,14 +45,14 @@ public:
 
 	virtual void set_handle(entityHandle* handle_);
 
-	virtual void add(std::shared_ptr<entity> elem);
+	virtual void add(entity_ptr elem);
 
 	/*
 		@function add_sketch adds a sketch to the list
 
 		@param sketch_ : A shared pointer to the sketch to add
 	*/
-	void add_sketch(std::shared_ptr<sketch> sketch_);
+	void add_sketch(sketch_ptr sketch_);
 	/*
 		@function get_sketch grants linear access to the part's sketches
 
@@ -60,7 +60,7 @@ public:
 
 		@return : The desired sketch or the last if the index is out of bounds
 	*/
-	std::shared_ptr<sketch> get_sketch(int ind = -1);
+	sketch_ptr get_sketch(int ind = -1);
 protected:
 	/*
 		@function draw_impl draws the part on screen, it calls draw on all it's components
@@ -68,14 +68,14 @@ protected:
 		@param cam : The camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	virtual void draw_impl(std::shared_ptr<camera> cam, int frame);
+	virtual void draw_impl(camera_ptr cam, int frame);
 	/*
 		@function draw_selection_impl draws the part on the selection buffer, it calls draw_selection on all it's components
 
 		@param cam : The camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	virtual void draw_selection_impl(std::shared_ptr<camera> cam, int frame);
+	virtual void draw_selection_impl(camera_ptr cam, int frame);
 };
 
 #endif

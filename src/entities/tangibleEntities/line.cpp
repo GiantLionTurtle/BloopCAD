@@ -63,7 +63,7 @@ void line::update_VB()
 	mVB->unbind();
 }
 
-void line::draw_impl(std::shared_ptr<camera> cam, int frame)
+void line::draw_impl(camera_ptr cam, int frame)
 {
 	if(mRequire_VBUpdate)
 		update_VB();
@@ -92,7 +92,7 @@ void line::draw_impl(std::shared_ptr<camera> cam, int frame)
 	mShader->unbind();
 }
 
-void line::draw_selection_impl(std::shared_ptr<camera> cam, int frame)
+void line::draw_selection_impl(camera_ptr cam, int frame)
 {
 	mShader->bind();
 	mShader->setUniform4f("u_Color", mSelectionColor.r, mSelectionColor.g, mSelectionColor.b, 1.0f);

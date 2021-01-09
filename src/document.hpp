@@ -24,7 +24,7 @@
 	@struct selection describes a selected entity from a certain camera viewpoint
 */
 struct selection {
-	std::shared_ptr<entity> ent; // The selected entity
+	entity_ptr ent; // The selected entity
 	camState camSt; // The camera state at the moment of the selection
 
 	/*
@@ -33,7 +33,7 @@ struct selection {
 		@param ent_ : 	The selected entity
 		@param camSt_ : The camera state during selection
 	*/
-	selection(std::shared_ptr<entity> ent_, camState camSt_) :
+	selection(entity_ptr ent_, camState camSt_) :
 		ent(ent_),
 		camSt(camSt_)
 	{}
@@ -209,7 +209,7 @@ public:
 	*/
 	void toggle_select(glm::ivec3 id, camState cam, bool additive);
 
-	void toggle_select(std::shared_ptr<entity> ent, bool additive);
+	void toggle_select(entity_ptr ent, bool additive);
 };
 
 #endif

@@ -6,6 +6,7 @@
 #include <actions/common/switchWorkspace_action.hpp>
 #include <actions/common/moveCamera_action.hpp>
 #include <tools/sketchDesign/line_tool.hpp>
+#include <tools/sketchDesign/point_tool.hpp>
 #include <utils/xmlParser.hpp>
 #include <entities/svgEntity.hpp>
 #include <bloop.hpp>
@@ -18,11 +19,13 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 	workspace("sketchDesign_upperBar", builder, parent) // Create base workspace with upper bar
 {	
 	// Create all the tools used in this workspace
-	mTools["line"] 	= std::shared_ptr<tool_abstract>(new line_tool(this));
-	mDefaultTool = mTools.at("simpleSelector");
+	mTools["line"] 		= std::shared_ptr<tool_abstract>(new line_tool(this));
+	mTools["point"] 	= std::shared_ptr<tool_abstract>(new point_tool(this));
+	mDefaultTool 		= mTools.at("simpleSelector");
 
 	// Initialize all buttons as 2 nullptr
 	mButtons["line"] 			= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
+	mButtons["point"] 			= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
 	mButtons["rectangle"] 		= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
 	mButtons["circle"] 			= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
 	mButtons["polygon"] 		= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
@@ -52,6 +55,7 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 	if(all_btns_valid) {
 		try { // Attempt to fetch all the buttons' icons
 			std::get<1>(mButtons.at("line")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/line.png", 60, 60));
+			std::get<1>(mButtons.at("point")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/point.png", 60, 60));
 			std::get<1>(mButtons.at("rectangle")) 		= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/rectangle.png", 60, 60));
 			std::get<1>(mButtons.at("circle")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/circle.png", 60, 60));
 			std::get<1>(mButtons.at("polygon")) 		= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/polygon.png", 60, 60));
@@ -76,6 +80,7 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 
 		// Set all the buttons' icons		
 		std::get<0>(mButtons.at("line"))->			set_image(*std::get<1>(mButtons.at("line")));
+		std::get<0>(mButtons.at("point"))->			set_image(*std::get<1>(mButtons.at("point")));
 		std::get<0>(mButtons.at("rectangle"))->		set_image(*std::get<1>(mButtons.at("rectangle")));
 		std::get<0>(mButtons.at("circle"))->		set_image(*std::get<1>(mButtons.at("circle")));
 		std::get<0>(mButtons.at("polygon"))->		set_image(*std::get<1>(mButtons.at("polygon")));
@@ -96,6 +101,7 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 		
 		// Set all the buttons' callback
 		std::get<0>(mButtons.at("line"))->			signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::line));
+		std::get<0>(mButtons.at("point"))->			signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::point));
 		std::get<0>(mButtons.at("rectangle"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::rectangle));
 		std::get<0>(mButtons.at("circle"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::circle));
 		std::get<0>(mButtons.at("polygon"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::polygon));
@@ -121,50 +127,54 @@ void sketchDesign::line()
 {
 	set_tool("line");
 }
+void sketchDesign::point()
+{
+	set_tool("point");
+}
 void sketchDesign::rectangle()
 {
-//	mParentBloop->set_tool("rectangle");
+	LOG_WARNING("This tool is not available yet.");
 }
 void sketchDesign::polygon()
 {
-//	mParentBloop->set_tool("polygon");
+	LOG_WARNING("This tool is not available yet.");
 }
 void sketchDesign::circle()
 {
-//	mParentBloop->set_tool("circle");
+	LOG_WARNING("This tool is not available yet.");
 }
 void sketchDesign::threePointsArc()
 {
-//	mParentBloop->set_tool("threePointsArc");
+	LOG_WARNING("This tool is not available yet.");
 }
 
 void sketchDesign::dimension()
 {
-//	mParentBloop->set_tool("dimension");
+	LOG_WARNING("This tool is not available yet.");
 }
 void sketchDesign::verticality()
 {
-//	mParentBloop->set_tool("verticality");
+	LOG_WARNING("This tool is not available yet.");
 }
 void sketchDesign::horizontality()
 {
-//	mParentBloop->set_tool("horizontality");
+	LOG_WARNING("This tool is not available yet.");
 }
 void sketchDesign::perpendicularity()
 {
-//	mParentBloop->set_tool("perpendicularity");
+	LOG_WARNING("This tool is not available yet.");
 }
 void sketchDesign::parallelism()
 {
-//	mParentBloop->set_tool("parallelism");
+	LOG_WARNING("This tool is not available yet.");
 }
 void sketchDesign::coincidence()
 {
-//	mParentBloop->set_tool("coincidence");
+	LOG_WARNING("This tool is not available yet.");
 }
 void sketchDesign::equality()
 {
-//	mParentBloop->set_tool("equality");
+	LOG_WARNING("This tool is not available yet.");
 }
 
 void sketchDesign::to_svg()
@@ -178,9 +188,9 @@ void sketchDesign::to_svg()
 	svgDoc.add_lastChild(svg);
 	glm::vec2 min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max()), max(std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
 	if(mState && mState->target) {
-		mState->target->for_each([&svg, &min, &max, this](std::shared_ptr<entity> ent) {
+		mState->target->for_each([&svg, &min, &max, this](entity_ptr ent) {
 			std::shared_ptr<svgEntity> svgEnt = std::dynamic_pointer_cast<svgEntity>(ent);
-			std::shared_ptr<sketch> sk = std::dynamic_pointer_cast<sketch>(mState->target);
+			sketch_ptr sk = std::dynamic_pointer_cast<sketch>(mState->target);
 			if(svgEnt && sk) {
 				svg->add_lastChild(svgEnt->to_svg(sk->basePlane().get(), min, max));
 			}

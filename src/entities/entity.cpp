@@ -34,19 +34,19 @@ entity::entity(entity* parent):
 
 }
 
-void entity::draw(std::shared_ptr<camera> cam, int frame)
+void entity::draw(camera_ptr cam, int frame)
 {
 	if(exists() && (visible() || selected())) { // Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
 		mRequire_redraw = false;
 		draw_impl(cam, frame);
-		for_each([cam, frame](std::shared_ptr<entity> ent) { ent->draw(cam, frame); }); // Make the call for all components
+		for_each([cam, frame](entity_ptr ent) { ent->draw(cam, frame); }); // Make the call for all components
 	}
 }
-void entity::draw_selection(std::shared_ptr<camera> cam, int frame)
+void entity::draw_selection(camera_ptr cam, int frame)
 {
 	if(exists() && (visible() || selected())) {// Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
 		draw_selection_impl(cam, frame);
-		for_each([cam, frame](std::shared_ptr<entity> ent) { ent->draw_selection(cam, frame); }); // Make the call for all components
+		for_each([cam, frame](entity_ptr ent) { ent->draw_selection(cam, frame); }); // Make the call for all components
 	}
 }
 
@@ -151,7 +151,7 @@ bool entity::exists() const
 	return mState & BLOOP_ENTITY_EXISTS_FLAG;
 }
 
-void entity::add(std::shared_ptr<entity> elem)
+void entity::add(entity_ptr elem)
 {
 	if(elem) {
 		set_require_redraw();
@@ -160,11 +160,11 @@ void entity::add(std::shared_ptr<entity> elem)
 	}
 }
 
-std::shared_ptr<entity> entity::get(size_t ind) const
+entity_ptr entity::get(size_t ind) const
 {
-	return (ind < size() ? std::get<1>(mChildren[ind]) : std::shared_ptr<entity>(nullptr)); // Basic range check
+	return (ind < size() ? std::get<1>(mChildren[ind]) : entity_ptr(nullptr)); // Basic range check
 }
-std::shared_ptr<entity> entity::get(glm::ivec3 const& ind) const
+entity_ptr entity::get(glm::ivec3 const& ind) const
 {
 	if(ind != glm::ivec3(0, 0, 0)) {
 		// Naive binary search within our list
@@ -183,32 +183,32 @@ std::shared_ptr<entity> entity::get(glm::ivec3 const& ind) const
 
 		LOG_WARNING("Could not find children entity at index: " + glm::to_string(ind));
 	}
-	return std::shared_ptr<entity>(nullptr); // No entity was found
+	return entity_ptr(nullptr); // No entity was found
 }
-std::shared_ptr<entity> entity::get_last() const
+entity_ptr entity::get_last() const
 {
 	if(mChildren.empty())
 		return nullptr;
 	return std::get<1>(mChildren.back());
 }
 
-std::shared_ptr<entity> entity::operator[](size_t ind) const
+entity_ptr entity::operator[](size_t ind) const
 {
 	return get(ind);
 }
-std::shared_ptr<entity> entity::operator[](glm::ivec3 const& ind) const
+entity_ptr entity::operator[](glm::ivec3 const& ind) const
 {
 	return get(ind);
 }
 
-void entity::for_each(std::function<void (std::shared_ptr<entity>, glm::ivec3)> func)
+void entity::for_each(std::function<void (entity_ptr, glm::ivec3)> func)
 {
 	for(size_t i = 0; i < mChildren.size(); ++i) {
 		if(std::get<2>(mChildren[i]) && std::get<1>(mChildren[i])) // TODO: should nullptr be allowed to be given to function?
 			func(std::get<1>(mChildren[i]), std::get<0>(mChildren[i]));
 	}
 }
-void entity::for_each(std::function<void (std::shared_ptr<entity>)> func)
+void entity::for_each(std::function<void (entity_ptr)> func)
 {
 	for(size_t i = 0; i < mChildren.size(); ++i) {
 		if(std::get<2>(mChildren[i]) && std::get<1>(mChildren[i])) // TODO: should nullptr be allowed to be given to function?
@@ -238,7 +238,7 @@ void entity::set_parent(entity* parent)
 	mParent = parent;
 	increment_index(*highestInd);
 	set_selectionID(*highestInd);
-	for_each([this](std::shared_ptr<entity> child) {child->set_parent(this);});
+	for_each([this](entity_ptr child) {child->set_parent(this);});
 }
 
 int entity::compare_indices(glm::ivec3 const& a, glm::ivec3 const& b)
@@ -265,7 +265,7 @@ void entity::increment_index(glm::ivec3 &ind)
 	}
 }
 
-void entity::add_child(glm::ivec3 id, std::shared_ptr<entity> elem, bool first)
+void entity::add_child(glm::ivec3 id, entity_ptr elem, bool first)
 {
 	mChildren.push_back({id, elem, first});
 	if(mParent)

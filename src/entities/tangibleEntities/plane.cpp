@@ -40,7 +40,7 @@ void plane::update_VB()
 	mVB->unbind();
 }
 
-void plane::draw_impl(std::shared_ptr<camera> cam, int frame)
+void plane::draw_impl(camera_ptr cam, int frame)
 {
 	// TODO: make this less sketch?
 	// GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad
@@ -74,7 +74,7 @@ void plane::draw_impl(std::shared_ptr<camera> cam, int frame)
 	// GLCall(glEnable(GL_DEPTH_TEST));
 }
 
-void plane::draw_selection_impl(std::shared_ptr<camera> cam, int frame)
+void plane::draw_selection_impl(camera_ptr cam, int frame)
 {
 	// No need to disable depth buffer, the quads have to obstruct each others
 	mSelectionShader->bind();

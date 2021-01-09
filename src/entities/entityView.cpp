@@ -3,7 +3,7 @@
 
 #include <document.hpp>
 
-entityHandle::entityHandle(std::shared_ptr<entity> ent, entityView* view, entityHandle* parent):
+entityHandle::entityHandle(entity_ptr ent, entityView* view, entityHandle* parent):
 	mEntity(ent),
 	mView(view),
 	mParent(parent),

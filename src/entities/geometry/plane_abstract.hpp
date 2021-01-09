@@ -6,6 +6,9 @@
 
 #include <glm/glm.hpp>
 
+class plane_abstract;
+using plane_abstract_ptr = std::shared_ptr<plane_abstract>;
+
 /*
 	@class plane_abstract describes an abstract representation of a plane
 */
@@ -38,7 +41,7 @@ public:
 	static plane_abstract from_1Point2Vectors(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed = false); // this one is just a wrapper around the basic constructor
 	// static plane_abstract from_3Points(glm::vec3 origin, glm::vec3 pt1, glm::vec3 pt2);
 
-	// static std::shared_ptr<plane_abstract> from_1Point1Vector_ptr(glm::vec3 origin, glm::vec3 n);
+	// static plane_abstract_ptr from_1Point1Vector_ptr(glm::vec3 origin, glm::vec3 n);
 	/*
 		@function from_1Point2Vectors_ptr creates a plane_abstract
 
@@ -49,8 +52,8 @@ public:
 
 		@return : A pointer to the created plane
 	*/
-	static std::shared_ptr<plane_abstract> from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed = false); // this one is just a wrapper around the basic constructor
-	// static std::shared_ptr<plane_abstract> from_3Points_ptr(glm::vec3 origin, glm::vec3 pt1, glm::vec3 pt2);
+	static plane_abstract_ptr from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed = false); // this one is just a wrapper around the basic constructor
+	// static plane_abstract_ptr from_3Points_ptr(glm::vec3 origin, glm::vec3 pt1, glm::vec3 pt2);
 
 	/*
 		@function dist gives the distance between a point and the plane

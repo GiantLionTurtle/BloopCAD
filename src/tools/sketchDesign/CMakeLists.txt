@@ -1,4 +1,5 @@
 set(sketchDesign_tools_source_files
+    point_tool.cpp
     line_tool.cpp
   )
 

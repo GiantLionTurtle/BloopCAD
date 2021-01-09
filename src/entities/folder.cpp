@@ -18,7 +18,7 @@ void folder::set_handle(entityHandle* handle_)
 		std::get<1>(mChildren[i])->set_handle(new entityHandle(std::get<1>(mChildren[i]), mHandle->view(), mHandle));
 	}
 }
-void folder::add(std::shared_ptr<entity> ent)
+void folder::add(entity_ptr ent)
 {
 	entity::add(ent);
 	if(ent && mHandle) {

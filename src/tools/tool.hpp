@@ -3,6 +3,7 @@
 #define TOOL_HPP_
 
 #include <forward_bloop.hpp>
+#include <entities/entity.hpp>
 
 #include <glm/glm.hpp>
 #include <gtkmm.h>
@@ -10,7 +11,6 @@
 #include <memory>
 
 class workspace; // Forward declaration necesary for pointer
-class entity;
 
 /*
 	@struct compositeCursor describes a cursor that has both an image and a cursor type
@@ -96,8 +96,8 @@ public:
 	*/
 	std::shared_ptr<compositeCursor> cursor() const { return mCursor; };
 
-	virtual void act_on_entity(std::shared_ptr<entity> ent) {};
-	virtual bool should_hover(std::shared_ptr<entity> ent) { return true; }
+	virtual void act_on_entity(entity_ptr ent) {};
+	virtual bool should_hover(entity_ptr ent) { return true; }
 };
 
 #endif

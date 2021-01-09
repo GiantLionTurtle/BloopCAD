@@ -35,6 +35,9 @@ std::ostream& operator<<(std::ostream &os, camState const& st);
 bool operator !=(camState const& st1, camState const& st2);
 bool operator ==(camState const& st1, camState const& st2);
 
+class camera;
+using camera_ptr = std::shared_ptr<camera>;
+
 class camera {
 protected:
 	glm::vec3 mPos, mTarget; // Position of the camera and the position it is looking at
@@ -159,7 +162,7 @@ public:
 	/*
 		@function set sets the camera to have the same everything as another camera
 	*/
-	void set(std::shared_ptr<camera> other);
+	void set(camera_ptr other);
 
 	/*
 		@function flipped 
@@ -176,6 +179,8 @@ public:
 
 	glm::vec3& internalPos() { return mPos; } 
 	glm::vec3& internalFront() { return mFront; } 
+
+	glm::vec3 cast_ray(glm::vec2 screenPos, bool input_NDC = true);
 private:
 	glm::mat4 model(transform transf) const;
 	glm::mat4 model_inv(transform transf) const;

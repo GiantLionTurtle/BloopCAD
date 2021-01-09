@@ -15,9 +15,9 @@
 */
 class createSketch_action : public action {
 private:
-	std::shared_ptr<plane_abstract> mSketchPlane; 	// The baseplane of the sketch
+	plane_abstract_ptr mSketchPlane; 	// The baseplane of the sketch
 	std::shared_ptr<part> mTarget; 					// The part onto which to add the plane
-	std::shared_ptr<sketch> mSketch;				// The created sketch
+	sketch_ptr mSketch;				// The created sketch
 public:
 	/*
 		@function createSketch_action creates the action 
@@ -25,7 +25,7 @@ public:
 		@param sketchPlane: The plane that describes the sketch
 		@param target:		The part onto which to add the sketch
 	*/
-	createSketch_action(std::shared_ptr<plane_abstract> sketchPlane, std::shared_ptr<part> target);
+	createSketch_action(plane_abstract_ptr sketchPlane, std::shared_ptr<part> target);
 
 	/*
 		@function do_work activates the created sketch

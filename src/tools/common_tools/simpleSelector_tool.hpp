@@ -10,7 +10,7 @@
 */
 class simpleSelector_tool : public tool_abstract {
 private:
-	std::shared_ptr<entity> mCurrentHover; // The entity under the mouse, if there is one
+	entity_ptr mCurrentHover; // The entity under the mouse, if there is one
 public: 
 	/*
 		@function simpleSelector_tool creates a simpleSelector_tool object 
@@ -40,7 +40,7 @@ public:
 
 		@return : A pointer to the entity under a point if it exists
 	*/
-	virtual std::shared_ptr<entity> entity_at_point(glm::vec2 point);
+	virtual entity_ptr entity_at_point(glm::vec2 point);
 protected:
 	/*
 		@function id_at_point gives the the value of the document's frame buffer at a point on screen
@@ -57,7 +57,7 @@ protected:
 
 		@return : A pointer to the entity under a point if it exists
 	*/
-	std::shared_ptr<entity> primitive_entity_at_point(glm::vec2 point);
+	entity_ptr primitive_entity_at_point(glm::vec2 point);
 };
 
 #endif

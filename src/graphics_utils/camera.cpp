@@ -91,7 +91,7 @@ glm::vec3 camera::front() const
 	return glm::normalize(model_inv() * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f));  // Apply the inverse transform to the "real" front vector
 }
 
-void camera::set(std::shared_ptr<camera> other)
+void camera::set(camera_ptr other)
 {
 	mPos = other->mPos;
 	mTarget = other->mTarget;
@@ -131,6 +131,23 @@ void camera::orientation_to_rotation(glm::vec3 const& orientation, glm::quat& qu
 	// Create the quaternion 
 	quaternion = 	glm::angleAxis(orientation.x, glm::vec3(1.0f, 0.0f, 0.0f)) * 
 					glm::angleAxis(orientation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+}
+
+glm::vec3 camera::cast_ray(glm::vec2 screenPos, bool input_NDC/* = true*/)
+{
+	float screen_dist = 1.0f / std::tan(FOV() / 2.0f);
+	float half_screenWidth = aspectRatio();
+	glm::vec3 pos_on_screen;
+	if(input_NDC) {
+		pos_on_screen = glm::vec3(	map((float)screenPos.x, -1.0f, 1.0f, -half_screenWidth, half_screenWidth),
+									screenPos.y, 
+									-screen_dist);
+	} else {
+		pos_on_screen = glm::vec3(	map((float)screenPos.x, 0.0f, viewport().x, -half_screenWidth, half_screenWidth),
+									map((float)screenPos.y, viewport().y, 0.0f, -1.0f, 1.0f), 
+									-screen_dist);
+	}
+	return model_inv() * glm::vec4(glm::normalize(pos_on_screen), 0.0f);
 }
 
 glm::mat4 camera::model(transform transf) const

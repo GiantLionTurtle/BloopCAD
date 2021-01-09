@@ -6,5 +6,5 @@ public:
     partDesignDefault_tool(workspace* env);
     virtual ~partDesignDefault_tool() {};
 
-    virtual void act_on_entity(std::shared_ptr<entity> ent);
+    virtual void act_on_entity(entity_ptr ent);
 };
