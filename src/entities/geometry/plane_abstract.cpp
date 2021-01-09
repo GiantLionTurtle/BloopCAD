@@ -47,15 +47,18 @@ glm::vec3 plane_abstract::line_intersection(glm::vec3 const& point, glm::vec3 co
 {
 	// straight from https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
 	float t = (glm::dot(glm::cross(mV, mW), (point - mOrigin))) / (glm::dot(-vec, glm::cross(mV, mW)));
-	return point + vec * t;
+	glm::vec3 inter = point + vec * t;
+	return inter;
 }
 
 glm::vec2 plane_abstract::point_3d_to_2d(glm::vec3 const& point)
 {
 	glm::vec3 pt_around_origin = point - mOrigin;
-	return glm::vec2(glm::dot(mV, pt_around_origin), glm::dot(mW, pt_around_origin));
+	glm::vec2 point_2d(glm::dot(glm::normalize(mV), pt_around_origin), glm::dot(glm::normalize(mW), pt_around_origin));
+	return point_2d;
 }
 glm::vec3 plane_abstract::point_2d_to_3d(glm::vec2 const& point)
 {
-	return mOrigin + mV * point.x + mW * point.y;
+	glm::vec3 point_3d = mOrigin + glm::normalize(mV) * point.x + glm::normalize(mW) * point.y;
+	return point_3d;;
 }
