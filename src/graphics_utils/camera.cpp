@@ -133,7 +133,7 @@ void camera::orientation_to_rotation(glm::vec3 const& orientation, glm::quat& qu
 					glm::angleAxis(orientation.y, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
-glm::vec3 camera::cast_ray(glm::vec2 screenPos, bool input_NDC/* = true*/)
+glm::vec3 camera::cast_ray(glm::vec2 screenPos, bool input_NDC/* = false*/)
 {
 	float screen_dist = 1.0f / std::tan(FOV() / 2.0f);
 	float half_screenWidth = aspectRatio();

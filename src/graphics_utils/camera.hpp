@@ -180,7 +180,7 @@ public:
 	glm::vec3& internalPos() { return mPos; } 
 	glm::vec3& internalFront() { return mFront; } 
 
-	glm::vec3 cast_ray(glm::vec2 screenPos, bool input_NDC = true);
+	glm::vec3 cast_ray(glm::vec2 screenPos, bool input_NDC = false);
 private:
 	glm::mat4 model(transform transf) const;
 	glm::mat4 model_inv(transform transf) const;
