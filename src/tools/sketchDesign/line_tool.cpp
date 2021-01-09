@@ -80,7 +80,6 @@ glm::vec2 line_tool::pos_on_plane(std::shared_ptr<plane_abstract> plane_, glm::v
 							map((float)mousePos.y, (float)mEnv->state()->doc->get_height(), 0.0f, -1.0f, 1.0f), 
 							-screen_dist);
 	glm::vec3 ray = cam->model_inv() * glm::vec4(glm::normalize(pos_on_screen), 0.0f);
-	glm::vec3 inter = plane_->line_intersection(mEnv->state()->cam->pos(), ray);
-	// std::cout<<"inter: "<<glm::to_string(inter)<<"\n";
+	glm::vec3 inter = plane_->line_intersection(cam->pos(), ray);
 	return plane_->point_3d_to_2d(inter);
 }

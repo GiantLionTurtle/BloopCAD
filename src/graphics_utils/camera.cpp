@@ -33,6 +33,7 @@ camera::camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float 
 	mZoom(1.0f),
 	mFOV(FOV_),
 	mViewport(viewport_),
+	mFront(0.0f, 0.0f, -1.0f),
 	mTransformation{glm::vec3(0.0f, 0.0f, 0.0f)/*No translation*/, 
 		glm::vec3(1.0f, 1.0f, 1.0f)/*Scale of 100%*/, 
 		glm::quat(1.0f, 0.0f, 0.0f, 0.0f)/*No rotation with unit quaternion*/}
@@ -52,7 +53,7 @@ glm::mat4 camera::model_inv() const
 glm::mat4 camera::view() const
 {
 	// Here the "real" pos and target are used, not the computed ones
-	return glm::lookAt(mPos, mTarget, glm::vec3(0.0f, 1.0f, 0.0f));
+	return glm::lookAt(mPos, mPos + mFront, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 glm::mat4 camera::projection() const
 {

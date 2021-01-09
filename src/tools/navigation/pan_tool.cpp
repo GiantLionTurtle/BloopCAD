@@ -18,6 +18,21 @@ pan_tool::pan_tool(workspace* env):
 	}
 }
 
+bool pan_tool::manage_button_press(GdkEventButton* event)
+{
+	if(!event->state & GDK_BUTTON1_MASK)
+		return true;
+	prevPos = glm::vec2(event->x, -event->y);
+	is_moving = true;
+	return true;
+}
+bool pan_tool::manage_button_release(GdkEventButton* event)
+{
+	if(!event->state & GDK_BUTTON1_MASK)
+		return true;
+	is_moving = false;
+	return true;
+}
 bool pan_tool::manage_mouse_move(GdkEventMotion* event) 
 {
 	if(mEnv->state() && event->state & GDK_BUTTON1_MASK) {
@@ -26,7 +41,8 @@ bool pan_tool::manage_mouse_move(GdkEventMotion* event)
 			glm::vec2 abs_mov(pos.x-prevPos.x, pos.y-prevPos.y);
 			float speed_ratio = (float)mEnv->state()->cam->zoom() * 0.002f; // Since the zoom of the camera isn't really retrievable yet, this is just an arbitrary factor * 1.0f
 			std::shared_ptr<camera> cam = mEnv->state()->cam;
-			cam->transformation().translation += (speed_ratio * abs_mov.x * cam->right() + speed_ratio * abs_mov.y * cam->up()); // Move the model (no need to get fancy, it moves according to the "real position of the camera")
+			cam->internalPos() -= glm::vec3(abs_mov * speed_ratio, 0.0f);
+			// cam->transformation().translation += (speed_ratio * abs_mov.x * cam->right() + speed_ratio * abs_mov.y * cam->up()); // Move the model (no need to get fancy, it moves according to the "real position of the camera")
 		} else {
 			is_moving = true; // Now moving, first point recorded
 		}

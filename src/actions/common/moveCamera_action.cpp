@@ -111,6 +111,6 @@ void moveCamera_action::compute_animatables(camState const& state)
 
 	transform transf { glm::vec3(0.0f), glm::vec3(1.0f), rotation };
 	mTranslation.set(glm::vec3(mCamera->transformation().translation));
-	// mTranslation.set(-(state.pos-mCamera->predictedPos(transf)), mDuration);
+	mTranslation.set(-(state.pos-mCamera->predictedPos(transf)), mDuration);
 	mScale.set(glm::vec3(1.0f));
 }

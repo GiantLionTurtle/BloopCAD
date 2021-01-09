@@ -4,6 +4,7 @@
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <utils/mathUtils.hpp>
+#include <entities/geometry/plane_abstract.hpp>
 
 zoom_tool::zoom_tool(workspace* env): 
 	tool_abstract(env)
@@ -35,8 +36,7 @@ bool zoom_tool::manage_mouse_move(GdkEventMotion* event)
 		if(is_zooming) {
 			zoom(zoomStart, 0.02f * delta); // The movement is scaled arbitrarly, zoom around starting point
 		} else {
-			zoomStart = glm::vec2(	map((float)event->x, 0.0f, (float)mEnv->state()->doc->get_width(), 	-1.0f, 1.0f),
-									map((float)event->y, (float)mEnv->state()->doc->get_height(), 0.0f, -1.0f, 1.0f));
+			zoomStart = glm::vec2(event->x, event->y);
 			is_zooming = true; // Now zooming, position are recorded
 		}
 		prevPos = pos; // Pos recorded
@@ -54,8 +54,7 @@ bool zoom_tool::manage_button_release(GdkEventButton* event)
 bool zoom_tool::manage_scroll(GdkEventScroll* event)
 {
 	if(mEnv->state()) {
-		zoom(glm::vec2(	map((float)event->x, 0.0f, (float)mEnv->state()->doc->get_width(), 	-1.0f, 1.0f),
-						map((float)event->y, (float)mEnv->state()->doc->get_height(), 0.0f, -1.0f, 1.0f)), -0.015f * event->delta_y); // Delta is scaled arbitrarly, zooming around scroll origin
+		zoom(glm::vec2(event->x, event->y), -0.015f * event->delta_y); // Delta is scaled arbitrarly, zooming around scroll origin
 	}
 	return true;
 }
@@ -63,39 +62,26 @@ bool zoom_tool::manage_scroll(GdkEventScroll* event)
 void zoom_tool::zoom(glm::vec2 origin, float amount)
 {
 	// The goal of this function is to scale the model and translate it so that the scale origin appears fixed
-
-	std::shared_ptr<camera> cam = mEnv->state()->cam;
-
-	// The final scale of the zoom operation
 	float scale = 1.0f + amount;
-	cam->transformation().scale *= scale;
+	std::shared_ptr<camera> cam = mEnv->state()->cam;
 	
-	glm::vec4 event_pos(origin.x, origin.y, 0.0f, 0.0f);
+	float screen_dist = 1.0f / std::tan(cam->FOV() / 2.0f);
+	float half_screenWidth = cam->aspectRatio();
+	glm::vec3 pos_on_screen(map((float)origin.x, 0.0f, (float)mEnv->state()->doc->get_width(), -half_screenWidth, half_screenWidth),
+							map((float)origin.y, (float)mEnv->state()->doc->get_height(), 0.0f, -1.0f, 1.0f), 
+							-screen_dist);
+	glm::vec3 ray1 = cam->model_inv() * glm::vec4(glm::normalize(pos_on_screen), 0.0f);
 
-	glm::mat4 mvp = cam->mvp();
-	glm::mat4 vp =  cam->projection() * cam->view();
+	glm::vec4 model_pos1 = cam->model() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	plane_abstract pl1(glm::vec3(model_pos1), cam->right(), cam->up());
+	glm::vec3 inter1 = pl1.line_intersection(cam->pos(), ray1);
+	cam->transformation().scale *= scale;
 
-	// Find where the model's center end up on screen
-	glm::vec4 pos_screen = mvp * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-	pos_screen /= pos_screen.w;
+	glm::vec3 ray2 = cam->model_inv() * glm::vec4(glm::normalize(pos_on_screen), 0.0f);
 
-	// Find how the up-right vectors of the camera map on the screen 
-	glm::vec4 up_screen = vp * glm::vec4(cam->up(), 1.0f);
-	up_screen /= up_screen.w;
-	glm::vec4 right_screen = vp * glm::vec4(cam->right(), 1.0f);
-	right_screen /= right_screen.w;
-
-	// Calculate the right-up stretch when mapped (they are initially 1.0f long)
-	float up_length 	= glm::length(glm::vec2(up_screen));
-	float right_length 	= glm::length(glm::vec2(right_screen));
-
-	// Distance between the scale origin and the model origin mapped on screen
-	glm::vec4 delta = event_pos - pos_screen;
-
-	// How much the model moves is a function of how much it stretches in each direction and the scale amount
-	float translate_by_x = (delta.x * -amount) / right_length;
-	float translate_by_y = (delta.y * -amount) / up_length;
-
-	// Set the translation
-	cam->transformation().translation += (translate_by_x * cam->right() + translate_by_y * cam->up());
+	glm::vec4 model_pos2 = cam->model() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	plane_abstract pl2(glm::vec3(model_pos2), cam->right(), cam->up());
+	glm::vec3 inter2 = pl2.line_intersection(cam->pos(), ray2);
+	
+	cam->transformation().translation -= (inter1-inter2) * cam->transformation().scale.x;
 }

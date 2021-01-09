@@ -3,6 +3,7 @@
 
 #include "entityView.hpp"
 #include <utils/errorLogger.hpp>
+#include "tangibleEntities/point.hpp"
 
 part::part():
 	entity(glm::ivec3(0, 0, 1))
@@ -33,9 +34,13 @@ void part::init_scene()
 		plane_abstract::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f))));
 	mZX->set_name("ZX plane");
 
+	std::shared_ptr<point> center = std::make_shared<point>(point_abstract(glm::vec3(0.0f, 0.0f, 0.0f)));
+	center->set_name("origin");
+
 	mOrigin = std::shared_ptr<folder>(new folder("origin"));
 	
 	add(mOrigin);
+	mOrigin->add(center);
 	mOrigin->add(mXY);
 	mOrigin->add(mYZ);
 	mOrigin->add(mZX);

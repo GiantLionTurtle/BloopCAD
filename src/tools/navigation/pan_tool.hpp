@@ -20,6 +20,9 @@ public:
 	*/
 	pan_tool(workspace* env);
 
+
+	virtual bool manage_button_press(GdkEventButton* event);
+	virtual bool manage_button_release(GdkEventButton* event);
 	/*
 		@function manage_mouse_move moves the model according to the mouse movement if the right condition are met
 

@@ -38,6 +38,7 @@ bool operator ==(camState const& st1, camState const& st2);
 class camera {
 protected:
 	glm::vec3 mPos, mTarget; // Position of the camera and the position it is looking at
+	glm::vec3 mFront;
 	glm::vec3 mOrientation; // Rotation along x, y then z axis
 
 	float mZoom; 		// The overall zoom (unused and not supported for now)
@@ -172,6 +173,9 @@ public:
 	camState state() const;
 
 	static void orientation_to_rotation(glm::vec3 const& orientation, glm::quat& quaternion);
+
+	glm::vec3& internalPos() { return mPos; } 
+	glm::vec3& internalFront() { return mFront; } 
 private:
 	glm::mat4 model(transform transf) const;
 	glm::mat4 model_inv(transform transf) const;
