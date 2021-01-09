@@ -40,6 +40,9 @@ public:
 	virtual void set_pointB(std::shared_ptr<point_abstract> ptB) { mPointB->set_pos(ptB); }
 
 	virtual XML_element* to_svg(plane_abstract* drawingPlane, glm::vec2 &min, glm::vec2 &max);
+
+	float dist_to_point(point_abstract const& pt);
+	float length();
 };
 
 #endif

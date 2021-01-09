@@ -33,3 +33,13 @@ XML_element* line_abstract::to_svg(plane_abstract* drawingPlane, glm::vec2 &min,
 	svgLine->add_lastAttribute(new XML_attribute("stroke-width", "1"));
 	return svgLine;
 }
+
+float line_abstract::dist_to_point(point_abstract const& pt)
+{
+	// https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+	return glm::length(glm::cross((pt.pos_vec() - mPointA->pos_vec()), (pt.pos_vec() - mPointB->pos_vec()))) / length();
+}
+float line_abstract::length()
+{
+	glm::length(mPointA->pos_vec() - mPointB->pos_vec());
+}

@@ -80,15 +80,15 @@ glm::vec3 camera::target() const
 
 glm::vec3 camera::up() const
 {
-	return model_inv() * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);  // Apply the inverse transform to the "real" up vector
+	return glm::normalize(model_inv() * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));  // Apply the inverse transform to the "real" up vector
 }
 glm::vec3 camera::right() const
 {
-	return model_inv() * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);  // Apply the inverse transform to the "real" right vector
+	return glm::normalize(model_inv() * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));  // Apply the inverse transform to the "real" right vector
 }
 glm::vec3 camera::front() const
 {
-	return model_inv() * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);  // Apply the inverse transform to the "real" front vector
+	return glm::normalize(model_inv() * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f));  // Apply the inverse transform to the "real" front vector
 }
 
 void camera::set(std::shared_ptr<camera> other)
