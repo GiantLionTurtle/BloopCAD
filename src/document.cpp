@@ -196,6 +196,12 @@ std::shared_ptr<workspace> document::set_workspace(std::string const& name)
 		mCurrentWorkspaceState = mWorkspaceStates[name];
 		mCurrentWorkspaceState->cam->viewport() = glm::vec2((float)get_width(), (float)get_height()); // The dimensions might have changed, who knows?
 		mSideBar->set_workspaceState(mCurrentWorkspaceState);
+		
+		if(name == "sketchDesign") {
+			mPart->origin()->hide();
+		} else if(name == "partDesign" && !mPart->has_volume()) {
+			mPart->origin()->show();
+		}
 		return mParentBloop->set_workspace(name, mCurrentWorkspaceState); // Enforce change of workspace
 	}
 	return nullptr;

@@ -26,7 +26,7 @@ public:
 		@param reversed [defaults to false] : 	Wheter or not the direction should be inverted
 	*/
 	plane_abstract(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed = false);
-
+	virtual ~plane_abstract() {}
 	// static plane_abstract from_1Point1Vector(glm::vec3 origin, glm::vec3 n);
 	/*
 		@function from_1Point2Vectors creates a plane_abstract

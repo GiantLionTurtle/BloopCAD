@@ -37,7 +37,7 @@ void part::init_scene()
 	std::shared_ptr<point> center = std::make_shared<point>(point_abstract(glm::vec3(0.0f, 0.0f, 0.0f)));
 	center->set_name("origin");
 
-	mOrigin = std::shared_ptr<folder>(new folder("origin"));
+	mOrigin = folder_ptr(new folder("origin"));
 	
 	add(mOrigin);
 	mOrigin->add(center);

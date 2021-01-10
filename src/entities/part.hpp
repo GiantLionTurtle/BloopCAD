@@ -22,7 +22,7 @@ class modelColumns;
 class part : public entity {
 private:
 	std::shared_ptr<plane> mXY, mYZ, mZX; // Origin planes
-	std::shared_ptr<folder> mOrigin;
+	folder_ptr mOrigin;
 	std::vector<sketch_ptr> mSketches; // Sketches drawn in the part
 public:
 	/*
@@ -61,6 +61,10 @@ public:
 		@return : The desired sketch or the last if the index is out of bounds
 	*/
 	sketch_ptr get_sketch(int ind = -1);
+
+	bool has_volume() const { return false; }
+
+	entity_ptr origin() const { return mOrigin; }
 protected:
 	/*
 		@function draw_impl draws the part on screen, it calls draw on all it's components

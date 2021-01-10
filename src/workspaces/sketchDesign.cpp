@@ -212,4 +212,13 @@ void sketchDesign::finish()
 	camState targetState = newState->cam->state();
 	newState->cam->set(mState->cam);
 	mState->doc->push_action(std::shared_ptr<action>(new moveCamera_action(newState->cam, targetState, preferences::get_instance().get_long("camtrans")))); // Go to part design
+	sketch_ptr sk = std::dynamic_pointer_cast<sketch>(mState->target);
+	if(!sk) {
+		LOG_WARNING("Sketch is invalid.");
+	}
+	std::shared_ptr<plane> pl = std::dynamic_pointer_cast<plane>(sk->basePlane());
+	sk->origin()->hide();
+	if(pl) {
+		pl->show();
+	}
 }

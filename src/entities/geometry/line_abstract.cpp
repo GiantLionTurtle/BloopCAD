@@ -41,5 +41,5 @@ float line_abstract::dist_to_point(point_abstract const& pt)
 }
 float line_abstract::length()
 {
-	glm::length(mPointA->pos_vec() - mPointB->pos_vec());
+	return glm::length(mPointA->pos_vec() - mPointB->pos_vec());
 }

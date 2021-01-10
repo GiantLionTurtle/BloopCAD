@@ -5,6 +5,7 @@
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <entities/part.hpp>
+#include <entities/tangibleEntities/plane.hpp>
 
 #include <actions/partDesign/createSketch_action.hpp>
 #include <actions/common/switchWorkspace_action.hpp>
@@ -69,5 +70,10 @@ void startSketch_tool::start_sketch(plane_abstract_ptr sketchPlane, camState con
 
 		newState->doc->clear_selection();
 		mEnv->state()->doc->push_action(moveCamera_action::create_from_facingPlane(sketchPlane, 8.0, camState_, newState->cam));
+
+		std::shared_ptr<plane> pl = std::dynamic_pointer_cast<plane>(sketchPlane);
+		if(pl) {
+			pl->hide();
+		}
 	}
 }

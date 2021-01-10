@@ -4,6 +4,9 @@
 
 #include "entity.hpp"
 
+class folder;
+using folder_ptr = std::shared_ptr<folder>;
+
 class folder : public entity {
 public:
 	folder(std::string const& name_ = "folder");
