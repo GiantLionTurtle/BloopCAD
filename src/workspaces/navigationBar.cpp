@@ -35,7 +35,7 @@ navigationBar::navigationBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder>
 	show_all(); // Ensures that nothing is hidden within gtk
 }
 
-void navigationBar::set_workspace(std::shared_ptr<workspace> aWorkspace)
+void navigationBar::set_workspace(workspace_ptr aWorkspace)
 {
 	mCurrentWorkspace = aWorkspace;
 }

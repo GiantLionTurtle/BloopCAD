@@ -61,13 +61,13 @@ public:
 */
 class bloop : public Gtk::Window {
 private:
-	std::vector<std::tuple<tabButton, Gtk::Overlay, std::shared_ptr<document>>> mDocuments; // All the document with their tab and overlay over which they render
-	std::shared_ptr<document> mCurrentDocument; // The current document object
+	std::vector<std::tuple<tabButton, Gtk::Overlay, document_ptr>> mDocuments; // All the document with their tab and overlay over which they render
+	document_ptr mCurrentDocument; // The current document object
 
-	std::map<std::string, std::shared_ptr<workspace>> mWorkspaces; // All the existing workspaces indexed by name
-	std::shared_ptr<workspace> mCurrentWorkspace; // The currently used workspace
+	std::map<std::string, workspace_ptr> mWorkspaces; // All the existing workspaces indexed by name
+	workspace_ptr mCurrentWorkspace; // The currently used workspace
 
-	std::shared_ptr<compositeCursor> mCursor; // The current cursor
+	compositeCursor_ptr mCursor; // The current cursor
 	Gtk::Image* mHomePage, *mIcon; // Program icon and home page image (the latter will not be a thing)
 	Gtk::Notebook* mDocumentIndexer; // The widget containing the document rendering
 	Gtk::Stack* mUI_upperBar, *mSideBar; // A stack of all the workspaces upper bars and all the documents' side bars
@@ -95,13 +95,13 @@ public:
 
 		@return : The currently used document
 	*/
-	std::shared_ptr<document> currentDocument() { return mCurrentDocument; }
+	document_ptr currentDocument() { return mCurrentDocument; }
 	/*
 		@function currentWorkspace
 
 		@return the currently used workspace
 	*/
-	std::shared_ptr<workspace> currentWorkspace() { return mCurrentWorkspace; }
+	workspace_ptr currentWorkspace() { return mCurrentWorkspace; }
 
 	/*
 		@function set_workspace sets the currently used workspace with a named workspace
@@ -111,7 +111,7 @@ public:
 
 		@return : The set workspace or nullptr
 	*/
-	std::shared_ptr<workspace> set_workspace(std::string const& name, std::shared_ptr<workspaceState> state);
+	workspace_ptr set_workspace(std::string const& name, workspaceState_ptr state);
 
 	void set_sideBar(Gtk::Widget* to_show);
 	void add_sideBar(Gtk::Widget* sideBar);
@@ -185,7 +185,7 @@ public:
 
 		@param cursor_ : The cursor object to become the window's cursor
 	*/
-	void set_cursor(std::shared_ptr<compositeCursor> cursor_);
+	void set_cursor(compositeCursor_ptr cursor_);
 
 	/*
 		@function get_document_at_tabInd gets the document at the specified index
@@ -194,7 +194,7 @@ public:
 
 		@return : The document at the particular index or nullptr if it doesn't exist
 	*/
-	std::shared_ptr<document> get_document_at_tabInd(unsigned int ind);
+	document_ptr get_document_at_tabInd(unsigned int ind);
 };
 
 #endif

@@ -14,6 +14,9 @@
 #include <string>
 #include <memory>
 
+struct workspaceState;
+using workspaceState_ptr = std::shared_ptr<workspaceState>;
+
 /*
 	@struct workspaceState describes the state of a given workspace within a specific document
 	the goal is to not duplicate every workspace for every document but rather have each document record
@@ -23,19 +26,22 @@ struct workspaceState {
 	document* doc; // The document owning the state
 	entity_ptr target; // The target entity of the workspace
 	camera_ptr cam; // The camera rendering the scene for that workspace in the doc
-	std::shared_ptr<tool_abstract> currentTool; // The tool being used by the workspace in the doc
+	tool_abstract_ptr currentTool; // The tool being used by the workspace in the doc
 	std::string workspaceName; // The name of the workspace it is describing
 };
+
+class workspace;
+using workspace_ptr = std::shared_ptr<workspace>;
 
 class workspace {
 protected:
 	// std::map<unsigned int, std::string> mKey_invokes;
 	// std::map<unsigned int, std::string> mMouse_invokes;
 
-	std::map<std::string, std::shared_ptr<tool_abstract>> mTools; // All the tools used by the workspace
-	std::shared_ptr<tool_abstract> mDefaultTool; // The tool used by default in the workspace (typically some sort of selector)
+	std::map<std::string, tool_abstract_ptr> mTools; // All the tools used by the workspace
+	tool_abstract_ptr mDefaultTool; // The tool used by default in the workspace (typically some sort of selector)
 
-	std::shared_ptr<workspaceState> mState; // The state used by the current document
+	workspaceState_ptr mState; // The state used by the current document
 
 	Gtk::Box* mUpperBar; // The upper bar, where all buttons live
 	bloop* mParentBloop; // The parent window
@@ -70,20 +76,20 @@ public:
 
 		@param tool_ : The tool to set as active
 	*/
-	void set_tool(std::shared_ptr<tool_abstract> tool_);
+	void set_tool(tool_abstract_ptr tool_);
 	/*
 		@function set_toolCursor sets a tool's cursor to it's 
 		own cursor
 
 		@param tool_ : The tool from which to extract the cursor info
 	*/
-	void set_toolCursor(std::shared_ptr<tool_abstract> tool_);
+	void set_toolCursor(tool_abstract_ptr tool_);
 	/*
 		@function defaultTool
 
 		@return : The workspace's default tool
 	*/
-	std::shared_ptr<tool_abstract> defaultTool() { return mDefaultTool; }
+	tool_abstract_ptr defaultTool() { return mDefaultTool; }
 
 	/*
 		@function manage_key_press passes the key presses to the current tool and may
@@ -117,13 +123,13 @@ public:
 
 		@return : The current assigned state from the active document
 	*/
-	std::shared_ptr<workspaceState> state() { return mState; }
+	workspaceState_ptr state() { return mState; }
 	/*
 		@function set_state sets the current state from the document
 
 		@param state_ : The new state of the workspace from the document
 	*/
-	void set_state(std::shared_ptr<workspaceState> state_);
+	void set_state(workspaceState_ptr state_);
 
 	/*
 		@function upperBar

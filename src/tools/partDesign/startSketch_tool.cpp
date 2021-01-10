@@ -63,7 +63,7 @@ void startSketch_tool::start_sketch(plane_abstract_ptr sketchPlane, camState con
 	if(target) {
 		mEnv->state()->doc->push_action(std::shared_ptr<action>(new createSketch_action(sketchPlane, target)));
 		mEnv->state()->doc->push_action(std::shared_ptr<action>(new switchWorkspace_action(mEnv->state()->doc, "sketchDesign")));
-		std::shared_ptr<workspaceState> newState = mEnv->state()->doc->currentWorkspaceState(); // This tool is still owned by partDesign so it has to retrieve the sketchDesign workspace state
+		workspaceState_ptr newState = mEnv->state()->doc->currentWorkspaceState(); // This tool is still owned by partDesign so it has to retrieve the sketchDesign workspace state
 
 		newState->cam->set(mEnv->state()->cam); // Set sketch camera to part camera for seemless transition
 		newState->target = target->get_sketch(); // Set the state's target to the new sketch

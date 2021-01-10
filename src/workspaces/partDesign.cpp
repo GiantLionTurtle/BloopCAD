@@ -16,9 +16,9 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 	workspace("partDesign_upperBar", builder, parent) // Create base workspace with ui upper bar
 {
 	// Creat all the tools used in this workspace
-	mTools["startSketch"] 	= std::shared_ptr<tool_abstract>(new startSketch_tool(this));
-	mTools["default"]		= std::shared_ptr<tool_abstract>(new partDesignDefault_tool(this));
-	// mTools["extrusion"] 	= std::shared_ptr<tool_abstract>(new extrusion_tool(this));
+	mTools["startSketch"] 	= tool_abstract_ptr(new startSketch_tool(this));
+	mTools["default"]		= tool_abstract_ptr(new partDesignDefault_tool(this));
+	// mTools["extrusion"] 	= tool_abstract_ptr(new extrusion_tool(this));
 	mDefaultTool = mTools.at("default");
 
 	// Initialize all buttons as 2 nullptr

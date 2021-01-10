@@ -30,9 +30,9 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	get_style_context()->add_class("bloop");
 
 	// Create all possible workspaces
-	mWorkspaces["home"]			= std::shared_ptr<workspace>(new home(builder, this));
-	mWorkspaces["sketchDesign"] = std::shared_ptr<workspace>(new sketchDesign(builder, this));
-	mWorkspaces["partDesign"] 	= std::shared_ptr<workspace>(new partDesign(builder, this));
+	mWorkspaces["home"]			= workspace_ptr(new home(builder, this));
+	mWorkspaces["sketchDesign"] = workspace_ptr(new sketchDesign(builder, this));
+	mWorkspaces["partDesign"] 	= workspace_ptr(new partDesign(builder, this));
 
 	// Create the window's widget
 	builder->get_widget("documentIndexer", mDocumentIndexer);
@@ -57,7 +57,7 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	
 	if(mDocumentIndexer) {
 		// Warning: this is for testing purposes.
-		mDocuments.push_back(std::make_tuple(tabButton("Document"), Gtk::Overlay(), std::shared_ptr<document>(new document(this))));
+		mDocuments.push_back(std::make_tuple(tabButton("Document"), Gtk::Overlay(), document_ptr(new document(this))));
 		if(mSideBar) {
 			// mSideBar->add(*std::get<2>(mDocuments.back())->sideBar());
 		} else {
@@ -94,7 +94,7 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	show_all();	// Make sure nothing is hidden for some reason
 }
 
-std::shared_ptr<workspace> bloop::set_workspace(std::string const& name, std::shared_ptr<workspaceState> state)
+workspace_ptr bloop::set_workspace(std::string const& name, workspaceState_ptr state)
 {
 	if(mWorkspaces.find(name) != mWorkspaces.end()) {
 		mUI_upperBar->set_visible_child(*mWorkspaces.at(name)->upperBar()); // Update the upper bar
@@ -174,7 +174,7 @@ bool bloop::manage_button_release(GdkEventButton* event)
 
 void bloop::manage_tab_switch(Gtk::Widget* widget, unsigned int tab_ind)
 {
-	std::shared_ptr<document> doc = get_document_at_tabInd(tab_ind);
+	document_ptr doc = get_document_at_tabInd(tab_ind);
 
 	if(doc) { // If it's a doc do all the doc switching thingies (currently there can only be one document, so there is surely problems here)
 		mCurrentDocument = doc;
@@ -185,13 +185,13 @@ void bloop::manage_tab_switch(Gtk::Widget* widget, unsigned int tab_ind)
 	}
 }
 
-void bloop::set_cursor(std::shared_ptr<compositeCursor> cursor_)
+void bloop::set_cursor(compositeCursor_ptr cursor_)
 {
 	mCursor = cursor_;
 	get_window()->set_cursor(cursor_->windowCursor);
 }
 
-std::shared_ptr<document> bloop::get_document_at_tabInd(unsigned int ind)
+document_ptr bloop::get_document_at_tabInd(unsigned int ind)
 {
 	if(ind == 0 || ind > mDocuments.size())
 		return nullptr;

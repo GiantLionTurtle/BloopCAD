@@ -24,7 +24,7 @@ switchWorkspace_action::switchWorkspace_action(document* doc, std::string const&
 bool switchWorkspace_action::do_work()
 {
 	if(mValid) {
-		std::shared_ptr<workspace> space = mDoc->set_workspace(mTargetWorkspaceName);
+		workspace_ptr space = mDoc->set_workspace(mTargetWorkspaceName);
 		if(space) 
 			space->set_tool(space->defaultTool());
 	}
@@ -33,7 +33,7 @@ bool switchWorkspace_action::do_work()
 bool switchWorkspace_action::undo_work()
 {
 	if(mValid) {
-		std::shared_ptr<workspace> space = mDoc->set_workspace(mInitWorkspaceName);
+		workspace_ptr space = mDoc->set_workspace(mInitWorkspaceName);
 		if(space) 
 			space->set_tool(space->defaultTool());
 	}

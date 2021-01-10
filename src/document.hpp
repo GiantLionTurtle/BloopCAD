@@ -39,6 +39,9 @@ struct selection {
 	{}
 };
 
+class document;
+using document_ptr = std::shared_ptr<document>;
+
 /*
 	@class document represents a document that the user is working with
 	@parent Gtk::Box
@@ -48,8 +51,8 @@ private:
 	std::shared_ptr<part> mPart; // Curently, documents only work on a single part
 	std::vector<std::pair<glm::ivec3, selection>> mSelection; // This will be kept linear for as long as there is no need for large selections
 
-	std::map<std::string, std::shared_ptr<workspaceState>> mWorkspaceStates; // All the workspace states for the various workspaces
-	std::shared_ptr<workspaceState> mCurrentWorkspaceState; // The workspace state for the current workspace working on the document
+	std::map<std::string, workspaceState_ptr> mWorkspaceStates; // All the workspace states for the various workspaces
+	workspaceState_ptr mCurrentWorkspaceState; // The workspace state for the current workspace working on the document
 
 	std::shared_ptr<frameBuffer> mSelectionBuffer; // The buffer onto which render the selection colors
 
@@ -114,13 +117,13 @@ public:
 
 		@return : The set workspace, or nullptr 
 	*/
-	std::shared_ptr<workspace> set_workspace(std::string const& name);
+	workspace_ptr set_workspace(std::string const& name);
 	/*
 		@function set_workspace enforces the current workspace in the bloop window
 
 		@return : The set workspace, or nullptr 
 	*/
-	std::shared_ptr<workspace> set_workspace();
+	workspace_ptr set_workspace();
 	/*
 		@function has_workspace tells if a named workspace is available
 
@@ -135,7 +138,7 @@ public:
 
 		@return : The current workspace state
 	*/
-	std::shared_ptr<workspaceState> currentWorkspaceState() { return mCurrentWorkspaceState; };
+	workspaceState_ptr currentWorkspaceState() { return mCurrentWorkspaceState; };
 
 	/*
 		@function target

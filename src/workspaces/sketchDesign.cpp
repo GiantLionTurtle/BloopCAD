@@ -19,8 +19,8 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 	workspace("sketchDesign_upperBar", builder, parent) // Create base workspace with upper bar
 {	
 	// Create all the tools used in this workspace
-	mTools["line"] 		= std::shared_ptr<tool_abstract>(new line_tool(this));
-	mTools["point"] 	= std::shared_ptr<tool_abstract>(new point_tool(this));
+	mTools["line"] 		= tool_abstract_ptr(new line_tool(this));
+	mTools["point"] 	= tool_abstract_ptr(new point_tool(this));
 	mDefaultTool 		= mTools.at("simpleSelector");
 
 	// Initialize all buttons as 2 nullptr
@@ -206,7 +206,7 @@ void sketchDesign::to_svg()
 void sketchDesign::finish()
 {
 	mState->doc->push_action(std::shared_ptr<action>(new switchWorkspace_action(mState->doc, "partDesign"))); // Go to part design
-	std::shared_ptr<workspaceState> newState = mState->doc->currentWorkspaceState(); // Find the new part design camera
+	workspaceState_ptr newState = mState->doc->currentWorkspaceState(); // Find the new part design camera
 
 	// // Record the part design camera's state
 	camState targetState = newState->cam->state();

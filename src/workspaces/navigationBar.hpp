@@ -15,7 +15,7 @@ private:
 	Gtk::Button* mOrbitButton, *mPanButton, *mZoomButton, *mSelectorButton; // All the navigation tools
 	Gtk::Image* mOrbitIcon, *mPanIcon, *mZoomIcon, *mSelectorIcon; // All the navigation tools icons
 
-	std::shared_ptr<workspace> mCurrentWorkspace;
+	workspace_ptr mCurrentWorkspace;
 public:
 	/*
 		@function navigation bar creates the object as a gtk box
@@ -30,7 +30,7 @@ public:
 
 		@param aWorkspace : The workspace using the navigation bar
 	*/
-	void set_workspace(std::shared_ptr<workspace> aWorkspace);
+	void set_workspace(workspace_ptr aWorkspace);
 
 	/*
 		@function notify_pan sends a message to the workspace to use the pan tool

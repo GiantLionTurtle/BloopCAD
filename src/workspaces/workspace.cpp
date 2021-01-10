@@ -21,10 +21,10 @@ workspace::workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> c
 	builder->get_widget(upperBarID, mUpperBar);
 
 	// Create navigation/selection tools that are fairly common amongst workspaces
-	mTools["orbit"] 				= std::shared_ptr<tool_abstract>(new orbit_tool(this));
-	mTools["zoom"] 					= std::shared_ptr<tool_abstract>(new zoom_tool(this));
-	mTools["pan"] 					= std::shared_ptr<tool_abstract>(new pan_tool(this));
-	mTools["simpleSelector"] 		= std::shared_ptr<tool_abstract>(new simpleSelector_tool(this));
+	mTools["orbit"] 				= tool_abstract_ptr(new orbit_tool(this));
+	mTools["zoom"] 					= tool_abstract_ptr(new zoom_tool(this));
+	mTools["pan"] 					= tool_abstract_ptr(new pan_tool(this));
+	mTools["simpleSelector"] 		= tool_abstract_ptr(new simpleSelector_tool(this));
 }
 
 bool workspace::manage_key_press(GdkEventKey* event)
@@ -102,7 +102,7 @@ bool workspace::set_tool(std::string const& name)
 	}
 	return false;
 }
-void workspace::set_tool(std::shared_ptr<tool_abstract> tool_)
+void workspace::set_tool(tool_abstract_ptr tool_)
 {
 	if(!tool_) {
 		LOG_WARNING("Attempting to set null tool.");
@@ -116,12 +116,12 @@ void workspace::set_tool(std::shared_ptr<tool_abstract> tool_)
 	mState->currentTool->init();
 	set_toolCursor(mState->currentTool);
 }
-void workspace::set_toolCursor(std::shared_ptr<tool_abstract> tool_)
+void workspace::set_toolCursor(tool_abstract_ptr tool_)
 {
 	mParentBloop->set_cursor(tool_->cursor());
 }
 
-void workspace::set_state(std::shared_ptr<workspaceState> state_) 
+void workspace::set_state(workspaceState_ptr state_) 
 { 
 	if(mState) {
 		mState = state_;

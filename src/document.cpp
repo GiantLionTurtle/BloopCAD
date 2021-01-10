@@ -18,14 +18,14 @@ document::document(bloop* parent) :
 {
 	connect_signals();	
 	// Create the workspace states, their cameras and all
-	mWorkspaceStates["partDesign"] 			= std::shared_ptr<workspaceState>(new workspaceState);
+	mWorkspaceStates["partDesign"] 			= workspaceState_ptr(new workspaceState);
 	mWorkspaceStates.at("partDesign")->cam 	= camera_ptr(new camera(glm::vec3(0.0f, 0.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f)));
 	mWorkspaceStates.at("partDesign")->cam->set_orientation(glm::vec3(0.615480037895f, -M_PI_4, 0.0f));
 
 	mWorkspaceStates.at("partDesign")->doc 	= this;
 	mWorkspaceStates.at("partDesign")->workspaceName = "partDesign";
 
-	mWorkspaceStates["sketchDesign"] 		= std::shared_ptr<workspaceState>(new workspaceState);
+	mWorkspaceStates["sketchDesign"] 		= workspaceState_ptr(new workspaceState);
 	mWorkspaceStates.at("sketchDesign")->cam = camera_ptr(new camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f)));
 	mWorkspaceStates.at("sketchDesign")->doc = this;
 	mWorkspaceStates.at("sketchDesign")->workspaceName = "sketchDesign";
@@ -190,7 +190,7 @@ void document::connect_signals()
 	mViewport.set_vexpand(true);
 }
 
-std::shared_ptr<workspace> document::set_workspace(std::string const& name) 
+workspace_ptr document::set_workspace(std::string const& name) 
 {
 	if(mWorkspaceStates.find(name) != mWorkspaceStates.end()) {
 		mCurrentWorkspaceState = mWorkspaceStates[name];
@@ -207,7 +207,7 @@ std::shared_ptr<workspace> document::set_workspace(std::string const& name)
 	return nullptr;
 }
 
-std::shared_ptr<workspace> document::set_workspace() 
+workspace_ptr document::set_workspace() 
 {
 	if(mCurrentWorkspaceState && mWorkspaceStates.find(mCurrentWorkspaceState->workspaceName) != mWorkspaceStates.end()) {
 		mCurrentWorkspaceState->cam->viewport() = glm::vec2((float)get_width(), (float)get_height());

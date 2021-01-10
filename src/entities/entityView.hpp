@@ -55,7 +55,7 @@ public:
 
 class entityView : public Gtk::Box {
 private:
-	std::shared_ptr<workspaceState> mCurrentWorkspaceState;
+	workspaceState_ptr mCurrentWorkspaceState;
 
 	entityHandle mRootHandle;
 	std::vector<entityHandle*> mHandles;
@@ -69,8 +69,8 @@ public:
 	entityHandle& root() { return mRootHandle; };
 	document* doc() { return mDoc; }
 
-	std::shared_ptr<workspaceState> currentWorkspaceState() const { return mCurrentWorkspaceState; }
-	void set_workspaceState(std::shared_ptr<workspaceState> workspaceState_) { mCurrentWorkspaceState = workspaceState_; };
+	workspaceState_ptr currentWorkspaceState() const { return mCurrentWorkspaceState; }
+	void set_workspaceState(workspaceState_ptr workspaceState_) { mCurrentWorkspaceState = workspaceState_; };
 };
 
 #endif

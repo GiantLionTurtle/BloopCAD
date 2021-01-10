@@ -5,7 +5,7 @@
 #include <document.hpp>
 
 pan_tool::pan_tool(workspace* env): 
-	tool_abstract(env, std::shared_ptr<compositeCursor>(new compositeCursor
+	tool_abstract(env, compositeCursor_ptr(new compositeCursor
 		{Gdk::Cursor::create(Gdk::IRON_CROSS), nullptr, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f)})) // Iron cross is the closest to the icon
 {
 	// Attempt to load cursor icon
