@@ -110,4 +110,5 @@ void point::create()
 		{"resources/shaders/pointShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because point is expanded on the gpu
 		shadersPool::get_instance().add("point", mShader);
 	}
+	set_name("point");
 }

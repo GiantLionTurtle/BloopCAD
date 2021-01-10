@@ -154,9 +154,11 @@ bool entity::exists() const
 void entity::add(entity_ptr elem)
 {
 	if(elem) {
+		// std::cout<<"add_elem: ["<<elem->name()<<" in "<<mName<<"] ind: "<<glm::to_string(elem->selectionID())<<"\n";
 		set_require_redraw();
-		elem->set_parent(this);
-		add_child(*highestInd, elem, true);
+		elem->mParent = this;
+		elem->update_id(true);
+		add_child(elem, true);
 	}
 }
 
@@ -169,8 +171,13 @@ entity_ptr entity::get(glm::ivec3 const& ind) const
 	if(ind != glm::ivec3(0, 0, 0)) {
 		// Naive binary search within our list
 		int upperBound = mChildren.size(), lowerBound = 0;
+		int prev_middle_ind = -1;
 		while(upperBound > lowerBound) {
 			int middle_ind = (upperBound - lowerBound) / 2 + lowerBound; // The int rounding should give consistent results
+			if(middle_ind == prev_middle_ind) {
+				break;
+			}
+			prev_middle_ind = middle_ind;
 			int direction = compare_indices(ind, std::get<0>(mChildren[middle_ind]));
 			if(direction == 1) {
 				lowerBound = middle_ind;
@@ -180,7 +187,6 @@ entity_ptr entity::get(glm::ivec3 const& ind) const
 				return std::get<1>(mChildren[middle_ind]);
 			}
 		}
-
 		LOG_WARNING("Could not find children entity at index: " + glm::to_string(ind));
 	}
 	return entity_ptr(nullptr); // No entity was found
@@ -225,20 +231,18 @@ void entity::set_require_redraw()
 	}
 }
 
-void entity::set_parent(entity* parent)
+void entity::update_id(bool recursive /*= false*/)
 {
-	if(mParent) {
-		// TODO: detach the entity
-	}
-	if(!parent) {
-		*highestInd = mHighestInd;
-	} else {
-		highestInd = parent->highestInd;
-	}
-	mParent = parent;
+	if(mParent) 
+		highestInd = mParent->highestInd;
 	increment_index(*highestInd);
 	set_selectionID(*highestInd);
-	for_each([this](entity_ptr child) {child->set_parent(this);});
+
+	if(recursive) {
+		for_each([this](entity_ptr child) {	
+			child->update_id(true);
+		});
+	}
 }
 
 int entity::compare_indices(glm::ivec3 const& a, glm::ivec3 const& b)
@@ -265,9 +269,18 @@ void entity::increment_index(glm::ivec3 &ind)
 	}
 }
 
-void entity::add_child(glm::ivec3 id, entity_ptr elem, bool first)
+void entity::add_child(entity_ptr elem, bool first /*=false*/)
 {
-	mChildren.push_back({id, elem, first});
+	mChildren.push_back({elem->selectionID(), elem, first});
+	scrape_children(elem);
 	if(mParent)
-		mParent->add_child(id, elem);
+		mParent->add_child(elem);
+}
+
+void entity::scrape_children(entity_ptr elem)
+{
+	for(int i = 0; i < elem->mChildren.size(); ++i) {
+		entity_ptr child_elem = std::get<1>(elem->mChildren[i]);
+		mChildren.push_back({child_elem->selectionID(), child_elem, false});
+	}
 }

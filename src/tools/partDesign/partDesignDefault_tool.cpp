@@ -29,5 +29,6 @@ void partDesignDefault_tool::act_on_entity(entity_ptr ent)
 		std::shared_ptr<workspaceState> newState = mEnv->state()->doc->currentWorkspaceState(); // This tool is still owned by partDesign so it has to retrieve the sketchDesign workspace state
 		newState->cam->set(mEnv->state()->cam);
 		mEnv->state()->doc->push_action(moveCamera_action::create_from_facingPlane(sk->basePlane(), 8.0, newState->cam));
+		sk->origin()->show();
 	}
 }

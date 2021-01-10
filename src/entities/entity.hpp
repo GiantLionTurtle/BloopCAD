@@ -165,6 +165,7 @@ public:
 
 	glm::ivec3 selectionID() const { return mSelectionID; }
 	void set_selectionID(glm::ivec3 id) { mSelectionID = id; mSelectionColor = mSelectionID; mSelectionColor /= 255.0f; }
+	void update_id(bool recursive = false);
 
 	std::string name() const { return mName; }
 	void set_name(std::string const& name_) { mName = name_; }
@@ -235,8 +236,6 @@ public:
 	bool require_redraw() const { return mRequire_redraw; }
 
 	virtual void notify_childUpdate() {}
-
-	void set_parent(entity* parent);
 protected:
 	/*
 		@function draw_impl is an overiddable function for children classes to draw themselves
@@ -270,7 +269,9 @@ protected:
 	*/
 	static void increment_index(glm::ivec3 &ind);
 
-	void add_child(glm::ivec3 id, entity_ptr child, bool first = false);
+	void add_child(entity_ptr child, bool first = false);
+
+	void scrape_children(entity_ptr elem);
 };
 
 #endif

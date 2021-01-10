@@ -8,14 +8,14 @@
 part::part():
 	entity(glm::ivec3(0, 0, 1))
 {
-	init_scene();
 	set_name("Part");
+	init_scene();
 }
 part::part(entity* parent):
 	entity(parent)
 {
-	init_scene();
 	set_name("Part");
+	init_scene();
 }
 
 
@@ -35,7 +35,7 @@ void part::init_scene()
 	mZX->set_name("ZX plane");
 
 	std::shared_ptr<point> center = std::make_shared<point>(point_abstract(glm::vec3(0.0f, 0.0f, 0.0f)));
-	center->set_name("origin");
+	center->set_name("originPoint");
 
 	mOrigin = folder_ptr(new folder("origin"));
 	
