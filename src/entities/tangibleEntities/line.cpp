@@ -96,7 +96,7 @@ void line::draw_selection_impl(camera_ptr cam, int frame)
 {
 	mShader->bind();
 	mShader->setUniform4f("u_Color", mSelectionColor.r, mSelectionColor.g, mSelectionColor.b, 1.0f);
-	mShader->setUniform1f("u_LineWidth", 5);
+	mShader->setUniform1f("u_LineWidth", 5.0f / 0.6);
 	mShader->setUniform1f("u_Feather", 0.0);
 
 	if(mShader->lastUsed() != frame) {

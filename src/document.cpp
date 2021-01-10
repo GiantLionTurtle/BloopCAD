@@ -14,7 +14,9 @@ document::document(bloop* parent) :
 	mFrameId(1),
 	mActionStackSize(0),
 	mActionInd(0),
-	mCurrentActionInd(0)
+	mCurrentActionInd(0),
+	mRequire_redraw(false),
+	mUseSelectionBuffer(true)
 {
 	connect_signals();	
 	// Create the workspace states, their cameras and all
@@ -120,14 +122,16 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 		GLCall(glEnable(GL_DEPTH_TEST));
 
 		// Draw the selection shadows of the part
-		mSelectionBuffer->bind();
+		if(mUseSelectionBuffer)
+			mSelectionBuffer->bind();
 		GLCall(glViewport(0, 0, get_width(), get_height()));
 		GLCall(glClearColor(0.0, 0.0, 0.0, 1.0));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 		mPart->draw_selection(mCurrentWorkspaceState->cam, mFrameId);
 		
 		// Clean up
-		mSelectionBuffer->unbind(initialFrameBuffer);
+		if(mUseSelectionBuffer)
+			mSelectionBuffer->unbind(initialFrameBuffer);
 	}
 	mFrameId++;
 	return true;
@@ -139,8 +143,9 @@ gboolean document::frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock,
 	self->update_actionStack();
 	camState cmSt = self->mCurrentWorkspaceState->cam->state();
 
-	if(self->mCurrentCamState != cmSt || self->target()->require_redraw()) {
+	if(self->mCurrentCamState != cmSt || self->target()->require_redraw() || self->mRequire_redraw) {
 		self->mCurrentCamState = cmSt;
+		self->mRequire_redraw = false;
 		self->mViewport.queue_draw();
 	}
 
@@ -174,8 +179,8 @@ void document::connect_signals()
 	gtk_widget_add_tick_callback((GtkWidget*) this->gobj(),	document::frame_callback, this, NULL); // Couldn't find a c++-y way to do it
 
 	// Events happening on the viewport but handled by bloop, because it has direct access to the workspaces
-	mViewport.signal_key_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_key_press));
-	mViewport.signal_key_release_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_key_release));
+	mViewport.signal_key_press_event().connect(sigc::mem_fun(*this, &document::manage_key_press));
+	mViewport.signal_key_release_event().connect(sigc::mem_fun(*this, &document::manage_key_release));
 	mViewport.signal_scroll_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_scroll));
 	mViewport.signal_motion_notify_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_move));
 	mViewport.signal_button_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_button_press));
@@ -222,6 +227,23 @@ bool document::has_workspace(std::string const& name)
 	if(mWorkspaceStates.find(name) != mWorkspaceStates.end())
 		return true;
 	return false;
+}
+
+bool document::manage_key_press(GdkEventKey* event)
+{
+	if(event->keyval == GDK_KEY_o) {
+		mUseSelectionBuffer = false;
+		mRequire_redraw = true;
+	}
+	return mParentBloop->manage_key_press(event);
+}
+bool document::manage_key_release(GdkEventKey* event)
+{
+	if(event->keyval == GDK_KEY_o) {
+		mUseSelectionBuffer = true;
+		mRequire_redraw = true;
+	}
+	return mParentBloop->manage_key_release(event);
 }
 
 void document::push_action(std::shared_ptr<action> to_push)
