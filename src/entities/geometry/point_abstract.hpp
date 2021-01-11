@@ -16,9 +16,11 @@ public:
 
 	glm::vec3 pos_vec() const { return mPos->get(); }
 	variableVector3_ptr pos_var() const { return mPos; }
-	virtual void set_pos(glm::vec3 const& pos) { mPos->set(pos); }
-	virtual void set_pos(variableVector3_ptr pos) { mPos = pos; }
-	virtual void set_pos(std::shared_ptr<point_abstract> other) { mPos->set(other->pos_vec()); }
+	virtual void set_pos(glm::vec3 const& pos) { mPos->set(pos); post_set_update(); }
+	virtual void set_pos(variableVector3_ptr pos) { mPos = pos; post_set_update(); }
+	virtual void set_pos(std::shared_ptr<point_abstract> other) { mPos->set(other->pos_vec()); post_set_update(); }
+protected:
+	virtual void post_set_update() {}
 };
 
 

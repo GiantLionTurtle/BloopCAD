@@ -24,9 +24,6 @@ public:
 	line(line_abstract const& baseLine);
 	virtual ~line() {}
 
-	virtual void set_pointA(std::shared_ptr<point_abstract> ptA);
-	virtual void set_pointB(std::shared_ptr<point_abstract> ptB);
-
 	virtual void update_VB();
 protected:
 	/*
@@ -43,6 +40,8 @@ protected:
 		@param frame : 	The current frame id
 	*/
 	virtual void draw_selection_impl(camera_ptr cam, int frame);
+
+	virtual void post_set_update();
 };
 
 #endif

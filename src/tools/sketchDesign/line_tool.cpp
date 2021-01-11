@@ -5,7 +5,7 @@
 #include <entities/part.hpp>
 #include <entities/tangibleEntities/line.hpp>
 #include <entities/sketch.hpp>
-#include <actions/sketchDesign/addEntity_action.hpp>
+#include <actions/common/addEntity_action.hpp>
 #include <utils/mathUtils.hpp>
 
 #include <glm/gtx/quaternion.hpp>
@@ -63,8 +63,8 @@ bool line_tool::manage_button_press(GdkEventButton* event)
 
 	if(!started) {
 		mEnv->state()->doc->make_glContext_current();
-		mStartPos = sketchPoint_ptr(new sketchPoint(pl, line_pos));
-		mEndPos = sketchPoint_ptr(new sketchPoint(pl, line_pos));
+		mStartPos = sketchPoint_ptr(new sketchPoint(line_pos, pl));
+		mEndPos = sketchPoint_ptr(new sketchPoint(line_pos, pl));
 		mLine = std::make_shared<line>(line_abstract(mStartPos, mEndPos));
 		started = true;
 

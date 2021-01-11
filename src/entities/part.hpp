@@ -48,12 +48,6 @@ public:
 	virtual void add(entity_ptr elem);
 
 	/*
-		@function add_sketch adds a sketch to the list
-
-		@param sketch_ : A shared pointer to the sketch to add
-	*/
-	void add_sketch(sketch_ptr sketch_);
-	/*
 		@function get_sketch grants linear access to the part's sketches
 
 		@param ind [defaults to -1] : The index of the desired sketch

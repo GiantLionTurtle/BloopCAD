@@ -5,7 +5,7 @@
 #include <entities/part.hpp>
 #include <entities/tangibleEntities/line.hpp>
 #include <entities/sketch.hpp>
-#include <actions/sketchDesign/addEntity_action.hpp>
+#include <actions/common/addEntity_action.hpp>
 #include <utils/mathUtils.hpp>
 
 #include <glm/gtx/quaternion.hpp>
@@ -35,10 +35,10 @@ bool point_tool::manage_button_press(GdkEventButton* event)
 	// Find where the ray intersectpos_on_plane
 	camera_ptr cam = mEnv->state()->cam; // For ease of writing
 	plane_abstract_ptr pl = target->basePlane();
-	glm::vec2 line_pos = pl->point_3d_to_2d(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
+	glm::vec2 point_pos = pl->point_3d_to_2d(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 
 	mEnv->state()->doc->make_glContext_current();
-	mCurrentPoint = sketchPoint_ptr(new sketchPoint(pl, line_pos));
+	mCurrentPoint = sketchPoint_ptr(new sketchPoint(point_pos, pl));
 
 	mEnv->state()->doc->push_action(std::make_shared<addEntity_action>(mCurrentPoint, target)); // Doc is passed to activate glContext
 	return true;

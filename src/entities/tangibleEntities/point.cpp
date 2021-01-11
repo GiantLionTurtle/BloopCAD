@@ -15,19 +15,6 @@ point::point(std::shared_ptr<point_abstract> basePoint):
 	create();
 }
 
-void point::set_pos(glm::vec3 pos)
-{
-	mRequire_VBUpdate = true;
-	set_require_redraw();
-	mPos->set(pos);
-}
-void point::set_pos(point_abstract const& other)
-{
-	mRequire_VBUpdate = true;
-	set_require_redraw();
-	mPos->set(other.pos_vec());
-}
-
 void point::update_VB()
 {
 	mVB->bind();
@@ -89,6 +76,12 @@ void point::draw_selection_impl(camera_ptr cam, int frame)
 
 	mVA->unbind();
 	mShader->unbind();
+}
+
+void point::post_set_update()
+{
+	set_require_redraw();
+	mRequire_VBUpdate = true;
 }
 
 void point::create()

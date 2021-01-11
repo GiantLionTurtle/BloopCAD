@@ -15,13 +15,12 @@ public:
 	point(std::shared_ptr<point_abstract> basePoint);
 	virtual ~point() {}
 
-	virtual void set_pos(glm::vec3 pos);
-	virtual void set_pos(point_abstract const& other);
-
 	virtual void update_VB();
 protected:
 	void draw_impl(camera_ptr cam, int frame);
 	void draw_selection_impl(camera_ptr cam, int frame);
+
+	virtual void post_set_update();
 
 	void create();
 };

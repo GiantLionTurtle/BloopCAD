@@ -71,21 +71,15 @@ void part::set_handle(entityHandle* handle_)
 }
 void part::add(entity_ptr elem)
 {
+	sketch_ptr sk = std::dynamic_pointer_cast<sketch>(elem);
+	if(sk)
+		mSketches.push_back(sk);
 	entity::add(elem);
 	if(elem && mHandle) {
 		elem->set_handle(new entityHandle(elem, mHandle->view(), mHandle));
 	}
 }
 
-void part::add_sketch(sketch_ptr sketch_)
-{
-	if(sketch_) {
-		mSketches.push_back(sketch_);
-		add(sketch_);
-	} else {
-		LOG_WARNING("Trying to add null sketch.");
-	}
-}
 sketch_ptr part::get_sketch(int ind)
 {
 	// It's kind of a funny behavior, I might change it to just return nullptr on out of bounds

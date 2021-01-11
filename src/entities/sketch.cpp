@@ -2,6 +2,7 @@
 #include "sketch.hpp"
 
 #include <entities/tangibleEntities/line.hpp>
+#include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
 #include <utils/errorLogger.hpp>
 
 sketch::sketch(plane_abstract_ptr base_plane):
@@ -30,7 +31,8 @@ void sketch::draw_selection_impl(camera_ptr cam, int frame)
 void sketch::create_origin()
 {
 	mOrigin = folder_ptr(new folder("skorigin"));
+	add(mOrigin);
+	mOrigin->add(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane));
 	mOrigin->add(std::make_shared<line>(line_abstract(mBasePlane->origin() - mBasePlane->v(), mBasePlane->origin() + mBasePlane->v())));
 	mOrigin->add(std::make_shared<line>(line_abstract(mBasePlane->origin() - mBasePlane->w(), mBasePlane->origin() + mBasePlane->w())));
-	add(mOrigin);
 }

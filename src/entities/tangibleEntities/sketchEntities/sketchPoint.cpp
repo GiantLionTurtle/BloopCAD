@@ -3,7 +3,7 @@
 
 #include <utils/errorLogger.hpp>
 
-sketchPoint::sketchPoint(plane_abstract_ptr basePlane_, glm::vec2 pos_2d):
+sketchPoint::sketchPoint(glm::vec2 pos_2d, plane_abstract_ptr basePlane_):
 	sketchElement(basePlane_),
 	point(basePlane_->point_2d_to_3d(pos_2d))
 {

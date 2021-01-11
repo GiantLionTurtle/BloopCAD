@@ -43,6 +43,8 @@ public:
 
 	float dist_to_point(point_abstract const& pt);
 	float length();
+protected:
+	virtual void post_set_update() {}
 };
 
 #endif

@@ -3,6 +3,7 @@
 #define STARTSKETCH_TOOL_HPP_
 
 #include <tools/common_tools/planeSelector_tool.hpp>
+#include <entities/sketch.hpp>
 
 struct camState;
 
@@ -13,6 +14,8 @@ struct camState;
 	@note : The plane it is hovering are notified via the planeSelector_tool inheritance
 */
 class startSketch_tool : public planeSelector_tool {
+private:
+	sketch_ptr mCurrentSketch;
 public:
 	/*
 		@function startSketch_tool creates a startSketch_tool object

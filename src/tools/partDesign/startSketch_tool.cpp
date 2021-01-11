@@ -7,7 +7,7 @@
 #include <entities/part.hpp>
 #include <entities/tangibleEntities/plane.hpp>
 
-#include <actions/partDesign/createSketch_action.hpp>
+#include <actions/common/addEntity_action.hpp>
 #include <actions/common/switchWorkspace_action.hpp>
 #include <actions/common/moveCamera_action.hpp>
 #include <glm/gtx/vector_angle.hpp>
@@ -61,7 +61,9 @@ void startSketch_tool::start_sketch(plane_abstract_ptr sketchPlane, camState con
 {
 	std::shared_ptr<part> target = std::dynamic_pointer_cast<part>(mEnv->state()->target); // Aquire the part that is worked on
 	if(target) {
-		mEnv->state()->doc->push_action(std::shared_ptr<action>(new createSketch_action(sketchPlane, target)));
+		mEnv->state()->doc->make_glContext_current();
+		mCurrentSketch = std::make_shared<sketch>(sketchPlane);
+		mEnv->state()->doc->push_action(std::shared_ptr<action>(new addEntity_action(mCurrentSketch, target)));
 		mEnv->state()->doc->push_action(std::shared_ptr<action>(new switchWorkspace_action(mEnv->state()->doc, "sketchDesign")));
 		workspaceState_ptr newState = mEnv->state()->doc->currentWorkspaceState(); // This tool is still owned by partDesign so it has to retrieve the sketchDesign workspace state
 

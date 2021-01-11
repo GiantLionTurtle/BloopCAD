@@ -41,19 +41,6 @@ line::line(line_abstract const& baseLine):
 	add(pointB_as_drawable);
 }
 
-void line::set_pointA(std::shared_ptr<point_abstract> ptA)
-{
-	mRequire_VBUpdate = true;
-	set_require_redraw();
-	mPointA->set_pos(ptA);
-}
-void line::set_pointB(std::shared_ptr<point_abstract> ptB)
-{
-	mRequire_VBUpdate = true;
-	set_require_redraw();
-	mPointB->set_pos(ptB);
-}
-
 void line::update_VB()
 {
 	mRequire_VBUpdate = false;
@@ -111,4 +98,10 @@ void line::draw_selection_impl(camera_ptr cam, int frame)
 
 	mVA->unbind();
 	mShader->unbind();
+}
+
+void line::post_set_update()
+{
+	set_require_redraw();
+	mRequire_VBUpdate = true;
 }
