@@ -42,6 +42,11 @@ variable::variable(std::string name_, double val_, bool fixed_):
 
 }
 
+void variable::set_val(double val_) 
+{
+	mVal = val_;
+}
+
 expression_ptr variable::expr()
 {
 	return expression_ptr(new expression_variable(this->shared_from_this()));

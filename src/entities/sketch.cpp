@@ -19,6 +19,15 @@ sketch::sketch(plane_abstract_ptr base_plane, entity* parent):
 	create_origin();
 }
 
+bool sketch::add_constraint(std::shared_ptr<constraint> cons) 
+{
+	mSystem.add_equations(cons->equations());
+	mSystem.add_variables(cons->variables());
+	bool success = mSystem.solve() >= 0;
+	update();
+	return success;
+}
+
 void sketch::draw_impl(camera_ptr cam, int frame)
 {
 

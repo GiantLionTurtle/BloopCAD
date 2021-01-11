@@ -2,7 +2,7 @@
 #ifndef STARTSKETCH_TOOL_HPP_
 #define STARTSKETCH_TOOL_HPP_
 
-#include <tools/common_tools/planeSelector_tool.hpp>
+#include <tools/common/planeSelector_tool.hpp>
 #include <entities/sketch.hpp>
 
 struct camState;

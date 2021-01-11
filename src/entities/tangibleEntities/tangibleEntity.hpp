@@ -31,6 +31,8 @@ public:
     virtual void update_VB() = 0;
 
     bool require_VBUpdate() const { return mRequire_VBUpdate; }
+protected:
+    virtual void update_impl() { update_VB(); }
 };
 
 #endif

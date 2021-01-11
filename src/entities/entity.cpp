@@ -38,16 +38,22 @@ void entity::draw(camera_ptr cam, int frame)
 {
 	if(exists() && (visible() || selected())) { // Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
 		mRequire_redraw = false;
-		for_each([cam, frame](entity_ptr ent) { ent->draw(cam, frame); }); // Make the call for all components
 		draw_impl(cam, frame);
+		for_each([cam, frame](entity_ptr ent) { ent->draw(cam, frame); }); // Make the call for all components
 	}
 }
 void entity::draw_selection(camera_ptr cam, int frame)
 {
 	if(exists() && (visible() || selected())) {// Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
-		for_each([cam, frame](entity_ptr ent) { ent->draw_selection(cam, frame); }); // Make the call for all components
 		draw_selection_impl(cam, frame);
+		for_each([cam, frame](entity_ptr ent) { ent->draw_selection(cam, frame); }); // Make the call for all components
 	}
+}
+
+void entity::update()
+{
+	for_each([](entity_ptr ent) { ent->update(); });
+	update_impl();
 }
 
 void entity::set_selected(bool select) 

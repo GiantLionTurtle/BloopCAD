@@ -1,5 +1,5 @@
 
-add_subdirectory(common_tools)
+add_subdirectory(common)
 add_subdirectory(navigation)
 add_subdirectory(partDesign)
 add_subdirectory(sketchDesign)

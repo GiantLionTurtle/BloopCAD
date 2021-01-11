@@ -2,12 +2,12 @@
 #include "line_abstract.hpp"
 
 line_abstract::line_abstract(point_abstract ptA, point_abstract ptB):
-	mPointA(std::shared_ptr<point_abstract>(new point_abstract(ptA))),
-	mPointB(std::shared_ptr<point_abstract>(new point_abstract(ptB)))
+	mPointA(point_abstract_ptr(new point_abstract(ptA))),
+	mPointB(point_abstract_ptr(new point_abstract(ptB)))
 {
 
 }
-line_abstract::line_abstract(std::shared_ptr<point_abstract> ptA, std::shared_ptr<point_abstract> ptB):
+line_abstract::line_abstract(point_abstract_ptr ptA, point_abstract_ptr ptB):
 	mPointA(ptA),
 	mPointB(ptB)
 {

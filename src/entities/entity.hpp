@@ -76,6 +76,8 @@ public:
 	*/
 	void draw_selection(camera_ptr cam, int frame);
 
+	void update();
+
 	/*
 		@function set_selected sets the selected
 
@@ -252,6 +254,8 @@ protected:
 		@param frame : 	The current frame id
 	*/	
 	virtual void draw_selection_impl(camera_ptr cam, int frame) {};
+
+	virtual void update_impl() {};
 
 	/*
 		@function compare_indices makes a comparison between two 3 ints indices

@@ -9,7 +9,7 @@ point::point(point_abstract const& basePoint):
 {	
 	create();
 }
-point::point(std::shared_ptr<point_abstract> basePoint):
+point::point(point_abstract_ptr basePoint):
 	point_abstract(basePoint->pos_var())
 {
 	create();

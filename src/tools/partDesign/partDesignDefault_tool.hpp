@@ -1,5 +1,5 @@
 
-#include <tools/common_tools/simpleSelector_tool.hpp>
+#include <tools/common/simpleSelector_tool.hpp>
 
 class partDesignDefault_tool : public simpleSelector_tool {
 public:

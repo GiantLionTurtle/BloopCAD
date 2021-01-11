@@ -12,7 +12,7 @@ private:
 	const glm::vec3 mColor = glm::vec3(0.0f, 0.89f, 0.725f); // Point color
 public:
 	point(point_abstract const& basePoint);
-	point(std::shared_ptr<point_abstract> basePoint);
+	point(point_abstract_ptr basePoint);
 	virtual ~point() {}
 
 	virtual void update_VB();

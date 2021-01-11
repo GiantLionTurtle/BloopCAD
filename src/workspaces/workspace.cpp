@@ -3,7 +3,7 @@
 #include <utils/errorLogger.hpp>
 #include <bloop.hpp>
 #include <tools/navigation/navigation.hpp>
-#include <tools/common_tools/simpleSelector_tool.hpp>
+#include <tools/common/simpleSelector_tool.hpp>
 
 workspace::workspace(bloop* parent) :
 	mParentBloop(parent),

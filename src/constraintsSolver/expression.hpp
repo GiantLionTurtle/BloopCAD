@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 class expression;
 class variable;
@@ -27,7 +28,7 @@ public:
 	void set_name(std::string name_) { mName = name_; }
 
 	double val() const { return mVal; }
-	void set_val(double val_) { mVal = val_;}
+	void set_val(double val_);
 
 	bool fixed() const { return mFixed; }
 	void set_fixed(bool fixed_) { mFixed = fixed_; }

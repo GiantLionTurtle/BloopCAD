@@ -31,6 +31,7 @@ add_executable(constraintsSolverTest
 target_link_libraries(constraintsSolverTest
 	vendor
 	utils
+	entities
 	constraintsSolver
 	${GTKMM_LIBRARIES}
 	${CMAKE_DL_LIBS} epoxy)

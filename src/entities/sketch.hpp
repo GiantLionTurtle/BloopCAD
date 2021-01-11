@@ -5,6 +5,8 @@
 #include "entity.hpp"
 #include <entities/geometry/plane_abstract.hpp>
 #include <entities/folder.hpp>
+#include <constraintsSolver/equationsSystem.hpp>
+#include <constraintsSolver/constraint.hpp>
 
 #include <memory>
 #include <vector>
@@ -21,6 +23,8 @@ private:
 	plane_abstract_ptr mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
 
 	folder_ptr mOrigin;
+
+	equationsSystem mSystem;
 public:
 	/*
 		@function sketch creates a sketch
@@ -44,6 +48,8 @@ public:
 	plane_abstract_ptr basePlane() { return mBasePlane; }
 
 	entity_ptr origin() const { return mOrigin; }
+
+	bool add_constraint(std::shared_ptr<constraint> cons);
 protected:
 	/*
 		@function draw_impl draws the part on screen, it calls draw on all it's components
