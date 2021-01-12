@@ -51,16 +51,24 @@ bool equationsSystem::satisfied()
 
 int equationsSystem::solve()
 {
-	if(mVariables.size() > mEquations.size()) {
-		LOG_WARNING("Too few equations to solve this system: got " + 
-		std::to_string(mEquations.size()) + ", expected at least " + std::to_string(mVariables.size()));
-		return -1;
-	} else if(mVariables.empty()) {
+	if(mVariables.empty()) {
 		LOG_WARNING("No variables in equation system.");
 		return -1;
 	}
 
+	if(mVariables.size() > mEquations.size()) {
+		return solve_LevenbergMarquardt();
+	} else if(mVariables.size() == mEquations.size()) {
+		return solve_NewtonRaphson();
+	}
+
+	return -1;
+}
+
+int equationsSystem::solve_NewtonRaphson()
+{
 	Eigen::VectorXd y(mVariables.size());
+	mJacobianMat.resize(mEquations.size(), mVariables.size());
 
 	for(int i = 0; i < mMaxIt; ++i) {
 		compute_F();
@@ -68,7 +76,6 @@ int equationsSystem::solve()
 			return i;
 		}
 		freeze_allVars();
-		mJacobianMat.resize(mVariables.size(), mVariables.size());
 		compute_jacobian();
 
 		y = -mJacobianMat.inverse() * mComputedF;
@@ -77,9 +84,32 @@ int equationsSystem::solve()
 	}
 
 	LOG_WARNING("Could not solve this system in: " + std::to_string(mMaxIt) + " iterations.");
-
 	return -1;
 }
+
+int equationsSystem::solve_LevenbergMarquardt()
+{
+	// mJacobianMat.resize(mEquations.size(), mVariables.size());
+	// double u = 0.5;
+	// double u_c;
+
+	// for(int i = 0; i < mMaxIt; ++i) {
+	// 	compute_F();
+	// 	if(satisfied()) {
+	// 		return i;
+	// 	}
+	// 	freeze_allVars();
+	// 	compute_jacobian();
+	// 	u_c = u * mComputedF.squaredNorm();
+	// 	// y = -mJacobianMat.inverse() * mComputedF;
+
+	// 	update_variables(y);
+	// }
+
+	LOG_WARNING("Could not solve this system in: " + std::to_string(mMaxIt) + " iterations.");
+	return -1;
+}
+
 
 void equationsSystem::freeze_allVars()
 {
@@ -89,7 +119,7 @@ void equationsSystem::freeze_allVars()
 }
 void equationsSystem::compute_jacobian()
 {
-	for(int i = 0; i < mVariables.size(); ++i) { // Kind of confusing because we want a square at all cost, but this is the equation loop
+	for(int i = 0; i < mEquations.size(); ++i) { // Kind of confusing because we want a square at all cost, but this is the equation loop
 		for(int j = 0; j < mVariables.size(); ++j) {
 			mVariables[j]->set_fixed(false);
 			mJacobianMat(i, j) = mEquations[i]->derivative()->eval();

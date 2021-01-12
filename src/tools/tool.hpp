@@ -104,6 +104,8 @@ public:
 
 	virtual void act_on_entity(entity_ptr ent) {};
 	virtual bool should_hover(entity_ptr ent) { return true; }
+
+	virtual std::string name() { return "unkown tool"; }
 };
 
 #endif

@@ -29,6 +29,8 @@ public:
 		@param event : The motion event handed by gtk
 	*/
 	virtual bool manage_mouse_move(GdkEventMotion* event);
+
+	virtual std::string name() { return "pan"; }
 };
 
 #endif

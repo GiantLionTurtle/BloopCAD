@@ -41,6 +41,8 @@ public:
 		@param event : The event handed out by gtk
 	*/
 	virtual bool manage_button_release(GdkEventButton* event);
+
+	virtual std::string name() { return "orbit"; }
 };
 
 #endif

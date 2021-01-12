@@ -15,6 +15,8 @@ public:
 	virtual void init();
 
 	virtual bool manage_button_press(GdkEventButton* event);
+
+	virtual std::string name() { return "coincidence"; }
 };
 
 #endif

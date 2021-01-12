@@ -18,6 +18,7 @@ document::document(bloop* parent) :
 	mRequire_redraw(false),
 	mUseSelectionBuffer(true)
 {
+	mViewport.set_required_version(3, 2);
 	connect_signals();	
 	// Create the workspace states, their cameras and all
 	mWorkspaceStates["partDesign"] 			= workspaceState_ptr(new workspaceState);
@@ -45,6 +46,10 @@ void document::make_glContext_current()
 
 void document::do_realize()
 {
+	BLOOP_MARKER;
+	int maj, min;
+	mViewport.get_required_version(maj, min);
+	std::cout<<"Req ver: "<<maj<<",  "<<min<<"\n";
 	make_glContext_current();
 	try{
 		mViewport.throw_if_error();
@@ -76,10 +81,10 @@ void document::do_realize()
 		// Setyp tools and all
 		if(mParentBloop->currentWorkspace())
 			mCurrentWorkspaceState->currentTool = mParentBloop->currentWorkspace()->defaultTool();
-		
 		mPart->set_handle(new entityHandle(mPart, mSideBar, &mSideBar->root()));
 		mParentBloop->add_sideBar(mSideBar);
 		mParentBloop->set_sideBar(mSideBar);
+		mParentBloop->notify_set_tool(mCurrentWorkspaceState->currentTool->name());
 
 		// Setup target
 		mCurrentWorkspaceState->target = mPart;

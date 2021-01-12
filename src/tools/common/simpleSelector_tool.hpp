@@ -33,6 +33,8 @@ public:
 	*/
 	virtual bool manage_mouse_move(GdkEventMotion* event);
 
+	virtual std::string name() { return "simple selector"; }
+
 	/*
 		@function entity_at_point gives the entity under a certain point on screen, can be overriden to filter out some entities
 

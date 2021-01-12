@@ -115,6 +115,7 @@ void workspace::set_tool(tool_abstract_ptr tool_)
 	mState->currentTool = tool_;
 	mState->currentTool->init();
 	set_toolCursor(mState->currentTool);
+	mParentBloop->notify_set_tool(tool_->name());
 }
 void workspace::set_toolCursor(tool_abstract_ptr tool_)
 {

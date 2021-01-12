@@ -50,6 +50,8 @@ public:
 	*/
 	virtual bool manage_scroll(GdkEventScroll* event);
 
+	virtual std::string name() { return "zoom"; }
+
 	/*
 		@function zoom scales the model around a point
 

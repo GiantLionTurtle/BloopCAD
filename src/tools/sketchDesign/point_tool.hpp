@@ -25,6 +25,8 @@ public:
 		@param event : The button press event handed by gtk
 	*/
 	virtual bool manage_button_press(GdkEventButton* event);
+
+	virtual std::string name() { return "point"; }
 };
 
 #endif

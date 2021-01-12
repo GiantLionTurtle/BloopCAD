@@ -38,6 +38,8 @@ public:
    	virtual bool manage_button_press(GdkEventButton* event);
 
 	virtual void act_on_entity(entity_ptr ent);
+
+	virtual std::string name() { return "start sketch"; }
 private:
 	/*
 		@function start_sketch is the core of the tool, it creates a sketch with a plane and a camera state

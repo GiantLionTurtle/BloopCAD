@@ -37,6 +37,9 @@ public:
 
 	int solve();
 private:
+	int solve_NewtonRaphson();
+	int solve_LevenbergMarquardt();
+
 	void freeze_allVars();
 	void compute_jacobian();
 	void compute_F();

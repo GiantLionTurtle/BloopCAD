@@ -22,6 +22,8 @@ public:
 
     virtual bool should_hover(entity_ptr ent);
 
+    virtual std::string name() { return "plane selector"; }
+
     /*
         @function entity_at_point is an override of the parent's entity_at_point to filter out non planes
 

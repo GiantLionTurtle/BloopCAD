@@ -53,6 +53,18 @@ public:
 	std::string label() { return mLabel->get_text(); }
 };
 
+class statusBar : public Gtk::Box {
+public:
+	enum status { WORKSPACE, TOOL };
+private:
+	Gtk::Label* workspaceName, * toolName;
+public:
+	statusBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder);
+
+	void update(status which, std::string const& content);
+};
+
+
 /*
 	@class bloop describes a window containing the whole cad software
 	@parent : Gtk::Window
@@ -73,6 +85,7 @@ private:
 	Gtk::Stack* mUI_upperBar, *mSideBar; // A stack of all the workspaces upper bars and all the documents' side bars
 	Gtk::Overlay* mHome; // The home screen overlay (I guess that it could go with the document's)
 	navigationBar* mNavigationBar; // The side navigation bar
+	statusBar* mStatusBar;
 
 	glm::vec2 scroll_deltas; // kinda dirty but it's a workaround for a bug in gtk3
 public:
@@ -112,6 +125,7 @@ public:
 		@return : The set workspace or nullptr
 	*/
 	workspace_ptr set_workspace(std::string const& name, workspaceState_ptr state);
+	void notify_set_tool(std::string const& name);
 
 	void set_sideBar(Gtk::Widget* to_show);
 	void add_sideBar(Gtk::Widget* sideBar);

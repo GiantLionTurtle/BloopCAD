@@ -5,6 +5,25 @@
 #include "workspaces/sketchDesign.hpp"
 #include "workspaces/home.hpp"
 
+statusBar::statusBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder):
+	Gtk::Box(cobject)
+{
+	builder->get_widget("status_workspace", workspaceName);
+	builder->get_widget("status_tool", toolName);
+}
+
+void statusBar::update(status which, std::string const& content)
+{
+	if(which == status::WORKSPACE) {
+		workspaceName->set_label(content);
+	} else if(which == status::TOOL) {
+		toolName->set_label(content);
+	} else {
+		LOG_WARNING("Attempted to set unknown status: " + std::to_string(which) + ".");
+	}
+}
+
+
 bloop::bloop()
 {
 	set_border_width(6);
@@ -39,6 +58,7 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	builder->get_widget("homePage", mHome);
 	builder->get_widget("upperBar_stack", mUI_upperBar);
 	builder->get_widget_derived("navigationBar", mNavigationBar);
+	builder->get_widget_derived("statusBar", mStatusBar);
 	builder->get_widget("sideBar", mSideBar);
 
 	if(mHome && mDocumentIndexer) {
@@ -57,7 +77,7 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	
 	if(mDocumentIndexer) {
 		// Warning: this is for testing purposes.
-		mDocuments.push_back(std::make_tuple(tabButton("Document"), Gtk::Overlay(), document_ptr(new document(this))));
+		mDocuments.push_back(std::make_tuple(tabButton("Document"), Gtk::Overlay(), std::shared_ptr<document>(new document(this))));
 		if(mSideBar) {
 			// mSideBar->add(*std::get<2>(mDocuments.back())->sideBar());
 		} else {
@@ -77,6 +97,12 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	} else {
 		LOG_ERROR("Could not build navigation bar.");
 	}
+	// Add the status bar as an overlay over the document
+	if(mStatusBar) {
+		std::get<1>(mDocuments.back()).add_overlay(*mStatusBar);
+	} else {
+		LOG_ERROR("Could not build status bar.");
+	}
 	
 	// Add all possible upper bars in a stack
 	if(mUI_upperBar) {
@@ -94,19 +120,25 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	show_all();	// Make sure nothing is hidden for some reason
 }
 
-workspace_ptr bloop::set_workspace(std::string const& name, workspaceState_ptr state)
+workspace_ptr bloop::set_workspace(std::string const& name, std::shared_ptr<workspaceState> state)
 {
 	if(mWorkspaces.find(name) != mWorkspaces.end()) {
 		mUI_upperBar->set_visible_child(*mWorkspaces.at(name)->upperBar()); // Update the upper bar
 		mCurrentWorkspace = mWorkspaces.at(name); // new workspace is set
 		mCurrentWorkspace->set_state(state); // Whoopsie, this surely should be fetching a new state from the document. TODO: Fix this please
-		if(mNavigationBar) // Notify the navigation bar
-			mNavigationBar->set_workspace(mCurrentWorkspace);
+
+		mNavigationBar->set_workspace(mCurrentWorkspace);
+		mStatusBar->update(statusBar::WORKSPACE, name);
 		return mCurrentWorkspace;
 	}
 	
 	LOG_WARNING("Trying to set workspace to \"" + name + "\". No such workspace exist.");
 	return nullptr;
+}
+
+void bloop::notify_set_tool(std::string const& name)
+{
+	mStatusBar->update(statusBar::status::TOOL, name);
 }
 
 void bloop::set_sideBar(Gtk::Widget* to_show)
@@ -174,7 +206,7 @@ bool bloop::manage_button_release(GdkEventButton* event)
 
 void bloop::manage_tab_switch(Gtk::Widget* widget, unsigned int tab_ind)
 {
-	document_ptr doc = get_document_at_tabInd(tab_ind);
+	std::shared_ptr<document> doc = get_document_at_tabInd(tab_ind);
 
 	if(doc) { // If it's a doc do all the doc switching thingies (currently there can only be one document, so there is surely problems here)
 		mCurrentDocument = doc;
@@ -185,13 +217,13 @@ void bloop::manage_tab_switch(Gtk::Widget* widget, unsigned int tab_ind)
 	}
 }
 
-void bloop::set_cursor(compositeCursor_ptr cursor_)
+void bloop::set_cursor(std::shared_ptr<compositeCursor> cursor_)
 {
 	mCursor = cursor_;
 	get_window()->set_cursor(cursor_->windowCursor);
 }
 
-document_ptr bloop::get_document_at_tabInd(unsigned int ind)
+std::shared_ptr<document> bloop::get_document_at_tabInd(unsigned int ind)
 {
 	if(ind == 0 || ind > mDocuments.size())
 		return nullptr;
