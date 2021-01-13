@@ -10,7 +10,7 @@ using sketchPoint_ptr = std::shared_ptr<sketchPoint>;
 
 class sketchPoint : public sketchElement, public point {
 public:
-	sketchPoint(glm::vec2 pos_2d, plane_abstract_ptr basePlane_);
+	sketchPoint(glm::vec2 pos_2d, plane_abstract_ptr basePlane_, bool immovable = false);
 	virtual ~sketchPoint() {}
 
 	virtual glm::vec3 pos_vec() const;

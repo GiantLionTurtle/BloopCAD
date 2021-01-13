@@ -13,15 +13,15 @@ class point_abstract {
 protected:
 	variableVector3_ptr mPos;
 public:
-	point_abstract(glm::vec3 pos): mPos(new variableVector3(pos)) {}
-	point_abstract(variableVector3_ptr pos): mPos(pos) {}
+	point_abstract(glm::vec3 pos, bool immovable = false);
+	point_abstract(variableVector3_ptr pos, bool immovable = false);
     virtual ~point_abstract() {}
 
 	virtual glm::vec3 pos_vec() const { return mPos->get(); }
 	virtual variableVector3_ptr pos_var() const { return mPos; }
-	virtual void set_pos(glm::vec3 const& pos) { mPos->set(pos); post_set_update(); }
-	virtual void set_pos(variableVector3_ptr pos) { mPos = pos; post_set_update(); }
-	virtual void set_pos(point_abstract_ptr other) { mPos->set(other->pos_vec()); post_set_update(); }
+	virtual void set_pos(glm::vec3 const& pos);
+	virtual void set_pos(variableVector3_ptr pos);
+	virtual void set_pos(point_abstract_ptr other);
 protected:
 	virtual void post_set_update() {}
 };

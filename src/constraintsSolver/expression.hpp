@@ -15,7 +15,9 @@ class variable : public std::enable_shared_from_this<variable> {
 private:
 	std::string mName;
 	double mVal;
-	bool mFixed;
+	int mFixed;
+
+	enum fixedType { FREE, FIXED, CONST };
 public:
 	variable();
 	variable(double val_, bool fixed_ = true);
@@ -30,8 +32,11 @@ public:
 	double val() const { return mVal; }
 	void set_val(double val_);
 
-	bool fixed() const { return mFixed; }
-	void set_fixed(bool fixed_) { mFixed = fixed_; }
+	bool fixed() const { return mFixed > fixedType::FREE; }
+	void set_fixed(bool fixed_) { if(mFixed < fixedType::CONST) mFixed = fixed_; }
+
+	bool constant() const { return mFixed == fixedType::CONST; }
+	void set_constant(bool const_) { if(const_) mFixed = fixedType::CONST; else mFixed = fixedType::FREE; }
 
 	std::string to_string();
 };

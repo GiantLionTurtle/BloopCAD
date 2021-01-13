@@ -39,6 +39,13 @@ void variableVector3::operator=(glm::vec3 const& vec)
 	set(vec);
 }
 
+void variableVector3::set_constant(bool const_)
+{
+	x->set_constant(const_);
+	y->set_constant(const_);
+	z->set_constant(const_);
+}
+
 float length(expressionVector3_ptr vec)
 {
 	return glm::length(glm::vec3(vec->x->eval(), vec->y->eval(), vec->z->eval()));

@@ -3,9 +3,9 @@
 
 #include <utils/errorLogger.hpp>
 
-sketchPoint::sketchPoint(glm::vec2 pos_2d, plane_abstract_ptr basePlane_):
+sketchPoint::sketchPoint(glm::vec2 pos_2d, plane_abstract_ptr basePlane_, bool immovable /*= false*/):
 	sketchElement(basePlane_),
-	point(glm::vec3(pos_2d, 0.0f))
+	point(point_abstract(glm::vec3(pos_2d, 0.0f), immovable))
 {
 	mRequire_VBUpdate = true;
 	set_name("sketchPoint");

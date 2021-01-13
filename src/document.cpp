@@ -46,10 +46,6 @@ void document::make_glContext_current()
 
 void document::do_realize()
 {
-	BLOOP_MARKER;
-	int maj, min;
-	mViewport.get_required_version(maj, min);
-	std::cout<<"Req ver: "<<maj<<",  "<<min<<"\n";
 	make_glContext_current();
 	try{
 		mViewport.throw_if_error();
