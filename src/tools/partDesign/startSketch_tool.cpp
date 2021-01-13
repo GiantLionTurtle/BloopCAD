@@ -34,6 +34,7 @@ void startSketch_tool::init()
 			plane_abstract_ptr sketchPlane = std::dynamic_pointer_cast<plane_abstract>(sel.ent);
 			if(sketchPlane) {
 				start_sketch(sketchPlane, sel.camSt);
+				sel.ent->set_hover(false);
 			}
 		}
 	}
@@ -43,9 +44,11 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 {
 	if(mEnv->state()) {
 		// If the hovered entity is a plane, start sketch
-		plane_abstract_ptr sketchPlane = std::dynamic_pointer_cast<plane_abstract>(entity_at_point(glm::vec2(event->x, mEnv->state()->doc->get_height() - event->y)));
+		entity_ptr ent = entity_at_point(glm::vec2(event->x, mEnv->state()->doc->get_height() - event->y));
+		plane_abstract_ptr sketchPlane = std::dynamic_pointer_cast<plane_abstract>(ent);
 		if(sketchPlane) {
 			start_sketch(sketchPlane, mEnv->state()->cam->state());
+			ent->set_hover(false);
 		}
 	}
 	return true;

@@ -39,7 +39,7 @@ protected:
 	glm::ivec3 mSelectionID;
 	glm::vec3 mSelectionColor; // The color of the entity on the selection buffer
 
-	bool mRequire_redraw;
+	bool mRequire_redraw, mRequire_selfRedraw;
 
 	std::string mName;
 
@@ -67,7 +67,7 @@ public:
 		@param cam : 	The camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	void draw(camera_ptr cam, int frame);
+	void draw(camera_ptr cam, int frame, bool on_required = false);
 	/*
 		@function draw draws the entity with it's plain selection color
 
@@ -234,7 +234,7 @@ public:
 	*/
 	bool is_following() const { if(mParent) return true; return false; }
 
-	void set_require_redraw();
+	void set_require_redraw(bool self = true);
 	bool require_redraw() const { return mRequire_redraw; }
 
 	virtual void notify_childUpdate() {}

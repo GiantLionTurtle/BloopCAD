@@ -9,7 +9,9 @@ entity::entity():
 	mSelectionColor(0.0f, 0.0f, 0.0f),
 	mHighestInd(0, 0, 0),
 	mParent(nullptr),
-	mHandle(nullptr)
+	mHandle(nullptr),
+	mRequire_redraw(false),
+	mRequire_selfRedraw(false)
 {
 	highestInd = new glm::ivec3(mHighestInd);
 }
@@ -18,7 +20,9 @@ entity::entity(glm::ivec3 startInd):
 	mSelectionColor(0.0f, 0.0f, 0.0f),
 	mHighestInd(startInd),
 	mParent(nullptr),
-	mHandle(nullptr)
+	mHandle(nullptr),
+	mRequire_redraw(false),
+	mRequire_selfRedraw(false)
 {
 	highestInd = new glm::ivec3(mHighestInd);
 	set_selectionID(startInd);
@@ -29,17 +33,24 @@ entity::entity(entity* parent):
 	mHighestInd(parent->mHighestInd),
 	highestInd(parent->highestInd),
 	mParent(parent),
-	mHandle(nullptr)
+	mHandle(nullptr),
+	mRequire_redraw(false),
+	mRequire_selfRedraw(false)
 {
 
 }
 
-void entity::draw(camera_ptr cam, int frame)
+void entity::draw(camera_ptr cam, int frame, bool on_required /*= false*/)
 {
-	if(exists() && (visible() || selected())) { // Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
+	if(exists()) { // Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
+		bool draw_self = (visible() && !on_required) || (mRequire_selfRedraw && (hovered() || selected()));
+		bool on_require_child = !visible();
+		if(draw_self)
+			draw_impl(cam, frame);
+		if(visible() || mRequire_redraw || draw_self)
+			for_each([cam, frame, on_require_child](entity_ptr ent) { ent->draw(cam, frame, on_require_child); }); // Make the call for all components
 		mRequire_redraw = false;
-		draw_impl(cam, frame);
-		for_each([cam, frame](entity_ptr ent) { ent->draw(cam, frame); }); // Make the call for all components
+		mRequire_selfRedraw = false;
 	}
 }
 void entity::draw_selection(camera_ptr cam, int frame)
@@ -228,10 +239,13 @@ void entity::for_each(std::function<void (entity_ptr)> func)
 	}
 }
 
-void entity::set_require_redraw()
+void entity::set_require_redraw(bool self /*= true*/)
 {
 	if(mParent) {
-		mParent->set_require_redraw();
+		mParent->set_require_redraw(false);
+	} 
+	if(self) {
+		mRequire_selfRedraw = true;
 	} else {
 		mRequire_redraw = true;
 	}
