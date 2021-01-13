@@ -42,6 +42,8 @@ void sketch::create_origin()
 	mOrigin = folder_ptr(new folder("skorigin"));
 	add(mOrigin);
 	mOrigin->add(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane));
-	mOrigin->add(std::make_shared<line>(line_abstract(mBasePlane->origin() - mBasePlane->v(), mBasePlane->origin() + mBasePlane->v())));
-	mOrigin->add(std::make_shared<line>(line_abstract(mBasePlane->origin() - mBasePlane->w(), mBasePlane->origin() + mBasePlane->w())));
+	mOrigin->add(std::make_shared<line>(line_abstract(	std::make_shared<sketchPoint>(glm::vec2(0.0f,  1.0f), mBasePlane), 
+														std::make_shared<sketchPoint>(glm::vec2(0.0f, -1.0f), mBasePlane))));
+	mOrigin->add(std::make_shared<line>(line_abstract(	std::make_shared<sketchPoint>(glm::vec2( 1.0f, 0.0f), mBasePlane), 
+														std::make_shared<sketchPoint>(glm::vec2(-1.0f, 0.0f), mBasePlane))));
 }

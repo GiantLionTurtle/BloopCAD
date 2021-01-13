@@ -15,6 +15,7 @@ private:
 	std::vector<expression_ptr> mEquations;
 	std::vector<variable_ptr> mVariables;
     Eigen::MatrixXd mJacobianMat;
+	Eigen::VectorXd mErrors;
 	Eigen::VectorXd mComputedF;
 	bool mComputedF_upToDate;
 	int mMaxIt;
@@ -39,6 +40,8 @@ public:
 private:
 	int solve_NewtonRaphson();
 	int solve_LevenbergMarquardt();
+
+	void compute_errors();
 
 	void freeze_allVars();
 	void compute_jacobian();

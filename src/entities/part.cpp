@@ -6,7 +6,7 @@
 #include "tangibleEntities/point.hpp"
 
 part::part():
-	entity(glm::ivec3(0, 0, 1))
+	entity(glm::ivec3(100, 0, 100))
 {
 	set_name("Part");
 	init_scene();

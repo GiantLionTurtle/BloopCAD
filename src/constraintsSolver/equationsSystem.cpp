@@ -4,14 +4,14 @@
 #include <utils/errorLogger.hpp>
 
 equationsSystem::equationsSystem():
-	mMaxIt(20)
+	mMaxIt(50)
 {
 
 }
 equationsSystem::equationsSystem(std::vector<expression_ptr> eqs, std::vector<variable_ptr> vars):
 	mEquations(eqs),
 	mVariables(vars),
-	mMaxIt(20)
+	mMaxIt(50)
 {
 	mComputedF_upToDate = false;
 }
@@ -56,11 +56,11 @@ int equationsSystem::solve()
 		return -1;
 	}
 
-	if(mVariables.size() > mEquations.size()) {
+	// if(mVariables.size() > mEquations.size()) {
 		return solve_LevenbergMarquardt();
-	} else if(mVariables.size() == mEquations.size()) {
-		return solve_NewtonRaphson();
-	}
+	// } else if(mVariables.size() == mEquations.size()) {
+	// 	return solve_NewtonRaphson();
+	// }
 
 	return -1;
 }
@@ -69,13 +69,13 @@ int equationsSystem::solve_NewtonRaphson()
 {
 	Eigen::VectorXd y(mVariables.size());
 	mJacobianMat.resize(mEquations.size(), mVariables.size());
+	freeze_allVars();
 
 	for(int i = 0; i < mMaxIt; ++i) {
 		compute_F();
 		if(satisfied()) {
 			return i;
 		}
-		freeze_allVars();
 		compute_jacobian();
 
 		y = -mJacobianMat.inverse() * mComputedF;
@@ -89,27 +89,45 @@ int equationsSystem::solve_NewtonRaphson()
 
 int equationsSystem::solve_LevenbergMarquardt()
 {
-	// mJacobianMat.resize(mEquations.size(), mVariables.size());
-	// double u = 0.5;
-	// double u_c;
+	Eigen::VectorXd y(mVariables.size());
+	mJacobianMat.resize(mEquations.size(), mVariables.size());
+	Eigen::MatrixXd identity = Eigen::MatrixXd::Identity(mVariables.size(), mVariables.size());
+	mErrors.resize(mEquations.size());
+	freeze_allVars();
+	double lambda = 0.1; // TODO: find a way to compute this??
 
-	// for(int i = 0; i < mMaxIt; ++i) {
-	// 	compute_F();
-	// 	if(satisfied()) {
-	// 		return i;
-	// 	}
-	// 	freeze_allVars();
-	// 	compute_jacobian();
-	// 	u_c = u * mComputedF.squaredNorm();
-	// 	// y = -mJacobianMat.inverse() * mComputedF;
+	compute_F();
+	compute_errors();
+	double previous_error_norm = mErrors.norm();
 
-	// 	update_variables(y);
-	// }
+	for(int i = 0; i < mMaxIt; ++i) {
+		if(satisfied()) {
+			return i;
+		}
+		compute_jacobian();
+		y = -(mJacobianMat.transpose() * mJacobianMat + lambda * identity).inverse() * (mJacobianMat.transpose() * mErrors);
+
+		update_variables(y);
+
+		compute_F();
+		compute_errors();
+		if(mErrors.norm() < previous_error_norm) {
+			lambda /= 2.0;
+		} else {
+			lambda *= 2.0;
+		}
+	}
 
 	LOG_WARNING("Could not solve this system in: " + std::to_string(mMaxIt) + " iterations.");
 	return -1;
 }
 
+void equationsSystem::compute_errors()
+{
+	for(int i = 0; i < mEquations.size(); ++i) {
+		mErrors(i) = mEquations[i]->eval();
+	}
+}
 
 void equationsSystem::freeze_allVars()
 {

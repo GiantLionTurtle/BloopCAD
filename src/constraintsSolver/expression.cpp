@@ -47,6 +47,13 @@ void variable::set_val(double val_)
 	mVal = val_;
 }
 
+std::string variable::to_string()
+{
+	return mName + " = " + std::to_string(mVal);
+}
+
+
+
 expression_ptr variable::expr()
 {
 	return expression_ptr(new expression_variable(this->shared_from_this()));
@@ -719,5 +726,10 @@ expression_ptr ln(expression_ptr arg)
 std::ostream& operator <<(std::ostream& os, expression_ptr expr)
 {
 	os<<expr->to_string();
+	return os;
+}
+std::ostream& operator <<(std::ostream& os, variable_ptr var)
+{
+	os<<var->to_string();
 	return os;
 }

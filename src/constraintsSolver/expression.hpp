@@ -32,6 +32,8 @@ public:
 
 	bool fixed() const { return mFixed; }
 	void set_fixed(bool fixed_) { mFixed = fixed_; }
+
+	std::string to_string();
 };
 
 class expression {
@@ -331,6 +333,7 @@ expression_ptr log(expression_ptr base, expression_ptr arg);
 expression_ptr ln(expression_ptr arg);
 
 std::ostream& operator <<(std::ostream& os, expression_ptr expr);
+std::ostream& operator <<(std::ostream& os, variable_ptr var);
 
 class expConst {
 public:
