@@ -39,7 +39,7 @@ bool point_tool::manage_button_press(GdkEventButton* event)
 
 	mEnv->state()->doc->make_glContext_current();
 	mCurrentPoint = sketchPoint_ptr(new sketchPoint(point_pos, pl));
-
+	std::cout<<"pt: "<<glm::to_string(point_pos)<<" - "<<glm::to_string(mCurrentPoint->pos_vec())<<"\n";
 	mEnv->state()->doc->push_action(std::make_shared<addEntity_action>(mCurrentPoint, target)); // Doc is passed to activate glContext
 	return true;
 }

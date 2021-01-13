@@ -39,7 +39,7 @@ bool coincidence_tool::manage_button_press(GdkEventButton* event)
 				return true;
 			}
 			if(sk->add_constraint(std::make_shared<coincidence_constraint>(mPointA, mPointB))) {
-				std::cout<<"Successfully added constrain!\n";
+				std::cout<<"Successfully added constraint!\n";
 			}
 		}
 	}

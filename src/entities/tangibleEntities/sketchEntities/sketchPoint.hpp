@@ -13,6 +13,8 @@ public:
 	sketchPoint(glm::vec2 pos_2d, plane_abstract_ptr basePlane_);
 	virtual ~sketchPoint() {}
 
+	virtual glm::vec3 pos_vec() const;
+
 	virtual void set_pos(glm::vec2 pos);
 	virtual void set_pos(glm::vec3 pos);
 	virtual void set_pos(point_abstract const& other);

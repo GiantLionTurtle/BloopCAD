@@ -5,15 +5,20 @@
 
 sketchPoint::sketchPoint(glm::vec2 pos_2d, plane_abstract_ptr basePlane_):
 	sketchElement(basePlane_),
-	point(basePlane_->point_2d_to_3d(pos_2d))
+	point(glm::vec3(pos_2d, 0.0f))
 {
 	mRequire_VBUpdate = true;
 	set_name("sketchPoint");
 }
 
+glm::vec3 sketchPoint::pos_vec() const
+{
+	return mBasePlane->point_2d_to_3d(glm::vec2(point_abstract::pos_vec()));
+}
+
 void sketchPoint::set_pos(glm::vec2 pos)
 {
-	point::set_pos(mBasePlane->point_2d_to_3d(pos));
+	point::set_pos(glm::vec3(pos, 0.0f));
 }
 void sketchPoint::set_pos(glm::vec3 pos)
 {
