@@ -13,7 +13,7 @@
 #include <glm/gtx/vector_angle.hpp>
 
 startSketch_tool::startSketch_tool(workspace* env):
-	planeSelector_tool(env)
+	simpleSelector_tool(env)
 {
 	// Attempt to load the cursor icon
 	try {
@@ -23,6 +23,8 @@ startSketch_tool::startSketch_tool(workspace* env):
 	} catch(const Gdk::PixbufError& ex) {
 		LOG_WARNING("Glib::PixbufError: " + ex.what());
 	}
+
+	mFilter = [](entity_ptr ent) -> bool { return std::dynamic_pointer_cast<plane_abstract>(ent).operator bool(); };
 }
 
 void startSketch_tool::init()
@@ -44,7 +46,7 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 {
 	if(mEnv->state()) {
 		// If the hovered entity is a plane, start sketch
-		entity_ptr ent = entity_at_point(glm::vec2(event->x, mEnv->state()->doc->get_height() - event->y));
+		entity_ptr ent = entity_at_point(glm::vec2(event->x, event->y));
 		plane_abstract_ptr sketchPlane = std::dynamic_pointer_cast<plane_abstract>(ent);
 		if(sketchPlane) {
 			start_sketch(sketchPlane, mEnv->state()->cam->state());
@@ -56,7 +58,7 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 
 void startSketch_tool::act_on_entity(entity_ptr ent)
 {
-	if(mEnv->state() && entity_valid(ent))
+	if(mEnv->state() && mFilter(ent))
 		start_sketch(std::dynamic_pointer_cast<plane_abstract>(ent), mEnv->state()->cam->state());
 }
 

@@ -22,9 +22,19 @@ public:
 	virtual void set_pos(glm::vec3 const& pos);
 	virtual void set_pos(variableVector3_ptr pos);
 	virtual void set_pos(point_abstract_ptr other);
+
+	float dist(point_abstract const& pt);
+	float dist(point_abstract_ptr pt) { return dist(*pt.get()); }
+	float dist2(point_abstract const& pt);
+	float dist2(point_abstract_ptr pt) { return dist2(*pt.get()); }
 protected:
 	virtual void post_set_update() {}
 };
 
+std::ostream& operator<<(std::ostream& os, point_abstract_ptr p);
+std::ostream& operator<<(std::ostream& os, point_abstract const& p);
+
+point_abstract_ptr operator+(point_abstract_ptr p, glm::vec3 v);
+point_abstract_ptr operator-(point_abstract_ptr p, glm::vec3 v);
 
 #endif

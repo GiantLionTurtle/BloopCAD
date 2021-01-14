@@ -1,6 +1,8 @@
 
 #include "line_abstract.hpp"
 
+#include <glm/gtx/string_cast.hpp>
+
 line_abstract::line_abstract(point_abstract ptA, point_abstract ptB):
 	mPointA(point_abstract_ptr(new point_abstract(ptA))),
 	mPointB(point_abstract_ptr(new point_abstract(ptB)))
@@ -36,10 +38,55 @@ XML_element* line_abstract::to_svg(plane_abstract* drawingPlane, glm::vec2 &min,
 
 float line_abstract::dist_to_point(point_abstract const& pt)
 {
-	// https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-	return glm::length(glm::cross((pt.pos_vec() - mPointA->pos_vec()), (pt.pos_vec() - mPointB->pos_vec()))) / length();
+	return closest_point(pt)->dist(pt);
+}
+point_abstract_ptr line_abstract::closest_point(point_abstract const& pt)
+{
+	float len2 = length2();
+	if(len2 == 0) {
+		return mPointA;
+	}
+	glm::vec3 line_vec = as_vec();
+	float t = glm::dot(line_vec, mPointA->pos_vec()-pt.pos_vec()) / len2;
+	if(t <= 0) { // First point
+		return mPointA;
+	} else if(t >= 1) { // Second point 
+		return mPointB;
+	} else {
+		return at(t);
+	}
+}
+point_abstract_ptr line_abstract::closest_point(point_abstract const& pt, float& on_line)
+{
+	float len2 = length2();
+	if(len2 == 0) {
+		return mPointA;
+	}
+	glm::vec3 line_vec = as_vec();
+	on_line = glm::dot(line_vec, mPointA->pos_vec()-pt.pos_vec()) / len2;
+	if(on_line <= 0) { // First point
+		return mPointA;
+	} else if(on_line >= 1) { // Second point 
+		return mPointB;
+	} else {
+		return at(on_line);
+	}
 }
 float line_abstract::length()
 {
-	return glm::length(mPointA->pos_vec() - mPointB->pos_vec());
+	return mPointA->dist(mPointB);
+}
+float line_abstract::length2()
+{
+	return mPointA->dist2(mPointB);
+}
+
+point_abstract_ptr line_abstract::at(float t)
+{
+	return (mPointA - t * as_vec());
+}
+
+glm::vec3 line_abstract::as_vec()
+{
+	return mPointA->pos_vec() - mPointB->pos_vec();
 }

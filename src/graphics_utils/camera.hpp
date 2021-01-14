@@ -46,6 +46,7 @@ protected:
 
 	float mZoom; 		// The overall zoom (unused and not supported for now)
 	float mFOV; 		// The field of view of the camera
+	float mNearPlane, mFarPlane;
 	glm::vec2 mViewport;		// The viewport dimensions 
 	transform mTransformation;		// The transformation of the model
 public:
@@ -143,6 +144,9 @@ public:
 		@return : The zoom of the camera
 	*/
 	float& zoom() { return mZoom; };
+
+	float& nearPlane() { return mNearPlane; }
+	float& farPlane() { return mFarPlane; }
 
 	glm::vec2& viewport() { return mViewport; };
 	/*

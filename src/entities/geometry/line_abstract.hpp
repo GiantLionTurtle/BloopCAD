@@ -45,9 +45,16 @@ public:
 	virtual XML_element* to_svg(plane_abstract* drawingPlane, glm::vec2 &min, glm::vec2 &max);
 
 	float dist_to_point(point_abstract const& pt);
+	point_abstract_ptr closest_point(point_abstract const& pt);
+	point_abstract_ptr closest_point(point_abstract const& pt, float& at);
 	float length();
+	float length2();
+
+	point_abstract_ptr at(float at);
 protected:
 	virtual void post_set_update() {}
+
+	glm::vec3 as_vec();
 };
 
 #endif

@@ -5,12 +5,15 @@
 #include <tools/tool.hpp>
 #include <entities/forward_entities.hpp>
 
+#include <functional>
 /*
 	@class simpleSelector_tool describes a tool used to select entities in a document
 */
 class simpleSelector_tool : public tool_abstract {
-private:
+protected:
 	entity_ptr mCurrentHover; // The entity under the mouse, if there is one
+
+	std::function<bool (entity_ptr)> mFilter;
 public: 
 	/*
 		@function simpleSelector_tool creates a simpleSelector_tool object 
@@ -19,6 +22,8 @@ public:
 	*/
 	simpleSelector_tool(workspace* env);
 	virtual ~simpleSelector_tool() {};
+
+	virtual bool should_hover(entity_ptr ent);
 
 	/*
 		@function manage_button_press manages selection when clicking at a point on screen
@@ -43,23 +48,6 @@ public:
 		@return : A pointer to the entity under a point if it exists
 	*/
 	virtual entity_ptr entity_at_point(glm::vec2 point);
-protected:
-	/*
-		@function id_at_point gives the the value of the document's frame buffer at a point on screen
-
-		@param point : The position on screen, in pixels
-
-		@return : The value of the frame buffer at the point
-	*/
-	glm::ivec3 id_at_point(glm::vec2 point);
-	/*
-		@function primitive_entity_at_point gives the entity under a certain point on screen
-
-		@param point : The position on screen, in pixels
-
-		@return : A pointer to the entity under a point if it exists
-	*/
-	entity_ptr primitive_entity_at_point(glm::vec2 point);
 };
 
 #endif

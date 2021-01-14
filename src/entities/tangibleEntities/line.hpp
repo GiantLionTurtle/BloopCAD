@@ -24,6 +24,8 @@ public:
 	line(line_abstract const& baseLine);
 	virtual ~line() {}
 
+	virtual int selection_rank() { return 7; }
+
 	virtual void update_VB();
 protected:
 	/*
@@ -40,6 +42,8 @@ protected:
 		@param frame : 	The current frame id
 	*/
 	virtual void draw_selection_impl(camera_ptr cam, int frame);
+
+	virtual float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
 
 	virtual void post_set_update();
 };

@@ -114,25 +114,27 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 	int initialFrameBuffer;
 	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &initialFrameBuffer); // TODO: check if this could change (if it does not, no need to do it every loop)
 
+	GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad
+
 	if(mPart) {
-		GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad
+		// GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad
 
 		// Draw the part
 		mPart->draw(mCurrentWorkspaceState->cam, mFrameId);
 		
-		GLCall(glEnable(GL_DEPTH_TEST));
+		// GLCall(glEnable(GL_DEPTH_TEST));
 
-		// Draw the selection shadows of the part
-		if(mUseSelectionBuffer)
-			mSelectionBuffer->bind();
-		GLCall(glViewport(0, 0, get_width(), get_height()));
-		GLCall(glClearColor(0.0, 0.0, 0.0, 1.0));
-		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-		mPart->draw_selection(mCurrentWorkspaceState->cam, mFrameId);
+		// // Draw the selection shadows of the part
+		// if(mUseSelectionBuffer)
+		// 	mSelectionBuffer->bind();
+		// GLCall(glViewport(0, 0, get_width(), get_height()));
+		// GLCall(glClearColor(0.0, 0.0, 0.0, 1.0));
+		// GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+		// mPart->draw_selection(mCurrentWorkspaceState->cam, mFrameId);
 		
-		// Clean up
-		if(mUseSelectionBuffer)
-			mSelectionBuffer->unbind(initialFrameBuffer);
+		// // Clean up
+		// if(mUseSelectionBuffer)
+		// 	mSelectionBuffer->unbind(initialFrameBuffer);
 	}
 	mFrameId++;
 	return true;

@@ -97,6 +97,17 @@ void plane::draw_selection_impl(camera_ptr cam, int frame)
 	mSelectionShader->unbind();
 }
 
+float plane::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
+{
+	glm::vec3 pos = cam->pos();
+	glm::vec3 inter = line_intersection(pos, cam->cast_ray(cursor_pos));
+	glm::vec2 plane_pos = point_3d_to_2d(inter);
+	if(std::abs(plane_pos.x) <= glm::length(mV) && std::abs(plane_pos.y) <= glm::length(mW)) {
+		return glm::length(pos-inter);
+	}
+	return -1.0f;
+}
+
 void plane::init_buffers()
 {
 	// Set all vertices in anti-clockwise fashion

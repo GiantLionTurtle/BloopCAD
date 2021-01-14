@@ -3,6 +3,7 @@
 
 #include <graphics_utils/GLCall.hpp>
 #include <graphics_utils/shadersPool.hpp>
+#include <utils/mathUtils.hpp>
 
 line::line(line_abstract const& baseLine):
 	line_abstract(baseLine)
@@ -98,6 +99,26 @@ void line::draw_selection_impl(camera_ptr cam, int frame)
 
 	mVA->unbind();
 	mShader->unbind();
+}
+
+float line::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
+{
+	glm::vec4 screenPos_a = cam->mvp() * glm::vec4(mPointA->pos_vec(), 1.0f);
+	glm::vec3 screenPos_a_2d(	map(screenPos_a.x / screenPos_a.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
+								map(screenPos_a.y / screenPos_a.w, -1.0f, 1.0f, cam->viewport().y, 0.0f),
+								0.0f);
+
+	glm::vec4 screenPos_b = cam->mvp() * glm::vec4(mPointB->pos_vec(), 1.0f);
+	glm::vec3 screenPos_b_2d(	map(screenPos_b.x / screenPos_b.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
+								map(screenPos_b.y / screenPos_b.w, -1.0f, 1.0f, cam->viewport().y, 0.0f), 
+								0.0f);
+
+	line_abstract screen_line(screenPos_a_2d, screenPos_b_2d);
+	float line_point = 0;
+	if(screen_line.closest_point(glm::vec3(cursor_pos, 0.0f), line_point)->dist2(glm::vec3(cursor_pos, 0.0f)) < 25) {
+		return glm::length(cam->pos() - plane_abstract(at(line_point)->pos_vec(), cam->right(), cam->up()).line_intersection(cam->pos(), cam->cast_ray(cursor_pos)));		
+	}
+	return -1.0f;
 }
 
 void line::post_set_update()

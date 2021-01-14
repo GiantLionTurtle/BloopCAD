@@ -1,8 +1,10 @@
 
 #include "point.hpp"
 
+#include <entities/geometry/plane_abstract.hpp>
 #include <graphics_utils/GLCall.hpp>
 #include <graphics_utils/shadersPool.hpp>
+#include <utils/mathUtils.hpp>
 
 point::point(point_abstract const& basePoint):
 	point_abstract(basePoint)
@@ -76,6 +78,18 @@ void point::draw_selection_impl(camera_ptr cam, int frame)
 
 	mVA->unbind();
 	mShader->unbind();
+}
+
+float point::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
+{
+	glm::vec4 screenPos = cam->mvp() * glm::vec4(pos_vec(), 1.0f);
+	glm::vec2 screenPos_2d(	map(screenPos.x / screenPos.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
+							map(screenPos.y / screenPos.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
+	
+	if(glm::length(screenPos_2d - cursor_pos) < 5) {
+		return glm::length(cam->pos() - plane_abstract(pos_vec(), cam->right(), cam->up()).line_intersection(cam->pos(), cam->cast_ray(cursor_pos)));
+	}
+	return -1.0f;
 }
 
 void point::post_set_update()

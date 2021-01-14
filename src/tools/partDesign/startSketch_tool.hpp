@@ -2,18 +2,18 @@
 #ifndef STARTSKETCH_TOOL_HPP_
 #define STARTSKETCH_TOOL_HPP_
 
-#include <tools/common/planeSelector_tool.hpp>
+#include <tools/common/simpleSelector_tool.hpp>
 #include <entities/sketch.hpp>
 
 struct camState;
 
 /*
 	@class startSketch_tool describes the tool used to create a sketch in a part by selecting a plane
-	@parent : planeSelector_tool
+	@parent : simpleSelector_tool
 
-	@note : The plane it is hovering are notified via the planeSelector_tool inheritance
+	@note : The plane it is hovering are notified via the simpleSelector_tool inheritance
 */
-class startSketch_tool : public planeSelector_tool {
+class startSketch_tool : public simpleSelector_tool {
 private:
 	sketch_ptr mCurrentSketch;
 public:

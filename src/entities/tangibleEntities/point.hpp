@@ -15,10 +15,14 @@ public:
 	point(point_abstract_ptr basePoint);
 	virtual ~point() {}
 
+	virtual int selection_rank() { return 5; }
+
 	virtual void update_VB();
 protected:
 	void draw_impl(camera_ptr cam, int frame);
 	void draw_selection_impl(camera_ptr cam, int frame);
+
+	virtual float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
 
 	virtual void post_set_update();
 

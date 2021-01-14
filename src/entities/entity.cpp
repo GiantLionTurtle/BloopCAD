@@ -67,6 +67,15 @@ void entity::update()
 	update_impl();
 }
 
+entity_ptr entity::hovered_child(camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (entity_ptr)> filter_func)
+{
+	entity_ptr candidate_child(nullptr);
+	float min_dist = std::numeric_limits<float>::max();
+	hovered_child_internal(cam, cursor_pos, candidate_child, min_dist, filter_func);
+
+	return candidate_child;
+}
+
 void entity::set_selected(bool select) 
 { 	
 	if(exists()) {
@@ -262,6 +271,25 @@ void entity::update_id(bool recursive /*= false*/)
 		for_each([this](entity_ptr child) {	
 			child->update_id(true);
 		});
+	}
+}
+
+void entity::hovered_child_internal(camera_ptr cam, glm::vec2 cursor_pos, entity_ptr& candidate, float& min_dist, std::function<bool (entity_ptr)> filter_func)
+{
+	for(int i = 0; i < mChildren.size(); ++i) {
+		if(!std::get<2>(mChildren[i]))
+			continue;
+		std::get<1>(mChildren[i])->hovered_child_internal(cam, cursor_pos, candidate, min_dist, filter_func);
+
+		if(std::get<1>(mChildren[i])->visible() && filter_func(std::get<1>(mChildren[i]))) {
+			float dist = std::get<1>(mChildren[i])->selection_depth(cam, cursor_pos);
+			if(dist > 0.0f) {
+				if((dist < (min_dist)) || (dist == min_dist && (!candidate || candidate->selection_rank() > std::get<1>(mChildren[i])->selection_rank()))) {
+					candidate = std::get<1>(mChildren[i]);
+					min_dist = dist;
+				}
+			}
+		} 
 	}
 }
 

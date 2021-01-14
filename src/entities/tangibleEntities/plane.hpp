@@ -33,6 +33,8 @@ public:
 	plane(plane_abstract const& plane_);
 	virtual ~plane() {}
 
+	virtual int selection_rank() { return 10; }
+
 	virtual void update_VB();
 protected:
 	/*
@@ -49,6 +51,8 @@ protected:
 		@param frame : 	The current frame id
 	*/
 	virtual void draw_selection_impl(camera_ptr cam, int frame);
+
+	virtual float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
 
 	void init_buffers();
 };

@@ -8,7 +8,7 @@
 coincidence_tool::coincidence_tool(workspace* env):
 	simpleSelector_tool(env)
 {
-
+    mFilter = [](entity_ptr ent) -> bool { return std::dynamic_pointer_cast<point_abstract>(ent).operator bool(); };
 }
 
 void coincidence_tool::init()
@@ -23,9 +23,7 @@ bool coincidence_tool::manage_button_press(GdkEventButton* event)
 		return true;
 	}
 	
-	point_abstract_ptr pt = std::dynamic_pointer_cast<point_abstract>
-	(primitive_entity_at_point(glm::vec2(event->x, mEnv->state()->doc->get_height() - event->y)));
-
+	point_abstract_ptr pt = std::dynamic_pointer_cast<point_abstract>(entity_at_point(glm::vec2(event->x, event->y)));
 	if(pt) {
 		if(!mStarted) {
 			mPointA = pt;

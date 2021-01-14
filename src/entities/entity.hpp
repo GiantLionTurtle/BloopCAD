@@ -41,6 +41,8 @@ protected:
 
 	bool mRequire_redraw, mRequire_selfRedraw;
 
+	float mHoverDistance;
+
 	std::string mName;
 
 	std::vector<std::tuple<glm::ivec3, entity_ptr, bool>> mChildren; // The entities container
@@ -77,6 +79,9 @@ public:
 	void draw_selection(camera_ptr cam, int frame);
 
 	void update();
+
+	entity_ptr hovered_child(camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (entity_ptr)> filter_func = 
+	std::function<bool (entity_ptr)>([](entity_ptr ent) { return true; }));
 
 	/*
 		@function set_selected sets the selected
@@ -169,6 +174,8 @@ public:
 	void set_selectionID(glm::ivec3 id) { mSelectionID = id; mSelectionColor = mSelectionID; mSelectionColor /= 255.0f; }
 	void update_id(bool recursive = false);
 
+	virtual int selection_rank() { return -1; }
+
 	std::string name() const { return mName; }
 	void set_name(std::string const& name_) { mName = name_; }
 
@@ -256,6 +263,10 @@ protected:
 	virtual void draw_selection_impl(camera_ptr cam, int frame) {};
 
 	virtual void update_impl() {};
+
+	virtual float selection_depth(camera_ptr cam, glm::vec2 cursor_pos) { return -1.0f; }
+
+	void hovered_child_internal(camera_ptr cam, glm::vec2 cursor_pos, entity_ptr& candidate, float& min_dist, std::function<bool (entity_ptr)> filter_func);
 
 	/*
 		@function compare_indices makes a comparison between two 3 ints indices

@@ -32,6 +32,8 @@ camera::camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float 
 	mOrientation(glm::vec3(0.0f, 0.0f, 0.0f)),
 	mZoom(1.0f),
 	mFOV(FOV_),
+	mNearPlane(0.1),
+	mFarPlane(100),
 	mViewport(viewport_),
 	mFront(0.0f, 0.0f, -1.0f),
 	mTransformation{glm::vec3(0.0f, 0.0f, 0.0f)/*No translation*/, 
@@ -58,7 +60,7 @@ glm::mat4 camera::view() const
 glm::mat4 camera::projection() const
 {
 	// 0.1f for the close plane and 100.0f for the far plane are arbitrary, they are subject to change
-	return glm::perspective(mFOV, aspectRatio(), 0.1f, 100.0f);
+	return glm::perspective(mFOV, aspectRatio(), mNearPlane, mFarPlane);
 }
 glm::mat4 camera::mvp() const
 {
