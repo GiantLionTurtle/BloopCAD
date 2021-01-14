@@ -74,29 +74,6 @@ void plane::draw_impl(camera_ptr cam, int frame)
 	// GLCall(glEnable(GL_DEPTH_TEST));
 }
 
-void plane::draw_selection_impl(camera_ptr cam, int frame)
-{
-	// No need to disable depth buffer, the quads have to obstruct each others
-	mSelectionShader->bind();
-
-	mSelectionShader->setUniform3f("u_Color", mSelectionColor);
-
-	if(mSelectionShader->lastUsed() != frame) {
-		mSelectionShader->setUniformMat4f("u_MVP", cam->mvp());
-		mSelectionShader->set_used(frame);
-	}
-
-	mVA->bind();
-	mIB->bind();
-
-	GLCall(glDrawElements(GL_TRIANGLES, mIB->count(), GL_UNSIGNED_INT, nullptr)); // Actual draw call
-
-	// Clean up
-	mIB->unbind();
-	mVA->unbind();
-	mSelectionShader->unbind();
-}
-
 float plane::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
 {
 	glm::vec3 pos = cam->pos();

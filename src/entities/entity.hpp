@@ -36,8 +36,6 @@ using entity_ptr = std::shared_ptr<entity>;
 class entity {
 protected:
 	int mState;	// The state of the entity, described by the above flags
-	glm::ivec3 mSelectionID;
-	glm::vec3 mSelectionColor; // The color of the entity on the selection buffer
 
 	bool mRequire_redraw, mRequire_selfRedraw;
 
@@ -45,9 +43,7 @@ protected:
 
 	std::string mName;
 
-	std::vector<std::tuple<glm::ivec3, entity_ptr, bool>> mChildren; // The entities container
-	glm::ivec3 mHighestInd; // The current highest 3 ints index
-	glm::ivec3* highestInd;
+	std::vector<entity_ptr> mChildren; // The entities container
 	entity* mParent;
 
 	entityHandle* mHandle;
@@ -60,7 +56,6 @@ public:
 		* Does exist
 	*/
 	entity();
-	entity(glm::ivec3 startInd);
 	entity(entity* parent);
 
 	/*
@@ -70,13 +65,6 @@ public:
 		@param frame : 	The current frame id
 	*/
 	void draw(camera_ptr cam, int frame, bool on_required = false);
-	/*
-		@function draw draws the entity with it's plain selection color
-
-		@param cam : 	The camera used for rendering
-		@param frame : 	The current frame id
-	*/
-	void draw_selection(camera_ptr cam, int frame);
 
 	void update();
 
@@ -170,10 +158,6 @@ public:
 	*/
 	int state() const { return mState; }
 
-	glm::ivec3 selectionID() const { return mSelectionID; }
-	void set_selectionID(glm::ivec3 id) { mSelectionID = id; mSelectionColor = mSelectionID; mSelectionColor /= 255.0f; }
-	void update_id(bool recursive = false);
-
 	virtual int selection_rank() { return -1; }
 
 	std::string name() const { return mName; }
@@ -204,14 +188,6 @@ public:
 		@return : The entity at a peculiar linear index, it it exists
 	*/
 	entity_ptr get(size_t ind) const;
-	/*
-		@function get gives access to the indexer at a 3 ints index
-
-		@param ind : The 3 ints index of the researched entity
-
-		@return : The entity at a peculiar linear index, it it exists
-	*/
-	entity_ptr get(glm::ivec3 const& ind) const;
 
 	/*
 		@function get_last returns the last element added
@@ -224,14 +200,12 @@ public:
 		@operator [] is a wrapper for the get function
 	*/
 	entity_ptr operator[](size_t ind) const;
-	entity_ptr operator[](glm::ivec3 const& ind) const;
 
 	/*
 		@function for_each applies a function to all entities stored
 
-		@param func : The function to apply. It takes a entity_ptr and optionaly a glm::ivec3 index
+		@param func : The function to apply. It takes a entity_ptr
 	*/
-	void for_each(std::function<void (entity_ptr, glm::ivec3)> func);
 	void for_each(std::function<void (entity_ptr)> func);
 
 	/*
@@ -253,40 +227,12 @@ protected:
 		@param frame : 	The current frame id
 	*/
 	virtual void draw_impl(camera_ptr cam, int frame) {};
-	/*
-		@function draw_selection_impl is an overiddable function for children classes to draw themselves 
-		in plain color on the selection buffer
-
-		@param cam : 	The camera used for rendering
-		@param frame : 	The current frame id
-	*/	
-	virtual void draw_selection_impl(camera_ptr cam, int frame) {};
 
 	virtual void update_impl() {};
 
 	virtual float selection_depth(camera_ptr cam, glm::vec2 cursor_pos) { return -1.0f; }
 
 	void hovered_child_internal(camera_ptr cam, glm::vec2 cursor_pos, entity_ptr& candidate, float& min_dist, std::function<bool (entity_ptr)> filter_func);
-
-	/*
-		@function compare_indices makes a comparison between two 3 ints indices
-
-		@param a : The left side operand of the comparison
-		@param b : The right side operand of the comparison
-
-		@return : -1 if a > b, 0 if a == b, 1 if b > a
-	*/
-	static int compare_indices(glm::ivec3 const& a, glm::ivec3 const& b);
-	/*
-		@function increment_index adds one to an index
-
-		@param ind [out] : A reference to the index to increment
-	*/
-	static void increment_index(glm::ivec3 &ind);
-
-	void add_child(entity_ptr child, bool first = false);
-
-	void scrape_children(entity_ptr elem);
 };
 
 #endif

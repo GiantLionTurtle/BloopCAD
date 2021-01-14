@@ -6,32 +6,15 @@
 
 entity::entity(): 
 	mState(BLOOP_ENTITY_EXISTS_FLAG),
-	mSelectionColor(0.0f, 0.0f, 0.0f),
-	mHighestInd(0, 0, 0),
 	mParent(nullptr),
 	mHandle(nullptr),
 	mRequire_redraw(false),
 	mRequire_selfRedraw(false)
 {
-	highestInd = new glm::ivec3(mHighestInd);
-}
-entity::entity(glm::ivec3 startInd): 
-	mState(BLOOP_ENTITY_EXISTS_FLAG),
-	mSelectionColor(0.0f, 0.0f, 0.0f),
-	mHighestInd(startInd),
-	mParent(nullptr),
-	mHandle(nullptr),
-	mRequire_redraw(false),
-	mRequire_selfRedraw(false)
-{
-	highestInd = new glm::ivec3(mHighestInd);
-	set_selectionID(startInd);
+
 }
 entity::entity(entity* parent): 
 	mState(BLOOP_ENTITY_EXISTS_FLAG),
-	mSelectionColor(0.0f, 0.0f, 0.0f),
-	mHighestInd(parent->mHighestInd),
-	highestInd(parent->highestInd),
 	mParent(parent),
 	mHandle(nullptr),
 	mRequire_redraw(false),
@@ -51,13 +34,6 @@ void entity::draw(camera_ptr cam, int frame, bool on_required /*= false*/)
 			for_each([cam, frame, on_require_child](entity_ptr ent) { ent->draw(cam, frame, on_require_child); }); // Make the call for all components
 		mRequire_redraw = false;
 		mRequire_selfRedraw = false;
-	}
-}
-void entity::draw_selection(camera_ptr cam, int frame)
-{
-	if(exists() && (visible() || selected())) {// Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
-		draw_selection_impl(cam, frame);
-		for_each([cam, frame](entity_ptr ent) { ent->draw_selection(cam, frame); }); // Make the call for all components
 	}
 }
 
@@ -180,71 +156,31 @@ bool entity::exists() const
 void entity::add(entity_ptr elem)
 {
 	if(elem) {
-		// std::cout<<"add_elem: ["<<elem->name()<<" in "<<mName<<"] ind: "<<glm::to_string(elem->selectionID())<<"\n";
 		set_require_redraw();
 		elem->mParent = this;
-		elem->update_id(true);
-		add_child(elem, true);
+		mChildren.push_back(elem);
 	}
 }
 
 entity_ptr entity::get(size_t ind) const
 {
-	return (ind < size() ? std::get<1>(mChildren[ind]) : entity_ptr(nullptr)); // Basic range check
-}
-entity_ptr entity::get(glm::ivec3 const& ind) const
-{
-	if(ind != glm::ivec3(0, 0, 0)) {
-		// Naive binary search within our list
-		int upperBound = mChildren.size(), lowerBound = 0;
-		int prev_middle_ind = -1;
-		while(upperBound > lowerBound) {
-			int middle_ind = (upperBound - lowerBound) / 2 + lowerBound; // The int rounding should give consistent results
-			if(middle_ind == prev_middle_ind) {
-				break;
-			}
-			prev_middle_ind = middle_ind;
-			int direction = compare_indices(ind, std::get<0>(mChildren[middle_ind]));
-			if(direction == 1) {
-				lowerBound = middle_ind;
-			} else if(direction == -1) {
-				upperBound = middle_ind;
-			} else {
-				return std::get<1>(mChildren[middle_ind]);
-			}
-		}
-		LOG_WARNING("Could not find children entity at index: " + glm::to_string(ind));
-	}
-	return entity_ptr(nullptr); // No entity was found
+	return (ind < size() ? mChildren[ind] : entity_ptr(nullptr)); // Basic range check
 }
 entity_ptr entity::get_last() const
 {
 	if(mChildren.empty())
 		return nullptr;
-	return std::get<1>(mChildren.back());
+	return mChildren.back();
 }
 
 entity_ptr entity::operator[](size_t ind) const
 {
 	return get(ind);
 }
-entity_ptr entity::operator[](glm::ivec3 const& ind) const
-{
-	return get(ind);
-}
-
-void entity::for_each(std::function<void (entity_ptr, glm::ivec3)> func)
-{
-	for(size_t i = 0; i < mChildren.size(); ++i) {
-		if(std::get<2>(mChildren[i]) && std::get<1>(mChildren[i])) // TODO: should nullptr be allowed to be given to function?
-			func(std::get<1>(mChildren[i]), std::get<0>(mChildren[i]));
-	}
-}
 void entity::for_each(std::function<void (entity_ptr)> func)
 {
 	for(size_t i = 0; i < mChildren.size(); ++i) {
-		if(std::get<2>(mChildren[i]) && std::get<1>(mChildren[i])) // TODO: should nullptr be allowed to be given to function?
-			func(std::get<1>(mChildren[i]));
+		func(mChildren[i]);
 	}
 }
 
@@ -260,75 +196,19 @@ void entity::set_require_redraw(bool self /*= true*/)
 	}
 }
 
-void entity::update_id(bool recursive /*= false*/)
-{
-	if(mParent) 
-		highestInd = mParent->highestInd;
-	increment_index(*highestInd);
-	set_selectionID(*highestInd);
-
-	if(recursive) {
-		for_each([this](entity_ptr child) {	
-			child->update_id(true);
-		});
-	}
-}
-
 void entity::hovered_child_internal(camera_ptr cam, glm::vec2 cursor_pos, entity_ptr& candidate, float& min_dist, std::function<bool (entity_ptr)> filter_func)
 {
 	for(int i = 0; i < mChildren.size(); ++i) {
-		if(!std::get<2>(mChildren[i]))
-			continue;
-		std::get<1>(mChildren[i])->hovered_child_internal(cam, cursor_pos, candidate, min_dist, filter_func);
+		mChildren[i]->hovered_child_internal(cam, cursor_pos, candidate, min_dist, filter_func);
 
-		if(std::get<1>(mChildren[i])->visible() && filter_func(std::get<1>(mChildren[i]))) {
-			float dist = std::get<1>(mChildren[i])->selection_depth(cam, cursor_pos);
+		if(mChildren[i]->visible() && filter_func(mChildren[i])) {
+			float dist = mChildren[i]->selection_depth(cam, cursor_pos);
 			if(dist > 0.0f) {
-				if((dist < (min_dist)) || (dist == min_dist && (!candidate || candidate->selection_rank() > std::get<1>(mChildren[i])->selection_rank()))) {
-					candidate = std::get<1>(mChildren[i]);
+				if((dist < (min_dist)) || (dist == min_dist && (!candidate || candidate->selection_rank() > mChildren[i]->selection_rank()))) {
+					candidate = mChildren[i];
 					min_dist = dist;
 				}
 			}
 		} 
-	}
-}
-
-int entity::compare_indices(glm::ivec3 const& a, glm::ivec3 const& b)
-{
-	for(int i = 0; i < 3; ++i) { // The first elements of the indices are the more significant
-		if(*(&a.x+i) > *(&b.x+i)) { // Access to the members with i, as ivec3 are just a struct with 3 ints
-			return 1;
-		} else if(*(&a.x+i) < *(&b.x+i)) {
-			return -1;
-		}
-	}
-	return 0;
-}
-
-void entity::increment_index(glm::ivec3 &ind)
-{
-	for(int i = 2; i >= 0; --i) {
-		(*(&ind.x+i))++;
-		if((*(&ind.x+i)) > 255) { // Roll back index after 255 (our aim is to do color thingies)
-			(*(&ind.x+i)) = 0;
-			continue;
-		}
-		break;		
-	}
-}
-
-void entity::add_child(entity_ptr elem, bool first /*=false*/)
-{
-	mChildren.push_back({elem->selectionID(), elem, first});
-	scrape_children(elem);
-	if(mParent)
-		mParent->add_child(elem);
-}
-
-void entity::scrape_children(entity_ptr elem)
-{
-	for(int i = 0; i < elem->mChildren.size(); ++i) {
-		entity_ptr child_elem = std::get<1>(elem->mChildren[i]);
-		mChildren.push_back({child_elem->selectionID(), child_elem, false});
 	}
 }

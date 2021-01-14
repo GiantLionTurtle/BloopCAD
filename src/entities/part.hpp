@@ -67,13 +67,6 @@ protected:
 		@param frame : 	The current frame id
 	*/
 	virtual void draw_impl(camera_ptr cam, int frame);
-	/*
-		@function draw_selection_impl draws the part on the selection buffer, it calls draw_selection on all it's components
-
-		@param cam : The camera used for rendering
-		@param frame : 	The current frame id
-	*/
-	virtual void draw_selection_impl(camera_ptr cam, int frame);
 };
 
 #endif

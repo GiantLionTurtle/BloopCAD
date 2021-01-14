@@ -59,27 +59,6 @@ void point::draw_impl(camera_ptr cam, int frame)
 	mShader->unbind();
 }
 
-void point::draw_selection_impl(camera_ptr cam, int frame)
-{
-	mShader->bind();
-	mShader->setUniform4f("u_Color", mSelectionColor.r, mSelectionColor.g, mSelectionColor.b, 1.0f);
-	mShader->setUniform1f("u_Diameter", 5.0f / 0.6f);
-	// mShader->setUniform1f("u_Feather", 0.0);
-
-	if(mShader->lastUsed() != frame) {
-		mShader->setUniformMat4f("u_MVP", cam->mvp());
-		mShader->setUniform2f("u_Viewport", cam->viewport());
-		mShader->set_used(frame);
-	}
-	
-	mVA->bind();
-
-	GLCall(glDrawArrays(GL_POINTS, 0, 1)); // No indexing needed, a line only has two vertices
-
-	mVA->unbind();
-	mShader->unbind();
-}
-
 float point::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
 {
 	glm::vec4 screenPos = cam->mvp() * glm::vec4(pos_vec(), 1.0f);

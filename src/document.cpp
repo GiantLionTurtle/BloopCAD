@@ -61,7 +61,7 @@ void document::do_realize()
 		// Set up opengl
 		mViewport.set_has_depth_buffer(true);
 		GLCall(glEnable(GL_MULTISAMPLE));
-		GLCall(glEnable(GL_DEPTH_TEST));
+		// GLCall(glEnable(GL_DEPTH_TEST));
 		GLCall(glDepthFunc(GL_LESS)); 
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -109,32 +109,9 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 	GLCall(glViewport(0, 0, get_width(), get_height()));
 	GLCall(glClearColor(mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, 1.0));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-	
-	// Record the rendering buffer because the selection buffer will be bound
-	int initialFrameBuffer;
-	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &initialFrameBuffer); // TODO: check if this could change (if it does not, no need to do it every loop)
-
-	GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad
-
+	GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad	
 	if(mPart) {
-		// GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad
-
-		// Draw the part
 		mPart->draw(mCurrentWorkspaceState->cam, mFrameId);
-		
-		// GLCall(glEnable(GL_DEPTH_TEST));
-
-		// // Draw the selection shadows of the part
-		// if(mUseSelectionBuffer)
-		// 	mSelectionBuffer->bind();
-		// GLCall(glViewport(0, 0, get_width(), get_height()));
-		// GLCall(glClearColor(0.0, 0.0, 0.0, 1.0));
-		// GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-		// mPart->draw_selection(mCurrentWorkspaceState->cam, mFrameId);
-		
-		// // Clean up
-		// if(mUseSelectionBuffer)
-		// 	mSelectionBuffer->unbind(initialFrameBuffer);
 	}
 	mFrameId++;
 	return true;
@@ -295,14 +272,14 @@ void document::update_actionStack()
 selection document::selection_at(unsigned int ind)
 {
 	if(ind < selection_size()) {
-		return std::get<1>(mSelection.at(ind));
+		return mSelection.at(ind);
 	}
 	return {nullptr, {glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)}}; // Empty selection
 }
-int document::selection_ind(glm::ivec3 id)
+int document::selection_ind(entity_ptr ent)
 {
 	for(int i = 0; i < mSelection.size(); ++i) { // Linear search because I don't see huge selections coming, but it might change
-		if(std::get<0>(mSelection.at(i)) == id)
+		if(mSelection.at(i).ent == ent)
 			return i;
 	}
 	return -1;
@@ -310,35 +287,34 @@ int document::selection_ind(glm::ivec3 id)
 void document::clear_selection()
 {
 	for(int i = 0; i < mSelection.size(); ++i) {
-		std::get<1>(mSelection.at(i)).ent->unselect();
+		mSelection.at(i).ent->unselect();
 	}
 	mSelection.clear();
 }
-void document::toggle_select(glm::ivec3 id, camState cam, bool additive)
+void document::toggle_select(entity_ptr ent, camState cam, bool additive)
 {
-	int ind = selection_ind(id);
+	if(!ent && !additive) {
+		clear_selection();
+		return;
+	}
+
+	int ind = selection_ind(ent);
 	if(ind >= 0) { // The entity was already in the buffer
 		if(additive) { // If additive, remove only the toggled entity
-			std::get<1>(mSelection.at(ind)).ent->unselect(); // Notify the entity
+			mSelection.at(ind).ent->unselect(); // Notify the entity
 			mSelection.erase(mSelection.begin() + ind); // Delete it
 		} else { // If not additive, remove everything
 			clear_selection();
 		}
-	} else {
-		entity_ptr ent = mPart->get(id); // Find the entity
-		if(ent) {
-			if(!additive) { // If not additive, only the toggled entity should be selected ; the selection must be cleared
-				clear_selection();
-			}
-			ent->select(); // Notify the entity
-			mSelection.push_back(std::make_pair(id, selection(ent, cam))); // Add it to the buffer
-		} else if(!additive) { // Clicked on non existing entity (likely the background) ; clear the selection except if the additive mode is on
+	} else {		
+		if(!additive) { // If not additive, only the toggled entity should be selected ; the selection must be cleared
 			clear_selection();
 		}
+		ent->select(); // Notify the entity
+		mSelection.push_back(selection(ent, cam)); // Add it to the buffer
 	}
 }
-
 void document::toggle_select(entity_ptr ent, bool additive)
 {
-	toggle_select(ent->selectionID(), mCurrentCamState, additive);
+	toggle_select(ent, mCurrentCamState, additive);
 }

@@ -23,16 +23,10 @@ bool simpleSelector_tool::manage_button_press(GdkEventButton* event)
 	if(mEnv->state()) {
 		// Here it lets the document manage it's selection
 		// it hands over the shift&ctrl
-		// mEnv->state()->doc->toggle_select(
-		// 	id_at_point(glm::vec2(event->x, mEnv->state()->doc->get_height() - event->y)), 
-		// 	mEnv->state()->cam->state(),
-		// 	event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK);		
-		entity_ptr ent = entity_at_point(glm::vec2(event->x, event->y));
-		if(ent) {
-			std::cout<<"Clicked ont entity: "<<ent->name()<<"\n";
-		} else {
-			std::cout<<"No clicked entity :(\n";
-		}
+		mEnv->state()->doc->toggle_select(
+			entity_at_point(glm::vec2(event->x, event->y)), 
+			mEnv->state()->cam->state(),
+			event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK);		
 	}
 	return true;
 }

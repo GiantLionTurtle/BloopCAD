@@ -32,18 +32,14 @@ void sketch::draw_impl(camera_ptr cam, int frame)
 {
 
 }
-void sketch::draw_selection_impl(camera_ptr cam, int frame)
-{
-
-}
 
 void sketch::create_origin()
 {
 	mOrigin = folder_ptr(new folder("skorigin"));
 	add(mOrigin);
-	mOrigin->add(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane));
 	mOrigin->add(std::make_shared<line>(line_abstract(	std::make_shared<sketchPoint>(glm::vec2(0.0f,  1.0f), mBasePlane, true), 
 														std::make_shared<sketchPoint>(glm::vec2(0.0f, -1.0f), mBasePlane, true))));
 	mOrigin->add(std::make_shared<line>(line_abstract(	std::make_shared<sketchPoint>(glm::vec2( 1.0f, 0.0f), mBasePlane, true), 
 														std::make_shared<sketchPoint>(glm::vec2(-1.0f, 0.0f), mBasePlane, true))));
+	mOrigin->add(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane));
 }

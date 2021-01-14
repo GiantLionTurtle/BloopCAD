@@ -19,8 +19,7 @@ public:
 
 	virtual void update_VB();
 protected:
-	void draw_impl(camera_ptr cam, int frame);
-	void draw_selection_impl(camera_ptr cam, int frame);
+	virtual void draw_impl(camera_ptr cam, int frame);
 
 	virtual float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
 

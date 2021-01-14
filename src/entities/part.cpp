@@ -6,7 +6,7 @@
 #include "tangibleEntities/point.hpp"
 
 part::part():
-	entity(glm::ivec3(100, 0, 100))
+	entity()
 {
 	set_name("Part");
 	init_scene();
@@ -61,12 +61,10 @@ void part::set_handle(entityHandle* handle_)
 {
 	mHandle = handle_;
 	for(int i = 0; i < mChildren.size(); ++i) {
-		if(std::get<2>(mChildren[i])) {
-			if(std::get<1>(mChildren[i])->handle())
-				delete std::get<1>(mChildren[i])->handle();
+		if(mChildren[i]->handle())
+			delete mChildren[i]->handle();
 		
-			std::get<1>(mChildren[i])->set_handle(new entityHandle(std::get<1>(mChildren[i]), mHandle->view(), mHandle));
-		}
+		mChildren[i]->set_handle(new entityHandle(mChildren[i], mHandle->view(), mHandle));	
 	}
 }
 void part::add(entity_ptr elem)
@@ -92,11 +90,6 @@ sketch_ptr part::get_sketch(int ind)
 }
 
 void part::draw_impl(camera_ptr cam, int frame)
-{
-
-}
-
-void part::draw_selection_impl(camera_ptr cam, int frame)
 {
 
 }

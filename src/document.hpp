@@ -49,7 +49,7 @@ using document_ptr = std::shared_ptr<document>;
 class document : public Gtk::Box {
 private:
 	std::shared_ptr<part> mPart; // Curently, documents only work on a single part
-	std::vector<std::pair<glm::ivec3, selection>> mSelection; // This will be kept linear for as long as there is no need for large selections
+	std::vector<selection> mSelection; // This will be kept linear for as long as there is no need for large selections
 
 	std::map<std::string, workspaceState_ptr> mWorkspaceStates; // All the workspace states for the various workspaces
 	workspaceState_ptr mCurrentWorkspaceState; // The workspace state for the current workspace working on the document
@@ -196,26 +196,19 @@ public:
 	*/
 	selection selection_at(unsigned int ind);
 	/*
-		@function selection_ind gives the linear index of the selection buffer at a ivec3 index
+		@function selection_ind gives the linear index of the selection buffer for a peculiar entity
 
-		@param id : The ivec3 id of the wanted selection
+		@param id : The entity that is looked for
 
 		@return : The linear index of the required selection or -1
 	*/
-	int selection_ind(glm::ivec3 id);
+	int selection_ind(entity_ptr ent);
 	/*
 		@function clear_selection clears the selection buffer
 	*/
 	void clear_selection();
-	/*
-		@function toggle_select manages the selection buffer with a toggle of an entity@
 
-		@param id : 		The selection id of the entity to toggle
-		@param cam : 		The state of the camera at the moment of calling
-		@param additive : 	If the toggle behavior is additive (e.g. ctrl + select)
-	*/
-	void toggle_select(glm::ivec3 id, camState cam, bool additive);
-
+	void toggle_select(entity_ptr ent, camState cam, bool additive);
 	void toggle_select(entity_ptr ent, bool additive);
 };
 

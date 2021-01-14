@@ -13,9 +13,9 @@ void folder::set_handle(entityHandle* handle_)
 {
 	mHandle = handle_;
 	for(int i = 0; i < mChildren.size(); ++i) {
-		if(std::get<1>(mChildren[i])->handle())
-			delete std::get<1>(mChildren[i])->handle();
-		std::get<1>(mChildren[i])->set_handle(new entityHandle(std::get<1>(mChildren[i]), mHandle->view(), mHandle));
+		if(mChildren[i]->handle())
+			delete mChildren[i]->handle();
+		mChildren[i]->set_handle(new entityHandle(mChildren[i], mHandle->view(), mHandle));
 	}
 }
 void folder::add(entity_ptr ent)

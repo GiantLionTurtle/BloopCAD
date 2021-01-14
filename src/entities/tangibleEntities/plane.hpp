@@ -44,14 +44,7 @@ protected:
 		@param frame : 	The current frame id
 	*/
 	virtual void draw_impl(camera_ptr cam, int frame);
-	/*
-		@function draw_selection_impl draws the plane in plain color on the selection buffer
-
-		@param cam : The camera used for rendering
-		@param frame : 	The current frame id
-	*/
-	virtual void draw_selection_impl(camera_ptr cam, int frame);
-
+	
 	virtual float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
 
 	void init_buffers();
