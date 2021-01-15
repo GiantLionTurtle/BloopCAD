@@ -29,7 +29,8 @@ public:
 	void add_variable(variable_ptr var);
 	void add_variables(std::vector<variable_ptr> vars);
 
-	size_t size() const { return mVariables.size(); };
+	size_t vars_size() const { return mVariables.size(); }
+	size_t equs_size() const { return mEquations.size(); }
 
 	int maxIt() const { return mMaxIt; }
 	void set_maxIt(int maxIt_) { mMaxIt = maxIt_; }
@@ -37,6 +38,9 @@ public:
 	bool satisfied();
 
 	int solve(bool verbose = false);
+
+	std::vector<double> state();
+	void set(std::vector<double> st);
 private:
 	int solve_NewtonRaphson(bool verbose = false);
 	int solve_LevenbergMarquardt(bool verbose = false);

@@ -25,7 +25,7 @@ int main()
 	equationsSystem sys(eqs, vars);
 
 	std::cout<<"Start: "<<glm::to_string(a->pos_vec())<<" - "<<glm::to_string(b->pos_vec())<<"\n";
-	std::cout<<"Sys size: "<<sys.size()<<"\n";
+	std::cout<<"Sys size: "<<sys.vars_size()<<",  "<<sys.equs_size()<<"\n";
 	std::cout<<"Sys solved: "<<sys.satisfied()<<"\n";
 	std::cout<<"Sys solve attempt: "<<sys.solve()<<"\n";
 	std::cout<<"Sys solved: "<<sys.satisfied()<<"\n";
@@ -47,7 +47,7 @@ int main()
 	expression_ptr eq3 = exp(-x1->expr()*x2->expr()) + 20*x3->expr() + (10.0f * expConst::pi - 3.0f) / 3.0f;
 	equationsSystem sys({ eq1, eq2, eq3 }, { x1, x2, x3 });
 	
-	std::cout<<"Sys size: "<<sys.size()<<"\n";
+	std::cout<<"Sys size: "<<sys.vars_size()<<",  "<<sys.equs_size()<<"\n";
 	std::cout<<"Sys solved: "<<sys.satisfied()<<"\n";
 	std::cout<<"Sys solve attempt: "<<sys.solve()<<"\n";
 	std::cout<<"Sys solved: "<<sys.satisfied()<<"\n";

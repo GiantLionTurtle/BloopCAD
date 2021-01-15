@@ -60,6 +60,7 @@ void coincidence_tool::point_point_coincidence()
 		return;
 	}
 
+	sk->backup_system();
 	// Try to move only one point at a time
 	mPointB->set_tmpConstant(true);
 	if(!sk->add_constraint(std::make_shared<coincidence_constraint>(mPointA, mPointB))) {
@@ -68,7 +69,7 @@ void coincidence_tool::point_point_coincidence()
 		if(!sk->update_constraints()) {
 			mPointA->set_tmpConstant(false);
 			if(!sk->update_constraints()) {
-				std::cout<<"lol.\n";
+				sk->revert_system_to_backup();
 			}
 		}
 	}

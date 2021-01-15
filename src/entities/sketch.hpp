@@ -25,6 +25,7 @@ private:
 	folder_ptr mOrigin;
 
 	equationsSystem mSystem;
+	std::vector<double> mSystemBackup;
 public:
 	/*
 		@function sketch creates a sketch
@@ -52,6 +53,9 @@ public:
 	bool add_constraint(std::shared_ptr<constraint> cons);
 
 	bool update_constraints();
+
+	void backup_system();
+	void revert_system_to_backup();
 protected:
 	/*
 		@function draw_impl draws the part on screen, it calls draw on all it's components

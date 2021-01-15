@@ -66,6 +66,25 @@ int equationsSystem::solve(bool verbose)
 	return -1;
 }
 
+std::vector<double> equationsSystem::state()
+{
+	std::vector<double> state_vec(mVariables.size());
+	for(int i = 0; i < mVariables.size(); ++i) {
+		state_vec[i] = mVariables[i]->val();
+	}
+	return state_vec;
+}
+void equationsSystem::set(std::vector<double> st)
+{
+	if(st.size() != mVariables.size()) {
+		LOG_WARNING("Sizes not matching.");
+		return;
+	}
+	for(int i = 0; i < mVariables.size(); ++i) {
+		mVariables[i]->set_val(st[i]);
+	}
+}
+
 int equationsSystem::solve_NewtonRaphson(bool verbose)
 {
 	Eigen::VectorXd y(mVariables.size());

@@ -27,6 +27,7 @@ bool sketch::add_constraint(std::shared_ptr<constraint> cons)
 	if(mSystem.solve() >= 0) {
 		update();
 		cons->on_added();
+		// backup_system();
 		return true;
 	}
 	return false;
@@ -36,9 +37,19 @@ bool sketch::update_constraints()
 {
 	if(mSystem.solve() >= 0) {
 		update();
+		// backup_system();
 		return true;
 	}
 	return false;
+}
+
+void sketch::backup_system()
+{
+	mSystemBackup = mSystem.state();
+}
+void sketch::revert_system_to_backup()
+{
+	mSystem.set(mSystemBackup);
 }
 
 void sketch::draw_impl(camera_ptr cam, int frame)
