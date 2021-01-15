@@ -30,12 +30,13 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 			plane_abstract_ptr pl = sk->basePlane();
 			camera_ptr cam = mEnv->state()->cam;
 			glm::vec2 point_pos = pl->point_3d_to_2d(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
-			glm::vec2 currPos = hover_pt->pos_vec();
 			sk->backup_system();
 			hover_pt->set_pos(point_pos);
-			hover_pt->set_tmpConstant(true);
+			hover_pt->set_tmpConstant(true); 	
 			if(!sk->update_constraints()) {
-				sk->revert_system_to_backup();
+				hover_pt->set_tmpConstant(false);
+				if(!sk->update_constraints())
+					sk->revert_system_to_backup();
 			}
 			hover_pt->set_tmpConstant(false);
 		}

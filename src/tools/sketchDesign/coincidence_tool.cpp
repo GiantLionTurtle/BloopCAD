@@ -1,6 +1,8 @@
 
 #include "coincidence_tool.hpp"
 
+#include <entities/geometry/point_abstract.hpp>
+#include <entities/geometry/line_abstract.hpp>
 #include <constraintsSolver/constraint.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
@@ -8,7 +10,10 @@
 coincidence_tool::coincidence_tool(workspace* env):
 	simpleSelector_tool(env)
 {
-    mFilter = [](entity_ptr ent) -> bool { return std::dynamic_pointer_cast<point_abstract>(ent).operator bool(); };
+    mFilter = [](entity_ptr ent) -> bool { 
+		return 	std::dynamic_pointer_cast<point_abstract>(ent).operator bool() ||
+				std::dynamic_pointer_cast<line_abstract>(ent).operator bool(); 
+	};
 }
 
 void coincidence_tool::init()

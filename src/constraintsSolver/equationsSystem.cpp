@@ -100,6 +100,7 @@ void equationsSystem::set(std::vector<double> st)
 		return;
 	}
 	for(int i = 0; i < mVariables.size(); ++i) {
+		mVariables[i]->set_tmpConstant(false);
 		mVariables[i]->set_val(st[i]);
 	}
 }

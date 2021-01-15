@@ -3,7 +3,7 @@
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <entities/part.hpp>
-#include <entities/tangibleEntities/line.hpp>
+#include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
 #include <entities/sketch.hpp>
 #include <actions/common/addEntity_action.hpp>
 #include <utils/mathUtils.hpp>
@@ -65,7 +65,7 @@ bool line_tool::manage_button_press(GdkEventButton* event)
 		mEnv->state()->doc->make_glContext_current();
 		mStartPos = sketchPoint_ptr(new sketchPoint(line_pos, pl));
 		mEndPos = sketchPoint_ptr(new sketchPoint(line_pos, pl));
-		mLine = std::make_shared<line>(line_abstract(mStartPos, mEndPos));
+		mLine = std::make_shared<sketchLine>(line_abstract(mStartPos, mEndPos));
 		started = true;
 
 		mEnv->state()->doc->push_action(std::make_shared<addEntity_action>(mLine, target)); // Doc is passed to activate glContext

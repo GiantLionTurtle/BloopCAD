@@ -23,6 +23,7 @@ public:
 	virtual void set_pos(variableVector3_ptr pos);
 	virtual void set_pos(point_abstract_ptr other);
 
+	void set_constant();
 	void set_tmpConstant(bool immovable);
 
 	float dist(point_abstract const& pt);

@@ -1,7 +1,7 @@
 
 #include "sketch.hpp"
 
-#include <entities/tangibleEntities/line.hpp>
+#include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
 #include <utils/errorLogger.hpp>
 
@@ -60,6 +60,7 @@ void sketch::backup_system()
 void sketch::revert_system_to_backup()
 {
 	mSystem.set(mSystemBackup);
+	update();
 }
 
 void sketch::draw_impl(camera_ptr cam, int frame)
@@ -71,9 +72,9 @@ void sketch::create_origin()
 {
 	mOrigin = folder_ptr(new folder("skorigin"));
 	add(mOrigin);
-	mOrigin->add(std::make_shared<line>(line_abstract(	std::make_shared<sketchPoint>(glm::vec2(0.0f,  1.0f), mBasePlane, true), 
-														std::make_shared<sketchPoint>(glm::vec2(0.0f, -1.0f), mBasePlane, true))));
-	mOrigin->add(std::make_shared<line>(line_abstract(	std::make_shared<sketchPoint>(glm::vec2( 1.0f, 0.0f), mBasePlane, true), 
-														std::make_shared<sketchPoint>(glm::vec2(-1.0f, 0.0f), mBasePlane, true))));
+	mOrigin->add(std::make_shared<sketchLine>(line_abstract(std::make_shared<sketchPoint>(glm::vec2(0.0f,  1.0f), mBasePlane), 
+															std::make_shared<sketchPoint>(glm::vec2(0.0f, -1.0f), mBasePlane)), true));
+	mOrigin->add(std::make_shared<sketchLine>(line_abstract(std::make_shared<sketchPoint>(glm::vec2( 1.0f, 0.0f), mBasePlane), 
+															std::make_shared<sketchPoint>(glm::vec2(-1.0f, 0.0f), mBasePlane)), true));
 	mOrigin->add(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane, true));
 }
