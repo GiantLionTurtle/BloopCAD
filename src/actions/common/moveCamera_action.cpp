@@ -73,9 +73,7 @@ bool moveCamera_action::move_camera()
 	mRotation.update();
 	mTranslation.update();
 	mScale.update();
-	mCamera->transformation().rotation = mRotation.get();
-	mCamera->transformation().translation = mTranslation.get();
-	mCamera->transformation().scale = mScale.get();
+	mCamera->set_transformation({ mTranslation.get(), mScale.get(), mRotation.get() });
 
 	if(mRotation.steady()) {
 		mStarted = false;

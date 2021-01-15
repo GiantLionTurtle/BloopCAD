@@ -27,76 +27,39 @@ bool operator ==(camState const& st1, camState const& st2)
 }
 
 camera::camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float FOV_, glm::vec2 viewport_):
-	mPos(cartesianCoords),
-	mTarget(target),
+	mInternalPos(cartesianCoords),
+	mInternalTarget(target),
 	mOrientation(glm::vec3(0.0f, 0.0f, 0.0f)),
 	mZoom(1.0f),
 	mFOV(FOV_),
 	mNearPlane(0.1),
 	mFarPlane(100),
 	mViewport(viewport_),
-	mFront(0.0f, 0.0f, -1.0f),
+	mInternalFront(0.0f, 0.0f, -1.0f),
 	mTransformation{glm::vec3(0.0f, 0.0f, 0.0f)/*No translation*/, 
 		glm::vec3(1.0f, 1.0f, 1.0f)/*Scale of 100%*/, 
-		glm::quat(1.0f, 0.0f, 0.0f, 0.0f)/*No rotation with unit quaternion*/}
+		glm::quat(1.0f, 0.0f, 0.0f, 0.0f)/*No rotation with unit quaternion*/},
+	mRequire_update(false)
 {
 
 }
 
-glm::mat4 camera::model() const
-{
-	return model(mTransformation);
-}
-glm::mat4 camera::model_inv() const
-{
-	// The order is important! - it is the inverse of the model's order
-	return model_inv(mTransformation);
-}
-glm::mat4 camera::view() const
-{
-	// Here the "real" pos and target are used, not the computed ones
-	return glm::lookAt(mPos, mPos + mFront, glm::vec3(0.0f, 1.0f, 0.0f));
-}
-glm::mat4 camera::projection() const
-{
-	// 0.1f for the close plane and 100.0f for the far plane are arbitrary, they are subject to change
-	return glm::perspective(mFOV, aspectRatio(), mNearPlane, mFarPlane);
-}
-glm::mat4 camera::mvp() const
-{
-	return projection() * view() * model(); // The order of multiplication makes this slightly awkward but model is first
-}
-
-glm::vec3 camera::pos() const
-{
-	return model_inv() * glm::vec4(mPos, 1.0f); // Apply the inverse transform to the "real" position
-}
 glm::vec3 camera::predictedPos(transform trans) const
 {
-	return model_inv(trans) * glm::vec4(mPos, 1.0f);
-}
-glm::vec3 camera::target() const
-{
-	return model_inv() * glm::vec4(mTarget, 1.0f); // Apply the inverse transform to the "real" target
+	return model_inv(trans) * glm::vec4(mInternalPos, 1.0f);
 }
 
-glm::vec3 camera::up() const
+void camera::set_orientation(glm::vec3 orient)
 {
-	return glm::normalize(model_inv() * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));  // Apply the inverse transform to the "real" up vector
-}
-glm::vec3 camera::right() const
-{
-	return glm::normalize(model_inv() * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));  // Apply the inverse transform to the "real" right vector
-}
-glm::vec3 camera::front() const
-{
-	return glm::normalize(model_inv() * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f));  // Apply the inverse transform to the "real" front vector
+	mOrientation = orient;
+	orientation_to_rotation(mOrientation, mTransformation.rotation);
+	mRequire_update = true; 
 }
 
 void camera::set(camera_ptr other)
 {
-	mPos = other->mPos;
-	mTarget = other->mTarget;
+	mInternalPos = other->mInternalPos;
+	mInternalTarget = other->mInternalTarget;
 	mOrientation = other->mOrientation;
 
 	mZoom = other->mZoom;
@@ -106,6 +69,22 @@ void camera::set(camera_ptr other)
 	mTransformation.rotation = other->mTransformation.rotation;
 	mTransformation.translation = other->mTransformation.translation;
 	mTransformation.scale = other->mTransformation.scale;
+	mRequire_update = true;
+}
+void camera::update()
+{
+	mModel 		= model(mTransformation);
+	mView 		= glm::lookAt(mInternalPos, mInternalPos + mInternalFront, glm::vec3(0.0f, 1.0f, 0.0f));
+	mProjection =  glm::perspective(mFOV, aspectRatio(), mNearPlane, mFarPlane);
+	mMVP 		=  projection() * view() * model(); // The order of multiplication makes this slightly awkward but model is first
+	mModel_inv = model_inv(mTransformation);
+
+	mFront 	= glm::normalize(model_inv() * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f));  // Apply the inverse transform to the "real" front vector
+	mRight 	= glm::normalize(model_inv() * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));  // Apply the inverse transform to the "real" right vector
+	mUp 	=  glm::normalize(model_inv() * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));  // Apply the inverse transform to the "real" up vector
+
+	mPos 	= model_inv() * glm::vec4(mInternalPos, 1.0f); // Apply the inverse transform to the "real" position
+	mTarget = model_inv() * glm::vec4(mInternalTarget, 1.0f); // Apply the inverse transform to the "real" target
 }
 
 bool camera::flipped() const

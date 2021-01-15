@@ -65,9 +65,6 @@ void document::do_realize()
 		GLCall(glDepthFunc(GL_LESS)); 
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-		// Init selection buffer
-		mSelectionBuffer = std::shared_ptr<frameBuffer>(new frameBuffer(get_width(), get_height()));
 		
 		// Create an empty part. This surely should be in the constructor right?
 		mPart = std::shared_ptr<part>(new part());
@@ -99,9 +96,8 @@ void document::do_unrealize()
 }
 void document::do_resize(int width, int height)
 {
-	// TODO: manage selection frame buffer?
 	if(mCurrentWorkspaceState)
-		mCurrentWorkspaceState->cam->viewport() = glm::vec2((float)width, (float)height); // The dimensions might have changed, who knows?
+		mCurrentWorkspaceState->cam->set_viewport(glm::vec2((float)width, (float)height)); // The dimensions might have changed, who knows?
 }
 bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 {
@@ -122,10 +118,13 @@ gboolean document::frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock,
     document* self = (document*) data;
 
 	self->update_actionStack();
-	camState cmSt = self->mCurrentWorkspaceState->cam->state();
+	bool cam_updated = self->mCurrentWorkspaceState->cam->require_update();
+	if(cam_updated)	{
+		self->mCurrentWorkspaceState->cam->update();
+		self->mCurrentCamState = self->mCurrentWorkspaceState->cam->state();
+	}
 
-	if(self->mCurrentCamState != cmSt || self->target()->require_redraw() || self->mRequire_redraw) {
-		self->mCurrentCamState = cmSt;
+	if(cam_updated || self->target()->require_redraw()/* || self->mRequire_redraw*/) {
 		self->mRequire_redraw = false;
 		self->mViewport.queue_draw();
 	}
@@ -180,7 +179,7 @@ workspace_ptr document::set_workspace(std::string const& name)
 {
 	if(mWorkspaceStates.find(name) != mWorkspaceStates.end()) {
 		mCurrentWorkspaceState = mWorkspaceStates[name];
-		mCurrentWorkspaceState->cam->viewport() = glm::vec2((float)get_width(), (float)get_height()); // The dimensions might have changed, who knows?
+		mCurrentWorkspaceState->cam->set_viewport(glm::vec2((float)get_width(), (float)get_height())); // The dimensions might have changed, who knows?
 		mSideBar->set_workspaceState(mCurrentWorkspaceState);
 		
 		if(name == "sketchDesign") {
@@ -196,7 +195,7 @@ workspace_ptr document::set_workspace(std::string const& name)
 workspace_ptr document::set_workspace() 
 {
 	if(mCurrentWorkspaceState && mWorkspaceStates.find(mCurrentWorkspaceState->workspaceName) != mWorkspaceStates.end()) {
-		mCurrentWorkspaceState->cam->viewport() = glm::vec2((float)get_width(), (float)get_height());
+		mCurrentWorkspaceState->cam->set_viewport(glm::vec2((float)get_width(), (float)get_height()));
 		mSideBar->set_workspaceState(mCurrentWorkspaceState);
 
 		return mParentBloop->set_workspace(mCurrentWorkspaceState->workspaceName, mCurrentWorkspaceState); // Enforce workspace choice

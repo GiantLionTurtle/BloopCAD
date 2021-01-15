@@ -54,8 +54,6 @@ private:
 	std::map<std::string, workspaceState_ptr> mWorkspaceStates; // All the workspace states for the various workspaces
 	workspaceState_ptr mCurrentWorkspaceState; // The workspace state for the current workspace working on the document
 
-	std::shared_ptr<frameBuffer> mSelectionBuffer; // The buffer onto which render the selection colors
-
 	std::vector<std::shared_ptr<action>> mActionStack; // The stack of actions done in the document
 	int mActionInd, mCurrentActionInd, mActionStackSize; // Metrics for the action stack
 
@@ -147,13 +145,6 @@ public:
 		@return : The part that is worked on in the document, as a part
 	*/
 	std::shared_ptr<part> target() { return mPart; }
-
-	/*
-		@function selectionBuffer
-
-		@return : The selection buffer
-	*/
-	std::shared_ptr<frameBuffer> selectionBuffer() { return mSelectionBuffer; }
 
 	/*
 		@function push_action adds an action to the action stack and executes it

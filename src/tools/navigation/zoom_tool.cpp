@@ -70,7 +70,7 @@ void zoom_tool::zoom(glm::vec2 origin, float amount)
 	glm::vec4 model_pos1 = cam->model() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	plane_abstract pl1(glm::vec3(model_pos1), cam->right(), cam->up());
 	glm::vec3 inter1 = pl1.line_intersection(cam->pos(), ray1);
-	cam->transformation().scale *= scale;
+	cam->set_scale(cam->transformation().scale * scale);
 
 	glm::vec3 ray2 = cam->cast_ray(origin, false);
 
@@ -78,5 +78,5 @@ void zoom_tool::zoom(glm::vec2 origin, float amount)
 	plane_abstract pl2(glm::vec3(model_pos2), cam->right(), cam->up());
 	glm::vec3 inter2 = pl2.line_intersection(cam->pos(), ray2);
 	
-	cam->transformation().translation -= (inter1-inter2) * cam->transformation().scale.x;
+	cam->set_translation(cam->transformation().translation - (inter1-inter2) * cam->transformation().scale.x);
 }
