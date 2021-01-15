@@ -26,6 +26,10 @@ public:
 
 	virtual int selection_rank() { return 7; }
 
+	virtual void move(glm::vec3 delta);
+	virtual void set_constant();
+	virtual void set_tmpConstant(bool const_);
+
 	virtual void update_VB();
 protected:
 	/*

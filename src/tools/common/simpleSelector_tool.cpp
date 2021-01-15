@@ -20,7 +20,7 @@ bool simpleSelector_tool::should_hover(entity_ptr ent)
 
 bool simpleSelector_tool::manage_button_press(GdkEventButton* event)
 {
-	if(mEnv->state()) {
+	if(mEnv->state() && event->button == 1) {
 		// Here it lets the document manage it's selection
 		// it hands over the shift&ctrl
 		mEnv->state()->doc->toggle_select(

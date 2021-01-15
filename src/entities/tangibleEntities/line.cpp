@@ -42,6 +42,22 @@ line::line(line_abstract const& baseLine):
 	add(pointB_as_drawable);
 }
 
+void line::move(glm::vec3 delta)
+{
+	mPointA->set_pos(mPointA->pos_vec() + delta);
+	mPointB->set_pos(mPointB->pos_vec() + delta);
+}
+void line::set_constant()
+{
+	mPointA->set_constant();
+	mPointB->set_constant();
+}
+void line::set_tmpConstant(bool const_)
+{
+	mPointA->set_tmpConstant(const_);
+	mPointB->set_tmpConstant(const_);
+}
+
 void line::update_VB()
 {
 	mRequire_VBUpdate = false;

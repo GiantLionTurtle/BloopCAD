@@ -17,6 +17,10 @@ public:
 
 	virtual int selection_rank() { return 5; }
 
+	virtual void move(glm::vec3 delta);
+	virtual void set_constant();
+	virtual void set_tmpConstant(bool const_);
+
 	virtual void update_VB();
 protected:
 	virtual void draw_impl(camera_ptr cam, int frame);

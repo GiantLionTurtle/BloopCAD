@@ -24,7 +24,7 @@ public:
 	virtual void set_pos(point_abstract_ptr other);
 
 	void set_constant();
-	void set_tmpConstant(bool immovable);
+	void set_tmpConstant(bool const_);
 
 	float dist(point_abstract const& pt);
 	float dist(point_abstract_ptr pt) { return dist(*pt.get()); }

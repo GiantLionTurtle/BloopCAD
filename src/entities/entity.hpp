@@ -227,6 +227,10 @@ public:
 
 	virtual void notify_childUpdate() {}
 
+	virtual void move(glm::vec3 delta) {}
+	virtual void set_constant() {}
+	virtual void set_tmpConstant(bool const_) {}
+
 	virtual subEquationsSystem coincidence() { return {}; }
 protected:
 	/*

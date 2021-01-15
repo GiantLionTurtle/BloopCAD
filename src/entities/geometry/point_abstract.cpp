@@ -37,9 +37,9 @@ void point_abstract::set_constant()
 {
 	mPos->set_constant();
 }
-void point_abstract::set_tmpConstant(bool immovable)
+void point_abstract::set_tmpConstant(bool const_)
 {
-	mPos->set_tmpConstant(immovable);
+	mPos->set_tmpConstant(const_);
 }
 
 float point_abstract::dist(point_abstract const& pt)

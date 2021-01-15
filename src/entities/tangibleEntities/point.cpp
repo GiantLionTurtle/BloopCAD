@@ -17,6 +17,19 @@ point::point(point_abstract_ptr basePoint):
 	create();
 }
 
+void point::move(glm::vec3 delta) 
+{
+	mPos->set(pos_vec() + delta);
+}
+void point::set_constant()
+{
+	point_abstract::set_constant();
+}
+void point::set_tmpConstant(bool const_)
+{
+	point_abstract::set_tmpConstant(const_);
+}
+
 void point::update_VB()
 {
 	mVB->bind();
