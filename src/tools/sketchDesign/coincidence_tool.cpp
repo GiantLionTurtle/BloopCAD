@@ -20,11 +20,13 @@ void coincidence_tool::init()
 		return;
 	}
 	// Check if there is only one item in the document's selection stack and if it is a plane, use it
-	if(mEnv->state()->doc->selection_size() > 0 && (mPointA = std::dynamic_pointer_cast<point_abstract>(mEnv->state()->doc->selection_at(0).ent))) {
+	if(mEnv->state()->doc->selection_size() > 0 && mFilter(mEnv->state()->doc->selection_at(0).ent)) {
+		mSysA = mEnv->state()->doc->selection_at(0).ent->coincidence();
 		mStarted = true;
-		if(mEnv->state()->doc->selection_size() > 1 && (mPointB = std::dynamic_pointer_cast<point_abstract>(mEnv->state()->doc->selection_at(1).ent))) {
+		if(mEnv->state()->doc->selection_size() > 1 && mFilter(mEnv->state()->doc->selection_at(0).ent)) {
+			mSysB = mEnv->state()->doc->selection_at(1).ent->coincidence();
 			mStarted = false;
-			point_point_coincidence();
+			add_constraint();
 		}
 		
 	}
@@ -37,22 +39,23 @@ bool coincidence_tool::manage_button_press(GdkEventButton* event)
 		return true;
 	}
 	
-	point_abstract_ptr pt = std::dynamic_pointer_cast<point_abstract>(entity_at_point(glm::vec2(event->x, event->y)));
-	if(pt) {
-		if(!mStarted) {
-			mPointA = pt;
-			mStarted = true;
-		} else {
-			mPointB = pt;
-			mStarted = false;
+	entity_ptr ent = entity_at_point(glm::vec2(event->x, event->y));
+	if(!ent) {
+		return true;
+	}
+	if(!mStarted) {
+		mSysA = ent->coincidence();
+		mStarted = true;
+	} else {
+		mSysB = ent->coincidence();
+		mStarted = false;
 
-			point_point_coincidence();
-		}
+		add_constraint();
 	}
 	return true;
 }
 
-void coincidence_tool::point_point_coincidence()
+void coincidence_tool::add_constraint()
 {
 	sketch_ptr sk = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);
 	if(!sk) {
@@ -62,17 +65,17 @@ void coincidence_tool::point_point_coincidence()
 
 	sk->backup_system();
 	// Try to move only one point at a time
-	mPointB->set_tmpConstant(true);
-	if(!sk->add_constraint(std::make_shared<coincidence_constraint>(mPointA, mPointB))) {
-		mPointB->set_tmpConstant(false);
-		mPointA->set_tmpConstant(true);
+	mSysA.set_tmpConstant(true);
+	if(!sk->add_constraint(mSysA - mSysB)) {
+		mSysA.set_tmpConstant(false);
+		mSysA.set_tmpConstant(true);
 		if(!sk->update_constraints()) {
-			mPointA->set_tmpConstant(false);
+			mSysA.set_tmpConstant(false);
 			if(!sk->update_constraints()) {
 				sk->revert_system_to_backup();
 			}
 		}
 	}
-	mPointB->set_tmpConstant(false);
-	mPointA->set_tmpConstant(false);
+	mSysA.set_tmpConstant(false);
+	mSysA.set_tmpConstant(false);
 }

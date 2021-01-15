@@ -8,6 +8,7 @@
 #include <graphics_utils/indexBuffer.hpp>
 #include <graphics_utils/shader.hpp>
 #include <graphics_utils/camera.hpp>
+#include <constraintsSolver/equationsSystem.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -34,6 +35,8 @@ using entity_ptr = std::shared_ptr<entity>;
 	@class entity describes a basic entity that appears on screen
 */
 class entity {
+public: 
+	enum draw_type { ALL, TRANSLUCID, ACTIVE, INACTIVE };
 protected:
 	int mState;	// The state of the entity, described by the above flags
 
@@ -64,7 +67,7 @@ public:
 		@param cam : 	The camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	void draw(camera_ptr cam, int frame, bool on_required = false);
+	void draw(camera_ptr cam, int frame, draw_type type = draw_type::ALL, bool on_required = false);
 
 	void update();
 
@@ -151,12 +154,16 @@ public:
 	*/
 	operator bool() const { return exists(); }
 
+	bool active() const;
+
 	/*
 		@function state
 
 		@return : The entity's state
 	*/
 	int state() const { return mState; }
+
+	virtual bool translucid() { return false; }
 
 	virtual int selection_rank() { return -1; }
 
@@ -219,6 +226,8 @@ public:
 	bool require_redraw() const { return mRequire_redraw; }
 
 	virtual void notify_childUpdate() {}
+
+	virtual subEquationsSystem coincidence() { return {}; }
 protected:
 	/*
 		@function draw_impl is an overiddable function for children classes to draw themselves
@@ -229,6 +238,8 @@ protected:
 	virtual void draw_impl(camera_ptr cam, int frame) {};
 
 	virtual void update_impl() {};
+
+	bool should_draw_self(draw_type type, bool on_required);
 
 	virtual float selection_depth(camera_ptr cam, glm::vec2 cursor_pos) { return -1.0f; }
 

@@ -3,6 +3,19 @@
 
 #include <utils/errorLogger.hpp>
 
+void subEquationsSystem::set_constant()
+{
+	for(int i = 0; i < variables.size(); ++i) {
+		variables[i]->set_constant();
+	}
+}
+void subEquationsSystem::set_tmpConstant(bool const_)
+{
+	for(int i = 0; i < variables.size(); ++i) {
+		variables[i]->set_tmpConstant(const_);
+	}
+}
+
 equationsSystem::equationsSystem():
 	mMaxIt(50)
 {
@@ -37,6 +50,12 @@ void equationsSystem::add_variables(std::vector<variable_ptr> vars)
 	mComputedF_upToDate = false;
 	mVariables.insert(mVariables.end(), vars.begin(), vars.end());
 }
+
+// void equationsSystem::add_subSystem(subEquationsSystem const& subSystem)
+// {
+// 	add_variables(subSystem.variables);
+// 	add_equations(subSystem.equations);
+// }
 
 bool equationsSystem::satisfied()
 {
@@ -185,4 +204,20 @@ void equationsSystem::update_variables(Eigen::VectorXd const& y)
 	for(int i = 0; i < mVariables.size(); ++i) {
 		mVariables[i]->set_val(mVariables[i]->val() + y(i));
 	}
+}
+
+subEquationsSystem operator-(subEquationsSystem const& l, subEquationsSystem const& r)
+{
+	if(l.equations.size() != r.equations.size()) {
+		LOG_WARNING("Sub equations systems do not mesh.");
+		return {};
+	}
+	subEquationsSystem out = { std::vector<variable_ptr>(0), std::vector<expression_ptr>(l.equations.size()) };
+	for(int i = 0; i < l.equations.size(); ++i) {
+		out.equations[i] = l.equations[i] - r.equations[i];
+	}
+	out.variables.insert(out.variables.end(), l.variables.begin(), l.variables.end());
+	out.variables.insert(out.variables.end(), r.variables.begin(), r.variables.end());
+
+	return out;
 }

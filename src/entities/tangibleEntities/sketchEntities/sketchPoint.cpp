@@ -28,3 +28,8 @@ void sketchPoint::set_pos(point_abstract const& other)
 {
 	set_pos(other.pos_vec());
 }
+
+subEquationsSystem sketchPoint::coincidence()
+{
+	return { { mPos->x, mPos->y }, { mPos->x->expr(), mPos->y->expr() } };
+}

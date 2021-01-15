@@ -8,6 +8,15 @@
 
 #include <vector>
 
+struct subEquationsSystem {
+	std::vector<variable_ptr> variables;
+	std::vector<expression_ptr> equations;
+	
+	bool empty() { return variables.empty() && equations.empty(); }
+	void set_constant();
+	void set_tmpConstant(bool const_);
+};
+
 class equationsSystem {
 public:
 	static constexpr double kEpsilon = 1e-10;
@@ -28,6 +37,8 @@ public:
 
 	void add_variable(variable_ptr var);
 	void add_variables(std::vector<variable_ptr> vars);
+
+	void add_subSystem(subEquationsSystem const& subSystem);
 
 	size_t vars_size() const { return mVariables.size(); }
 	size_t equs_size() const { return mEquations.size(); }
@@ -52,5 +63,7 @@ private:
 	void compute_F();
 	void update_variables(Eigen::VectorXd const& y);
 };
+
+subEquationsSystem operator-(subEquationsSystem const& l, subEquationsSystem const& r);
 
 #endif

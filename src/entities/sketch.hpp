@@ -51,6 +51,7 @@ public:
 	entity_ptr origin() const { return mOrigin; }
 
 	bool add_constraint(std::shared_ptr<constraint> cons);
+	bool add_constraint(subEquationsSystem const& subSystem);
 
 	bool update_constraints();
 

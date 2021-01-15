@@ -3,11 +3,11 @@
 #define COINCIDENCE_TOOL_HPP_
 
 #include <tools/common/simpleSelector_tool.hpp>
-#include <entities/geometry/point_abstract.hpp>
+#include <constraintsSolver/equationsSystem.hpp>
 
 class coincidence_tool : public simpleSelector_tool {
 private:
-	point_abstract_ptr mPointA, mPointB;
+	subEquationsSystem mSysA, mSysB;
 	bool mStarted;
 public:
 	coincidence_tool(workspace* env);
@@ -18,7 +18,7 @@ public:
 
 	virtual std::string name() { return "coincidence"; }
 private:
-	void point_point_coincidence();
+	void add_constraint();
 };
 
 #endif

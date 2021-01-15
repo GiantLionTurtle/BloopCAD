@@ -26,13 +26,23 @@ bool sketch::add_constraint(std::shared_ptr<constraint> cons)
 
 	if(mSystem.solve() >= 0) {
 		update();
-		cons->on_added();
 		// backup_system();
 		return true;
 	}
 	return false;
 }
+bool sketch::add_constraint(subEquationsSystem const& subSystem)
+{
+	mSystem.add_equations(subSystem.equations);
+	mSystem.add_variables(subSystem.variables);
 
+	if(mSystem.solve() >= 0) {
+		update();
+		// backup_system();
+		return true;
+	}
+	return false;
+}
 bool sketch::update_constraints()
 {
 	if(mSystem.solve() >= 0) {

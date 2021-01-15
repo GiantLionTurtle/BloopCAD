@@ -23,15 +23,15 @@ entity::entity(entity* parent):
 
 }
 
-void entity::draw(camera_ptr cam, int frame, bool on_required /*= false*/)
+void entity::draw(camera_ptr cam, int frame, draw_type type /*= draw_type::ALL*/, bool on_required /*= false*/)
 {
 	if(exists()) { // Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
-		bool draw_self = (visible() && !on_required) || (mRequire_selfRedraw && (hovered() || selected()));
 		bool on_require_child = !visible();
+		bool draw_self = should_draw_self(type, on_required);
 		if(draw_self)
 			draw_impl(cam, frame);
 		if(visible() || mRequire_redraw || draw_self)
-			for_each([cam, frame, on_require_child](entity_ptr ent) { ent->draw(cam, frame, on_require_child); }); // Make the call for all components
+			for_each([cam, frame, type, on_require_child](entity_ptr ent) { ent->draw(cam, frame, type, on_require_child); }); // Make the call for all components
 		mRequire_redraw = false;
 		mRequire_selfRedraw = false;
 	}
@@ -153,6 +153,11 @@ bool entity::exists() const
 	return mState & BLOOP_ENTITY_EXISTS_FLAG;
 }
 
+bool entity::active() const
+{
+	return hovered() || selected();
+}
+
 void entity::add(entity_ptr elem)
 {
 	if(elem) {
@@ -194,6 +199,23 @@ void entity::set_require_redraw(bool self /*= true*/)
 	} else {
 		mRequire_redraw = true;
 	}
+}
+
+bool entity::should_draw_self(draw_type type, bool on_required)
+{
+	bool draw_self = (visible() && !on_required);
+	
+	switch(type) {
+	case draw_type::ALL:
+		return draw_self || (mRequire_selfRedraw && active());
+	case draw_type::ACTIVE:
+		return active() && !translucid();
+	case draw_type::INACTIVE:
+		return draw_self && !active() && !translucid();
+	case draw_type::TRANSLUCID:
+		return should_draw_self(draw_type::ALL, on_required) && translucid();
+	}
+	return false;
 }
 
 void entity::hovered_child_internal(camera_ptr cam, glm::vec2 cursor_pos, entity_ptr& candidate, float& min_dist, std::function<bool (entity_ptr)> filter_func)
