@@ -36,10 +36,10 @@ public:
 
 	bool satisfied();
 
-	int solve();
+	int solve(bool verbose = false);
 private:
-	int solve_NewtonRaphson();
-	int solve_LevenbergMarquardt();
+	int solve_NewtonRaphson(bool verbose = false);
+	int solve_LevenbergMarquardt(bool verbose = false);
 
 	void compute_errors();
 

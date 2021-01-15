@@ -159,8 +159,8 @@ void document::connect_signals()
 	gtk_widget_add_tick_callback((GtkWidget*) this->gobj(),	document::frame_callback, this, NULL); // Couldn't find a c++-y way to do it
 
 	// Events happening on the viewport but handled by bloop, because it has direct access to the workspaces
-	mViewport.signal_key_press_event().connect(sigc::mem_fun(*this, &document::manage_key_press));
-	mViewport.signal_key_release_event().connect(sigc::mem_fun(*this, &document::manage_key_release));
+	mViewport.signal_key_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_key_press));
+	mViewport.signal_key_release_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_key_release));
 	mViewport.signal_scroll_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_scroll));
 	mViewport.signal_motion_notify_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_move));
 	mViewport.signal_button_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_button_press));
@@ -207,23 +207,6 @@ bool document::has_workspace(std::string const& name)
 	if(mWorkspaceStates.find(name) != mWorkspaceStates.end())
 		return true;
 	return false;
-}
-
-bool document::manage_key_press(GdkEventKey* event)
-{
-	if(event->keyval == GDK_KEY_o) {
-		mUseSelectionBuffer = false;
-		mRequire_redraw = true;
-	}
-	return mParentBloop->manage_key_press(event);
-}
-bool document::manage_key_release(GdkEventKey* event)
-{
-	if(event->keyval == GDK_KEY_o) {
-		mUseSelectionBuffer = true;
-		mRequire_redraw = true;
-	}
-	return mParentBloop->manage_key_release(event);
 }
 
 void document::push_action(std::shared_ptr<action> to_push)

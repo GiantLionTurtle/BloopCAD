@@ -44,7 +44,18 @@ variable::variable(std::string name_, double val_, bool fixed_):
 
 void variable::set_val(double val_) 
 {
-	mVal = val_;
+	if(mFixed < fixedType::TMP_CONST)
+		mVal = val_;
+}
+
+void variable::set_tmpConstant(bool const_) 
+{
+	if(mFixed == fixedType::CONST)
+		return;
+	if(const_) 
+		mFixed = fixedType::TMP_CONST; 
+	else 
+		mFixed = fixedType::FREE; 
 }
 
 std::string variable::to_string()

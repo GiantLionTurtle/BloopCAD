@@ -23,6 +23,8 @@ public:
 	virtual void set_pos(variableVector3_ptr pos);
 	virtual void set_pos(point_abstract_ptr other);
 
+	void set_tmpConstant(bool immovable);
+
 	float dist(point_abstract const& pt);
 	float dist(point_abstract_ptr pt) { return dist(*pt.get()); }
 	float dist2(point_abstract const& pt);

@@ -14,6 +14,20 @@ coincidence_tool::coincidence_tool(workspace* env):
 void coincidence_tool::init()
 {
 	mStarted = false;
+
+	if(!mEnv->state()) {
+		LOG_WARNING("No valid state.");
+		return;
+	}
+	// Check if there is only one item in the document's selection stack and if it is a plane, use it
+	if(mEnv->state()->doc->selection_size() > 0 && (mPointA = std::dynamic_pointer_cast<point_abstract>(mEnv->state()->doc->selection_at(0).ent))) {
+		mStarted = true;
+		if(mEnv->state()->doc->selection_size() > 1 && (mPointB = std::dynamic_pointer_cast<point_abstract>(mEnv->state()->doc->selection_at(1).ent))) {
+			mStarted = false;
+			point_point_coincidence();
+		}
+		
+	}
 }
 
 bool coincidence_tool::manage_button_press(GdkEventButton* event)
@@ -31,15 +45,33 @@ bool coincidence_tool::manage_button_press(GdkEventButton* event)
 		} else {
 			mPointB = pt;
 			mStarted = false;
-			sketch_ptr sk = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);
-			if(!sk) {
-				LOG_WARNING("No valid sketch.");
-				return true;
-			}
-			if(sk->add_constraint(std::make_shared<coincidence_constraint>(mPointA, mPointB))) {
-				std::cout<<"Successfully added constraint!\n";
-			}
+
+			point_point_coincidence();
 		}
 	}
 	return true;
+}
+
+void coincidence_tool::point_point_coincidence()
+{
+	sketch_ptr sk = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);
+	if(!sk) {
+		LOG_WARNING("No valid sketch.");
+		return;
+	}
+
+	// Try to move only one point at a time
+	mPointB->set_tmpConstant(true);
+	if(!sk->add_constraint(std::make_shared<coincidence_constraint>(mPointA, mPointB))) {
+		mPointB->set_tmpConstant(false);
+		mPointA->set_tmpConstant(true);
+		if(!sk->update_constraints()) {
+			mPointA->set_tmpConstant(false);
+			if(!sk->update_constraints()) {
+				std::cout<<"lol.\n";
+			}
+		}
+	}
+	mPointB->set_tmpConstant(false);
+	mPointA->set_tmpConstant(false);
 }

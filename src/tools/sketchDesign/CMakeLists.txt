@@ -1,4 +1,5 @@
 set(sketchDesign_tools_source_files
+    sketchDesignDefault_tool.cpp
     point_tool.cpp
     line_tool.cpp
     coincidence_tool.cpp

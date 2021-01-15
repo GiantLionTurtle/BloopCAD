@@ -7,14 +7,14 @@ point_abstract::point_abstract(glm::vec3 pos, bool immovable /*= false*/):
 	mPos(new variableVector3(pos)) 
 {
 	if(immovable) {
-		mPos->set_constant(true);
+		mPos->set_constant();
 	}
 }
 point_abstract::point_abstract(variableVector3_ptr pos, bool immovable /*= false*/): 
 	mPos(pos) 
 {
 	if(immovable) {
-		mPos->set_constant(true);
+		mPos->set_constant();
 	}
 }
 
@@ -34,9 +34,14 @@ void point_abstract::set_pos(point_abstract_ptr other)
 	post_set_update();
 }
 
+void point_abstract::set_tmpConstant(bool immovable)
+{
+	mPos->set_tmpConstant(immovable);
+}
+
 float point_abstract::dist(point_abstract const& pt)
 {
-	glm::length(pos_vec() - pt.pos_vec());
+	return glm::length(pos_vec() - pt.pos_vec());
 }
 float point_abstract::dist2(point_abstract const& pt)
 {

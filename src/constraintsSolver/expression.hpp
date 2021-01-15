@@ -17,7 +17,7 @@ private:
 	double mVal;
 	int mFixed;
 
-	enum fixedType { FREE, FIXED, CONST };
+	enum fixedType { FREE, FIXED, TMP_CONST, CONST };
 public:
 	variable();
 	variable(double val_, bool fixed_ = true);
@@ -33,10 +33,11 @@ public:
 	void set_val(double val_);
 
 	bool fixed() const { return mFixed > fixedType::FREE; }
-	void set_fixed(bool fixed_) { if(mFixed < fixedType::CONST) mFixed = fixed_; }
+	void set_fixed(bool fixed_) { if(mFixed < fixedType::TMP_CONST) mFixed = fixed_; }
 
-	bool constant() const { return mFixed == fixedType::CONST; }
-	void set_constant(bool const_) { if(const_) mFixed = fixedType::CONST; else mFixed = fixedType::FREE; }
+	bool constant() const { return mFixed >= fixedType::TMP_CONST; }
+	void set_constant() { mFixed = fixedType::CONST; }
+	void set_tmpConstant(bool const_);
 
 	std::string to_string();
 };

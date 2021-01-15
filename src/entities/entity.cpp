@@ -125,9 +125,9 @@ void entity::show()
 }
 bool entity::hidden() const
 {
-	if(exists())
-		return mState & BLOOP_ENTITY_HIDDEN_FLAG;
-	return false; 
+	if(mParent)
+		return mState & BLOOP_ENTITY_HIDDEN_FLAG || mParent->hidden();
+	return mState & BLOOP_ENTITY_HIDDEN_FLAG; 
 }
 bool entity::visible() const
 {

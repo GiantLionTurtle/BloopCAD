@@ -49,15 +49,16 @@ bool equationsSystem::satisfied()
 	return true;
 }
 
-int equationsSystem::solve()
+int equationsSystem::solve(bool verbose)
 {
 	if(mVariables.empty()) {
-		LOG_WARNING("No variables in equation system.");
-		return -1;
+		if(verbose)
+			LOG_WARNING("No variables in equation system.");
+		return 0; // Success! Our 0 variables are all correct
 	}
 
 	// if(mVariables.size() > mEquations.size()) {
-		return solve_LevenbergMarquardt();
+		return solve_LevenbergMarquardt(verbose);
 	// } else if(mVariables.size() == mEquations.size()) {
 	// 	return solve_NewtonRaphson();
 	// }
@@ -65,7 +66,7 @@ int equationsSystem::solve()
 	return -1;
 }
 
-int equationsSystem::solve_NewtonRaphson()
+int equationsSystem::solve_NewtonRaphson(bool verbose)
 {
 	Eigen::VectorXd y(mVariables.size());
 	mJacobianMat.resize(mEquations.size(), mVariables.size());
@@ -83,11 +84,12 @@ int equationsSystem::solve_NewtonRaphson()
 		update_variables(y);
 	}
 
-	LOG_WARNING("Could not solve this system in: " + std::to_string(mMaxIt) + " iterations.");
+	if(verbose)
+		LOG_WARNING("Could not solve this system in: " + std::to_string(mMaxIt) + " iterations.");
 	return -1;
 }
 
-int equationsSystem::solve_LevenbergMarquardt()
+int equationsSystem::solve_LevenbergMarquardt(bool verbose)
 {
 	Eigen::VectorXd y(mVariables.size());
 	mJacobianMat.resize(mEquations.size(), mVariables.size());
@@ -117,8 +119,8 @@ int equationsSystem::solve_LevenbergMarquardt()
 			lambda *= 2.0;
 		}
 	}
-
-	LOG_WARNING("Could not solve this system in: " + std::to_string(mMaxIt) + " iterations.");
+	if(verbose)
+		LOG_WARNING("Could not solve this system in: " + std::to_string(mMaxIt) + " iterations.");
 	return -1;
 }
 

@@ -50,6 +50,8 @@ public:
 	entity_ptr origin() const { return mOrigin; }
 
 	bool add_constraint(std::shared_ptr<constraint> cons);
+
+	bool update_constraints();
 protected:
 	/*
 		@function draw_impl draws the part on screen, it calls draw on all it's components

@@ -31,7 +31,8 @@ public:
 
 	void operator=(glm::vec3 const& vec);
 
-	void set_constant(bool const_);
+	void set_tmpConstant(bool const_);
+	void set_constant();
 };
 
 // functions are declared outside so that the api resemble glm's

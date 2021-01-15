@@ -155,9 +155,6 @@ public:
 	*/
 	std::shared_ptr<frameBuffer> selectionBuffer() { return mSelectionBuffer; }
 
-	bool manage_key_press(GdkEventKey* event);
-	bool manage_key_release(GdkEventKey* event);
-
 	/*
 		@function push_action adds an action to the action stack and executes it
 

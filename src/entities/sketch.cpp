@@ -23,9 +23,22 @@ bool sketch::add_constraint(std::shared_ptr<constraint> cons)
 {
 	mSystem.add_equations(cons->equations());
 	mSystem.add_variables(cons->variables());
-	bool success = mSystem.solve() >= 0;
-	update();
-	return success;
+
+	if(mSystem.solve() >= 0) {
+		update();
+		cons->on_added();
+		return true;
+	}
+	return false;
+}
+
+bool sketch::update_constraints()
+{
+	if(mSystem.solve() >= 0) {
+		update();
+		return true;
+	}
+	return false;
 }
 
 void sketch::draw_impl(camera_ptr cam, int frame)
@@ -41,5 +54,5 @@ void sketch::create_origin()
 														std::make_shared<sketchPoint>(glm::vec2(0.0f, -1.0f), mBasePlane, true))));
 	mOrigin->add(std::make_shared<line>(line_abstract(	std::make_shared<sketchPoint>(glm::vec2( 1.0f, 0.0f), mBasePlane, true), 
 														std::make_shared<sketchPoint>(glm::vec2(-1.0f, 0.0f), mBasePlane, true))));
-	mOrigin->add(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane));
+	mOrigin->add(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane, true));
 }
