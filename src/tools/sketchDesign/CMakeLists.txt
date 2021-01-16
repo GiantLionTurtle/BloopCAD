@@ -3,6 +3,7 @@ set(sketchDesign_tools_source_files
     point_tool.cpp
     line_tool.cpp
     coincidence_tool.cpp
+    perpendicularity_tool.cpp
   )
 
 add_library(sketchDesign_tools ${sketchDesign_tools_source_files})

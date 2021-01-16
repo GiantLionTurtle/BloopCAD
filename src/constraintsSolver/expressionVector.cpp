@@ -23,7 +23,10 @@ variableVector3::variableVector3(glm::vec3 vec):
 {
 
 }
-
+expressionVector3_ptr variableVector3::expr()
+{
+	return std::make_shared<expressionVector3>(x->expr(), y->expr(), z->expr());
+}
 glm::vec3 variableVector3::get() const
 {
 	return glm::vec3(x->val(), y->val(), z->val());
@@ -57,26 +60,26 @@ float length(expressionVector3_ptr vec)
 {
 	return glm::length(glm::vec3(vec->x->eval(), vec->y->eval(), vec->z->eval()));
 }
-expressionVector3_ptr normalize(expressionVector3_ptr vec)
-{
-   return vec / normalize(vec);
-}
+// expressionVector3_ptr normalize(expressionVector3_ptr vec)
+// {
+//    return vec / length(vec);
+// }
 
 expressionVector3_ptr operator+(expressionVector3_ptr left, expressionVector3_ptr right)
 {
-	return expressionVector3_ptr(new expressionVector3(left->x + right->x, left->y + left->y, left->z + left->z));
+	return expressionVector3_ptr(new expressionVector3(left->x + right->x, left->y + right->y, left->z + right->z));
 }
 expressionVector3_ptr operator-(expressionVector3_ptr left, expressionVector3_ptr right)
 {
-	return expressionVector3_ptr(new expressionVector3(left->x - right->x, left->y - left->y, left->z - left->z));
+	return expressionVector3_ptr(new expressionVector3(left->x - right->x, left->y - right->y, left->z - right->z));
 }
 expressionVector3_ptr operator*(expressionVector3_ptr left, expressionVector3_ptr right)
 {
-	return expressionVector3_ptr(new expressionVector3(left->x * right->x, left->y * left->y, left->z * left->z));
+	return expressionVector3_ptr(new expressionVector3(left->x * right->x, left->y * right->y, left->z * right->z));
 }
 expressionVector3_ptr operator/(expressionVector3_ptr left, expressionVector3_ptr right)
 {
-	return expressionVector3_ptr(new expressionVector3(left->x / right->x, left->y / left->y, left->z / left->z));
+	return expressionVector3_ptr(new expressionVector3(left->x / right->x, left->y / right->y, left->z / right->z));
 }
 expressionVector3_ptr operator+(expressionVector3_ptr exp)
 {
@@ -134,7 +137,7 @@ expressionVector3_ptr cot(expressionVector3_ptr exp)
 
 expression_ptr dot(expressionVector3_ptr left, expressionVector3_ptr right)
 {
-	return left->x * right->x + left->y * right->y + left->z * left->z;
+	return left->x * right->x + left->y * right->y + left->z * right->z;
 }
 expressionVector3_ptr cross(expressionVector3_ptr left, expressionVector3_ptr right)
 {

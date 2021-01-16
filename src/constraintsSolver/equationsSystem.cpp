@@ -16,6 +16,19 @@ void subEquationsSystem::set_tmpConstant(bool const_)
 	}
 }
 
+void subEquationsSystem_vec::set_constant()
+{
+	for(int i = 0; i < variables.size(); ++i) {
+		variables[i]->set_constant();
+	}
+}
+void subEquationsSystem_vec::set_tmpConstant(bool const_)
+{
+	for(int i = 0; i < variables.size(); ++i) {
+		variables[i]->set_tmpConstant(const_);
+	}
+}
+
 equationsSystem::equationsSystem():
 	mMaxIt(50)
 {

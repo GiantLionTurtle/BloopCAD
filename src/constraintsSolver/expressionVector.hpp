@@ -26,6 +26,8 @@ public:
 	variableVector3(variable_ptr x_, variable_ptr y_, variable_ptr z_);
 	variableVector3(glm::vec3 vec);
 
+	expressionVector3_ptr expr();
+
 	glm::vec3 get() const;
 	void set(glm::vec3 const& vec);
 

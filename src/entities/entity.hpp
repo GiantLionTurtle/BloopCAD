@@ -9,6 +9,7 @@
 #include <graphics_utils/shader.hpp>
 #include <graphics_utils/camera.hpp>
 #include <constraintsSolver/equationsSystem.hpp>
+#include <constraintsSolver/expressionVector.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -232,6 +233,7 @@ public:
 	virtual void set_tmpConstant(bool const_) {}
 
 	virtual subEquationsSystem coincidence() { return {}; }
+	virtual subEquationsSystem_vec direction() { return {}; }
 protected:
 	/*
 		@function draw_impl is an overiddable function for children classes to draw themselves

@@ -3,6 +3,7 @@
 #define EQUATIONSSYSTEM_HPP_
 
 #include "expression.hpp"
+#include "expressionVector.hpp"
 
 #include <Eigen/Eigen>
 
@@ -13,6 +14,15 @@ struct subEquationsSystem {
 	std::vector<expression_ptr> equations;
 	
 	bool empty() { return variables.empty() && equations.empty(); }
+	void set_constant();
+	void set_tmpConstant(bool const_);
+};
+
+struct subEquationsSystem_vec {
+	std::vector<variable_ptr> variables;
+	expressionVector3_ptr equations;
+	
+	bool empty() { return variables.empty(); }
 	void set_constant();
 	void set_tmpConstant(bool const_);
 };

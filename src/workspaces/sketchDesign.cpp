@@ -8,6 +8,7 @@
 #include <tools/sketchDesign/line_tool.hpp>
 #include <tools/sketchDesign/point_tool.hpp>
 #include <tools/sketchDesign/coincidence_tool.hpp>
+#include <tools/sketchDesign/perpendicularity_tool.hpp>
 #include <tools/sketchDesign/sketchDesignDefault_tool.hpp>
 #include <utils/xmlParser.hpp>
 #include <entities/svgEntity.hpp>
@@ -23,11 +24,12 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 	workspace("sketchDesign_upperBar", builder, parent) // Create base workspace with upper bar
 {	
 	// Create all the tools used in this workspace
-	mTools["line"] 			= tool_abstract_ptr(new line_tool(this));
-	mTools["point"] 		= tool_abstract_ptr(new point_tool(this));
-	mTools["coincidence"] 	= tool_abstract_ptr(new coincidence_tool(this));
-	mTools["default"]		= tool_abstract_ptr(new sketchDesignDefault_tool(this));
-	mDefaultTool 		= mTools.at("default");
+	mTools["line"] 				= tool_abstract_ptr(new line_tool(this));
+	mTools["point"] 			= tool_abstract_ptr(new point_tool(this));
+	mTools["coincidence"] 		= tool_abstract_ptr(new coincidence_tool(this));
+	mTools["perpendicularity"] 	= tool_abstract_ptr(new perpendicularity_tool(this));
+	mTools["default"]			= tool_abstract_ptr(new sketchDesignDefault_tool(this));
+	mDefaultTool = mTools.at("default");
 
 	// Initialize all buttons as 2 nullptr
 	mButtons["line"] 			= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
@@ -168,7 +170,7 @@ void sketchDesign::horizontality()
 }
 void sketchDesign::perpendicularity()
 {
-	LOG_WARNING("This tool is not available yet.");
+	set_tool("perpendicularity");
 }
 void sketchDesign::parallelism()
 {
