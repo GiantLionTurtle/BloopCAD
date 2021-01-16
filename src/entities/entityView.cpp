@@ -162,7 +162,7 @@ int entityHandle::count_all()
 
 void entityHandle::set_selected(bool selected)
 {
-	if(mEntity->selected()) {
+	if(selected) {
 		get_style_context()->add_class("selected");
 	} else {
 		get_style_context()->remove_class("selected");
@@ -170,10 +170,20 @@ void entityHandle::set_selected(bool selected)
 }
 void entityHandle::set_hovered(bool hovered)
 {
-	if(mEntity->hovered()) {
+	if(hovered) {
 		get_style_context()->add_class("hovered");
 	} else {
 		get_style_context()->remove_class("hovered");
+	}
+}
+void entityHandle::set_exists(bool exists)
+{
+	if(exists) {
+		// collapse();
+		show_rec();
+	} else {
+		// collapse();
+		hide_rec();
 	}
 }
 

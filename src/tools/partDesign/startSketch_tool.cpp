@@ -6,9 +6,10 @@
 #include <document.hpp>
 #include <entities/part.hpp>
 #include <entities/tangibleEntities/plane.hpp>
-
 #include <actions/common/addEntity_action.hpp>
-#include <actions/common/switchWorkspace_action.hpp>
+#include <actions/sketchDesign/enterSketchDesign_action.hpp>
+#include <actions/partDesign/quitPartDesign_action.hpp>
+#include <actions/common/serial_action.hpp>
 #include <actions/common/moveCamera_action.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
@@ -65,22 +66,17 @@ void startSketch_tool::act_on_entity(entity_ptr ent)
 void startSketch_tool::start_sketch(plane_abstract_ptr sketchPlane, camState const& camState_)
 {
 	std::shared_ptr<part> target = std::dynamic_pointer_cast<part>(mEnv->state()->target); // Aquire the part that is worked on
-	if(target) {
-		mEnv->state()->doc->make_glContext_current();
-		mCurrentSketch = std::make_shared<sketch>(sketchPlane);
-		mEnv->state()->doc->push_action(std::shared_ptr<action>(new addEntity_action(mCurrentSketch, target)));
-		mEnv->state()->doc->push_action(std::shared_ptr<action>(new switchWorkspace_action(mEnv->state()->doc, "sketchDesign")));
-		workspaceState_ptr newState = mEnv->state()->doc->currentWorkspaceState(); // This tool is still owned by partDesign so it has to retrieve the sketchDesign workspace state
-
-		newState->cam->set(mEnv->state()->cam); // Set sketch camera to part camera for seemless transition
-		newState->target = target->get_sketch(); // Set the state's target to the new sketch
-
-		newState->doc->clear_selection();
-		mEnv->state()->doc->push_action(moveCamera_action::create_from_facingPlane(sketchPlane, 8.0, camState_, newState->cam));
-
-		std::shared_ptr<plane> pl = std::dynamic_pointer_cast<plane>(sketchPlane);
-		if(pl) {
-			pl->hide();
-		}
+	if(!target) {
+		LOG_WARNING("Invalid target.");
 	}
+
+	mEnv->state()->doc->make_glContext_current();
+	mCurrentSketch = std::make_shared<sketch>(sketchPlane);
+
+	mEnv->state()->doc->push_action(std::shared_ptr<serial_action>(new serial_action({
+		std::shared_ptr<action>(new addEntity_action(mCurrentSketch, target)),
+		std::shared_ptr<action>(new enterSketchDesign_action(mCurrentSketch, true)),
+		std::shared_ptr<action>(new quitPartDesign_action()),
+		moveCamera_action::create_from_facingPlane(sketchPlane, 8.0, camState_, nullptr)
+	})));
 }

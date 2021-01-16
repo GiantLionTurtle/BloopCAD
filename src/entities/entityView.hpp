@@ -49,6 +49,7 @@ public:
 
 	void set_selected(bool selected);
 	void set_hovered(bool hovered);
+	void set_exists(bool exists);
 
 	void add_child(entityHandle* child);
 };

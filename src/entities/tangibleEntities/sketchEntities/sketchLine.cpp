@@ -25,5 +25,4 @@ subEquationsSystem_vec sketchLine::direction()
 	return { 	{ mPointA->pos_var()->x, mPointA->pos_var()->y, mPointB->pos_var()->x, mPointB->pos_var()->y },
 				mPointA->pos_var()->expr() - mPointB->pos_var()->expr()
 			};
-		//mPointA->pos_var() - mPointB->pos_var();
 }

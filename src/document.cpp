@@ -14,7 +14,7 @@ document::document(bloop* parent) :
 	mFrameId(1),
 	mActionStackSize(0),
 	mActionInd(0),
-	mCurrentActionInd(0),
+	mCurrentActionNum(0),
 	mRequire_redraw(false),
 	mUseSelectionBuffer(true)
 {
@@ -88,7 +88,7 @@ void document::do_realize()
 void document::do_unrealize()
 {
 	make_glContext_current();
-	try{
+	try {
 		mViewport.throw_if_error();
 	} catch(const Gdk::GLError& gle) {
 		LOG_ERROR("\ndomain: " + std::to_string(gle.domain()) + "\ncode: " + std::to_string(gle.code()) + "\nwhat: " + gle.what());
@@ -131,6 +131,22 @@ gboolean document::frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock,
 
     return G_SOURCE_CONTINUE;
 }
+bool document::manage_key_press(GdkEventKey* event)
+{
+	if(event->state & GDK_CONTROL_MASK) {
+		if(event->keyval == GDK_KEY_z) {
+			rewind_action_index();
+		} else if(event->keyval == GDK_KEY_y) {
+			advance_action_index();
+		}
+	}
+	
+	return mParentBloop->manage_key_press(event);
+}
+bool document::manage_key_release(GdkEventKey* event)
+{
+	return mParentBloop->manage_key_release(event);
+}
 
 void document::connect_signals()
 {
@@ -159,8 +175,8 @@ void document::connect_signals()
 	gtk_widget_add_tick_callback((GtkWidget*) this->gobj(),	document::frame_callback, this, NULL); // Couldn't find a c++-y way to do it
 
 	// Events happening on the viewport but handled by bloop, because it has direct access to the workspaces
-	mViewport.signal_key_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_key_press));
-	mViewport.signal_key_release_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_key_release));
+	mViewport.signal_key_press_event().connect(sigc::mem_fun(*this, &document::manage_key_press));
+	mViewport.signal_key_release_event().connect(sigc::mem_fun(*this, &document::manage_key_release));
 	mViewport.signal_scroll_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_scroll));
 	mViewport.signal_motion_notify_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_move));
 	mViewport.signal_button_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_button_press));
@@ -182,11 +198,6 @@ workspace_ptr document::set_workspace(std::string const& name)
 		mCurrentWorkspaceState->cam->set_viewport(glm::vec2((float)get_width(), (float)get_height())); // The dimensions might have changed, who knows?
 		mSideBar->set_workspaceState(mCurrentWorkspaceState);
 		
-		if(name == "sketchDesign") {
-			mPart->origin()->hide();
-		} else if(name == "partDesign" && !mPart->has_volume()) {
-			mPart->origin()->show();
-		}
 		return mParentBloop->set_workspace(name, mCurrentWorkspaceState); // Enforce change of workspace
 	}
 	return nullptr;
@@ -220,8 +231,8 @@ void document::push_action(std::shared_ptr<action> to_push)
 		mActionStack.push_back(to_push);
 	}
 
-	if(to_push->do_work())
-		mCurrentActionInd++;
+	if(to_push->do_work(this))
+		mCurrentActionNum++;
 	// Housekeeping incrementations
 	mActionInd++;
 	mActionStackSize++;
@@ -230,7 +241,7 @@ void document::advance_action_index(unsigned int amount)
 {
 	mActionInd += amount;
 	if(mActionInd >= mActionStackSize)
-		mActionInd = mActionStackSize-1;
+		mActionInd = mActionStackSize;
 }
 void document::rewind_action_index(unsigned int amount)
 {
@@ -241,14 +252,16 @@ void document::rewind_action_index(unsigned int amount)
 
 void document::update_actionStack()
 {
-	if(mCurrentActionInd < mActionInd) {
-		if(mActionStack[mCurrentActionInd]->do_work()) {
-			mCurrentActionInd++;
+	if(mCurrentActionNum < mActionInd) {
+		if(mActionStack.at(mCurrentActionNum)->do_work(this)) {
+			mCurrentActionNum++;
 			std::cout<<"Done action\n";
 		}
-	} else if(mCurrentActionInd > mActionInd) {
-		if(mActionStack[mCurrentActionInd]->undo_work())
-			mCurrentActionInd--;
+	} else if(mCurrentActionNum > mActionInd) {
+		if(mActionStack.at(mCurrentActionNum-1)->undo_work(this)) {
+			mCurrentActionNum--;
+			std::cout<<"Undone action\n";
+		}
 	}
 }
 

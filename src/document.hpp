@@ -55,7 +55,7 @@ private:
 	workspaceState_ptr mCurrentWorkspaceState; // The workspace state for the current workspace working on the document
 
 	std::vector<std::shared_ptr<action>> mActionStack; // The stack of actions done in the document
-	int mActionInd, mCurrentActionInd, mActionStackSize; // Metrics for the action stack
+	int mActionInd, mCurrentActionNum, mActionStackSize; // Metrics for the action stack
 
 	glm::vec3 mBackgroundColor; // The rendering background color
 	Gtk::GLArea mViewport; // The rendering widget
@@ -99,9 +99,9 @@ public:
 	*/
 	static gboolean frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock, gpointer data);
 	
-	void on_treeview_renderCell(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
-	void on_treeview_row_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column);
-	
+	bool manage_key_press(GdkEventKey* event);
+	bool manage_key_release(GdkEventKey* event);
+
 	/*
 		@function connect_signals connects the viewport events to bloop's callbacks
 	*/

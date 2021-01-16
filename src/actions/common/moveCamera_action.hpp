@@ -24,8 +24,8 @@ public:
 															camState const& camSt, camera_ptr cam);
 	static std::shared_ptr<action> create_from_facingPlane(plane_abstract_ptr toFace, float dist_to_plane, camera_ptr cam);
 
-	virtual bool do_work();
-	virtual bool undo_work();
+	virtual bool do_work(document* caller);
+	virtual bool undo_work(document* caller);
 private:
 	bool move_camera();
 	void compute_animatables(camState const& state);

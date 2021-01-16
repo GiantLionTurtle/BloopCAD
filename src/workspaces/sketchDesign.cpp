@@ -3,8 +3,10 @@
 
 #include <utils/preferences.hpp>
 #include <utils/mathUtils.hpp>
-#include <actions/common/switchWorkspace_action.hpp>
+#include <actions/partDesign/enterPartDesign_action.hpp>
+#include <actions/sketchDesign/quitSketchDesign_action.hpp>
 #include <actions/common/moveCamera_action.hpp>
+#include <actions/common/serial_action.hpp>
 #include <tools/sketchDesign/line_tool.hpp>
 #include <tools/sketchDesign/point_tool.hpp>
 #include <tools/sketchDesign/coincidence_tool.hpp>
@@ -213,20 +215,9 @@ void sketchDesign::to_svg()
 
 void sketchDesign::finish()
 {
-	mState->doc->push_action(std::shared_ptr<action>(new switchWorkspace_action(mState->doc, "partDesign"))); // Go to part design
-	workspaceState_ptr newState = mState->doc->currentWorkspaceState(); // Find the new part design camera
-
-	// // Record the part design camera's state
-	camState targetState = newState->cam->state();
-	newState->cam->set(mState->cam);
-	mState->doc->push_action(std::shared_ptr<action>(new moveCamera_action(newState->cam, targetState, preferences::get_instance().get_long("camtrans")))); // Go to part design
-	sketch_ptr sk = std::dynamic_pointer_cast<sketch>(mState->target);
-	if(!sk) {
-		LOG_WARNING("Sketch is invalid.");
-	}
-	std::shared_ptr<plane> pl = std::dynamic_pointer_cast<plane>(sk->basePlane());
-	sk->origin()->hide();
-	if(pl) {
-		pl->show();
-	}
+	mState->doc->push_action(std::shared_ptr<action>(new serial_action({
+		std::shared_ptr<action>(new quitSketchDesign_action(std::dynamic_pointer_cast<sketch>(mState->target))),
+		std::shared_ptr<action>(new enterPartDesign_action(true)),
+		std::shared_ptr<action>(new moveCamera_action(nullptr, mState->startCamState, preferences::get_instance().get_long("camtrans")))
+	})));
 }

@@ -147,6 +147,8 @@ void entity::set_exists(bool exists_)
 		set_selected(false);
 		set_hidden(false);
 	}
+	if(mHandle)
+		mHandle->set_exists(exists_);
 }
 bool entity::exists() const
 {

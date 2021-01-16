@@ -4,6 +4,7 @@
 #include <utils/mathUtils.hpp>
 #include <utils/errorLogger.hpp>
 #include <utils/preferences.hpp>
+#include <document.hpp>
 
 #include <glm/gtx/vector_angle.hpp>
 
@@ -48,9 +49,12 @@ std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	plane_abstra
 	return create_from_facingPlane(toFace, dist_to_plane, cam->state(), cam);
 }
 
-bool moveCamera_action::do_work()
+bool moveCamera_action::do_work(document* caller)
 {
 	if(!mStarted) {
+		if(!mCamera) {
+			mCamera = caller->currentWorkspaceState()->cam;
+		}
 		mInitState = mCamera->state();
 		compute_animatables(mTargetState);
 		mStarted = true;
@@ -58,9 +62,12 @@ bool moveCamera_action::do_work()
 
 	return move_camera();
 }
-bool moveCamera_action::undo_work()
+bool moveCamera_action::undo_work(document* caller)
 {
 	if(!mStarted) {
+		if(!mCamera) {
+			mCamera = caller->currentWorkspaceState()->cam;
+		}
 		compute_animatables(mInitState);
 		mStarted = true;
 	}

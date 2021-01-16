@@ -25,7 +25,7 @@ void partDesignDefault_tool::act_on_entity(entity_ptr ent)
 
 	sketch_ptr sk = std::dynamic_pointer_cast<sketch>(ent);
 	if(sk) {
-		mEnv->state()->doc->push_action(std::shared_ptr<action>(new switchWorkspace_action(mEnv->state()->doc, "sketchDesign")));
+		mEnv->state()->doc->push_action(std::shared_ptr<action>(new switchWorkspace_action("sketchDesign")));
 		workspaceState_ptr newState = mEnv->state()->doc->currentWorkspaceState(); // This tool is still owned by partDesign so it has to retrieve the sketchDesign workspace state
 		newState->cam->set(mEnv->state()->cam);
 		mEnv->state()->doc->push_action(moveCamera_action::create_from_facingPlane(sk->basePlane(), 8.0, newState->cam));

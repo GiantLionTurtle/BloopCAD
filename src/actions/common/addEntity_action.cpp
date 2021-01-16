@@ -17,13 +17,13 @@ addEntity_action::addEntity_action(entity_ptr child, entity_ptr parent):
 	}
 }
 
-bool addEntity_action::do_work()
+bool addEntity_action::do_work(document* caller)
 {
 	if(mValid) 
 		mChildEnt->set_exists(true); // The line now exists
 	return true;
 }
-bool addEntity_action::undo_work()
+bool addEntity_action::undo_work(document* caller)
 {
 	if(mValid)
 		mChildEnt->set_exists(false); // The line now doesn't exist, but is still available if needed
