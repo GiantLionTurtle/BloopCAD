@@ -179,10 +179,8 @@ void entityHandle::set_hovered(bool hovered)
 void entityHandle::set_exists(bool exists)
 {
 	if(exists) {
-		// collapse();
 		show_rec();
 	} else {
-		// collapse();
 		hide_rec();
 	}
 }

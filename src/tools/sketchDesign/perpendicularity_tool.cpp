@@ -84,6 +84,7 @@ void perpendicularity_tool::add_constraint()
 			mSysA.set_tmpConstant(false);
 			if(!sk->update_constraints()) {
 				sk->revert_system_to_backup();
+				LOG_WARNING("Could not solve system.");
 			}
 		}
 	}

@@ -19,10 +19,19 @@ subEquationsSystem sketchLine::coincidence()
 				{ mPointA->pos_var()->x->expr() - t->expr() * (mPointA->pos_var()->x->expr() - mPointB->pos_var()->x->expr()),
 				  mPointA->pos_var()->y->expr() - t->expr() * (mPointA->pos_var()->y->expr() - mPointB->pos_var()->y->expr()) }};
 }
-
 subEquationsSystem_vec sketchLine::direction()
 {
 	return { 	{ mPointA->pos_var()->x, mPointA->pos_var()->y, mPointB->pos_var()->x, mPointB->pos_var()->y },
 				mPointA->pos_var()->expr() - mPointB->pos_var()->expr()
 			};
+}
+std::vector<subEquationsSystem> sketchLine::verticality()
+{
+	return { { { mPointA->pos_var()->x }, { mPointA->pos_var()->x->expr() } },
+			 { { mPointB->pos_var()->x }, { mPointB->pos_var()->x->expr() } }};
+}
+std::vector<subEquationsSystem> sketchLine::horizontality()
+{
+	return { { { mPointA->pos_var()->y }, { mPointA->pos_var()->y->expr() } },
+			 { { mPointB->pos_var()->y }, { mPointB->pos_var()->y->expr() } }};
 }

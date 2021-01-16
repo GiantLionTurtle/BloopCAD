@@ -24,6 +24,7 @@ bool enterPartDesign_action::do_work(document* caller)
 
 bool enterPartDesign_action::undo_work(document* caller)
 {
+	switchWorkspace_action::undo_work(caller);
 	if(mTarget) {
 		mTarget->origin()->hide();
 	}

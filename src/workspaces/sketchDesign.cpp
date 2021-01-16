@@ -11,6 +11,8 @@
 #include <tools/sketchDesign/point_tool.hpp>
 #include <tools/sketchDesign/coincidence_tool.hpp>
 #include <tools/sketchDesign/perpendicularity_tool.hpp>
+#include <tools/sketchDesign/verticality_tool.hpp>
+#include <tools/sketchDesign/horizontality_tool.hpp>
 #include <tools/sketchDesign/sketchDesignDefault_tool.hpp>
 #include <utils/xmlParser.hpp>
 #include <entities/svgEntity.hpp>
@@ -30,6 +32,8 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 	mTools["point"] 			= tool_abstract_ptr(new point_tool(this));
 	mTools["coincidence"] 		= tool_abstract_ptr(new coincidence_tool(this));
 	mTools["perpendicularity"] 	= tool_abstract_ptr(new perpendicularity_tool(this));
+	mTools["verticality"] 		= tool_abstract_ptr(new verticality_tool(this));
+	mTools["horizontality"] 	= tool_abstract_ptr(new horizontality_tool(this));
 	mTools["default"]			= tool_abstract_ptr(new sketchDesignDefault_tool(this));
 	mDefaultTool = mTools.at("default");
 
@@ -119,6 +123,7 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 
 		std::get<0>(mButtons.at("dimension"))->			signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::dimension));
 		std::get<0>(mButtons.at("verticality"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::verticality));
+		std::get<0>(mButtons.at("horizontality"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::horizontality));
 		std::get<0>(mButtons.at("perpendicularity"))->	signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::perpendicularity));
 		std::get<0>(mButtons.at("parallelism"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::parallelism));
 		std::get<0>(mButtons.at("coincidence"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::coincidence));
@@ -164,11 +169,11 @@ void sketchDesign::dimension()
 }
 void sketchDesign::verticality()
 {
-	LOG_WARNING("This tool is not available yet.");
+	set_tool("verticality");
 }
 void sketchDesign::horizontality()
 {
-	LOG_WARNING("This tool is not available yet.");
+	set_tool("horizontality");
 }
 void sketchDesign::perpendicularity()
 {

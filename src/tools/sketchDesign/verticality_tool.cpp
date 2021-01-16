@@ -1,5 +1,5 @@
 
-#include "coincidence_tool.hpp"
+#include "verticality_tool.hpp"
 
 #include <entities/geometry/point_abstract.hpp>
 #include <entities/geometry/line_abstract.hpp>
@@ -7,37 +7,32 @@
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 
-coincidence_tool::coincidence_tool(workspace* env):
+verticality_tool::verticality_tool(workspace* env):
 	simpleSelector_tool(env)
 {
-    mFilter = [](entity_ptr ent) -> bool { 
+	mFilter = [](entity_ptr ent) -> bool { 
 		return 	std::dynamic_pointer_cast<point_abstract>(ent).operator bool() ||
 				std::dynamic_pointer_cast<line_abstract>(ent).operator bool(); 
 	};
 }
 
-void coincidence_tool::init()
+void verticality_tool::init()
 {
-	mStarted = false;
-
 	if(!mEnv->state()) {
 		LOG_WARNING("No valid state.");
 		return;
 	}
 	// Check if there is only one item in the document's selection stack and if it is a plane, use it
 	if(mEnv->state()->doc->selection_size() > 0 && mFilter(mEnv->state()->doc->selection_at(0).ent)) {
-		mSysA = mEnv->state()->doc->selection_at(0).ent->coincidence();
-		mStarted = true;
-		if(mEnv->state()->doc->selection_size() > 1 && mFilter(mEnv->state()->doc->selection_at(0).ent)) {
-			mSysB = mEnv->state()->doc->selection_at(1).ent->coincidence();
-			mStarted = false;
-			add_constraint();
+		if(!set_systems(mEnv->state()->doc->selection_at(0).ent->verticality()) && 
+		mEnv->state()->doc->selection_size() > 1 && mFilter(mEnv->state()->doc->selection_at(0).ent)) {
+			set_systems(mEnv->state()->doc->selection_at(1).ent->verticality());
 		}
 		
 	}
 }
 
-bool coincidence_tool::manage_button_press(GdkEventButton* event)
+bool verticality_tool::manage_button_press(GdkEventButton* event)
 {
 	if(!mEnv) {
 		LOG_WARNING("No valid workspace.");
@@ -48,19 +43,31 @@ bool coincidence_tool::manage_button_press(GdkEventButton* event)
 	if(!ent) {
 		return true;
 	}
-	if(!mStarted) {
-		mSysA = ent->coincidence();
-		mStarted = true;
-	} else {
-		mSysB = ent->coincidence();
-		mStarted = false;
-
-		add_constraint();
-	}
+	set_systems(ent->verticality());
 	return true;
 }
 
-void coincidence_tool::add_constraint()
+bool verticality_tool::set_systems(std::vector<subEquationsSystem> sys)
+{
+	if(!mStarted && sys.size() == 1) {
+		mSysA = sys[0];
+		mStarted = true;
+		return false;
+	} else if(mStarted && sys.size() == 1) {
+		mSysB = sys[0];
+		mStarted = false;
+		add_constraint();
+		return true;
+	} else if(!mStarted && sys.size() == 2) {
+		mSysA = sys[0];
+		mSysB = sys[1];
+		add_constraint();
+		return true;
+	}
+	return false;
+}
+
+void verticality_tool::add_constraint()
 {
 	sketch_ptr sk = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);
 	if(!sk) {

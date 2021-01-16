@@ -23,6 +23,7 @@ bool enterSketchDesign_action::do_work(document* caller)
 
 bool enterSketchDesign_action::undo_work(document* caller)
 {
+	switchWorkspace_action::undo_work(caller);
 	if(mPlane) {
 		mPlane->show();
 	}

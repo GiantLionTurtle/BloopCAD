@@ -33,3 +33,11 @@ subEquationsSystem sketchPoint::coincidence()
 {
 	return { { mPos->x, mPos->y }, { mPos->x->expr(), mPos->y->expr() } };
 }
+std::vector<subEquationsSystem> sketchPoint::verticality()
+{
+	return { { { mPos->x }, { mPos->x->expr() } } };
+}
+std::vector<subEquationsSystem> sketchPoint::horizontality()
+{
+	return { { { mPos->y }, { mPos->y->expr() } } };
+}

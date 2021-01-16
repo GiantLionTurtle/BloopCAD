@@ -4,6 +4,8 @@ set(sketchDesign_tools_source_files
     line_tool.cpp
     coincidence_tool.cpp
     perpendicularity_tool.cpp
+    verticality_tool.cpp
+    horizontality_tool.cpp
   )
 
 add_library(sketchDesign_tools ${sketchDesign_tools_source_files})

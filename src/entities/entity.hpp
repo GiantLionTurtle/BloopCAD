@@ -234,6 +234,8 @@ public:
 
 	virtual subEquationsSystem coincidence() { return {}; }
 	virtual subEquationsSystem_vec direction() { return {}; }
+	virtual std::vector<subEquationsSystem> verticality() { return {}; }
+	virtual std::vector<subEquationsSystem> horizontality() { return {}; };
 protected:
 	/*
 		@function draw_impl is an overiddable function for children classes to draw themselves

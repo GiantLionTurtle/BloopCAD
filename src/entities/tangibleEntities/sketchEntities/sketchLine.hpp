@@ -16,6 +16,8 @@ public:
 
 	virtual subEquationsSystem coincidence();
 	virtual subEquationsSystem_vec direction();
+	virtual std::vector<subEquationsSystem> verticality();
+	virtual std::vector<subEquationsSystem> horizontality();
 };
 
 #endif 
