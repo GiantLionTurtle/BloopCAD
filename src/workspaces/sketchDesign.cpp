@@ -129,6 +129,13 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 		std::get<0>(mButtons.at("coincidence"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::coincidence));
 		std::get<0>(mButtons.at("equality"))->			signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::equality));
 
+		std::get<0>(mButtons.at("verticality"))->		set_tooltip_text("verticality");
+		std::get<0>(mButtons.at("horizontality"))->		set_tooltip_text("horizontality");
+		std::get<0>(mButtons.at("perpendicularity"))->	set_tooltip_text("perpendicularity");
+		std::get<0>(mButtons.at("parallelism"))->		set_tooltip_text("parallelism");
+		std::get<0>(mButtons.at("coincidence"))->		set_tooltip_text("coincidence");
+		std::get<0>(mButtons.at("equality"))->			set_tooltip_text("equality");
+
 		std::get<0>(mButtons.at("to_svg"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::to_svg));
 
 		std::get<0>(mButtons.at("sketchFinish"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::finish));
