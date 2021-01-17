@@ -29,15 +29,20 @@ void sketchPoint::set_pos(point_abstract const& other)
 	set_pos(other.pos_vec());
 }
 
+std::vector<variable_ptr> sketchPoint::variables()
+{
+	return { mPos->x, mPos->y };
+}
+
 subEquationsSystem sketchPoint::coincidence()
 {
-	return { { mPos->x, mPos->y }, { mPos->x->expr(), mPos->y->expr() } };
+	return { {}, { mPos->x->expr(), mPos->y->expr() } };
 }
 std::vector<subEquationsSystem> sketchPoint::verticality()
 {
-	return { { { mPos->x }, { mPos->x->expr() } } };
+	return { { {}, { mPos->x->expr() } } };
 }
 std::vector<subEquationsSystem> sketchPoint::horizontality()
 {
-	return { { { mPos->y }, { mPos->y->expr() } } };
+	return { { {}, { mPos->y->expr() } } };
 }

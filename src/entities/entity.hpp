@@ -232,6 +232,8 @@ public:
 	virtual void set_constant() {}
 	virtual void set_tmpConstant(bool const_) {}
 
+	virtual std::vector<variable_ptr> variables() { return {}; };
+
 	virtual subEquationsSystem coincidence() { return {}; }
 	virtual subEquationsSystem_vec direction() { return {}; }
 	virtual std::vector<subEquationsSystem> verticality() { return {}; }

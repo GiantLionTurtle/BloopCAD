@@ -19,6 +19,13 @@ sketch::sketch(plane_abstract_ptr base_plane, entity* parent):
 	create_origin();
 }
 
+void sketch::add(entity_ptr elem)
+{
+	if(elem)
+		mSystem.add_variables(elem->variables());
+	entity::add(elem);
+}
+
 bool sketch::add_constraint(std::shared_ptr<constraint> cons) 
 {
 	mSystem.add_equations(cons->equations());

@@ -41,6 +41,8 @@ public:
 	*/
 	sketch(plane_abstract_ptr base_plane, entity* parent);
 
+	virtual void add(entity_ptr elem);
+
 	/*
 		@function basePlane
 

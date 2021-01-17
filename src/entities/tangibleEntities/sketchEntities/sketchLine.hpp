@@ -14,6 +14,8 @@ public:
 
     virtual void set_basePlane(plane_abstract_ptr basePlane_) { mBasePlane = basePlane_; mRequire_VBUpdate = true; }
 
+	virtual std::vector<variable_ptr> variables();
+
 	virtual subEquationsSystem coincidence();
 	virtual subEquationsSystem_vec direction();
 	virtual std::vector<subEquationsSystem> verticality();
