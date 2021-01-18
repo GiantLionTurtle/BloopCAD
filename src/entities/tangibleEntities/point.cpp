@@ -52,7 +52,7 @@ void point::draw_impl(camera_ptr cam, int frame)
 	if(hovered()) {
 		color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	} else if(selected()) {
-		color = glm::vec4(0.0f, 0.8, 0.2, 1.0f);
+		color = glm::vec4(0.01f, 0.70f, 0.99f, 1.0f);
 	}
 	mShader->setUniform4f("u_Color", color);
 	mShader->setUniform1f("u_Diameter", 5);
