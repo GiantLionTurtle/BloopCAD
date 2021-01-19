@@ -3,6 +3,7 @@
 
 #include <graphics_utils/GLCall.hpp>
 #include <graphics_utils/shadersPool.hpp>
+#include <utils/mathUtils.hpp>
 
 sketchCircle::sketchCircle(circle_abstract const& baseCircle, plane_abstract_ptr basePlane_):
 	circle_abstract(baseCircle),
@@ -56,26 +57,18 @@ void sketchCircle::update_VB()
 
 void sketchCircle::draw_impl(camera_ptr cam, int frame)
 {
+	if(mRequire_VBUpdate)
+		update_VB();
+
 	mShader->bind();
-
-	glm::vec4 p1 = cam->mvp() * glm::vec4(mVertices[0], 1.0f);
-	glm::vec2 p1_v = p1 /= p1.w;
-	glm::vec4 p2 = cam->mvp() * glm::vec4(mVertices[3], 1.0f);
-	glm::vec2 p2_v = p2 /= p2.w;
-	glm::vec4 c = cam->mvp() * glm::vec4(mCenter->pos_val(), 1.0f);
-	c /= c.w;
-
-	p1_v = (p1_v + glm::vec2(1.0f, 1.0f)) / 2.0f * cam->viewport();
-	p2_v = (p2_v + glm::vec2(1.0f, 1.0f)) / 2.0f * cam->viewport();
-
-	float len = glm::length(p2_v - p1_v) / 2.0f;
-
-	glm::vec2 sentcent = (glm::vec2(c) + glm::vec2(1.0f, 1.0f)) / 2.0f * cam->viewport();
-
-	mShader->setUniform1f("u_R2", len * len);
-	mShader->setUniform2f("u_Center", sentcent);
-	mShader->setUniform4f("u_Color", glm::vec4(mColor, 1.0f));
-
+	glm::vec4 color = glm::vec4(mColor, 1.0f);
+	if(hovered()) {
+		color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	} else if(selected()) {
+		color = glm::vec4(0.01f, 0.70f, 0.99f, 1.0f);
+	}
+	mShader->setUniform4f("u_Color", color);
+	
 	if(mShader->lastUsed() != frame) {
 		mShader->setUniformMat4f("u_MVP", cam->mvp());
 		mShader->set_used(frame);
@@ -94,7 +87,16 @@ void sketchCircle::draw_impl(camera_ptr cam, int frame)
 
 float sketchCircle::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
 {
-
+	glm::vec3 inter = mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor_pos));
+	glm::vec2 on_plane = mBasePlane->point_3d_to_2d(inter);
+	glm::vec4 closest_screen(mBasePlane->point_2d_to_3d(closestPoint(on_plane)), 1.0f);
+	closest_screen = cam->mvp() * closest_screen;
+	closest_screen /= closest_screen.w;
+	glm::vec2 on_screen_pix(map(closest_screen.x, -1.0f, 1.0f, 0.0f, cam->viewport().x), 
+							map(closest_screen.y, -1.0f, 1.0f, cam->viewport().y, 0.0f));
+	if(glm::length2(cursor_pos - on_screen_pix) < 50) {
+		return glm::length(cam->pos() - inter);
+	}
 	return -1.0f;
 }
 

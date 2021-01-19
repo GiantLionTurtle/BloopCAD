@@ -28,6 +28,11 @@ public:
 	void set_radius(float radius_) { mRadius->set(radius_); }
 
 	glm::vec2 at(float angle);
+
+	float dist_to_point(point_abstract_ptr pt);
+	float dist_to_point(point_abstract const& pt);
+	glm::vec2 closestPoint(point_abstract_ptr pt);
+	glm::vec2 closestPoint(glm::vec2 pt);
 };
 
 #endif
