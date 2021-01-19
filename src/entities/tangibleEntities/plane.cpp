@@ -4,7 +4,7 @@
 #include <graphics_utils/GLCall.hpp>
 #include <graphics_utils/shadersPool.hpp>
 
-plane::plane(plane_abstract const& plane_) :
+plane::plane(plane_abstract const& plane_):
 	plane_abstract(plane_)
 {
 	set_name("plane");
@@ -24,11 +24,6 @@ plane::plane(plane_abstract const& plane_) :
 	if(!mShader) {
 		mShader = shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/planeShader.frag");
 		shadersPool::get_instance().add("plane", mShader);
-	}
-	mSelectionShader = shadersPool::get_instance().get("plane_sel");
-	if(!mSelectionShader) {
-		mSelectionShader = shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/plainColor.frag");
-		shadersPool::get_instance().add("plane_sel", mSelectionShader);
 	}
 }
 
@@ -57,7 +52,6 @@ void plane::draw_impl(camera_ptr cam, int frame)
 	mShader->setUniform4f("u_Color", color.r, color.g, color.b, hovered() ? 0.5 : 0.3);
 
 	if(mShader->lastUsed() != frame) {
-		// std::cout<<"Frame: "<<frame<<"\n";
 		mShader->setUniformMat4f("u_MVP", cam->mvp());
 		mShader->set_used(frame);
 	}

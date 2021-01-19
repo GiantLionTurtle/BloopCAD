@@ -73,6 +73,7 @@ void camera::set(camera_ptr other)
 }
 void camera::update()
 {
+	mRequire_update = false;
 	mModel 		= model(mTransformation);
 	mView 		= glm::lookAt(mInternalPos, mInternalPos + mInternalFront, glm::vec3(0.0f, 1.0f, 0.0f));
 	mProjection =  glm::perspective(mFOV, aspectRatio(), mNearPlane, mFarPlane);

@@ -3,6 +3,7 @@
 
 #include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
+#include <entities/tangibleEntities/sketchEntities/sketchCircle.hpp>
 #include <utils/errorLogger.hpp>
 
 sketch::sketch(plane_abstract_ptr base_plane):
@@ -84,4 +85,6 @@ void sketch::create_origin()
 	mOrigin->add(std::make_shared<sketchLine>(line_abstract(std::make_shared<sketchPoint>(glm::vec2( 1.0f, 0.0f), mBasePlane), 
 															std::make_shared<sketchPoint>(glm::vec2(-1.0f, 0.0f), mBasePlane)), true));
 	mOrigin->add(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane, true));
+
+	add(std::make_shared<sketchCircle>(circle_abstract(std::make_shared<sketchPoint>(glm::vec2(0.5f, 0.5f), mBasePlane), variable_ptr(new variable(0.5f)))));
 }
