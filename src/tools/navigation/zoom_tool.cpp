@@ -66,17 +66,17 @@ void zoom_tool::zoom(glm::vec2 origin, float amount)
 	camera_ptr cam = mEnv->state()->cam;
 	
 	glm::vec3 ray1 = cam->cast_ray(origin, false);
-
 	glm::vec4 model_pos1 = cam->model() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	plane_abstract pl1(glm::vec3(model_pos1), cam->right(), cam->up());
 	glm::vec3 inter1 = pl1.line_intersection(cam->pos(), ray1);
 	cam->set_scale(cam->transformation().scale * scale);
+	cam->update(true);
 
 	glm::vec3 ray2 = cam->cast_ray(origin, false);
-
 	glm::vec4 model_pos2 = cam->model() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	plane_abstract pl2(glm::vec3(model_pos2), cam->right(), cam->up());
 	glm::vec3 inter2 = pl2.line_intersection(cam->pos(), ray2);
 	
-	cam->set_translation(cam->transformation().translation - (inter1-inter2) * cam->transformation().scale.x);
+	glm::vec3 trans_d = (inter1-inter2) * cam->transformation().scale.x;
+	cam->set_translation(cam->transformation().translation - trans_d);
 }

@@ -71,9 +71,10 @@ void camera::set(camera_ptr other)
 	mTransformation.scale = other->mTransformation.scale;
 	mRequire_update = true;
 }
-void camera::update()
+void camera::update(bool silent)
 {
-	mRequire_update = false;
+	if(!silent)
+		mRequire_update = false;
 	mModel 		= model(mTransformation);
 	mView 		= glm::lookAt(mInternalPos, mInternalPos + mInternalFront, glm::vec3(0.0f, 1.0f, 0.0f));
 	mProjection =  glm::perspective(mFOV, aspectRatio(), mNearPlane, mFarPlane);

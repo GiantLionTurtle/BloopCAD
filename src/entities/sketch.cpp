@@ -86,5 +86,5 @@ void sketch::create_origin()
 															std::make_shared<sketchPoint>(glm::vec2(-1.0f, 0.0f), mBasePlane)), true));
 	mOrigin->add(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane, true));
 
-	add(std::make_shared<sketchCircle>(circle_abstract(std::make_shared<sketchPoint>(glm::vec2(0.5f, 0.5f), mBasePlane), variable_ptr(new variable(0.5f)))));
+	add(std::make_shared<sketchCircle>(circle_abstract(std::make_shared<sketchPoint>(glm::vec2(0.75f, 0.75f), mBasePlane), variable_ptr(new variable(0.5f))), mBasePlane));
 }

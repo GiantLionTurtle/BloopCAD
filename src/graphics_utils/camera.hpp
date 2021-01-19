@@ -190,7 +190,7 @@ public:
 	void set(camera_ptr other);
 
 	bool require_update() const { return mRequire_update; }
-	void update();
+	void update(bool silent = false);
 
 	/*
 		@function flipped 
