@@ -9,6 +9,7 @@
 #include <actions/common/serial_action.hpp>
 #include <tools/sketchDesign/line_tool.hpp>
 #include <tools/sketchDesign/point_tool.hpp>
+#include <tools/sketchDesign/circle_tool.hpp>
 #include <tools/sketchDesign/coincidence_tool.hpp>
 #include <tools/sketchDesign/perpendicularity_tool.hpp>
 #include <tools/sketchDesign/verticality_tool.hpp>
@@ -28,8 +29,9 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 	workspace("sketchDesign_upperBar", builder, parent) // Create base workspace with upper bar
 {	
 	// Create all the tools used in this workspace
-	mTools["line"] 				= tool_abstract_ptr(new line_tool(this));
 	mTools["point"] 			= tool_abstract_ptr(new point_tool(this));
+	mTools["line"] 				= tool_abstract_ptr(new line_tool(this));
+	mTools["circle"] 			= tool_abstract_ptr(new circle_tool(this));
 	mTools["coincidence"] 		= tool_abstract_ptr(new coincidence_tool(this));
 	mTools["perpendicularity"] 	= tool_abstract_ptr(new perpendicularity_tool(this));
 	mTools["verticality"] 		= tool_abstract_ptr(new verticality_tool(this));
@@ -163,7 +165,7 @@ void sketchDesign::polygon()
 }
 void sketchDesign::circle()
 {
-	LOG_WARNING("This tool is not available yet.");
+	set_tool("circle");
 }
 void sketchDesign::threePointsArc()
 {

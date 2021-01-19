@@ -2,6 +2,7 @@ set(sketchDesign_tools_source_files
     sketchDesignDefault_tool.cpp
     point_tool.cpp
     line_tool.cpp
+    circle_tool.cpp
     coincidence_tool.cpp
     perpendicularity_tool.cpp
     verticality_tool.cpp

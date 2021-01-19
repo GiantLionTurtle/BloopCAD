@@ -47,6 +47,11 @@ sketchCircle::sketchCircle(circle_abstract const& baseCircle, plane_abstract_ptr
 	add(center_as_drawable);
 }
 
+void sketchCircle::move(glm::vec3 from, glm::vec3 to)
+{
+	set_radius(glm::length(to - mCenter->pos_val()));
+}
+
 void sketchCircle::update_VB()
 {
 	init_buffers();
@@ -83,6 +88,12 @@ void sketchCircle::draw_impl(camera_ptr cam, int frame)
 	mIB->unbind();
 	mVA->unbind();
 	mShader->unbind();
+}
+
+void sketchCircle::post_set_update()
+{
+	mRequire_VBUpdate = true;
+	set_require_redraw();
 }
 
 float sketchCircle::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)

@@ -17,9 +17,9 @@ point::point(point_abstract_ptr basePoint):
 	create();
 }
 
-void point::move(glm::vec3 delta) 
+void point::move(glm::vec3 from, glm::vec3 to) 
 {
-	mPos->set(pos_val() + delta);
+	mPos->set(to);
 }
 void point::set_constant()
 {

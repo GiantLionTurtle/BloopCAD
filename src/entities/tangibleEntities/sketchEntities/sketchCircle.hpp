@@ -8,6 +8,9 @@
 
 #define CIRCLE_RES 100
 
+class sketchCircle;
+using sketchCircle_ptr = std::shared_ptr<sketchCircle>;
+
 class sketchCircle : public tangibleEntity, public sketchElement, public circle_abstract {
 private:
 	const glm::vec3 mColor = glm::vec3(0.0f, 0.89f, 0.725f); // Curve color
@@ -19,11 +22,12 @@ public:
 
 	virtual int selection_rank() { return 8; }
 
+	virtual void move(glm::vec3 from, glm::vec3 to);
 	virtual void update_VB();
 protected:
 	virtual void draw_impl(camera_ptr cam, int frame);
 
-	virtual void post_set_update() {}
+	virtual void post_set_update();
 	
 	virtual float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
 

@@ -52,7 +52,7 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 		glm::vec2 pos = pl->point_3d_to_2d(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 		if(mMoving) {
 			sk->backup_system();
-			mDraggedEnt->move(glm::vec3(pos-mPrevPos, 0.0f));
+			mDraggedEnt->move(glm::vec3(pos, 0.0f), glm::vec3(mPrevPos, 0.0f));
 			mDraggedEnt->set_tmpConstant(true); 	
 			if(!sk->update_constraints()) {
 				mDraggedEnt->set_tmpConstant(false);

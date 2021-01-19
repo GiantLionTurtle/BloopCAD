@@ -42,8 +42,9 @@ line::line(line_abstract const& baseLine):
 	add(pointB_as_drawable);
 }
 
-void line::move(glm::vec3 delta)
+void line::move(glm::vec3 from, glm::vec3 to)
 {
+	glm::vec3 delta = to - from;
 	mPointA->set(mPointA->pos_val() + delta);
 	mPointB->set(mPointB->pos_val() + delta);
 }

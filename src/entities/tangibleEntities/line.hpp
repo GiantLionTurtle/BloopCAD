@@ -26,7 +26,7 @@ public:
 
 	virtual int selection_rank() { return 7; }
 
-	virtual void move(glm::vec3 delta);
+	virtual void move(glm::vec3 from, glm::vec3 to);
 	virtual void set_constant();
 	virtual void set_tmpConstant(bool const_);
 
