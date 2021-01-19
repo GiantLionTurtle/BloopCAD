@@ -12,14 +12,14 @@ point::point(point_abstract const& basePoint):
 	create();
 }
 point::point(point_abstract_ptr basePoint):
-	point_abstract(basePoint->pos_var())
+	point_abstract(basePoint->pos())
 {
 	create();
 }
 
 void point::move(glm::vec3 delta) 
 {
-	mPos->set(pos_vec() + delta);
+	mPos->set(pos_val() + delta);
 }
 void point::set_constant()
 {
@@ -33,7 +33,7 @@ void point::set_tmpConstant(bool const_)
 void point::update_VB()
 {
 	mVB->bind();
-	glm::vec3 pos_tmp = pos_vec();
+	glm::vec3 pos_tmp = pos_val();
 	mVB->set(&pos_tmp[0], sizeof(glm::vec3));
 	mVB->unbind();
 	set_require_redraw();
@@ -74,12 +74,12 @@ void point::draw_impl(camera_ptr cam, int frame)
 
 float point::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
 {
-	glm::vec4 screenPos = cam->mvp() * glm::vec4(pos_vec(), 1.0f);
+	glm::vec4 screenPos = cam->mvp() * glm::vec4(pos_val(), 1.0f);
 	glm::vec2 screenPos_2d(	map(screenPos.x / screenPos.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
 							map(screenPos.y / screenPos.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
 	
 	if(glm::length(screenPos_2d - cursor_pos) < 5) {
-		return glm::length(cam->pos() - plane_abstract(pos_vec(), cam->right(), cam->up()).line_intersection(cam->pos(), cam->cast_ray(cursor_pos)));
+		return glm::length(cam->pos() - plane_abstract(pos_val(), cam->right(), cam->up()).line_intersection(cam->pos(), cam->cast_ray(cursor_pos)));
 	}
 	return -1.0f;
 }
@@ -97,7 +97,7 @@ void point::create()
 	layout.add_proprety_float(3);
 	mVA->bind();
 
-	glm::vec3 pos_tmp = pos_vec();
+	glm::vec3 pos_tmp = pos_val();
 	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(&pos_tmp[0], sizeof(glm::vec3)));
 	mVA->add_buffer(*mVB.get(), layout);
 

@@ -17,11 +17,12 @@ public:
 	point_abstract(variableVector3_ptr pos, bool immovable = false);
     virtual ~point_abstract() {}
 
-	virtual glm::vec3 pos_vec() const { return mPos->get(); }
-	virtual variableVector3_ptr pos_var() const { return mPos; }
-	virtual void set_pos(glm::vec3 const& pos);
-	virtual void set_pos(variableVector3_ptr pos);
-	virtual void set_pos(point_abstract_ptr other);
+	virtual glm::vec3 pos_val() const { return mPos->get(); }
+	virtual variableVector3_ptr pos() const { return mPos; }
+	virtual void set(glm::vec3 const& pos);
+	virtual void set(variableVector3_ptr pos);
+	virtual void set(point_abstract_ptr other);
+	virtual void set(point_abstract const& other);
 
 	void set_constant();
 	void set_tmpConstant(bool const_);

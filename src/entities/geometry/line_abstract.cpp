@@ -18,8 +18,8 @@ line_abstract::line_abstract(point_abstract_ptr ptA, point_abstract_ptr ptB):
 
 XML_element* line_abstract::to_svg(plane_abstract* drawingPlane, glm::vec2 &min, glm::vec2 &max)
 {
-	glm::vec2 ptA = drawingPlane->point_3d_to_2d(mPointA->pos_vec());
-	glm::vec2 ptB = drawingPlane->point_3d_to_2d(mPointB->pos_vec());
+	glm::vec2 ptA = drawingPlane->point_3d_to_2d(mPointA->pos_val());
+	glm::vec2 ptB = drawingPlane->point_3d_to_2d(mPointB->pos_val());
 	ptA.y = -ptA.y;
 	ptB.y = -ptB.y;
 	
@@ -47,7 +47,7 @@ point_abstract_ptr line_abstract::closest_point(point_abstract const& pt)
 		return mPointA;
 	}
 	glm::vec3 line_vec = as_vec();
-	float t = glm::dot(line_vec, mPointA->pos_vec()-pt.pos_vec()) / len2;
+	float t = glm::dot(line_vec, mPointA->pos_val()-pt.pos_val()) / len2;
 	if(t <= 0) { // First point
 		return mPointA;
 	} else if(t >= 1) { // Second point 
@@ -63,7 +63,7 @@ point_abstract_ptr line_abstract::closest_point(point_abstract const& pt, float&
 		return mPointA;
 	}
 	glm::vec3 line_vec = as_vec();
-	on_line = glm::dot(line_vec, mPointA->pos_vec()-pt.pos_vec()) / len2;
+	on_line = glm::dot(line_vec, mPointA->pos_val()-pt.pos_val()) / len2;
 	if(on_line <= 0) { // First point
 		return mPointA;
 	} else if(on_line >= 1) { // Second point 
@@ -88,5 +88,5 @@ point_abstract_ptr line_abstract::at(float t)
 
 glm::vec3 line_abstract::as_vec()
 {
-	return mPointA->pos_vec() - mPointB->pos_vec();
+	return mPointA->pos_val() - mPointB->pos_val();
 }

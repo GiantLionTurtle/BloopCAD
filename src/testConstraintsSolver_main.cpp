@@ -15,21 +15,21 @@ int main()
 
 	point_abstract_ptr a = std::make_shared<point_abstract>(glm::vec3(-0.520555, 0.219129, 0)), b = std::make_shared<point_abstract>(glm::vec3(3, 4, 0));
 	std::vector<expression_ptr> eqs {
-		a->pos_var()->x->expr() - b->pos_var()->x->expr(),
-		a->pos_var()->y->expr() - b->pos_var()->y->expr()
+		a->pos()->x->expr() - b->pos()->x->expr(),
+		a->pos()->y->expr() - b->pos()->y->expr()
 	};
 	std::vector<variable_ptr> vars {
-		a->pos_var()->x, a->pos_var()->y,
-		b->pos_var()->x, b->pos_var()->y
+		a->pos()->x, a->pos()->y,
+		b->pos()->x, b->pos()->y
 	};
 	equationsSystem sys(eqs, vars);
 
-	std::cout<<"Start: "<<glm::to_string(a->pos_vec())<<" - "<<glm::to_string(b->pos_vec())<<"\n";
+	std::cout<<"Start: "<<glm::to_string(a->pos_val())<<" - "<<glm::to_string(b->pos_val())<<"\n";
 	std::cout<<"Sys size: "<<sys.vars_size()<<",  "<<sys.equs_size()<<"\n";
 	std::cout<<"Sys solved: "<<sys.satisfied()<<"\n";
 	std::cout<<"Sys solve attempt: "<<sys.solve()<<"\n";
 	std::cout<<"Sys solved: "<<sys.satisfied()<<"\n";
-	std::cout<<"End: "<<glm::to_string(a->pos_vec())<<" - "<<glm::to_string(b->pos_vec())<<"\n";
+	std::cout<<"End: "<<glm::to_string(a->pos_val())<<" - "<<glm::to_string(b->pos_val())<<"\n";
 
 	
 	return 0;

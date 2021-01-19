@@ -33,14 +33,14 @@ public:
 		@return : The start point of the line
 	*/
 	point_abstract_ptr pointA() const { return mPointA; }
-	virtual void set_pointA(point_abstract_ptr ptA) { mPointA->set_pos(ptA); }
+	virtual void set_pointA(point_abstract_ptr ptA) { mPointA->set(ptA); }
 	/*
 		@function pointB is a getter for the end point of the line
 
 		@return : The end point of the line
 	*/
 	point_abstract_ptr pointB() const { return mPointB; }
-	virtual void set_pointB(point_abstract_ptr ptB) { mPointB->set_pos(ptB); }
+	virtual void set_pointB(point_abstract_ptr ptB) { mPointB->set(ptB); }
 
 	virtual XML_element* to_svg(plane_abstract* drawingPlane, glm::vec2 &min, glm::vec2 &max);
 

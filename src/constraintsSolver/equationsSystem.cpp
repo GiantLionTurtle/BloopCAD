@@ -114,7 +114,7 @@ void equationsSystem::set(std::vector<double> st)
 	}
 	for(int i = 0; i < mVariables.size(); ++i) {
 		mVariables[i]->set_tmpConstant(false);
-		mVariables[i]->set_val(st[i]);
+		mVariables[i]->set(st[i]);
 	}
 }
 
@@ -216,7 +216,7 @@ void equationsSystem::update_variables(Eigen::VectorXd const& y)
 		return;
 	}
 	for(int i = 0; i < mVariables.size(); ++i) {
-		mVariables[i]->set_val(mVariables[i]->val() + y(i));
+		mVariables[i]->set(mVariables[i]->val() + y(i));
 	}
 }
 

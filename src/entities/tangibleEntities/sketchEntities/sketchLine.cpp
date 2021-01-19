@@ -37,15 +37,15 @@ sketchLine::sketchLine(line_abstract const& baseLine, bool immovable /*= false*/
 		mPointB->set_constant();
 	}
 
-	dirX = std::make_shared<expression_substr_funky>(mPointA->pos_var()->expr()->x, mPointB->pos_var()->expr()->x, 0.0);
-	dirY = std::make_shared<expression_substr_funky>(mPointA->pos_var()->expr()->y, mPointB->pos_var()->expr()->y, 0.0);
+	dirX = std::make_shared<expression_substr_funky>(mPointA->pos()->expr()->x, mPointB->pos()->expr()->x, 0.0);
+	dirY = std::make_shared<expression_substr_funky>(mPointA->pos()->expr()->y, mPointB->pos()->expr()->y, 0.0);
 	dir = std::make_shared<expressionVector3>(dirX, dirY, std::make_shared<expression_const>(0.0));
 }
 
 void sketchLine::notify_childUpdate()
 {
 	tangibleEntity::notify_childUpdate();
-	glm::vec2 dir = mPointA->pos_vec() - mPointB->pos_vec();
+	glm::vec2 dir = mPointA->pos_val() - mPointB->pos_val();
 	if(glm::length2(dir) == 0.0f) {
 		dirX->funk(true);
 		dirY->funk(true);
@@ -60,27 +60,27 @@ void sketchLine::notify_childUpdate()
 
 std::vector<variable_ptr> sketchLine::variables()
 {
-	return { mPointA->pos_var()->x, mPointA->pos_var()->y, mPointB->pos_var()->x, mPointB->pos_var()->y };
+	return { mPointA->pos()->x, mPointA->pos()->y, mPointB->pos()->x, mPointB->pos()->y };
 }
 
 subEquationsSystem sketchLine::coincidence()
 {
 	variable_ptr t = std::make_shared<variable>(0.5f);
 	return { 	{ t }, 
-				{ mPointA->pos_var()->x->expr() - t->expr() * (mPointA->pos_var()->x->expr() - mPointB->pos_var()->x->expr()),
-				  mPointA->pos_var()->y->expr() - t->expr() * (mPointA->pos_var()->y->expr() - mPointB->pos_var()->y->expr()) }};
+				{ mPointA->pos()->x->expr() - t->expr() * (mPointA->pos()->x->expr() - mPointB->pos()->x->expr()),
+				  mPointA->pos()->y->expr() - t->expr() * (mPointA->pos()->y->expr() - mPointB->pos()->y->expr()) }};
 }
 subEquationsSystem_vec sketchLine::direction()
 {
-	return { {}, dir }; // mPointA->pos_var()->expr() - mPointB->pos_var()->expr() };
+	return { {}, dir }; // mPointA->pos()->expr() - mPointB->pos()->expr() };
 }
 std::vector<subEquationsSystem> sketchLine::verticality()
 {
-	return { { {}, { mPointA->pos_var()->x->expr() } },
-			 { {}, { mPointB->pos_var()->x->expr() } }};
+	return { { {}, { mPointA->pos()->x->expr() } },
+			 { {}, { mPointB->pos()->x->expr() } }};
 }
 std::vector<subEquationsSystem> sketchLine::horizontality()
 {
-	return { { {}, { mPointA->pos_var()->y->expr() } },
-			 { {}, { mPointB->pos_var()->y->expr() } }};
+	return { { {}, { mPointA->pos()->y->expr() } },
+			 { {}, { mPointB->pos()->y->expr() } }};
 }

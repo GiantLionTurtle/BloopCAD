@@ -36,7 +36,7 @@ bool line_tool::manage_mouse_move(GdkEventMotion* event)
 		camera_ptr cam = mEnv->state()->cam; // For ease of writing
 		plane_abstract_ptr pl = target->basePlane();
 		glm::vec2 line_pos = pl->point_3d_to_2d(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
-		mEndPos->set_pos(line_pos);	
+		mEndPos->set(line_pos);	
 	}
 	return true;
 }
@@ -70,7 +70,7 @@ bool line_tool::manage_button_press(GdkEventButton* event)
 
 		mEnv->state()->doc->push_action(std::make_shared<addEntity_action>(mLine, target)); // Doc is passed to activate glContext
 	} else {
-		mEndPos->set_pos(line_pos);
+		mEndPos->set(line_pos);
 		started = false;
 	}
 	return true;

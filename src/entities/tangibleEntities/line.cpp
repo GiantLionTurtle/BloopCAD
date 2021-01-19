@@ -25,7 +25,7 @@ line::line(line_abstract const& baseLine):
 	layout.add_proprety_float(3);
 	mVA->bind();
 
-	glm::vec3 tmp[2] = {mPointA->pos_vec(), mPointB->pos_vec()};
+	glm::vec3 tmp[2] = {mPointA->pos_val(), mPointB->pos_val()};
 	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(&tmp[0], sizeof(glm::vec3) * 2));
 	mVA->add_buffer(*mVB.get(), layout);
 
@@ -44,8 +44,8 @@ line::line(line_abstract const& baseLine):
 
 void line::move(glm::vec3 delta)
 {
-	mPointA->set_pos(mPointA->pos_vec() + delta);
-	mPointB->set_pos(mPointB->pos_vec() + delta);
+	mPointA->set(mPointA->pos_val() + delta);
+	mPointB->set(mPointB->pos_val() + delta);
 }
 void line::set_constant()
 {
@@ -61,7 +61,7 @@ void line::set_tmpConstant(bool const_)
 void line::update_VB()
 {
 	mRequire_VBUpdate = false;
-	glm::vec3 tmp[2] = {mPointA->pos_vec(), mPointB->pos_vec()};
+	glm::vec3 tmp[2] = {mPointA->pos_val(), mPointB->pos_val()};
 	mVB->bind();
 	mVB->set(&tmp[0], sizeof(glm::vec3) * 2);
 	mVB->unbind();
@@ -98,12 +98,12 @@ void line::draw_impl(camera_ptr cam, int frame)
 
 float line::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
 {
-	glm::vec4 screenPos_a = cam->mvp() * glm::vec4(mPointA->pos_vec(), 1.0f);
+	glm::vec4 screenPos_a = cam->mvp() * glm::vec4(mPointA->pos_val(), 1.0f);
 	glm::vec3 screenPos_a_2d(	map(screenPos_a.x / screenPos_a.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
 								map(screenPos_a.y / screenPos_a.w, -1.0f, 1.0f, cam->viewport().y, 0.0f),
 								0.0f);
 
-	glm::vec4 screenPos_b = cam->mvp() * glm::vec4(mPointB->pos_vec(), 1.0f);
+	glm::vec4 screenPos_b = cam->mvp() * glm::vec4(mPointB->pos_val(), 1.0f);
 	glm::vec3 screenPos_b_2d(	map(screenPos_b.x / screenPos_b.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
 								map(screenPos_b.y / screenPos_b.w, -1.0f, 1.0f, cam->viewport().y, 0.0f), 
 								0.0f);
@@ -111,7 +111,7 @@ float line::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
 	line_abstract screen_line(screenPos_a_2d, screenPos_b_2d);
 	float line_point = 0;
 	if(screen_line.closest_point(glm::vec3(cursor_pos, 0.0f), line_point)->dist2(glm::vec3(cursor_pos, 0.0f)) < 25) {
-		return glm::length(cam->pos() - plane_abstract(at(line_point)->pos_vec(), cam->right(), cam->up()).line_intersection(cam->pos(), cam->cast_ray(cursor_pos)));		
+		return glm::length(cam->pos() - plane_abstract(at(line_point)->pos_val(), cam->right(), cam->up()).line_intersection(cam->pos(), cam->cast_ray(cursor_pos)));		
 	}
 	return -1.0f;
 }

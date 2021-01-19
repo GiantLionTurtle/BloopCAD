@@ -42,7 +42,7 @@ variable::variable(std::string name_, double val_, bool fixed_):
 
 }
 
-void variable::set_val(double val_) 
+void variable::set(double val_) 
 {
 	if(mFixed < fixedType::TMP_CONST)
 		mVal = val_;

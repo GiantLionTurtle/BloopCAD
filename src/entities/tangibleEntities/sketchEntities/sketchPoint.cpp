@@ -11,22 +11,22 @@ sketchPoint::sketchPoint(glm::vec2 pos_2d, plane_abstract_ptr basePlane_, bool i
 	set_name("sketchPoint");
 }
 
-glm::vec3 sketchPoint::pos_vec() const
+glm::vec3 sketchPoint::pos_val() const
 {
-	return mBasePlane->point_2d_to_3d(glm::vec2(point_abstract::pos_vec()));
+	return mBasePlane->point_2d_to_3d(glm::vec2(point_abstract::pos_val()));
 }
 
-void sketchPoint::set_pos(glm::vec2 pos)
+void sketchPoint::set(glm::vec2 pos)
 {
-	point::set_pos(glm::vec3(pos, 0.0f));
+	point::set(glm::vec3(pos, 0.0f));
 }
-void sketchPoint::set_pos(glm::vec3 pos)
+void sketchPoint::set(glm::vec3 pos)
 {
-	set_pos(glm::vec2(pos));
+	set(glm::vec2(pos));
 }
-void sketchPoint::set_pos(point_abstract const& other)
+void sketchPoint::set(point_abstract const& other)
 {
-	set_pos(other.pos_vec());
+	set(other.pos_val());
 }
 
 std::vector<variable_ptr> sketchPoint::variables()

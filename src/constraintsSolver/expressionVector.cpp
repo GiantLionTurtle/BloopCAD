@@ -33,9 +33,9 @@ glm::vec3 variableVector3::get() const
 }
 void variableVector3::set(glm::vec3 const& vec)
 {
-	x->set_val(vec.x);
-	y->set_val(vec.y);
-	z->set_val(vec.z);
+	x->set(vec.x);
+	y->set(vec.y);
+	z->set(vec.z);
 }
 void variableVector3::operator=(glm::vec3 const& vec)
 {
