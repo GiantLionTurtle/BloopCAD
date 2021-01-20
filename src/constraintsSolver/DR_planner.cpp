@@ -30,59 +30,193 @@ void solve(graph_ptr constraint_graph)
 	}
 }
 
-node_ptr create_network(graph graph_entry)
+network_ptr create_network(graph graph_entry)
 {
-	node_ptr source(new node{{}, 0});
-	node_ptr sink(new node{{}, 0});
+	return network_ptr(new network({graph_entry.nodes, graph_entry.edges}));
+}
 
-	for(int i = 0; i < graph_entry.edges.size(); ++i) {
-		node_ptr edge_node(new node({{}, 7}));
-		edge_ptr ed(new edge({source, edge_node, true, graph_entry.edges[i]->weight}));
-		graph_entry.edges[i]->junk = i;
-		edge_node->incidents.push_back(ed);
-		source->incidents.push_back(ed);
+void network::strip_labels()
+{
+	for(int i = 0; i < N.size(); ++i) {
+		N[i]->label = 0;
+		N[i]->scan = 0;
 	}
+	for(int i = 0; i < M.size(); ++i) {
+		M[i]->label = 0;
+		M[i]->scan = 0;
+	}
+}
+int network::labeled_nodes()
+{
+	int running_sum = 0;
+	for(int i = 0; i < N.size(); ++i) {
+		if(N[i]->label)
+			running_sum++;
+	}
+	for(int i = 0; i < M.size(); ++i) {
+		if(M[i]->label)
+			running_sum++;
+	}
+	return running_sum;
+}
+int network::scanned_nodes()
+{
+	int running_sum = 0;
+	for(int i = 0; i < N.size(); ++i) {
+		if(N[i]->scan)
+			running_sum++;
+	}
+	for(int i = 0; i < M.size(); ++i) {
+		if(M[i]->scan)
+			running_sum++;
+	}
+	return running_sum;
+}
 
-	for(int i = 0; i < graph_entry.nodes.size(); ++i) {
-		node_ptr node_node(new node({{}, 5}));
-		edge_ptr ed(new edge({node_node, sink, true, graph_entry.nodes[i]->weight}));
+void augment(node_ptr nd, edge_ptr ed)
+{
+	int w = std::min(nd->pathCap, nd->weight - nd->currFlow);
+	ed->pathCap -= w;
 
-		for(int j = 0; j < graph_entry.nodes[i]->incidents.size(); ++j) {
-			edge_ptr edge_node_to_node_node(new edge({source->incidents[graph_entry.nodes[i]->incidents[j]->junk]->b, node_node, true, 0, 0}));
-			source->incidents[graph_entry.nodes[i]->incidents[j]->junk]->b->incidents.push_back(edge_node_to_node_node);
-			node_node->incidents.push_back(edge_node_to_node_node);
+	node_ptr n = nd;
+	edge_ptr e = n->prevEdge;
+
+	while(e) {
+		if(e->a == n) {
+			e->flowa += w;
+			n->currFlow += w;
 		}
-		
-		node_node->incidents.push_back(ed);
-		sink->incidents.push_back(ed);
+		if(e->b == n) {
+			e->flowb += w;
+			n->currFlow += w;
+		}
+
+		if(e->prevNode) {
+			n = e->prevNode;
+
+			if(e->a == n) {
+				e->flowa -= w;
+				n->currFlow -= w;
+			}
+			if(e->b == n) {
+				e->flowb -= w;
+				n->currFlow -= w;
+			}
+
+			e = n->prevEdge;
+		} else {
+			e = nullptr;
+		}
 	}
-	return source;
 }
 
-void print_node(node_ptr nd, int stage)
+void restore_flow(edge_ptr ed)
 {
-	std::string offset = "";
-	for(int i = 0; i < stage; ++i) {
-		offset += '\t';
-	}
-	std::cout<<offset<<nd->weight<<"\n";
-	for(int i = 0; i < nd->incidents.size(); ++i) {
-		if(!nd->incidents[i]->directed || nd->incidents[i]->a == nd)
-			print_edge(nd->incidents[i], stage+1);
-	}
+	ed->a->currFlow -= ed->flowa;
+	ed->b->currFlow -= ed->flowb;
+
+	ed->flowa = 0;
+	ed->flowb = 0;	
 }
-void print_edge(edge_ptr ed, int stage)
+
+int sum_flow(network_ptr net, node_ptr nd)
 {
-	std::string offset = "";
-	for(int i = 0; i < stage; ++i) {
-		offset += '\t';
+	int running_sum = 0;
+	for(int i = 0; i < net->M.size(); ++i) {
+		edge_ptr e = net->M[i];
+		if(e->a == nd) {
+			running_sum += e->flowa;
+		} else if(e->b == nd) {
+			running_sum += e->flowb;
+		}
 	}
-	if(ed->directed) {
-		std::cout<<offset<<"["<<ed->weight<<"]"<<"=>\n";
-	} else {
-		std::cout<<offset<<"["<<ed->weight<<"]"<<"==\n";
+	return running_sum;
+}
+
+bool distribute(network_ptr G, edge_ptr ed)
+{
+	int n_labeled_unscanned = 1;
+
+	G->strip_labels();
+
+	int capNode = 0;
+	node_ptr nd;
+	ed->label = 1;
+	ed->pathCap = ed->weight;
+	ed->prevNode = nullptr;
+
+	while((ed->flowa + ed->flowb) < ed->weight || n_labeled_unscanned > 0) {
+		n_labeled_unscanned = 0;
+
+		for(int i = 0; i < G->M.size(); ++i) {
+			edge_ptr e = G->M[i];
+			if(!e->label || e->scan != 0) // For every labeled but non-scanned edge
+				continue;
+			
+			// An edge only has two endpoints, label unlabeled neighbors(end points)
+			if(!e->a->label) {
+				e->a->label = 1;
+				e->a->pathCap = e->pathCap;
+				e->a->prevEdge = e;
+				n_labeled_unscanned++;
+			}
+			if(!e->b->label) {
+				e->b->label = 1;
+				e->b->pathCap = e->pathCap;
+				e->b->prevEdge = e;
+				n_labeled_unscanned++;
+			}
+			e->scan = 1;
+		}
+
+		for(int i = 0; i < G->N.size(); ++i) {
+			node_ptr n = G->N[i];
+			if(!n->label || n->scan != 0) // For every labeled but non-scanned node
+				continue;
+			int attempt_path_cap = std::min(n->weight-sum_flow(G, n), n->pathCap);
+			if(attempt_path_cap > capNode) {
+				nd = n;
+				capNode = attempt_path_cap;
+
+				if(ed->pathCap > 0)
+					ed->label = 1;
+			} else {
+				for(int j = 0; j < G->M.size(); ++j) { // for every non labeled edge incident to n (TODO: use n->incid instead??)
+					edge_ptr e = G->M[i];
+					if(!e->label && e->a == n) {
+						e->label = 1;
+					}
+					if(!e->label && e->b == n) {
+						e->label = 1;
+					}
+				}
+			}
+			n->scan = 1;
+		}
+
+		if(nd) {
+			augment(nd, ed);
+			G->strip_labels();
+			nd = nullptr;
+			capNode = 0;
+			ed->label = 1;
+			ed->pathCap = ed->weight - (ed->flowa + ed->flowb);
+		}
 	}
-	if(!ed->directed)
-		print_node(ed->a, stage+1);
-	print_node(ed->b, stage+1);
+
+	return ed->pathCap > 0;
+}
+
+bool distribute(network_ptr G, edge_ptr ed, node_ptr added_node, int k)
+{
+	if(!distribute(G, ed))
+		return false;
+	
+	ed->pathCap -= (added_node->weight + k);
+	if(!distribute(G, ed))
+		return false;
+	
+	restore_flow(ed);
+
+	return true;
 }
