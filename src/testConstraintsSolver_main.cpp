@@ -3,9 +3,11 @@
 
 #include <constraintsSolver/expression.hpp>
 #include <constraintsSolver/equationsSystem.hpp>
+#include <constraintsSolver/DR_planner.hpp>
 
 #include <entities/geometry/point_abstract.hpp>
 #include <utils/errorLogger.hpp>
+
 
 #include <glm/gtx/string_cast.hpp>
 
@@ -13,6 +15,27 @@ int main()
 {
 	errorLogger::get_instance().init();
 
+	node_ptr n1(new node({{}, 2})), n2(new node({{}, 3})), n3(new node({{}, 4}));
+	edge_ptr e1(new edge{n1, n2, false, 3, 0}), e2(new edge{n2, n3, false, 3, 0}), e3(new edge{n3, n1, false, 3, 0});
+	n1->incidents.push_back(e1);
+	n1->incidents.push_back(e3);
+
+	n2->incidents.push_back(e1);
+	n2->incidents.push_back(e2);
+	
+	n3->incidents.push_back(e2);
+	n3->incidents.push_back(e3);
+
+	graph G = {{n1, n2, n3}, {e1, e2, e3}};
+	
+	node_ptr source = create_network(G);
+
+	print_node(source);
+
+	return 0;
+}
+
+/*
 	point_abstract_ptr a = std::make_shared<point_abstract>(glm::vec3(-0.520555, 0.219129, 0)), b = std::make_shared<point_abstract>(glm::vec3(3, 4, 0));
 	std::vector<expression_ptr> eqs {
 		a->pos()->x->expr() - b->pos()->x->expr(),
@@ -31,9 +54,7 @@ int main()
 	std::cout<<"Sys solved: "<<sys.satisfied()<<"\n";
 	std::cout<<"End: "<<glm::to_string(a->pos_val())<<" - "<<glm::to_string(b->pos_val())<<"\n";
 
-	
-	return 0;
-}
+*/
 
 /*
 	// Three variables, three equations

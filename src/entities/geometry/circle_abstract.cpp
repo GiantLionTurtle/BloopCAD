@@ -13,6 +13,15 @@ circle_abstract::circle_abstract(point_abstract_ptr center_, variable_ptr radius
         mRadius->set_constant();
     }
 }
+circle_abstract::circle_abstract(point_abstract_ptr center_, float radius_, bool immovable):
+    mCenter(center_),
+    mRadius(variable_ptr(new variable(radius_)))
+{
+    if(immovable) {
+        mCenter->set_constant();
+        mRadius->set_constant();
+    }
+}
 circle_abstract::circle_abstract(glm::vec2 center_, float radius_, bool immovable):
     mCenter(point_abstract_ptr(new point_abstract(glm::vec3(center_, 0.0f), immovable))),
     mRadius(variable_ptr(new variable(radius_)))

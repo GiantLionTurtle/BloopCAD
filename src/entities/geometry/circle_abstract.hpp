@@ -15,6 +15,7 @@ protected:
 	variable_ptr mRadius;
 public:
 	circle_abstract(point_abstract_ptr center_, variable_ptr radius_, bool immovable = false);
+	circle_abstract(point_abstract_ptr center_, float radius_, bool immovable = false);
 	circle_abstract(glm::vec2 center_, float radius_, bool immovable = false);
 
 	glm::vec2 center_val() const { return mCenter->pos_val(); }
