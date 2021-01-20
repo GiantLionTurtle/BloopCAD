@@ -1,14 +1,14 @@
 
 #include "DR_planner.hpp"
 
-std::vector<cluster_ptr> detect_clusters(graph_ptr constraint_graph)
-{
-	return {};
-}
-graph_ptr skeletonize(graph_ptr constraint_graph, std::vector<cluster_ptr> clusters)
-{
-	return nullptr;
-}
+// std::vector<cluster_ptr> detect_clusters(graph_ptr constraint_graph)
+// {
+// 	return {};
+// }
+// graph_ptr skeletonize(graph_ptr constraint_graph, std::vector<cluster_ptr> clusters)
+// {
+// 	return nullptr;
+// }
 void place_clusters(graph_ptr constraint_graph, graph_ptr next_constraint_graph)
 {
 
@@ -19,20 +19,30 @@ void place_nodes_in_plane(graph_ptr constraint_graph)
 }
 void solve(graph_ptr constraint_graph)
 {
-	std::vector<cluster_ptr> clusters = detect_clusters(constraint_graph);
+	// std::vector<cluster_ptr> clusters = detect_clusters(constraint_graph);
 
-	if(clusters.size() > 1) {
-		graph_ptr next_constraint_graph = skeletonize(constraint_graph, clusters);
-		solve(next_constraint_graph);
-		place_clusters(constraint_graph, next_constraint_graph);
-	} else {
-		place_nodes_in_plane(constraint_graph);
-	}
+	// if(clusters.size() > 1) {
+	// 	graph_ptr next_constraint_graph = skeletonize(constraint_graph, clusters);
+	// 	solve(next_constraint_graph);
+	// 	place_clusters(constraint_graph, next_constraint_graph);
+	// } else {
+	// 	place_nodes_in_plane(constraint_graph);
+	// }
 }
 
 network_ptr create_network(graph graph_entry)
 {
 	return network_ptr(new network({graph_entry.nodes, graph_entry.edges}));
+}
+
+bool is_incident(graph_ptr G, edge_ptr ed)
+{
+	for(int i = 0; i < G->nodes.size(); ++i) {
+		node_ptr nd = G->nodes[i];
+		if(ed->a == nd || ed->b == nd) 
+			return true;
+	}
+	return false;
 }
 
 void network::strip_labels()
@@ -219,4 +229,32 @@ bool distribute(network_ptr G, edge_ptr ed, node_ptr added_node, int k)
 	restore_flow(ed);
 
 	return true;
+}
+
+std::vector<node_ptr> dense(graph_ptr G)
+{
+	graph_ptr cluster(new graph);
+	network_ptr net(new network({G->nodes, G->edges}));
+	std::vector<node_ptr> out(0);
+	bool done = false;
+
+	for(int i = 0; i < G->nodes.size() && !done; ++i) {
+		node_ptr nd = G->nodes[i];
+		for(int j = 0; j < G->edges.size() && !done; ++j) {
+			edge_ptr ed = G->edges[j];
+			if((ed->a != nd && ed->b != nd) || !is_incident(cluster, ed)) 
+				continue;
+			if(!distribute(net, ed, nd, 4)) {
+				for(int h = 0; h < cluster->nodes.size(); ++i) {
+					node_ptr cnd = cluster->nodes[i];
+					if(cnd->label) {
+						out.push_back(cnd);
+					}
+				}
+				done = true;
+			}
+		}
+		cluster->nodes.push_back(nd);
+	}
+	return out;
 }

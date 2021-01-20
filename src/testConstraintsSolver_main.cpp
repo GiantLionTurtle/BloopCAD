@@ -15,35 +15,20 @@ int main()
 {
 	errorLogger::get_instance().init();
 
+	node_ptr n1(new node({nullptr, 2, 0, 0, 0, 0})), n2(new node({nullptr, 3, 0, 0, 0, 0})), n3(new node({nullptr, 4, 0, 0, 0, 0}));
+	edge_ptr e1(new edge{n1, n2, nullptr, 3, 0, 0, 0, 0, 0}), 
+	e2(new edge{n2, n3, nullptr, 3, 0, 0, 0, 0, 0}), e3(new edge{n3, n1, nullptr, 3, 0, 0, 0, 0, 0});
 
-	variable_ptr x1(new variable("x1", 0.1, false));
-	variable_ptr x2(new variable("x2", 0.1, false));
-	variable_ptr x3(new variable("x3", -0.1, false));
-	expression_ptr eq1 = 3 * x1->expr() - cos(x2->expr() * x3->expr()) - 0.5f;
-	expression_ptr eq2 = pow(x1->expr(), 2.0f) - 81 * pow(x2->expr() + 0.1, 2.0f) + sin(x3->expr()) + 1.06;
-	expression_ptr eq3 = exp(-x1->expr()*x2->expr()) + 20*x3->expr() + (10.0f * expConst::pi - 3.0f) / 3.0f;
-	equationsSystem sys({ eq1, eq2, eq3 }, { x1, x2, x3 });
+	network_ptr G(new network({{n1, n2, n3}, {e1, e2, e3}}));
+
+	distribute(G, e1);
+	distribute(G, e2);
+	distribute(G, e3);
+
+	std::cout<<"E1: "<<e1->pathCap<<" => "<<e1->flowa<<",  "<<e1->flowb<<"\n";
+	std::cout<<"E2: "<<e2->pathCap<<" => "<<e2->flowa<<",  "<<e2->flowb<<"\n";
+	std::cout<<"E3: "<<e3->pathCap<<" => "<<e3->flowa<<",  "<<e3->flowb<<"\n";
 	
-	std::cout<<"Sys size: "<<sys.vars_size()<<",  "<<sys.equs_size()<<"\n";
-	std::cout<<"Sys solved: "<<sys.satisfied()<<"\n";
-	std::cout<<"Sys solve attempt: "<<sys.solve()<<"\n";
-	std::cout<<"Sys solved: "<<sys.satisfied()<<"\n";
-
-	// node_ptr n1(new node({{}, 2})), n2(new node({{}, 3})), n3(new node({{}, 4}));
-	// edge_ptr e1(new edge{n1, n2, false, 3, 0}), e2(new edge{n2, n3, false, 3, 0}), e3(new edge{n3, n1, false, 3, 0});
-	// n1->incidents.push_back(e1);
-	// n1->incidents.push_back(e3);
-
-	// n2->incidents.push_back(e1);
-	// n2->incidents.push_back(e2);
-	
-	// n3->incidents.push_back(e2);
-	// n3->incidents.push_back(e3);
-
-	// graph G = {{n1, n2, n3}, {e1, e2, e3}};
-	
-	// node_ptr source = create_network(G);
-
 	// print_node(source);
 
 	return 0;

@@ -11,9 +11,7 @@
 #include <iostream>
 
 class graph;
-class cluster;
 using graph_ptr = std::shared_ptr<graph>;
-using cluster_ptr = std::shared_ptr<cluster>;
 
 struct node;
 struct edge;
@@ -24,7 +22,7 @@ struct network;
 using network_ptr = std::shared_ptr<network>;
 
 struct node {
-	std::vector<edge_ptr> incid;
+	// std::vector<edge_ptr> incid;
 	edge_ptr prevEdge;
 	int weight;
 	int scan, label;
@@ -35,8 +33,8 @@ struct node {
 struct edge {
 	node_ptr a, b;
 	node_ptr prevNode;
-	int flowa, flowb;
 	int weight;
+	int flowa, flowb;
 	int scan, label;
 	int pathCap;
 };
@@ -61,18 +59,20 @@ struct cluster {
 	std::vector<node_ptr> frontier;
 };
 
-std::vector<cluster_ptr> detect_clusters(graph_ptr constraint_graph);
-graph_ptr skeletonize(graph_ptr constraint_graph, std::vector<cluster_ptr> clusters);
+// std::vector<cluster_ptr> detect_clusters(graph_ptr constraint_graph);
+// graph_ptr skeletonize(graph_ptr constraint_graph, std::vector<cluster_ptr> clusters);
 void place_clusters(graph_ptr constraint_graph, graph_ptr next_constraint_graph);
 void place_nodes_in_plane(graph_ptr constraint_graph);
 void solve(graph_ptr constraint_graph);
 
 network_ptr create_network(graph graph_entry);
 
+bool is_incident(graph_ptr G, edge_ptr ed);
 void restore_flow(edge_ptr ed);
 void augment(node_ptr nd, edge_ptr ed);
 int sum_flow(network_ptr net, node_ptr nd);
 bool distribute(network_ptr G, edge_ptr ed);
 bool distribute(network_ptr G, edge_ptr ed, node_ptr added_node, int k);
+std::vector<node_ptr> dense(graph_ptr G);
 
 #endif
