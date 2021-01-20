@@ -118,8 +118,8 @@ bool entityHandle::select(GdkEventButton* event)
 	if(mView && mView->doc() && mEntity && mEntity->hovered()) {
 		if(event->type != GDK_2BUTTON_PRESS || (event->type == GDK_2BUTTON_PRESS && !mEntity->selected()))
 			mView->doc()->toggle_select(mEntity, event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK);
-		if(event->type == GDK_2BUTTON_PRESS && mView->currentWorkspaceState()) {
-			mView->currentWorkspaceState()->currentTool->act_on_entity(mEntity);
+		if(event->type == GDK_2BUTTON_PRESS && mView->state()) {
+			mView->state()->currentTool->act_on_entity(mEntity);
 		} 
 	}
 	return true;
@@ -128,7 +128,7 @@ bool entityHandle::select(GdkEventButton* event)
 bool entityHandle::set_hover(GdkEventCrossing* event)
 {
 	if(mEntity && mView) {
-		if(mView->currentWorkspaceState() && mView->currentWorkspaceState()->currentTool && !mView->currentWorkspaceState()->currentTool->should_hover(mEntity))
+		if(mView->state() && mView->state()->currentTool && !mView->state()->currentTool->should_hover(mEntity))
 			return true;
 		mEntity->set_hover(true);
 	}

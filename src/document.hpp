@@ -25,7 +25,7 @@
 */
 struct selection {
 	entity_ptr ent; // The selected entity
-	camState camSt; // The camera state at the moment of the selection
+	cameraState camSt; // The camera state at the moment of the selection
 
 	/*
 		@function selection creates a selection object
@@ -33,7 +33,7 @@ struct selection {
 		@param ent_ : 	The selected entity
 		@param camSt_ : The camera state during selection
 	*/
-	selection(entity_ptr ent_, camState camSt_) :
+	selection(entity_ptr ent_, cameraState camSt_) :
 		ent(ent_),
 		camSt(camSt_)
 	{}
@@ -61,7 +61,7 @@ private:
 	Gtk::GLArea mViewport; // The rendering widget
 	int mFrameId; // The current frame id, it is NOT garanteed to be unique
 	bloop* mParentBloop; // The bloop window owning the document
-	camState mCurrentCamState;
+	cameraState mCurrentCamState;
 
 	bool mRequire_redraw;
 	bool mUseSelectionBuffer;
@@ -137,7 +137,7 @@ public:
 
 		@return : The current workspace state
 	*/
-	workspaceState_ptr currentWorkspaceState() { return mCurrentWorkspaceState; };
+	workspaceState_ptr state() { return mCurrentWorkspaceState; };
 
 	/*
 		@function target
@@ -196,7 +196,7 @@ public:
 	*/
 	void clear_selection();
 
-	void toggle_select(entity_ptr ent, camState cam, bool additive);
+	void toggle_select(entity_ptr ent, cameraState cam, bool additive);
 	void toggle_select(entity_ptr ent, bool additive);
 };
 

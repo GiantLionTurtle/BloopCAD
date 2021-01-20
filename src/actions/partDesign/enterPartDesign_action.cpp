@@ -17,8 +17,8 @@ bool enterPartDesign_action::do_work(document* caller)
 	if(mTarget && !mTarget->has_volume()) {
 		mTarget->origin()->show();
 	}
-	mInitialTarget = caller->currentWorkspaceState()->target;
-	caller->currentWorkspaceState()->target = mTarget;
+	mInitialTarget = caller->state()->target;
+	caller->state()->target = mTarget;
 	return true;
 }
 
@@ -28,6 +28,6 @@ bool enterPartDesign_action::undo_work(document* caller)
 	if(mTarget) {
 		mTarget->origin()->hide();
 	}
-	caller->currentWorkspaceState()->target = mInitialTarget;
+	caller->state()->target = mInitialTarget;
 	return true;
 }

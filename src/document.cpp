@@ -287,7 +287,7 @@ void document::clear_selection()
 	}
 	mSelection.clear();
 }
-void document::toggle_select(entity_ptr ent, camState cam, bool additive)
+void document::toggle_select(entity_ptr ent, cameraState cam, bool additive)
 {
 	if(!ent && !additive) {
 		clear_selection();

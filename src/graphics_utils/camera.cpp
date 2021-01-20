@@ -8,20 +8,20 @@
 #include <glm/ext/quaternion_trigonometric.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-void print_state(camState const& st)
+void print_state(cameraState const& st)
 {
 	std::cout<<glm::to_string(st.pos)<<" - "<<glm::to_string(st.right)<<" - "<<glm::to_string(st.up);
 }
-std::ostream& operator<<(std::ostream &os, camState const& st)
+std::ostream& operator<<(std::ostream &os, cameraState const& st)
 {
 	os<<glm::to_string(st.pos)<<" - "<<glm::to_string(st.right)<<" - "<<glm::to_string(st.up);
 	return os;
 }
-bool operator !=(camState const& st1, camState const& st2) 
+bool operator !=(cameraState const& st1, cameraState const& st2) 
 {
 	return st1.pos != st2.pos || st1.right != st2.right|| st1.up != st2.up;
 }
-bool operator ==(camState const& st1, camState const& st2) 
+bool operator ==(cameraState const& st1, cameraState const& st2) 
 {
 	return st1.pos == st2.pos && st1.right == st2.right && st1.up == st2.up;
 }
@@ -99,12 +99,12 @@ bool camera::flipped() const
 	return (mod_angle > M_PI / 2.0f && mod_angle < M_PI * 3.0f / 2.0f);
 }
 
-bool camera::flipped(camState state_)
+bool camera::flipped(cameraState state_)
 {
 	return state_.up.y < 0.0f;
 }
 
-camState camera::state() const 
+cameraState camera::state() const 
 {
 	return { pos(), right(), up() };
 }

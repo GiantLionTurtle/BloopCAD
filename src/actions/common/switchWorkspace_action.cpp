@@ -13,8 +13,8 @@ switchWorkspace_action::switchWorkspace_action(std::string const& workspaceName,
 bool switchWorkspace_action::do_work(document* caller)
 {
 	if(caller) {
-		if(caller->currentWorkspaceState()) {
-			mInitWorkspaceName = caller->currentWorkspaceState()->workspaceName; // save the document's current workspace
+		if(caller->state()) {
+			mInitWorkspaceName = caller->state()->workspaceName; // save the document's current workspace
 
 			mValid = caller->has_workspace(mTargetWorkspaceName); // Check if the target workspace exists within the target document
 		} else {
@@ -26,12 +26,12 @@ bool switchWorkspace_action::do_work(document* caller)
 	}
 	camera_ptr tmpCam;
 	if(mSet_camera)
-		tmpCam = caller->currentWorkspaceState()->cam;
-	camState startState = caller->currentWorkspaceState()->cam->state();
+		tmpCam = caller->state()->cam;
+	cameraState startState = caller->state()->cam->state();
 	switch_workspace(caller, mTargetWorkspaceName);
-	caller->currentWorkspaceState()->startCamState = startState;
+	caller->state()->startCamState = startState;
 	if(mSet_camera)
-		caller->currentWorkspaceState()->cam->set(tmpCam);
+		caller->state()->cam->set(tmpCam);
 	return true;
 }
 bool switchWorkspace_action::undo_work(document* caller)

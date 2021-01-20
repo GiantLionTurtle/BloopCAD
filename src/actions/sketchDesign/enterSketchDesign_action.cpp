@@ -16,8 +16,8 @@ bool enterSketchDesign_action::do_work(document* caller)
 	if(mPlane) {
 		mPlane->hide();
 	}
-	mInitialTarget = caller->currentWorkspaceState()->target;
-	caller->currentWorkspaceState()->target = mTarget;
+	mInitialTarget = caller->state()->target;
+	caller->state()->target = mTarget;
 	return true;
 }
 
@@ -27,6 +27,6 @@ bool enterSketchDesign_action::undo_work(document* caller)
 	if(mPlane) {
 		mPlane->show();
 	}
-	caller->currentWorkspaceState()->target = mInitialTarget;
+	caller->state()->target = mInitialTarget;
 	return true;
 }

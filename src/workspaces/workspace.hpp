@@ -26,7 +26,7 @@ struct workspaceState {
 	document* doc; // The document owning the state
 	entity_ptr target; // The target entity of the workspace
 	camera_ptr cam; // The camera rendering the scene for that workspace in the doc
-	camState startCamState;
+	cameraState startCamState;
 	tool_abstract_ptr currentTool; // The tool being used by the workspace in the doc
 	std::string workspaceName; // The name of the workspace it is describing
 };

@@ -5,7 +5,7 @@
 #include <tools/common/simpleSelector_tool.hpp>
 #include <entities/sketch.hpp>
 
-struct camState;
+struct cameraState;
 
 /*
 	@class startSketch_tool describes the tool used to create a sketch in a part by selecting a plane
@@ -49,7 +49,7 @@ private:
 		@param sketchPlane :	The plane on which the plane will sit
 		@param camState_ : 		The state of the camera at selection time
 	*/
-	void start_sketch(plane_abstract_ptr sketchPlane, camState const& camState_);
+	void start_sketch(plane_abstract_ptr sketchPlane, cameraState const& camState_);
 };
 
 #endif

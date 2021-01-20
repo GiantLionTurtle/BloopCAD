@@ -70,7 +70,7 @@ public:
 	entityHandle& root() { return mRootHandle; };
 	document* doc() { return mDoc; }
 
-	workspaceState_ptr currentWorkspaceState() const { return mCurrentWorkspaceState; }
+	workspaceState_ptr state() const { return mCurrentWorkspaceState; }
 	void set_workspaceState(workspaceState_ptr workspaceState_) { mCurrentWorkspaceState = workspaceState_; };
 };
 

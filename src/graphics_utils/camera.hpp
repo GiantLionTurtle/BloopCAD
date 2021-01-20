@@ -24,16 +24,16 @@ struct transform {
 };
 
 /*
-	@struct camState is a helper struct to help describe a camera at a given orientation
+	@struct cameraState is a helper struct to help describe a camera at a given orientation
 */
-struct camState {
+struct cameraState {
 	glm::vec3 pos, right, up;
 };
 
-void print_state(camState const& st);
-std::ostream& operator<<(std::ostream &os, camState const& st);
-bool operator !=(camState const& st1, camState const& st2);
-bool operator ==(camState const& st1, camState const& st2);
+void print_state(cameraState const& st);
+std::ostream& operator<<(std::ostream &os, cameraState const& st);
+bool operator !=(cameraState const& st1, cameraState const& st2);
+bool operator ==(cameraState const& st1, cameraState const& st2);
 
 class camera;
 using camera_ptr = std::shared_ptr<camera>;
@@ -198,9 +198,9 @@ public:
 		@return : Whether or not the camera is upside down
 	*/
 	bool flipped() const;
-	static bool flipped(camState state_);
+	static bool flipped(cameraState state_);
 
-	camState state() const;
+	cameraState state() const;
 
 	static void orientation_to_rotation(glm::vec3 const& orientation, glm::quat& quaternion);
 

@@ -63,7 +63,7 @@ void startSketch_tool::act_on_entity(entity_ptr ent)
 		start_sketch(std::dynamic_pointer_cast<plane_abstract>(ent), mEnv->state()->cam->state());
 }
 
-void startSketch_tool::start_sketch(plane_abstract_ptr sketchPlane, camState const& camState_)
+void startSketch_tool::start_sketch(plane_abstract_ptr sketchPlane, cameraState const& camState_)
 {
 	std::shared_ptr<part> target = std::dynamic_pointer_cast<part>(mEnv->state()->target); // Aquire the part that is worked on
 	if(!target) {

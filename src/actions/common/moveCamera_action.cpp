@@ -8,7 +8,7 @@
 
 #include <glm/gtx/vector_angle.hpp>
 
-moveCamera_action::moveCamera_action(camera_ptr cam, camState target, long duration_ms):
+moveCamera_action::moveCamera_action(camera_ptr cam, cameraState target, long duration_ms):
 	mCamera(cam),
 	mTargetState({target.pos, glm::normalize(target.right), glm::normalize(target.up)}),
 	mStarted(false),
@@ -21,7 +21,7 @@ moveCamera_action::moveCamera_action(camera_ptr cam, camState target, long durat
 }
 
 std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	plane_abstract_ptr toFace, float dist_to_plane, 
-																				camState const& camSt, camera_ptr cam)
+																				cameraState const& camSt, camera_ptr cam)
 {
 	float dot_right_v 	= glm::dot(camSt.right, toFace->v()); // How similar is the camRight to the v vector?
 	float dot_up_v 		= glm::dot(camSt.up, toFace->v()); // How similar is the camUp to the v vector?
@@ -39,7 +39,7 @@ std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	plane_abstra
 		right_plane =  toFace->v() * (dot_right_v < 0.0f ? -1.0f : 1.0f); // Invert it or not
 		up_plane =  toFace->w() * (dot_up_w < 0.0f ? -1.0f : 1.0f); // Invert it or not
 	}
-	camState targetCamState = {  toFace->origin() + glm::normalize(glm::cross(right_plane, up_plane)) * dist_to_plane, right_plane, up_plane };
+	cameraState targetCamState = {  toFace->origin() + glm::normalize(glm::cross(right_plane, up_plane)) * dist_to_plane, right_plane, up_plane };
 	return std::shared_ptr<action>(new moveCamera_action(cam, 
 	targetCamState, 
 	preferences::get_instance().get_long("camtrans")));
@@ -53,7 +53,7 @@ bool moveCamera_action::do_work(document* caller)
 {
 	if(!mStarted) {
 		if(!mCamera) {
-			mCamera = caller->currentWorkspaceState()->cam;
+			mCamera = caller->state()->cam;
 		}
 		mInitState = mCamera->state();
 		compute_animatables(mTargetState);
@@ -66,7 +66,7 @@ bool moveCamera_action::undo_work(document* caller)
 {
 	if(!mStarted) {
 		if(!mCamera) {
-			mCamera = caller->currentWorkspaceState()->cam;
+			mCamera = caller->state()->cam;
 		}
 		compute_animatables(mInitState);
 		mStarted = true;
@@ -90,10 +90,10 @@ bool moveCamera_action::move_camera()
 	return false;
 }
 
-void moveCamera_action::compute_animatables(camState const& state)
+void moveCamera_action::compute_animatables(cameraState const& state)
 {
 	float angle_x, angle_y;
-	camState currState = mCamera->state();
+	cameraState currState = mCamera->state();
 	
 	angle_y = glm::orientedAngle(state.right, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
