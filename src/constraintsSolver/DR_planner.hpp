@@ -28,6 +28,7 @@ struct node {
 	int scan, label;
 	int pathCap;
 	int currFlow;
+	int name;
 };
 
 struct edge {
@@ -37,6 +38,7 @@ struct edge {
 	int flowa, flowb;
 	int scan, label;
 	int pathCap;
+	int name;
 };
 
 
@@ -52,6 +54,7 @@ struct network {
 	void strip_labels();
 	int labeled_nodes();
 	int scanned_nodes();
+	int labeled_unscanned();
 };
 
 struct cluster {
@@ -74,5 +77,7 @@ int sum_flow(network_ptr net, node_ptr nd);
 bool distribute(network_ptr G, edge_ptr ed);
 bool distribute(network_ptr G, edge_ptr ed, node_ptr added_node, int k);
 std::vector<node_ptr> dense(graph_ptr G);
+
+void dense_greedy(graph_ptr G);
 
 #endif

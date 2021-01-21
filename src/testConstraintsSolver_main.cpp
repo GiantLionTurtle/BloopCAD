@@ -15,19 +15,43 @@ int main()
 {
 	errorLogger::get_instance().init();
 
-	node_ptr n1(new node({nullptr, 2, 0, 0, 0, 0})), n2(new node({nullptr, 3, 0, 0, 0, 0})), n3(new node({nullptr, 4, 0, 0, 0, 0}));
-	edge_ptr e1(new edge{n1, n2, nullptr, 3, 0, 0, 0, 0, 0}), 
-	e2(new edge{n2, n3, nullptr, 3, 0, 0, 0, 0, 0}), e3(new edge{n3, n1, nullptr, 3, 0, 0, 0, 0, 0});
 
-	network_ptr G(new network({{n1, n2, n3}, {e1, e2, e3}}));
+	node_ptr 	n1(new node({nullptr, 3, 0, 0, 0, 0, 1})), n2(new node({nullptr, 3, 0, 0, 0, 0, 2})), n3(new node({nullptr, 3, 0, 0, 0, 0, 3})),
+				n4(new node({nullptr, 3, 0, 0, 0, 0, 4})), n5(new node({nullptr, 3, 0, 0, 0, 0, 5}));
+	edge_ptr 	e1(new edge{n1, n2, nullptr, 2, 0, 0, 0, 0, 0, 1}), e2(new edge{n2, n3, nullptr, 2, 0, 0, 0, 0, 0, 2}), 
+				e3(new edge{n3, n4, nullptr, 2, 0, 0, 0, 0, 0, 3}), e4(new edge{n4, n5, nullptr, 2, 0, 0, 0, 0, 0, 4}), 
+				e5(new edge{n5, n1, nullptr, 2, 0, 0, 0, 0, 0, 5}), e6(new edge{n3, n5, nullptr, 2, 0, 0, 0, 0, 0, 6});
 
-	distribute(G, e1);
-	distribute(G, e2);
-	distribute(G, e3);
+	network_ptr G(new network({{n1, n2, n3, n4, n5}, {e1, e2, e3, e4, e5, e6}}));
 
-	std::cout<<"E1: "<<e1->pathCap<<" => "<<e1->flowa<<",  "<<e1->flowb<<"\n";
-	std::cout<<"E2: "<<e2->pathCap<<" => "<<e2->flowa<<",  "<<e2->flowb<<"\n";
-	std::cout<<"E3: "<<e3->pathCap<<" => "<<e3->flowa<<",  "<<e3->flowb<<"\n";
+	
+	// node_ptr n1(new node({nullptr, 2, 0, 0, 0, 0, 1})), n2(new node({nullptr, 3, 0, 0, 0, 0, 2})), n3(new node({nullptr, 4, 0, 0, 0, 0, 3}));
+	// edge_ptr e1(new edge{n1, n2, nullptr, 3, 0, 0, 0, 0, 0}), 
+	// e2(new edge{n2, n3, nullptr, 4, 0, 0, 0, 0, 0}), e3(new edge{n3, n1, nullptr, 3, 0, 0, 0, 0, 0});
+
+	// network_ptr G(new network({{n1, n2, n3}, {e1, e2, e3}}));
+
+	// std::cout<<"TryDisE1: "<<distribute(G, e1)<<"\n";
+	// std::cout<<"TryDisE2: "<<distribute(G, e2)<<"\n";
+	// std::cout<<"TryDisE3: "<<distribute(G, e3)<<"\n";
+
+	// std::cout<<"E1: "<<e1->pathCap<<" => "<<e1->flowa<<",  "<<e1->flowb<<"\n";
+	// std::cout<<"E2: "<<e2->pathCap<<" => "<<e2->flowa<<",  "<<e2->flowb<<"\n";
+	// std::cout<<"E3: "<<e3->pathCap<<" => "<<e3->flowa<<",  "<<e3->flowb<<"\n";
+
+	// restore_flow(e1);
+	// restore_flow(e2);
+	// restore_flow(e3);
+	// n1->pathCap = 0;
+	// n2->pathCap = 0;
+	// n3->pathCap = 0;
+
+	std::vector<node_ptr> subgraph = dense(graph_ptr(new graph{G->N, G->M}));
+	std::cout<<"Dense subgraph: "<<subgraph.size()<<"\n";
+
+	for(int i = 0; i < subgraph.size(); ++i) {
+		std::cout<<"ID: "<<subgraph[i]->name<<"\n";
+	}
 	
 	// print_node(source);
 

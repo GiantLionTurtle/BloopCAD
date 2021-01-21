@@ -1,6 +1,8 @@
 
 #include "DR_planner.hpp"
 
+#include <utils/errorLogger.hpp>
+
 // std::vector<cluster_ptr> detect_clusters(graph_ptr constraint_graph)
 // {
 // 	return {};
@@ -83,6 +85,21 @@ int network::scanned_nodes()
 	return running_sum;
 }
 
+int network::labeled_unscanned()
+{
+	int running_sum = 0;
+	for(int i = 0; i < N.size(); ++i) {
+		if(N[i]->label && !N[i]->scan)
+			running_sum++;
+	}
+	for(int i = 0; i < M.size(); ++i) {
+		if(M[i]->label && !M[i]->scan)
+			running_sum++;
+	}
+	std::cout<<"lu: "<<running_sum<<"\n";
+	return running_sum;
+}
+
 void augment(node_ptr nd, edge_ptr ed)
 {
 	int w = std::min(nd->pathCap, nd->weight - nd->currFlow);
@@ -146,7 +163,7 @@ int sum_flow(network_ptr net, node_ptr nd)
 bool distribute(network_ptr G, edge_ptr ed)
 {
 	int n_labeled_unscanned = 1;
-
+	int tmp;
 	G->strip_labels();
 
 	int capNode = 0;
@@ -154,8 +171,8 @@ bool distribute(network_ptr G, edge_ptr ed)
 	ed->label = 1;
 	ed->pathCap = ed->weight;
 	ed->prevNode = nullptr;
-
-	while((ed->flowa + ed->flowb) < ed->weight || n_labeled_unscanned > 0) {
+	// ed->pathCap > 0
+	while((ed->flowa + ed->flowb) < ed->weight || (tmp = G->labeled_unscanned()) > 0) {
 		n_labeled_unscanned = 0;
 
 		for(int i = 0; i < G->M.size(); ++i) {
@@ -166,12 +183,14 @@ bool distribute(network_ptr G, edge_ptr ed)
 			// An edge only has two endpoints, label unlabeled neighbors(end points)
 			if(!e->a->label) {
 				e->a->label = 1;
+				std::cout<<"Label: "<<e->a->name<<"\n";
 				e->a->pathCap = e->pathCap;
 				e->a->prevEdge = e;
 				n_labeled_unscanned++;
 			}
 			if(!e->b->label) {
 				e->b->label = 1;
+				std::cout<<"Label: "<<e->b->name<<"\n";
 				e->b->pathCap = e->pathCap;
 				e->b->prevEdge = e;
 				n_labeled_unscanned++;
@@ -187,19 +206,21 @@ bool distribute(network_ptr G, edge_ptr ed)
 			if(attempt_path_cap > capNode) {
 				nd = n;
 				capNode = attempt_path_cap;
-
-				if(ed->pathCap > 0)
-					ed->label = 1;
 			} else {
 				for(int j = 0; j < G->M.size(); ++j) { // for every non labeled edge incident to n (TODO: use n->incid instead??)
-					edge_ptr e = G->M[i];
-					if(!e->label && e->a == n) {
+					edge_ptr e = G->M[j];
+					if(!e->label && e->a == n && e->flowa > 0) {
 						e->label = 1;
+						// e->pathCap = std::min(n->pathCap, e->flowa);
+						// e->prevNode = n;
 					}
-					if(!e->label && e->b == n) {
+					if(!e->label && e->b == n && e->flowb > 0) {
 						e->label = 1;
+						// e->pathCap = std::min(n->pathCap, e->flowb);
+						// e->prevNode = n;
 					}
 				}
+				n_labeled_unscanned++;
 			}
 			n->scan = 1;
 		}
@@ -214,19 +235,36 @@ bool distribute(network_ptr G, edge_ptr ed)
 		}
 	}
 
-	return ed->pathCap > 0;
+	bool out = ed->pathCap <= 0;
+	if(!out) {
+		restore_flow(ed);
+	}
+	return out;
 }
 
 bool distribute(network_ptr G, edge_ptr ed, node_ptr added_node, int k)
 {
+	int saved_pathcap = added_node->pathCap;
+	bool save_pathcap = false;
+	if(added_node->weight + k < 0) {
+		added_node->pathCap = 0;
+		save_pathcap = true;
+	}
+
+	std::cout<<"Node, edge: "<<added_node->name<<",  "<<ed->name<<"\n";
+
+	if(!distribute(G, ed))
+		return false;
+	BLOOP_MARKER;
+	int saved_weight = ed->weight;
+	ed->weight -= (added_node->weight + k);
+
 	if(!distribute(G, ed))
 		return false;
 	
-	ed->pathCap -= (added_node->weight + k);
-	if(!distribute(G, ed))
-		return false;
-	
-	restore_flow(ed);
+	ed->weight = saved_weight;
+	if(save_pathcap) 
+		added_node->pathCap = saved_pathcap;
 
 	return true;
 }
@@ -237,16 +275,17 @@ std::vector<node_ptr> dense(graph_ptr G)
 	network_ptr net(new network({G->nodes, G->edges}));
 	std::vector<node_ptr> out(0);
 	bool done = false;
-
 	for(int i = 0; i < G->nodes.size() && !done; ++i) {
 		node_ptr nd = G->nodes[i];
 		for(int j = 0; j < G->edges.size() && !done; ++j) {
 			edge_ptr ed = G->edges[j];
 			if((ed->a != nd && ed->b != nd) || !is_incident(cluster, ed)) 
 				continue;
-			if(!distribute(net, ed, nd, 4)) {
-				for(int h = 0; h < cluster->nodes.size(); ++i) {
-					node_ptr cnd = cluster->nodes[i];
+			 if(!distribute(net, ed, nd, -4)) {
+				// if(!distribute(net, ed)) {
+				for(int h = 0; h < G->nodes.size(); ++h) {
+					std::cout<<"OutTry: "<<G->nodes[h]->name<<" - "<<G->nodes[h]->label<<"\n";
+					node_ptr cnd = G->nodes[h];
 					if(cnd->label) {
 						out.push_back(cnd);
 					}
@@ -254,7 +293,18 @@ std::vector<node_ptr> dense(graph_ptr G)
 				done = true;
 			}
 		}
+		std::cout<<"Add: "<<nd->name<<"\n";
 		cluster->nodes.push_back(nd);
 	}
 	return out;
 }
+
+// void dense_greedy(graph_ptr G)
+// {
+// 	std::vector<node_ptr> B;
+// 	for(int i = 0; i < G->nodes.size(); ++i) {
+// 		node_ptr n = G->nodes[i];
+// 		B.push_back(n);
+// 	}
+// }
+
