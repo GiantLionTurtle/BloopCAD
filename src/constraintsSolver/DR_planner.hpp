@@ -2,82 +2,77 @@
 #ifndef DR_PLANNER_HPP_
 #define DR_PLANNER_HPP_
 
-// https://www.cise.ufl.edu/~sitharam/pdfs/drone-final.pdf
-// https://www.cs.purdue.edu/homes/cmh/distribution/PubsCons.html
-// https://www.cs.purdue.edu/homes/cmh/distribution/papers/Constraints/JSC01b.pdf
+// https://www.geeksforgeeks.org/minimum-cut-in-a-directed-graph/
 
 #include <memory>
 #include <vector>
-#include <iostream>
 
-class graph;
-using graph_ptr = std::shared_ptr<graph>;
-
-struct node;
+struct vertex;
 struct edge;
-using node_ptr = std::shared_ptr<node>;
+struct bipartite_graph;
+using vertex_ptr = std::shared_ptr<vertex>;
 using edge_ptr = std::shared_ptr<edge>;
+using bipartite_graph_ptr = std::shared_ptr<bipartite_graph>;
 
-struct network;
-using network_ptr = std::shared_ptr<network>;
-
-struct node {
-	// std::vector<edge_ptr> incid;
+struct vertex {
+	vertex(int w);
 	edge_ptr prevEdge;
 	int weight;
-	int scan, label;
-	int pathCap;
-	int currFlow;
+	int init_capacity, capacity;
+	int label;
+	int scan;
 	int name;
+	bool exists;
+	static int counter;
 };
 
 struct edge {
-	node_ptr a, b;
-	node_ptr prevNode;
+	edge(vertex_ptr a_, vertex_ptr b_, int w);
+	vertex_ptr prevVert;
+	vertex_ptr a, b;
 	int weight;
-	int flowa, flowb;
-	int scan, label;
-	int pathCap;
+	int init_capacity, capacity;
+	int flow_a, flow_b;
+	int label;
+	int scan;
 	int name;
+	bool exists;
+	static int counter;
 };
 
-
-struct graph {
-	std::vector<node_ptr> nodes;
-	std::vector<edge_ptr> edges;
-};
-
-struct network {
-	std::vector<node_ptr> N;
+class bipartite_graph {
+public:
+	std::vector<vertex_ptr> N;
 	std::vector<edge_ptr> M;
+public:
+	bipartite_graph(std::vector<vertex_ptr> aN, std::vector<edge_ptr> aM);
 
-	void strip_labels();
-	int labeled_nodes();
-	int scanned_nodes();
-	int labeled_unscanned();
+	int max_matching();
+
+	void clear_marquers();
+	void clear_path();
+
+	void minCut();
+	bool has_validFlow();
+
+	std::vector<vertex_ptr> labeled_vertices();
+
+	int sum_capIncid(vertex_ptr v);
+	void label_incid(vertex_ptr v);
+	static bool is_incident(std::vector<vertex_ptr> G, edge_ptr ed);
+	bool has_labeled_unscanned();
+	int distribute(edge_ptr e);
+	std::vector<vertex_ptr> minimal(int k = 0);
+	bipartite_graph_ptr induced_subgraph(std::vector<vertex_ptr> V);
+	int density(bool labeled_only = false);
+private:
+	bool dense(int k, std::vector<vertex_ptr>& outDense, vertex_ptr& lastAdded);
+	bool dense_k_positive(int k, std::vector<vertex_ptr>& outDense, vertex_ptr& lastAdded);
+	bool dense_k_negative(int k, std::vector<vertex_ptr>& outDense, vertex_ptr& lastAdded);
+
+	bool matching(edge_ptr e);
+	void label_reachableFromVertex(vertex_ptr v);
+	void label_reachableFromEdge(edge_ptr e);
 };
-
-struct cluster {
-	int weight;
-	std::vector<node_ptr> frontier;
-};
-
-// std::vector<cluster_ptr> detect_clusters(graph_ptr constraint_graph);
-// graph_ptr skeletonize(graph_ptr constraint_graph, std::vector<cluster_ptr> clusters);
-void place_clusters(graph_ptr constraint_graph, graph_ptr next_constraint_graph);
-void place_nodes_in_plane(graph_ptr constraint_graph);
-void solve(graph_ptr constraint_graph);
-
-network_ptr create_network(graph graph_entry);
-
-bool is_incident(graph_ptr G, edge_ptr ed);
-void restore_flow(edge_ptr ed);
-void augment(node_ptr nd, edge_ptr ed);
-int sum_flow(network_ptr net, node_ptr nd);
-bool distribute(network_ptr G, edge_ptr ed);
-bool distribute(network_ptr G, edge_ptr ed, node_ptr added_node, int k);
-std::vector<node_ptr> dense(graph_ptr G);
-
-void dense_greedy(graph_ptr G);
 
 #endif
