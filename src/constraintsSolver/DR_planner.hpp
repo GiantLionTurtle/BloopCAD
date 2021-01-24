@@ -2,7 +2,7 @@
 #ifndef DR_PLANNER_HPP_
 #define DR_PLANNER_HPP_
 
-// https://www.geeksforgeeks.org/minimum-cut-in-a-directed-graph/
+// https://www.cs.purdue.edu/homes/cmh/distribution/papers/Constraints/CP97.pdf
 
 #include <memory>
 #include <vector>
@@ -47,26 +47,28 @@ public:
 public:
 	bipartite_graph(std::vector<vertex_ptr> aN, std::vector<edge_ptr> aM);
 
+	std::vector<vertex_ptr> minimal(int k = 0);
+	bool dense(int k, std::vector<vertex_ptr>& outDense, vertex_ptr& lastAdded);
+	int distribute(edge_ptr e);
+
 	int max_matching();
+	void minCut();
+	bool has_validFlow();
+	
+	int sum_incidentCapacity(vertex_ptr v);
+	void label_incidents(vertex_ptr v);
+	bool has_labeled_unscanned();
+	int density(bool labeled_only = false);
+	int density_withRespectTo(vertex_ptr v);
+
+	std::vector<vertex_ptr> labeled_vertices();
+	bipartite_graph_ptr induced_subgraph(std::vector<vertex_ptr> V);
 
 	void clear_marquers();
 	void clear_path();
 
-	void minCut();
-	bool has_validFlow();
-
-	std::vector<vertex_ptr> labeled_vertices();
-
-	int sum_capIncid(vertex_ptr v);
-	void label_incid(vertex_ptr v);
 	static bool is_incident(std::vector<vertex_ptr> G, edge_ptr ed);
-	bool has_labeled_unscanned();
-	int distribute(edge_ptr e);
-	std::vector<vertex_ptr> minimal(int k = 0);
-	bipartite_graph_ptr induced_subgraph(std::vector<vertex_ptr> V);
-	int density(bool labeled_only = false);
 private:
-	bool dense(int k, std::vector<vertex_ptr>& outDense, vertex_ptr& lastAdded);
 	bool dense_k_positive(int k, std::vector<vertex_ptr>& outDense, vertex_ptr& lastAdded);
 	bool dense_k_negative(int k, std::vector<vertex_ptr>& outDense, vertex_ptr& lastAdded);
 
