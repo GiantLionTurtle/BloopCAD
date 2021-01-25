@@ -31,13 +31,24 @@ struct edge {
 	vertex_ptr prevVert;
 	vertex_ptr a, b;
 	int weight;
-	int init_capacity, capacity;
+	
 	int flow_a, flow_b;
 	int label;
 	int scan;
 	int name;
 	bool exists;
 	static int counter;
+
+	void set_capacity(int cap) 
+	{
+		mCapacity = cap;
+	}
+	int capacity()
+	{
+		return mCapacity;
+	}
+private:
+	int mCapacity;
 };
 
 class bipartite_graph {
@@ -46,8 +57,11 @@ public:
 	std::vector<edge_ptr> M;
 public:
 	bipartite_graph(std::vector<vertex_ptr> aN, std::vector<edge_ptr> aM);
+	bipartite_graph();
 
-	std::vector<vertex_ptr> minimal(int k = 0);
+	std::vector<bipartite_graph_ptr> clusters(int k = 0);
+	bipartite_graph_ptr extend(bipartite_graph_ptr min);
+	bipartite_graph_ptr minimal(int k = 0);
 	bool dense(int k, std::vector<vertex_ptr>& outDense, vertex_ptr& lastAdded);
 	int distribute(edge_ptr e);
 
@@ -56,7 +70,9 @@ public:
 	bool has_validFlow();
 	
 	int sum_incidentCapacity(vertex_ptr v);
+	int sum_incidentWeight(vertex_ptr v, bool labeled_only);
 	void label_incidents(vertex_ptr v);
+	void label_incidents(std::vector<vertex_ptr> V);
 	bool has_labeled_unscanned();
 	int density(bool labeled_only = false);
 	int density_withRespectTo(vertex_ptr v);

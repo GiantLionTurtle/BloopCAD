@@ -27,8 +27,7 @@ edge::edge(vertex_ptr a_, vertex_ptr b_, int w):
 	a(a_),
 	b(b_),
 	weight(w),
-	init_capacity(0),
-	capacity(0),
+	mCapacity(0),
 	flow_a(0),
 	flow_b(0),
 	label(0),
@@ -45,21 +44,42 @@ bipartite_graph::bipartite_graph(std::vector<vertex_ptr> aN, std::vector<edge_pt
 {
 
 }
+bipartite_graph::bipartite_graph()
+{
 
+}
 
-std::vector<vertex_ptr> bipartite_graph::minimal(int k)
+bipartite_graph_ptr bipartite_graph::extend(bipartite_graph_ptr min)
+{
+	std::vector<vertex_ptr> newGraph = min->N;
+	int init_size = 0;
+	while(newGraph.size() > init_size) {
+		init_size = newGraph.size();
+		label_incidents(newGraph);
+
+		for(int i = 0; i < N.size(); ++i) {
+			vertex_ptr v = N[i];
+			if(!v->label && sum_incidentWeight(v, true) >= v->weight) {
+				newGraph.push_back(v);
+			}
+		}
+	}
+	return induced_subgraph(newGraph);
+}
+
+bipartite_graph_ptr bipartite_graph::minimal(int k)
 {
 	std::vector<vertex_ptr> A_vertices;
 	vertex_ptr lastAdded;
 	if(!dense(k, A_vertices, lastAdded)) 
-		return {};
+		return std::make_shared<bipartite_graph>();
 	
 	bipartite_graph_ptr A = induced_subgraph(A_vertices);
 	std::vector<vertex_ptr> B = { lastAdded };
 
 	int density_A;
 	int density_B;
-	while((density_B = induced_subgraph(B)->density()) <= 0 && (density_A = A->density_withRespectTo(lastAdded) > (k+1))) {
+	while((density_B = induced_subgraph(B)->density()) <= 0 && (density_A = A->density_withRespectTo(lastAdded) > (/*k+*/1))) {
 		vertex_ptr v = nullptr;
 		bool v_in_B = false;
 		edge_ptr e_ = nullptr;
@@ -102,7 +122,7 @@ std::vector<vertex_ptr> bipartite_graph::minimal(int k)
 			}
 		}
 		if(!e_that_exists) {
-			LOG_ERROR("Fatal error, terminating.");
+			return induced_subgraph(A->N);
 		}
 		v->exists = false;
 		int c = density_A - e_->weight + e_->flow_a + e_->flow_b;
@@ -110,8 +130,7 @@ std::vector<vertex_ptr> bipartite_graph::minimal(int k)
 		v->capacity = 0;
 		A->distribute(e_that_exists);
 		if(A->density_withRespectTo(lastAdded) > c) {
-			std::vector<vertex_ptr> out = labeled_vertices();
-			return out;
+			return induced_subgraph(labeled_vertices());
 		}
 
 		v->capacity = init_cap;
@@ -124,9 +143,9 @@ std::vector<vertex_ptr> bipartite_graph::minimal(int k)
 	}
 
 	if(density_B > 0) {
-		return B;
+		return induced_subgraph(B);
 	}
-	return A->N;
+	return induced_subgraph(A->N);
 }
 
 bool bipartite_graph::dense(int k, std::vector<vertex_ptr>& outDense, vertex_ptr& lastAdded)
@@ -147,11 +166,18 @@ int bipartite_graph::distribute(edge_ptr ed)
 	clear_path();
 	clear_marquers();
 
+	for(int i = 0; i < M.size(); ++i) {
+		if(ed == M[i]) {
+			std::cout<<"Edge in M!\n";
+		}
+	}
+
 	vertex_ptr vert = nullptr;
 	int capvert = 0;
 	ed->label = true;
-	ed->capacity = ed->weight;
+	ed->set_capacity(ed->weight);
 	while(ed->weight > (ed->flow_a + ed->flow_b) || has_labeled_unscanned()) {
+		// std::cout<<__LINE__<<": cap = "<<ed->capacity()<<"\n";
 		for(int i = 0; i < M.size(); ++i) {
 			edge_ptr e = M[i];
 			if(!e->exists)
@@ -159,11 +185,11 @@ int bipartite_graph::distribute(edge_ptr ed)
 			if(e->label && !e->scan) {
 				e->a->label = true;
 				e->a->prevEdge = e;
-				e->a->capacity = e->capacity;
+				e->a->capacity = e->capacity();
 
 				e->b->label = true;
 				e->b->prevEdge = e;
-				e->b->capacity = e->capacity;
+				e->b->capacity = e->capacity();
 				e->scan = true;
 			}
 		}
@@ -186,10 +212,10 @@ int bipartite_graph::distribute(edge_ptr ed)
 			if(vert->prevEdge) {
 				int mod = 0;
 				if(vert->prevEdge->a == vert) {
-					mod = std::min(vert->weight - vert->prevEdge->flow_a, vert->prevEdge->capacity);
+					mod = std::min(vert->weight - vert->prevEdge->flow_a, vert->prevEdge->capacity());
 					vert->prevEdge->flow_a += mod;
 				} else if(vert->prevEdge->b == vert) {
-					mod = std::min(vert->weight - vert->prevEdge->flow_b, vert->prevEdge->capacity);
+					mod = std::min(vert->weight - vert->prevEdge->flow_b, vert->prevEdge->capacity());
 					vert->prevEdge->flow_b += mod;
 				} else {
 					LOG_WARNING("Should not be reached but ok..");
@@ -200,10 +226,12 @@ int bipartite_graph::distribute(edge_ptr ed)
 			vert = nullptr;
 			capvert = 0;
 			ed->label = true;
-			ed->capacity = ed->weight - (ed->flow_a + ed->flow_b);
+			ed->set_capacity(ed->weight - (ed->flow_a + ed->flow_b));
+			std::cout<<__LINE__<<": cap = "<<ed->capacity()<<"\n";
 		}		
 	}
-	return density(true);
+	int out = induced_subgraph(labeled_vertices())->density();
+	return out;// density(true);
 }
 
 int bipartite_graph::max_matching()
@@ -228,7 +256,7 @@ void bipartite_graph::minCut()
 			if(!v->exists)
 				continue;
 			if(v->label && v->prevEdge) {
-				path_flow = std::min(std::min(path_flow, v->capacity), v->prevEdge->capacity);
+				path_flow = std::min(std::min(path_flow, v->capacity), v->prevEdge->capacity());
 			}
 		}
 		for(int i = 0; i < N.size(); ++i) {
@@ -255,7 +283,7 @@ bool bipartite_graph::has_validFlow()
 
 	for(int i = 0; i < M.size(); ++i) {
 		edge_ptr e = M[i];
-		if(!e->label && (e->flow_a + e->flow_b) < e->capacity) {
+		if(!e->label && (e->flow_a + e->flow_b) < e->capacity()) {
 			e->label = true;
 
 			for(int j = 0; j < N.size(); ++j) {
@@ -288,6 +316,20 @@ int bipartite_graph::sum_incidentCapacity(vertex_ptr v)
 	}
 	return running_sum;
 }
+int bipartite_graph::sum_incidentWeight(vertex_ptr v, bool labeled_only)
+{
+	if(!v->exists)	
+		return 0;
+	int running_sum = 0;
+	for(int i = 0; i < M.size(); ++i) {
+		edge_ptr e = M[i];
+		if(!e->exists || (labeled_only && !e->label))
+			continue;
+		if(e->a == v || e->b == v) 
+			running_sum += e->weight;
+	}
+	return running_sum;	
+}
 
 void bipartite_graph::label_incidents(vertex_ptr v)
 {
@@ -303,6 +345,19 @@ void bipartite_graph::label_incidents(vertex_ptr v)
 		} else if(e->b == v && e->flow_b > 0) {
 			e->label = true;
 		}
+	}
+}
+
+void bipartite_graph::label_incidents(std::vector<vertex_ptr> V)
+{
+	clear_marquers();
+	for(int i = 0; i < V.size(); ++i) {
+		V[i]->label = true;
+	}
+	for(int i = 0; i < M.size(); ++i) {
+		edge_ptr e = M[i];
+		if(e->exists && (e->a->label || e->b->label))
+			e->label = true;
 	}
 }
 
@@ -335,6 +390,7 @@ int bipartite_graph::density(bool labeled_only)
 		if(e->exists && (!labeled_only || e->label))
 			distribute_balance += (e->flow_a + e->flow_b);
 	}
+	std::cout<<"Balance: "<<distribute_balance<<"\n";
 	return distribute_balance;
 }
 
@@ -451,7 +507,7 @@ bool bipartite_graph::dense_k_negative(int k, std::vector<vertex_ptr>& outDense,
 			if(v->weight + k >= 0) {
 				int init_cap = v->capacity;
 				v->capacity = v->weight + k;
-				if(distribute(e) > 0) {
+				if(distribute(e) > k) {
 					outDense = labeled_vertices();
 					lastAdded = G_.back();
 					return true;
@@ -460,19 +516,19 @@ bool bipartite_graph::dense_k_negative(int k, std::vector<vertex_ptr>& outDense,
 			} else {
 				// int init_v_cap = v->capacity;
 				v->capacity = 0;
-				if(distribute(e) > 0) {
+				if(distribute(e) > k) {
 					outDense = labeled_vertices();
 					lastAdded = G_.back();
 					return true;
 				}
-				int init_cap = e->capacity;
-				e->capacity -= (v->weight + k);
-				if(distribute(e) > 0) {
+				int init_cap = e->capacity();
+				e->set_capacity(e->capacity() - (v->weight + k));
+				if(distribute(e) > k) {
 					outDense = labeled_vertices();
 					lastAdded = G_.back();
 					return true;
 				}
-				e->capacity = init_cap;
+				e->set_capacity(init_cap);
 			}
 		}
 		G_.push_back(v);
