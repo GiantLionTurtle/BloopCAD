@@ -6,91 +6,141 @@
 
 #include <memory>
 #include <vector>
+#include <functional>
 
-struct vertex;
-struct edge;
-struct bipartite_graph;
-using vertex_ptr = std::shared_ptr<vertex>;
+// struct vertex;
+class cluster;
+class edge;
+class graph;
+// using vertex_ptr = std::shared_ptr<vertex>;
+using cluster_ptr = std::shared_ptr<cluster>;
 using edge_ptr = std::shared_ptr<edge>;
-using bipartite_graph_ptr = std::shared_ptr<bipartite_graph>;
+using graph_ptr = std::shared_ptr<graph>;
 
-struct vertex {
-	vertex(int w);
-	edge_ptr prevEdge;
-	int weight;
-	int init_capacity, capacity;
-	int label;
-	int scan;
-	int name;
-	bool exists;
-	static int counter;
-};
-
-struct edge {
-	edge(vertex_ptr a_, vertex_ptr b_, int w);
-	vertex_ptr prevVert;
-	vertex_ptr a, b;
-	int weight;
-	
-	int flow_a, flow_b;
-	int label;
-	int scan;
-	int name;
-	bool exists;
-	static int counter;
-
-	void set_capacity(int cap) 
-	{
-		mCapacity = cap;
-	}
-	int capacity()
-	{
-		return mCapacity;
-	}
+class cluster : public std::enable_shared_from_this<cluster> {
 private:
-	int mCapacity;
-};
-
-class bipartite_graph {
+	std::vector<cluster_ptr> mSubClusters;
+	std::vector<edge_ptr> mSubClusters_edges;
+	std::vector<edge_ptr> mIncidentEdges;
+	edge_ptr mPrevEdge;
+	int mWeight, mCapacity, mDensity;
+	int mLabel, mScan;
+	bool mExists;
+	int mName;
+	static int counter;
 public:
-	std::vector<vertex_ptr> N;
-	std::vector<edge_ptr> M;
-public:
-	bipartite_graph(std::vector<vertex_ptr> aN, std::vector<edge_ptr> aM);
-	bipartite_graph();
+	cluster(int weight_);
+	cluster(std::vector<cluster_ptr> clusters, cluster_ptr base = nullptr);
+	cluster(std::vector<cluster_ptr> clusters, std::vector<edge_ptr> edges, cluster_ptr base = nullptr);
 
-	std::vector<bipartite_graph_ptr> clusters(int k = 0);
-	bipartite_graph_ptr extend(bipartite_graph_ptr min);
-	bipartite_graph_ptr minimal(int k = 0);
-	bool dense(int k, std::vector<vertex_ptr>& outDense, vertex_ptr& lastAdded);
+	cluster_ptr simplify(int k);
+	cluster_ptr extend(cluster_ptr min);
+	cluster_ptr minimal(int k);
+	bool dense(int k, std::vector<cluster_ptr>& outDense, cluster_ptr& lastAdded);
 	int distribute(edge_ptr e);
 
-	int max_matching();
-	void minCut();
-	bool has_validFlow();
-	
-	int sum_incidentCapacity(vertex_ptr v);
-	int sum_incidentWeight(vertex_ptr v, bool labeled_only);
-	void label_incidents(vertex_ptr v);
-	void label_incidents(std::vector<vertex_ptr> V);
+	void set_prevEdge(edge_ptr e) { mPrevEdge = e; }
+	edge_ptr prevEdge() { return mPrevEdge; }
+
+	std::vector<cluster_ptr> subClusters() { return mSubClusters; }
+	void add_cluster(cluster_ptr clust);
+
+	int num_incidentEdges() const { return mIncidentEdges.size(); }
+	edge_ptr incidentEdge(unsigned int ind) { return ind < mIncidentEdges.size() ? mIncidentEdges[ind] : nullptr; }
+	std::vector<edge_ptr> incidentEdges() { return mIncidentEdges; }
+	int sum_incidentEdges_capacity(bool labeled_only = false);
+	int sum_incidentEdges_weight(bool labeled_only = false);
+	int incidentEdges_density();
+	void label_incidentEdges(cluster_ptr clust, bool with_flow = false);
+	void label_incidentEdges();
+	void add_incidentEdge(edge_ptr e);
+	void clear_incidentEdges() { mIncidentEdges.clear(); }
+
+	int weight() const { return mWeight; }
+	void set_weight(int w) { mWeight = w; }
+
+	int capacity() const { return mCapacity; }
+	void set_capacity(int c) { mCapacity = c; }
+
+	int density() const { return mDensity; }
+	int density_around(cluster_ptr subClust);
+
+	int label() const { return mLabel; }
+	int scan() const { return mScan; }
+	void set_label(int l = 1) { mLabel = l; }
+	void set_scan(int s = 1) { mScan = 1; }
+	void reset_label() { mLabel = 0; }
+	void reset_scan() { mScan = 0; }
+	void reset_marquers() { mLabel = 0; mScan = 0; }
 	bool has_labeled_unscanned();
-	int density(bool labeled_only = false);
-	int density_withRespectTo(vertex_ptr v);
 
-	std::vector<vertex_ptr> labeled_vertices();
-	bipartite_graph_ptr induced_subgraph(std::vector<vertex_ptr> V);
 
-	void clear_marquers();
-	void clear_path();
+	bool exists() const { return mExists; }
+	void set_exists(bool e) { mExists = e; }
 
-	static bool is_incident(std::vector<vertex_ptr> G, edge_ptr ed);
+	int name() const { return mName; }
+
+	cluster_ptr induced_graph(std::vector<cluster_ptr> clusters);
+	std::vector<cluster_ptr> labeled_clusters();
 private:
-	bool dense_k_positive(int k, std::vector<vertex_ptr>& outDense, vertex_ptr& lastAdded);
-	bool dense_k_negative(int k, std::vector<vertex_ptr>& outDense, vertex_ptr& lastAdded);
+	void for_each(std::function<void (cluster_ptr c)> func);
+	void reset_childrenMarquers();
+	void set_childrenLabels(int val);
+	void reset_childrenPaths();
 
-	bool matching(edge_ptr e);
-	void label_reachableFromVertex(vertex_ptr v);
-	void label_reachableFromEdge(edge_ptr e);
+	int compute_density();
+
+	bool dense_k_positive(int k, std::vector<cluster_ptr>& outDense, cluster_ptr& lastAdded);
+	bool dense_k_negative(int k, std::vector<cluster_ptr>& outDense, cluster_ptr& lastAdded);
+};
+
+class edge : public std::enable_shared_from_this<edge> {
+private:
+	cluster_ptr mA, mB; // The two clusters linked by the edge
+	cluster_ptr mPrevVert; // The previous cluster in the augmenting path
+	int mWeight;
+	int mCapacity;
+	int mFlow_a, mFlow_b;
+	int mLabel, mScan;
+	bool mExists;
+	int mName;
+	static int counter;
+public:
+	edge(cluster_ptr a_, cluster_ptr b_, int w);
+
+	cluster_ptr a() { return mA; }
+	cluster_ptr b() { return mB; }
+
+	int weight() const { return mWeight; }
+	void set_weight(int w) { mWeight = w; }
+
+	int capacity() const { return mCapacity; }
+	void set_capacity(int c) { mCapacity = c; }
+
+	int flow_a() const { return mFlow_a; }
+	int flow_b() const { return mFlow_b; }
+	void set_flow_a(int flow) { mFlow_a = flow; }
+	void set_flow_b(int flow) { mFlow_b = flow; }
+	void incr_flow_a(int flow) { mFlow_a += flow; }
+	void incr_flow_b(int flow) { mFlow_b += flow; }
+
+	int label() const { return mLabel; }
+	int scan() const { return mScan; }
+	void set_label(int l = 1) { mLabel = l; }
+	void set_scan(int s = 1) { mScan = 1; }
+	void reset_label() { mLabel = 0; }
+	void reset_scan() { mScan = 0; }
+	void reset_marquers() { mLabel = 0; mScan = 0; }
+
+	bool exists() const { return mExists; }
+	void set_exists(bool e) { mExists = e; }
+
+	int name() const { return mName; }
+
+	void set_endPointIncidence();
+
+	bool incident(cluster_ptr clust);
+	bool incident(std::vector<cluster_ptr> clust);
 };
 
 #endif

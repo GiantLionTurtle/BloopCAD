@@ -6,149 +6,204 @@
 #include <cmath>
 #include <limits>
 
-int vertex::counter = 0;
+int cluster::counter = 0;
 int edge::counter = 0;
 
-vertex::vertex(int w):
-	prevEdge(nullptr),
-	weight(w),
-	init_capacity(0),
-	capacity(0),
-	label(0),
-	scan(0),
-	exists(true),
-	name(++counter)
-{
-
-}
-
-edge::edge(vertex_ptr a_, vertex_ptr b_, int w):
-	prevVert(nullptr),
-	a(a_),
-	b(b_),
-	weight(w),
+cluster::cluster(int w):
+	mSubClusters(0),
+	mSubClusters_edges(0),
+	mIncidentEdges(0),
+	mPrevEdge(nullptr),
+	mWeight(w),
 	mCapacity(0),
-	flow_a(0),
-	flow_b(0),
-	label(0),
-	scan(0),
-	exists(true),
-	name(++counter)
+	mDensity(w),
+	mLabel(0),
+	mScan(0),
+	mExists(true),
+	mName(++counter)
 {
 
 }
-
-bipartite_graph::bipartite_graph(std::vector<vertex_ptr> aN, std::vector<edge_ptr> aM):
-	N(aN),
-	M(aM)
+cluster::cluster(std::vector<cluster_ptr> clusters, cluster_ptr base):
+	mSubClusters(clusters),
+	mSubClusters_edges(0),
+	mIncidentEdges(0),
+	mPrevEdge(nullptr),
+	mWeight(0),
+	mCapacity(0),
+	mDensity(0),
+	mLabel(0),
+	mScan(0),
+	mExists(true),
+	mName(++counter)
 {
-
-}
-bipartite_graph::bipartite_graph()
-{
-
-}
-
-bipartite_graph_ptr bipartite_graph::extend(bipartite_graph_ptr min)
-{
-	std::vector<vertex_ptr> newGraph = min->N;
-	int init_size = 0;
-	while(newGraph.size() > init_size) {
-		init_size = newGraph.size();
-		label_incidents(newGraph);
-
-		for(int i = 0; i < N.size(); ++i) {
-			vertex_ptr v = N[i];
-			if(!v->label && sum_incidentWeight(v, true) >= v->weight) {
-				newGraph.push_back(v);
+	for(cluster_ptr clus : mSubClusters) {
+		clus->set_label(2);
+	}
+	for(cluster_ptr clus : mSubClusters) {
+		for(edge_ptr edg : clus->incidentEdges()) {
+			if(edg->a()->label() == 2 && edg->b()->label() == 2 && edg->label() != 2) {
+				edg->set_endPointIncidence();
+				edg->set_label(2);
+				mSubClusters_edges.push_back(edg);
 			}
 		}
 	}
-	return induced_subgraph(newGraph);
+
+	if(base) {
+		for(edge_ptr edg : base->mSubClusters_edges) {
+			if((edg->a()->label() == 2 || edg->b()->label() == 2) && edg->label() != 2) {
+				edg->set_endPointIncidence();
+				edg->set_label(2);
+				mIncidentEdges.push_back(edg);
+			}
+		}
+	}
+
+	reset_childrenMarquers();
+	compute_density();
 }
 
-bipartite_graph_ptr bipartite_graph::minimal(int k)
+cluster::cluster(std::vector<cluster_ptr> clusters, std::vector<edge_ptr> edges, cluster_ptr base):
+	mSubClusters(clusters),
+	mSubClusters_edges(0),
+	mIncidentEdges(0),
+	mPrevEdge(nullptr),
+	mWeight(0),
+	mCapacity(0),
+	mDensity(0),
+	mLabel(0),
+	mScan(0),
+	mExists(true),
+	mName(++counter)
 {
-	std::vector<vertex_ptr> A_vertices;
-	vertex_ptr lastAdded;
-	if(!dense(k, A_vertices, lastAdded)) 
-		return std::make_shared<bipartite_graph>();
+	for(cluster_ptr clus : mSubClusters) {
+		clus->clear_incidentEdges();
+		clus->set_label(2);
+	}
+	for(edge_ptr edg : edges) {
+		if(edg->a()->label() == 2 && edg->b()->label() == 2 && edg->label() != 2) {
+			edg->set_endPointIncidence();
+			edg->set_label(2);
+			mSubClusters_edges.push_back(edg);
+		}
+	}
+
+	if(base) {
+		for(edge_ptr edg : base->mSubClusters_edges) {
+			if((edg->a()->label() == 2 || edg->b()->label() == 2) && edg->label() != 2) {
+				edg->set_endPointIncidence();
+				edg->set_label(2);
+				mIncidentEdges.push_back(edg);
+			}
+		}
+	}
+
+	reset_childrenMarquers();
+	compute_density();
+}
+
+cluster_ptr cluster::simplify(int k)
+{
+	return nullptr;
+}
+cluster_ptr cluster::extend(cluster_ptr min)
+{
+	cluster_ptr newGraph(new cluster(min->mSubClusters, min->mSubClusters_edges, shared_from_this()));
+	int init_size = 0;
+	reset_childrenMarquers();
+	while(newGraph->mSubClusters.size() > init_size) {
+		init_size = newGraph->mSubClusters.size();
+		newGraph->set_childrenLabels(1);
+		newGraph->label_incidentEdges();
+
+		for(cluster_ptr clust : mSubClusters) {
+			if(!clust->label() && clust->sum_incidentEdges_weight(true) >= clust->weight()) {
+				newGraph->add_cluster(clust);
+			}
+		}
+	}
+	return newGraph;
+}
+cluster_ptr cluster::minimal(int k)
+{
+	std::vector<cluster_ptr> dense_clusters;
+	cluster_ptr lastAdded;
+	if(!dense(k, dense_clusters, lastAdded)) 
+		return nullptr;
 	
-	bipartite_graph_ptr A = induced_subgraph(A_vertices);
-	std::vector<vertex_ptr> B = { lastAdded };
+	cluster_ptr A(new cluster(dense_clusters));
+	cluster_ptr B(new cluster({ lastAdded }));
 
 	int density_A;
 	int density_B;
-	while((density_B = induced_subgraph(B)->density()) <= 0 && (density_A = A->density_withRespectTo(lastAdded) > (/*k+*/1))) {
-		vertex_ptr v = nullptr;
-		bool v_in_B = false;
-		edge_ptr e_ = nullptr;
-		for(int i = 0; i < M.size() && !e_; ++i) {
-			edge_ptr tmp_e = M[i];
-			if(tmp_e->a == lastAdded) {
-				v_in_B = false;
-				for(int j = 0; j < B.size(); ++j) {
-					if(tmp_e->b == B[j]) {
-						v_in_B = true;
+	while((density_B = B->density() <= 0 && (density_A = A->density_around(lastAdded)) > (/*k+*/1))) {
+		cluster_ptr AExclusive = nullptr;
+		edge_ptr last_to_Aexclusive = nullptr;
+		for(edge_ptr e : mSubClusters_edges) {
+			bool cluster_in_B = false;
+			if(e->a() == lastAdded) {
+				for(cluster_ptr B_clust : B->mSubClusters) {
+					if(e->b() == B_clust) {
+						cluster_in_B = true;
 					}
 				}
-				if(!v_in_B) {
-					v = tmp_e->b;
-					e_ = tmp_e;
+				if(!cluster_in_B) {
+					AExclusive = e->b();
+					last_to_Aexclusive = e;
+					break;
 				}
-			} else if(tmp_e->b == lastAdded) {
-				v_in_B = false;
-				for(int j = 0; j < B.size(); ++j) {
-					if(tmp_e->a == B[j]) {
-						v_in_B = true;
+			} else if(e->b() == lastAdded) {
+				for(cluster_ptr B_clust : B->mSubClusters) {
+					if(e->a() == B_clust) {
+						cluster_in_B = true;
 					}
 				}
-				if(!v_in_B) {
-					v = tmp_e->a;
-					e_ = tmp_e;
+				if(!cluster_in_B) {
+					AExclusive = e->a();
+					last_to_Aexclusive = e;
+					break;
 				}
 			}
 		}
-		if(!e_) {
+		if(!last_to_Aexclusive) {
 			LOG_ERROR("Fatal error, terminating.");
 		}
-		edge_ptr e_that_exists = nullptr;
-		for(int i = 0; i < M.size(); ++i) {
-			edge_ptr e = M[i];
-			if(e->a == v || e->b == v) {
-				e->exists = false;
-			} else if(!e_that_exists && e->a == lastAdded || e->b == lastAdded) {
-				e_that_exists = e;
+		edge_ptr not_in_AExclusive_clust = nullptr;
+		for(edge_ptr e : mSubClusters_edges) {
+			if(e->a() == AExclusive || e->b() == AExclusive) {
+				e->set_exists(false);
+			} else if(!not_in_AExclusive_clust && (e->a() == lastAdded || e->b() == lastAdded)) {
+				not_in_AExclusive_clust = e;
 			}
 		}
-		if(!e_that_exists) {
-			return induced_subgraph(A->N);
-		}
-		v->exists = false;
-		int c = density_A - e_->weight + e_->flow_a + e_->flow_b;
-		int init_cap = v->capacity;
-		v->capacity = 0;
-		A->distribute(e_that_exists);
-		if(A->density_withRespectTo(lastAdded) > c) {
-			return induced_subgraph(labeled_vertices());
+		AExclusive->set_exists(false);
+		if(!not_in_AExclusive_clust) {
+			return A;
 		}
 
-		v->capacity = init_cap;
-		for(int i = 0; i < M.size(); ++i) {
-			edge_ptr e = M[i];
-			e->exists = true;
+		int c = density_A - last_to_Aexclusive->weight() + last_to_Aexclusive->flow_a() + last_to_Aexclusive->flow_b();
+		int init_cap = AExclusive->capacity();
+		AExclusive->set_capacity(0);
+		A->distribute(last_to_Aexclusive);
+		if(A->density_around(lastAdded) > c) {
+			return induced_graph(labeled_clusters());
 		}
-		v->exists = true;
-		B.push_back(v);
+
+		AExclusive->set_capacity(init_cap);
+		for(edge_ptr e : mSubClusters_edges) {
+			e->set_exists(true);
+		}
+		AExclusive->set_exists(true);
+		B->add_cluster(AExclusive);
 	}
 
 	if(density_B > 0) {
-		return induced_subgraph(B);
+		return B;
 	}
-	return induced_subgraph(A->N);
+	return A;
 }
-
-bool bipartite_graph::dense(int k, std::vector<vertex_ptr>& outDense, vertex_ptr& lastAdded)
+bool cluster::dense(int k, std::vector<cluster_ptr>& outDense, cluster_ptr& lastAdded)
 {
 	if(k >= 0) {
 		return dense_k_positive(k, outDense, lastAdded);
@@ -156,419 +211,353 @@ bool bipartite_graph::dense(int k, std::vector<vertex_ptr>& outDense, vertex_ptr
 		return dense_k_negative(k, outDense, lastAdded);
 	}
 }
-
-int bipartite_graph::distribute(edge_ptr ed)
+int cluster::distribute(edge_ptr edg)
 {
-	if(!ed->exists) {
+	if(!edg->exists()) {
 		LOG_WARNING("Trying to distribute edge that does not exist.");
 		return density();
 	}
-	clear_path();
-	clear_marquers();
 
-	for(int i = 0; i < M.size(); ++i) {
-		if(ed == M[i]) {
-			std::cout<<"Edge in M!\n";
-		}
-	}
+	reset_childrenMarquers();
+	reset_childrenPaths();
 
-	vertex_ptr vert = nullptr;
-	int capvert = 0;
-	ed->label = true;
-	ed->set_capacity(ed->weight);
-	while(ed->weight > (ed->flow_a + ed->flow_b) || has_labeled_unscanned()) {
-		// std::cout<<__LINE__<<": cap = "<<ed->capacity()<<"\n";
-		for(int i = 0; i < M.size(); ++i) {
-			edge_ptr e = M[i];
-			if(!e->exists)
+	cluster_ptr greatestCapcityCluster = nullptr;
+	int greatestCapacity = 0;
+
+	edg->set_label();
+	edg->set_capacity(edg->weight());
+	while(edg->weight() > (edg->flow_a() + edg->flow_b()) || has_labeled_unscanned()) {
+		for(edge_ptr currEdg : mSubClusters_edges) {
+			if(!currEdg->exists())
 				continue;
-			if(e->label && !e->scan) {
-				e->a->label = true;
-				e->a->prevEdge = e;
-				e->a->capacity = e->capacity();
+			if(currEdg->label() && !currEdg->scan()) {
+				currEdg->a()->set_label();
+				currEdg->a()->set_prevEdge(currEdg);
+				currEdg->a()->set_capacity(currEdg->capacity());
 
-				e->b->label = true;
-				e->b->prevEdge = e;
-				e->b->capacity = e->capacity();
-				e->scan = true;
+				currEdg->b()->set_label();
+				currEdg->b()->set_prevEdge(currEdg);
+				currEdg->b()->set_capacity(currEdg->capacity());
+				currEdg->set_scan();
 			}
 		}
-		for(int i = 0; i < N.size(); ++i) {
-			vertex_ptr v = N[i];
-			if(!v->exists)
+		for(cluster_ptr clust : mSubClusters) {
+			if(!clust->exists() || !(clust->label() && !clust->scan()))
 				continue;
-			if(v->label && !v->scan) {
-				int capvert_attempt = std::min(v->weight - sum_incidentCapacity(v), v->capacity);
-				if(capvert_attempt > capvert) {
-					vert = v;
-					capvert = capvert_attempt;
-				} else {
-					label_incidents(v);
-				}
-				v->scan = true;
+			int clusterCapacity = std::min(clust->weight() - clust->sum_incidentEdges_capacity(), clust->capacity());
+			if(clusterCapacity > greatestCapacity) {
+				greatestCapcityCluster = clust;
+				greatestCapacity = clusterCapacity;
+			} else {
+				label_incidentEdges(clust);
 			}
+			clust->set_scan();
 		}
-		if(vert) {
-			if(vert->prevEdge) {
-				int mod = 0;
-				if(vert->prevEdge->a == vert) {
-					mod = std::min(vert->weight - vert->prevEdge->flow_a, vert->prevEdge->capacity());
-					vert->prevEdge->flow_a += mod;
-				} else if(vert->prevEdge->b == vert) {
-					mod = std::min(vert->weight - vert->prevEdge->flow_b, vert->prevEdge->capacity());
-					vert->prevEdge->flow_b += mod;
-				} else {
-					LOG_WARNING("Should not be reached but ok..");
-				}
-				vert->capacity -= mod;
+		if(greatestCapcityCluster) {
+			edge_ptr augmentingPath_edge = greatestCapcityCluster->prevEdge();
+			BLOOP_MARKER;
+			if(!augmentingPath_edge) {
+				LOG_ERROR("No valid augmentation path.");
 			}
-			clear_marquers();
-			vert = nullptr;
-			capvert = 0;
-			ed->label = true;
-			ed->set_capacity(ed->weight - (ed->flow_a + ed->flow_b));
-			std::cout<<__LINE__<<": cap = "<<ed->capacity()<<"\n";
+			BLOOP_MARKER;
+	
+			int modifier = 0;
+			if(augmentingPath_edge->a() == greatestCapcityCluster) {
+				modifier = std::min(greatestCapcityCluster->weight() - augmentingPath_edge->flow_a(), augmentingPath_edge->capacity());
+				augmentingPath_edge->incr_flow_a(modifier);
+			} else if(augmentingPath_edge->b() == greatestCapcityCluster) {
+				modifier = std::min(greatestCapcityCluster->weight() - augmentingPath_edge->flow_b(), augmentingPath_edge->capacity());
+				augmentingPath_edge->incr_flow_b(modifier);
+			} else {
+				LOG_WARNING("Should not be reached but ok..");
+			}
+			greatestCapcityCluster->set_capacity(greatestCapcityCluster->capacity() - modifier);
+			reset_childrenMarquers();
+			greatestCapcityCluster = nullptr;
+			greatestCapacity = 0;
+			edg->set_label();
+			edg->set_capacity(edg->weight() - (edg->flow_a() + edg->flow_b()));
 		}		
 	}
-	int out = induced_subgraph(labeled_vertices())->density();
-	return out;// density(true);
-}
 
-int bipartite_graph::max_matching()
-{
-	int out = 0;
-	for(int i = 0; i < M.size(); ++i) {
-		edge_ptr e = M[i];
-
-		clear_marquers();
-
-		out += matching(e);
+	int labeled_density = 0;
+	for(edge_ptr e : mSubClusters_edges) {
+		if(e->a()->label() && e->b()->label())
+			labeled_density += e->weight();
 	}
-	return out;
+	for(cluster_ptr clust : mSubClusters) {
+		if(clust->label())
+			labeled_density -= clust->weight();
+	}
+
+	return labeled_density;
 }
 
-void bipartite_graph::minCut()
+void cluster::add_cluster(cluster_ptr clust)
 {
-	while(has_validFlow()) {
-		int path_flow = std::numeric_limits<int>::max();
-		for(int i = 0; i < N.size(); ++i) {
-			vertex_ptr v = N[i];
-			if(!v->exists)
-				continue;
-			if(v->label && v->prevEdge) {
-				path_flow = std::min(std::min(path_flow, v->capacity), v->prevEdge->capacity());
-			}
-		}
-		for(int i = 0; i < N.size(); ++i) {
-			vertex_ptr v = N[i];
-			if(!v->exists)
-				continue;
-			if(v->label && v->prevEdge) {
-				if(v->prevEdge->a == v) {
-					v->prevEdge->flow_a += path_flow;
-				} else if(v->prevEdge->b == v) {
-					v->prevEdge->flow_b += path_flow;
-				} else {
-					LOG_WARNING("What's going on here..?");
-				}
+	set_childrenLabels(2);
+	if(clust->label() != 2) {
+		mSubClusters.push_back(clust);
+		// mDensity -= clust->density();
+		for(edge_ptr edg : clust->incidentEdges()) {
+			if((edg->a()->label() == 2 || edg->b()->label() == 2) && edg->label() != 2) {
+				mSubClusters_edges.push_back(edg);
+				// mDensity += edg->weight();
 			}
 		}
 	}
+	set_childrenLabels(0);
+	compute_density();
 }
 
-bool bipartite_graph::has_validFlow()
+int cluster::sum_incidentEdges_capacity(bool labeled_only)
 {
-	clear_marquers();
-	clear_path();
-
-	for(int i = 0; i < M.size(); ++i) {
-		edge_ptr e = M[i];
-		if(!e->label && (e->flow_a + e->flow_b) < e->capacity()) {
-			e->label = true;
-
-			for(int j = 0; j < N.size(); ++j) {
-				vertex_ptr v = N[j];
-				if((e->a == v || e->b == v) && !v->label && v->capacity > 0) {	
-					v->label = true;
-					v->prevEdge = e;
-					return true;
-				}
-			}
-		}
+	int running_sum = 0;
+	for(edge_ptr edg : mIncidentEdges) {
+		if(!labeled_only || edg->label())
+			running_sum += edg->capacity();
 	}
-	return false;
+	return running_sum;
+}
+int cluster::sum_incidentEdges_weight(bool labeled_only)
+{
+	int running_sum = 0;
+	for(edge_ptr edg : mIncidentEdges) {
+		if(!labeled_only || edg->label())
+			running_sum += edg->weight();
+	}
+	return running_sum;
 }
 
-int bipartite_graph::sum_incidentCapacity(vertex_ptr v)
+int cluster::incidentEdges_density()
 {
-	if(!v->exists)	
+	int running_sum = 0;
+	for(edge_ptr edg : mIncidentEdges) {
+		running_sum += -edg->weight() + edg->flow_a() + edg->flow_b();
+	}
+	return running_sum;
+}
+
+void cluster::label_incidentEdges(cluster_ptr clust, bool with_flow)
+{
+	for(edge_ptr edg : clust->mIncidentEdges) {
+		if((edg->a() == clust && (with_flow || edg->flow_a() > 0)) || (edg->a() == clust && (with_flow || edg->flow_a() > 0)))
+			edg->set_label();
+	}
+}
+void cluster::label_incidentEdges()
+{
+	for(edge_ptr edg : mIncidentEdges) {
+		edg->set_label();
+	}
+}
+
+void cluster::add_incidentEdge(edge_ptr e)
+{
+	for(edge_ptr edg : mIncidentEdges) {
+		if(edg == e) 
+			return;
+	}
+	mIncidentEdges.push_back(e);
+}
+
+int cluster::density_around(cluster_ptr subClust)
+{
+	if(!subClust->exists())
 		return 0;
 	int running_sum = 0;
-	for(int i = 0; i < M.size(); ++i) {
-		edge_ptr e = M[i];
-		if(!e->exists)
-			continue;
-		if(e->a == v) {
-			running_sum += e->flow_a;
-		} else if(e->b == v) {
-			running_sum += e->flow_b;
+	for(edge_ptr edg : mSubClusters_edges) {
+		if(edg->exists() && edg->incident(subClust)) {
+			running_sum += -edg->weight() + edg->flow_a() + edg->flow_b();
 		}
 	}
 	return running_sum;
 }
-int bipartite_graph::sum_incidentWeight(vertex_ptr v, bool labeled_only)
-{
-	if(!v->exists)	
-		return 0;
-	int running_sum = 0;
-	for(int i = 0; i < M.size(); ++i) {
-		edge_ptr e = M[i];
-		if(!e->exists || (labeled_only && !e->label))
-			continue;
-		if(e->a == v || e->b == v) 
-			running_sum += e->weight;
-	}
-	return running_sum;	
-}
 
-void bipartite_graph::label_incidents(vertex_ptr v)
+bool cluster::has_labeled_unscanned()
 {
-	if(!v->exists)
-		return;
-	int running_sum = 0;
-	for(int i = 0; i < M.size(); ++i) {
-		edge_ptr e = M[i];
-		if(!e->exists)
-			continue;
-		if(e->a == v && e->flow_a > 0) {
-			e->label = true;
-		} else if(e->b == v && e->flow_b > 0) {
-			e->label = true;
-		}
-	}
-}
-
-void bipartite_graph::label_incidents(std::vector<vertex_ptr> V)
-{
-	clear_marquers();
-	for(int i = 0; i < V.size(); ++i) {
-		V[i]->label = true;
-	}
-	for(int i = 0; i < M.size(); ++i) {
-		edge_ptr e = M[i];
-		if(e->exists && (e->a->label || e->b->label))
-			e->label = true;
-	}
-}
-
-bool bipartite_graph::has_labeled_unscanned()
-{
-	for(int i = 0; i < N.size(); ++i) {
-		vertex_ptr v = N[i];
-		if(v->label && !v->scan && v->exists)
+	for(cluster_ptr clust : mSubClusters) {
+		if(clust->label() && !clust->scan() && clust->exists())
 			return true;
 	}
-	for(int i = 0; i < M.size(); ++i) {
-		edge_ptr e = M[i];
-		if(e->label && !e->scan && e->exists)
+	for(edge_ptr edg : mSubClusters_edges) {
+		if(edg->label() && !edg->scan() && edg->exists())
 			return true;
 	}
 	return false;
 }
 
 
-int bipartite_graph::density(bool labeled_only)
-{
-	int distribute_balance = 0;
-	for(int i = 0; i < N.size(); ++i) {
-		vertex_ptr v = N[i];
-		if(v->exists && (!labeled_only || v->label))
-			distribute_balance -= v->weight;
-	}
-	for(int i = 0; i < M.size(); ++i) {
-		edge_ptr e = M[i];
-		if(e->exists && (!labeled_only || e->label))
-			distribute_balance += (e->flow_a + e->flow_b);
-	}
-	std::cout<<"Balance: "<<distribute_balance<<"\n";
-	return distribute_balance;
-}
 
-int bipartite_graph::density_withRespectTo(vertex_ptr v)
+cluster_ptr cluster::induced_graph(std::vector<cluster_ptr> clusters)
 {
-	if(!v->exists) {
-		LOG_WARNING("You ok bro?");
+	reset_childrenMarquers();
+	for(cluster_ptr clust : clusters) {
+		clust->set_label();
 	}
-	int den = 0;
-	for(int i = 0; i < M.size(); ++i) {
-		edge_ptr e = M[i];
-		if(!e->exists)
+
+	std::vector<edge_ptr> edges;
+	for(edge_ptr e : mSubClusters_edges) {
+		if(!e->exists())
 			continue;
-		if(e->a == v || e->b == v) 
-			den += -e->weight + e->flow_a + e->flow_b;
+		if(e->a()->label() && e->b()->label())
+			edges.push_back(e);
 	}
-	return den;
+	cluster_ptr graph(new cluster(0));
+	graph->mSubClusters = clusters;
+	graph->mSubClusters_edges = edges;
+	graph->compute_density();
+	return graph;
 }
 
-std::vector<vertex_ptr> bipartite_graph::labeled_vertices()
+std::vector<cluster_ptr> cluster::labeled_clusters()
 {
-	std::vector<vertex_ptr> out;
-	for(int i = 0; i < N.size(); ++i) {
-		vertex_ptr v = N[i];
-		if(v->label)
-			out.push_back(v);
+	std::vector<cluster_ptr> out;	
+	for(cluster_ptr clust : mSubClusters) {
+		if(clust->label())
+			out.push_back(clust);
 	}
 	return out;
 }
 
-bipartite_graph_ptr bipartite_graph::induced_subgraph(std::vector<vertex_ptr> V)
+void cluster::for_each(std::function<void (cluster_ptr c)> func)
 {
-	clear_marquers();
-	for(int i = 0; i < V.size(); ++i) {
-		V[i]->label = true;
-	}
-
-	std::vector<edge_ptr> edges;
-	for(int i = 0; i < M.size(); ++i) {
-		edge_ptr e = M[i];
-		if(!e->exists)
-			continue;
-		if(e->a->label && e->b->label)
-			edges.push_back(e);
-	}
-	return std::make_shared<bipartite_graph>(V, edges);
-}
-
-void bipartite_graph::clear_marquers()
-{
-	for(int i = 0; i < N.size(); ++i) {
-		N[i]->label = 0;
-		N[i]->scan = 0;
-	}
-	for(int i = 0; i < M.size(); ++i) {
-		M[i]->label = 0;
-		M[i]->scan = 0;
-	}
-}
-void bipartite_graph::clear_path()
-{
-	for(int i = 0; i < N.size(); ++i) {
-		N[i]->prevEdge = nullptr;
-	}
-	for(int i = 0; i < M.size(); ++i) {
-		M[i]->prevVert = nullptr;
+	for(cluster_ptr clus : mSubClusters) {
+		func(clus);
 	}
 }
 
-bool bipartite_graph::is_incident(std::vector<vertex_ptr> G, edge_ptr ed)
+void cluster::reset_childrenMarquers()
 {
-	if(!ed->exists)
-		return false;
-	for(int i = 0; i < G.size(); ++i) {
-		vertex_ptr v = G[i];
-		if(!v->exists)
-			continue;
-		if(ed->a == v || ed->b == v) 
-			return true;
+	for(cluster_ptr clus : mSubClusters) {
+		clus->reset_marquers();
+		for(edge_ptr edg : clus->incidentEdges()) {
+			edg->reset_marquers();
+		} 
 	}
-	return false;
+}
+void cluster::set_childrenLabels(int val)
+{
+	for(cluster_ptr clus : mSubClusters) {
+		clus->set_label(val);
+		for(edge_ptr edg : clus->incidentEdges()) {
+			edg->set_label(val);
+		} 
+	}
+}
+void cluster::reset_childrenPaths()
+{
+	for(cluster_ptr clus : mSubClusters) {
+		clus->set_prevEdge(nullptr);
+	}	
 }
 
-/* Private functions */
- 
-bool bipartite_graph::dense_k_positive(int k, std::vector<vertex_ptr>& outDense, vertex_ptr& lastAdded)
+int cluster::compute_density()
 {
-	std::vector<vertex_ptr> G_;
-	for(int i = 0; i < N.size(); ++i) {
-		vertex_ptr v = N[i];
-		for(int j = 0; j < M.size(); ++j) {
-			edge_ptr e = M[i];
-			if(!is_incident(G_, e) || (e->a == v || e->b == v))
+	mDensity = mWeight;
+	for_each([&](cluster_ptr c) {
+		mDensity -= c->weight();
+		for(edge_ptr edg : c->incidentEdges()) {
+			if(!edg->label()) {
+				mDensity += edg->weight();
+				edg->set_label();
+			}
+		}
+	});
+	return mDensity;
+}
+
+bool cluster::dense_k_positive(int k, std::vector<cluster_ptr>& outDense, cluster_ptr& lastAdded)
+{
+	std::vector<cluster_ptr> G_;
+	for(cluster_ptr clust : mSubClusters) {
+		for(edge_ptr edg : mSubClusters_edges) {
+			if(!edg->incident(G_) || !edg->incident(clust))
 				continue;
-			if(distribute(e) > k) {
-				outDense = labeled_vertices();
+			if(distribute(edg) > k) {
+				outDense = labeled_clusters();
 				lastAdded = G_.back();
 				return true;
 			}
 		}
-		G_.push_back(v);
+		G_.push_back(clust);
 	}
 	return false;
 }
-bool bipartite_graph::dense_k_negative(int k, std::vector<vertex_ptr>& outDense, vertex_ptr& lastAdded)
+bool cluster::dense_k_negative(int k, std::vector<cluster_ptr>& outDense, cluster_ptr& lastAdded)
 {
-	std::vector<vertex_ptr> G_;
-	for(int i = 0; i < N.size(); ++i) {
-		vertex_ptr v = N[i];
-		for(int j = 0; j < M.size(); ++j) {
-			edge_ptr e = M[j];
-			if(!is_incident(G_, e) || !(e->a == v || e->b == v))
+	std::vector<cluster_ptr> G_;
+	for(cluster_ptr clust : mSubClusters) {
+		for(edge_ptr edg : mSubClusters_edges) {
+			if(!edg->incident(G_) || !edg->incident(clust))
 				continue;
-			if(v->weight + k >= 0) {
-				int init_cap = v->capacity;
-				v->capacity = v->weight + k;
-				if(distribute(e) > k) {
-					outDense = labeled_vertices();
+			if(clust->weight() + k >= 0) {
+				int init_cap = clust->capacity();
+				clust->set_capacity(clust->weight() + k);
+				if(distribute(edg) > k) {
+					outDense = labeled_clusters();
 					lastAdded = G_.back();
 					return true;
 				}
-				v->capacity = init_cap;
+				clust->set_capacity(init_cap);
 			} else {
 				// int init_v_cap = v->capacity;
-				v->capacity = 0;
-				if(distribute(e) > k) {
-					outDense = labeled_vertices();
+				clust->set_capacity(0);
+				if(distribute(edg) > k) {
+					outDense = labeled_clusters();
 					lastAdded = G_.back();
 					return true;
 				}
-				int init_cap = e->capacity();
-				e->set_capacity(e->capacity() - (v->weight + k));
-				if(distribute(e) > k) {
-					outDense = labeled_vertices();
+				int init_cap = edg->capacity();
+				edg->set_capacity(edg->capacity() - (clust->weight() + k));
+				if(distribute(edg) > k) {
+					outDense = labeled_clusters();
 					lastAdded = G_.back();
 					return true;
 				}
-				e->set_capacity(init_cap);
+				edg->set_capacity(init_cap);
 			}
 		}
-		G_.push_back(v);
+		G_.push_back(clust);
 	}
 	return false;
 }
 
-bool bipartite_graph::matching(edge_ptr e)
-{
-	for(int i = 0; i < N.size(); ++i) {
-		vertex_ptr v = N[i];
-		if((e->a == v || e->b == v) && !v->label) {
-			v->label = true;
 
-			if(!v->prevEdge || matching(v->prevEdge)) {
-				v->prevEdge = e;
-				return true;
-			}
-		}
+
+edge::edge(std::shared_ptr<cluster> a_, std::shared_ptr<cluster> b_, int w):
+	mA(a_),
+	mB(b_),
+	mPrevVert(nullptr),
+	mWeight(w),
+	mCapacity(0),
+	mFlow_a(0),
+	mFlow_b(0),
+	mLabel(0),
+	mScan(0),
+	mExists(true),
+	mName(++counter)
+{
+	
+}
+
+void edge::set_endPointIncidence()
+{
+	mA->add_incidentEdge(shared_from_this());
+	mB->add_incidentEdge(shared_from_this());	
+}
+
+bool edge::incident(cluster_ptr clust)
+{
+	return exists() && clust->exists() && (mA == clust || mB == clust);
+}
+bool edge::incident(std::vector<cluster_ptr> graph)
+{
+	if(!exists())
+		return false;
+	for(cluster_ptr clust : graph) {
+		if(clust->exists() && (mA == clust || mB == clust))
+			return true;
 	}
 	return false;
-}
-
-void bipartite_graph::label_reachableFromVertex(vertex_ptr v)
-{
-	v->label = true;
-	for(int i = 0; i < M.size(); ++i) {
-		edge_ptr e = M[i];
-		if(!e->label && (e->a == v || e->b == v)) {
-			label_reachableFromEdge(e);
-		}
-	}
-}
-void bipartite_graph::label_reachableFromEdge(edge_ptr e)
-{
-	e->label = true;
-	for(int i = 0; i < N.size(); ++i) {
-		vertex_ptr v = N[i];
-		if(!v->label && (e->a == v || e->b == v)) {
-			label_reachableFromVertex(v);
-		}
-	}
 }

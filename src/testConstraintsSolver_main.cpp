@@ -35,57 +35,59 @@ int main()
 
 	// bipartite_graph G({v1, v2, v3, v4, v5}, {e1, e2, e3, e4, e5, e6});
 
-	// vertex_ptr a(new vertex(2));
-	// vertex_ptr b(new vertex(2));
-	// vertex_ptr c(new vertex(2));
-	// vertex_ptr d(new vertex(2));
-	// vertex_ptr e(new vertex(2));
-	// vertex_ptr f(new vertex(2));	
+	cluster_ptr a(new cluster(2));
+	cluster_ptr b(new cluster(2));
+	cluster_ptr c(new cluster(2));
+	cluster_ptr d(new cluster(2));
+	cluster_ptr e(new cluster(2));
+	cluster_ptr f(new cluster(2));	
 
-	// edge_ptr e1(new edge(b, a, 1));
-	// edge_ptr e2(new edge(a, d, 1));
-	// edge_ptr e3(new edge(d, e, 1));
-	// edge_ptr e4(new edge(e, f, 1));
-	// edge_ptr e5(new edge(f, c, 1));
-	// edge_ptr e6(new edge(e, c, 1));
-	// edge_ptr e7(new edge(d, c, 1));
-	// edge_ptr e8(new edge(a, c, 1));
-	// edge_ptr e9(new edge(b, c, 1));
+	edge_ptr e1(new edge(b, a, 1));
+	edge_ptr e2(new edge(a, d, 1));
+	edge_ptr e3(new edge(d, e, 1));
+	edge_ptr e4(new edge(e, f, 1));
+	edge_ptr e5(new edge(f, c, 1));
+	edge_ptr e6(new edge(e, c, 1));
+	edge_ptr e7(new edge(d, c, 1));
+	edge_ptr e8(new edge(a, c, 1));
+	edge_ptr e9(new edge(b, c, 1));
 
-	// bipartite_graph G({ a, b, c, d, e, f }, { e1, e2, e3, e4, e5, e6, e7, e8, e9 });
+	cluster_ptr G(new cluster({ a, b, c, d, e, f }, { e1, e2, e3, e4, e5, e6, e7, e8, e9 }));
 
 	// bipartite_graph U({a, b}, {e1});
 	// std::cout<<"U density: "<<U.density()<<"\n";
 
-	vertex_ptr a(new vertex(2));
-	vertex_ptr b(new vertex(2));
-	vertex_ptr c(new vertex(2));
-	vertex_ptr d(new vertex(2));
-	vertex_ptr e(new vertex(2));
-	vertex_ptr f(new vertex(2));	
-	vertex_ptr g(new vertex(2));	
-	vertex_ptr h(new vertex(2));	
-	vertex_ptr i(new vertex(2));	
+	// cluster_ptr a(new cluster(2));
+	// cluster_ptr b(new cluster(2));
+	// cluster_ptr c(new cluster(2));
+	// cluster_ptr d(new cluster(2));
+	// cluster_ptr e(new cluster(2));
+	// cluster_ptr f(new cluster(2));	
+	// cluster_ptr g(new cluster(2));	
+	// cluster_ptr h(new cluster(2));	
+	// cluster_ptr i(new cluster(2));	
 
-	edge_ptr e1(new edge(a, b, 1));
-	edge_ptr e2(new edge(b, c, 1));
-	edge_ptr e3(new edge(c, a, 1));
-	edge_ptr e4(new edge(b, d, 1));
-	edge_ptr e5(new edge(c, d, 1));
+	// edge_ptr e1(new edge(a, b, 1));
+	// edge_ptr e2(new edge(b, c, 1));
+	// edge_ptr e3(new edge(c, a, 1));
+	// edge_ptr e4(new edge(b, d, 1));
+	// edge_ptr e5(new edge(c, d, 1));
 
-	edge_ptr e6(new edge(d, e, 1));
-	edge_ptr e7(new edge(d, f, 1));
-	edge_ptr e8(new edge(f, g, 1));
-	edge_ptr e9(new edge(e, g, 1));
-	edge_ptr e10(new edge(e, f, 1));
+	// edge_ptr e6(new edge(d, e, 1));
+	// edge_ptr e7(new edge(d, f, 1));
+	// edge_ptr e8(new edge(f, g, 1));
+	// edge_ptr e9(new edge(e, g, 1));
+	// edge_ptr e10(new edge(e, f, 1));
 
-	edge_ptr e11(new edge(g, h, 1));
-	edge_ptr e12(new edge(g, i, 1));
-	edge_ptr e13(new edge(i, a, 1));
-	edge_ptr e14(new edge(h, a, 1));
-	edge_ptr e15(new edge(h, i, 1));
+	// edge_ptr e11(new edge(g, h, 1));
+	// edge_ptr e12(new edge(g, i, 1));
+	// edge_ptr e13(new edge(i, a, 1));
+	// edge_ptr e14(new edge(h, a, 1));
+	// edge_ptr e15(new edge(h, i, 1));
 
-	bipartite_graph G({ a, b, c, d, e, f, g, h, i}, { e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13, e14, e15 });
+	// cluster_ptr G(new cluster({ a, b, c, d, e, f, g, h, i}, { e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13, e14, e15 }));
+
+	// bipartite_graph G({ a, b, c, d, e, f, g, h, i}, { e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13, e14, e15 });
 
 	// std::cout<<"E1: "<<e1->capacity<<" => "<<e1->flow_a<<",  "<<e1->flow_b<<"\n";
 	// std::cout<<"E2: "<<e2->capacity<<" => "<<e2->flow_a<<",  "<<e2->flow_b<<"\n";
@@ -108,12 +110,16 @@ int main()
 	// std::cout<<"E5: "<<e5->capacity<<" => "<<e5->flow_a<<",  "<<e5->flow_b<<"\n";
 	// std::cout<<"E6: "<<e6->capacity<<" => "<<e6->flow_a<<",  "<<e6->flow_b<<"\n";
 
-	std::vector<vertex_ptr> G_ = G.extend(G.minimal(-4))->N;
+	cluster_ptr G_ = G->extend(G->minimal(-4));
 	// vertex_ptr v;
 	// U.dense(-4, G_, v);
-	std::cout<<"G_:\n";
-	for(int i = 0; i < G_.size(); ++i) {
-		std::cout<<"ID: "<<G_[i]->name<<"\n";
+	if(G_) {
+		std::cout<<"G_:\n";
+		for(int i = 0; i < G_->subClusters().size(); ++i) {
+			std::cout<<"ID: "<<G_->subClusters()[i]->name()<<"\n";
+		}
+	} else {
+		LOG_ERROR("G_ could not be created.");
 	}
 
     return 0; 
