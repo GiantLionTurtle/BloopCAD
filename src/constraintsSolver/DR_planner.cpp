@@ -322,7 +322,7 @@ int cluster::distribute(edge_ptr edg)
 				greatestCapcityCluster = clust;
 				greatestCapacity = clusterCapacity;
 			} else {
-				label_incidentEdges(clust, true);
+				add_label_incidentEdges(labels::DENSE_LABEL, true);
 			}
 			clust->add_label(labels::DENSE_SCAN);
 		}
@@ -409,23 +409,6 @@ int cluster::sum_incidentEdges_weight(int labeled_only)
 	return running_sum;
 }
 
-int cluster::incidentEdges_density()
-{
-	int running_sum = 0;
-	for(edge_ptr edg : mIncidentEdges) {
-		running_sum += -edg->weight() + edg->flow_a() + edg->flow_b();
-	}
-	return running_sum;
-}
-
-void cluster::label_incidentEdges(cluster_ptr clust, bool with_flow)
-{
-	for(edge_ptr edg : clust->mIncidentEdges) {
-		if((edg->a() == clust && (!with_flow || edg->flow_a() > 0)) || (edg->a() == clust && (!with_flow || edg->flow_a() > 0)))
-			edg->add_label(labels::DENSE_LABEL);
-	}
-}
-
 void cluster::add_incidentEdge(edge_ptr e)
 {
 	for(edge_ptr edg : mIncidentEdges) {
@@ -448,10 +431,18 @@ int cluster::density_around(cluster_ptr subClust)
 	return running_sum;
 }
 
-void cluster::add_label_incidentEdges(int lab)
+void cluster::add_label_incidentEdges(int lab, bool with_flow)
 {
-	for(edge_ptr edg : mIncidentEdges) {
-		edg->add_label(lab);
+	if(with_flow) {
+		cluster_ptr shared_this = shared_from_this();
+		for(edge_ptr edg : mIncidentEdges) {
+			if((edg->a() == shared_this && (!with_flow || edg->flow_a() > 0)) || (edg->b() == shared_this && (!with_flow || edg->flow_b() > 0)))
+				edg->add_label(lab);
+		}
+	} else {
+		for(edge_ptr edg : mIncidentEdges) {
+			edg->add_label(lab);
+		}
 	}
 }
 void cluster::add_label_recursive(int lab, bool skip_self,  bool subedges)

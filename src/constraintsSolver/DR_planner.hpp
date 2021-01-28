@@ -51,14 +51,11 @@ public:
 	std::vector<cluster_ptr> subClusters() { return mSubClusters; }
 	void add_cluster(cluster_ptr clust);
 
-	int num_incidentEdges() const { return mIncidentEdges.size(); }
 	edge_ptr incidentEdge(unsigned int ind) { return ind < mIncidentEdges.size() ? mIncidentEdges[ind] : nullptr; }
 	std::vector<edge_ptr> incidentEdges() { return mIncidentEdges; }
 	int sum_incidentEdges_capacity(int labeled_only = 0);
 	int sum_incidentEdges_weight(int labeled_only = 0);
-	int incidentEdges_density();
-	void label_incidentEdges(cluster_ptr clust, bool with_flow = false);
-	void label_incidentEdges(int val = 1);
+
 	void add_incidentEdge(edge_ptr e);
 	void clear_incidentEdges() { mIncidentEdges.clear(); }
 
@@ -75,7 +72,7 @@ public:
 	bool has_label(int lab) const { return mSuperLabel & lab; }
 
 	void add_label(int lab) { mSuperLabel |= lab; }
-	void add_label_incidentEdges(int lab);
+	void add_label_incidentEdges(int lab, bool with_flow = false);
 	void add_label_recursive(int lab, bool skip_self = false, bool subedges = false);
 	void add_label_children(int lab, bool subedges = false);
 	void add_label_edges(int lab);
