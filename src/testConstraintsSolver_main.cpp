@@ -101,13 +101,16 @@ int main()
 
 	cluster_ptr G(new cluster({ a, b, c, d, e, f, g, h, i, j, k}, { e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13, e14, e15, e16, e17, e18, e19 }));
 
-	std::vector<cluster_ptr> G_ = G->clusters(-4);
+	std::vector<cluster_ptr> G_ = G->denseClusters(-4);
 	// vertex_ptr v;
 	// U.dense(-4, G_, v);
 	// if(G_) {
 		std::cout<<"G_:\n";
 		for(int i = 0; i < G_.size(); ++i) {
 			std::cout<<"ID: "<<G_[i]->name()<<"\n";
+			for(int j = 0; j < G_[i]->subClusters().size(); ++j) {
+				std::cout<<"\t"<<(char)(G_[i]->subClusters()[j]->name() + 'a' - 1	)<<"\n";
+			}
 		}
 	// } else {
 		// LOG_ERROR("G_ could not be created.");

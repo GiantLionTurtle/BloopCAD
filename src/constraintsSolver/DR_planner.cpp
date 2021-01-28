@@ -18,10 +18,7 @@ cluster::cluster(int w):
 	mWeight(w),
 	mCapacity(0),
 	mDensity(w),
-	mLabel(0),
-	mScan(0),
-	mExists(true),
-	mAvailable_for_dense(true),
+	mSuperLabel(labels::DENSE_USABLE | labels::EXISTS),
 	mName(++counter)
 {
 
@@ -34,19 +31,22 @@ cluster::cluster(std::vector<cluster_ptr> clusters, cluster* base):
 	mWeight(0),
 	mCapacity(0),
 	mDensity(0),
-	mLabel(0),
-	mScan(0),
-	mExists(true),
-	mAvailable_for_dense(true),
+	// mLabel(0),
+	// mScan(0),
+	// mExists(true),
+	// mAvailable_for_dense(true),
+	mSuperLabel(labels::DENSE_USABLE | labels::EXISTS),
 	mName(++counter)
 {
-	label_allNodes_recursive(2);
+	add_label_children(labels::MISC, true);
+	add_label_edges(labels::MISC);
+	// add_label_incidentEdges(labels::MISC);
 
 	for(cluster_ptr clus : mSubClusters) {
 		for(edge_ptr edg : clus->incidentEdges()) {
-			if(edg->a()->label() == 2 && edg->b()->label() == 2 && edg->label() != 2) {
+			if(edg->a()->has_label(labels::MISC) && edg->b()->has_label(labels::MISC) && !edg->has_label(labels::MISC)) {
 				edg->set_endPointIncidence();
-				edg->set_label(2);
+				edg->add_label(labels::MISC);
 				mSubClusters_edges.push_back(edg);
 			}
 		}
@@ -54,15 +54,17 @@ cluster::cluster(std::vector<cluster_ptr> clusters, cluster* base):
 
 	if(base) {
 		for(edge_ptr edg : base->mSubClusters_edges) {
-			if((edg->a()->label() == 2 || edg->b()->label() == 2) && edg->label() != 2) {
+			if((edg->a()->has_label(labels::MISC) || edg->b()->has_label(labels::MISC)) && !edg->has_label(labels::MISC)) {
 				edg->set_endPointIncidence();
-				edg->set_label(2);
+				edg->add_label(labels::MISC);
 				add_incidentEdge(edg);
 			}
 		}
 	}
 
-	label_allNodes_recursive(0);
+	remove_label_children(labels::MISC, true);
+	remove_label_edges(labels::MISC);
+	// remove_label_incidentEdges(labels::MISC);
 	compute_density();
 }
 
@@ -74,60 +76,65 @@ cluster::cluster(std::vector<cluster_ptr> clusters, std::vector<edge_ptr> edges,
 	mWeight(0),
 	mCapacity(0),
 	mDensity(0),
-	mLabel(0),
-	mScan(0),
-	mExists(true),
-	mAvailable_for_dense(true),
+	// mLabel(0),
+	// mScan(0),
+	// mExists(true),
+	// mAvailable_for_dense(true),
+	mSuperLabel(labels::DENSE_USABLE | labels::EXISTS),
 	mName(++counter)
 {
-	label_allNodes_recursive(2);
+	add_label_children(labels::MISC, true);
+	add_label_edges(labels::MISC);
+	// add_label_incidentEdges(labels::MISC);
 
 	for(edge_ptr edg : edges) {
-		if(edg->a()->label() == 2 && edg->b()->label() == 2 && edg->label() != 2) {
+		if(edg->a()->has_label(labels::MISC) && edg->b()->has_label(labels::MISC) && !edg->has_label(labels::MISC)) {
 			edg->set_endPointIncidence();
-			edg->set_label(2);
+			edg->add_label(labels::MISC);
 			mSubClusters_edges.push_back(edg);
 		}
 	}
 
 	if(base) {
 		for(edge_ptr edg : base->mSubClusters_edges) {
-			if((edg->a()->label() == 2 || edg->b()->label() == 2) && edg->label() != 2) {
+			if((edg->a()->has_label(labels::MISC) || edg->b()->has_label(labels::MISC)) && !edg->has_label(labels::MISC)) {
 				edg->set_endPointIncidence();
-				edg->set_label(2);
+				edg->add_label(labels::MISC);
 				add_incidentEdge(edg);
 			}
 		}
 	}
 
-	label_allNodes_recursive(0);
+	remove_label_children(labels::MISC, true);
+	remove_label_edges(labels::MISC);
+	// remove_label_incidentEdges(labels::MISC);
 	compute_density();
 }
 
-std::vector<cluster_ptr> cluster::clusters(int k)
+std::vector<cluster_ptr> cluster::denseClusters(int k)
 {
 	std::vector<cluster_ptr> out;
 	cluster_ptr subCluster = nullptr;
-	while((subCluster = find_cluster(out, k))) {
+	while((subCluster = find_denseCluster(out, k))) {
 		out.push_back(subCluster);
 	}
 	return out;
 }
 
-cluster_ptr cluster::find_cluster(std::vector<cluster_ptr>& root_mask, int k)
+cluster_ptr cluster::find_denseCluster(std::vector<cluster_ptr>& root_mask, int k)
 {
 	for(cluster_ptr clust : root_mask) {
-		clust->set_available_for_dense_recursive(false);
+		clust->remove_label_recursive(labels::DENSE_USABLE);
 	}
 
 	for(cluster_ptr clust : mSubClusters) {
-		if(clust->available_for_dense()) {
+		if(clust->has_label(labels::DENSE_USABLE)) {
 			return extend(minimal(-4));
 		}
 	}
 
 	for(cluster_ptr clust : root_mask) {
-		clust->set_available_for_dense_recursive(true);
+		clust->add_label_recursive(labels::DENSE_USABLE);
 	}
 	return nullptr;
 }
@@ -156,17 +163,17 @@ cluster_ptr cluster::reduce(int k)
 	if(!subgraph)
 		return nullptr;
 	subgraph->set_weight(-(k+1));
-	reset_childrenMarquers();
-	subgraph->set_childrenLabels(2);
+	remove_label_recursive(labels::MISC, true, true);
+	subgraph->add_label_recursive(labels::MISC, true);
 	std::vector<cluster_ptr> reduced_clusters(mSubClusters.size() - subgraph->mSubClusters.size() + 1);
 	int ind = 0;
 	for(cluster_ptr clust : mSubClusters) {
-		if(clust->label() != 2) {
+		if(!clust->has_label(labels::MISC)) {
 			reduced_clusters[ind++] = clust;
 		}
 	}
 	reduced_clusters[ind++] = subgraph;
-	subgraph->reset_childrenMarquers();
+	subgraph->remove_label_recursive(labels::MISC, true, true);
 	// subgraph->reroute_incidentEdges();
 	return std::make_shared<cluster>(reduced_clusters, this);
 }
@@ -176,18 +183,19 @@ cluster_ptr cluster::extend(cluster_ptr min)
 		return nullptr;
 	cluster_ptr newGraph(new cluster(min->mSubClusters, min->mSubClusters_edges, this));
 	int init_size = 0;
-	reset_childrenMarquers();
+	remove_label_recursive(labels::MISC, false, true);
 	while(newGraph->mSubClusters.size() > init_size) {
 		init_size = newGraph->mSubClusters.size();
-		newGraph->set_childrenLabels(1);
-		newGraph->label_incidentEdges();
+		newGraph->add_label_children(labels::MISC, true);
+		newGraph->add_label_incidentEdges(labels::MISC);
 
 		for(cluster_ptr clust : mSubClusters) {
-			if(!clust->label() && clust->sum_incidentEdges_weight(true) >= clust->weight()) {
+			if(!clust->has_label(labels::MISC) && clust->sum_incidentEdges_weight(labels::MISC) >= clust->weight()) {
 				newGraph->add_cluster(clust);
 			}
 		}
 	}
+	remove_label_recursive(labels::MISC, false, true);
 	return newGraph;
 }
 cluster_ptr cluster::minimal(int k)
@@ -237,12 +245,12 @@ cluster_ptr cluster::minimal(int k)
 		edge_ptr not_in_AExclusive_clust = nullptr;
 		for(edge_ptr e : mSubClusters_edges) {
 			if(e->a() == AExclusive || e->b() == AExclusive) {
-				e->set_exists(false);
+				e->remove_label(labels::EXISTS);
 			} else if(!not_in_AExclusive_clust && (e->a() == lastAdded || e->b() == lastAdded)) {
 				not_in_AExclusive_clust = e;
 			}
 		}
-		AExclusive->set_exists(false);
+		AExclusive->remove_label(labels::EXISTS);
 		if(!not_in_AExclusive_clust) {
 			return A;
 		}
@@ -257,9 +265,9 @@ cluster_ptr cluster::minimal(int k)
 
 		AExclusive->set_capacity(init_cap);
 		for(edge_ptr e : mSubClusters_edges) {
-			e->set_exists(true);
+			e->add_label(labels::EXISTS);
 		}
-		AExclusive->set_exists(true);
+		AExclusive->add_label(labels::EXISTS);
 		B->add_cluster(AExclusive);
 	}
 
@@ -278,45 +286,45 @@ bool cluster::dense(int k, std::vector<cluster_ptr>& outDense, cluster_ptr& last
 }
 int cluster::distribute(edge_ptr edg)
 {
-	if(!edg->exists()) {
+	if(!edg->has_label(labels::EXISTS)) {
 		LOG_WARNING("Trying to distribute edge that does not exist.");
 		return density();
 	}
 
-	reset_childrenMarquers();
+	remove_label_recursive(labels::DENSE_LABEL | labels::DENSE_SCAN, false, true);
 	reset_childrenPaths();
 
 	cluster_ptr greatestCapcityCluster = nullptr;
 	int greatestCapacity = 0;
 
-	edg->set_label();
+	edg->add_label(labels::DENSE_LABEL);
 	edg->set_capacity(edg->weight());
 	while(edg->weight() > (edg->flow_a() + edg->flow_b()) || has_labeled_unscanned()) {
 		for(edge_ptr currEdg : mSubClusters_edges) {
-			if(!currEdg->exists())
+			if(!currEdg->has_label(labels::EXISTS))
 				continue;
-			if(currEdg->label() && !currEdg->scan()) {
-				currEdg->a()->set_label();
+			if(currEdg->has_label(labels::DENSE_LABEL) && !currEdg->has_label(labels::DENSE_SCAN)) {
+				currEdg->a()->add_label(labels::DENSE_LABEL);
 				currEdg->a()->set_prevEdge(currEdg);
 				currEdg->a()->set_capacity(currEdg->capacity());
 
-				currEdg->b()->set_label();
+				currEdg->b()->add_label(labels::DENSE_LABEL);
 				currEdg->b()->set_prevEdge(currEdg);
 				currEdg->b()->set_capacity(currEdg->capacity());
-				currEdg->set_scan();
+				currEdg->add_label(labels::DENSE_SCAN);
 			}
 		}
 		for(cluster_ptr clust : mSubClusters) {
-			if(!clust->exists() || !(clust->label() && !clust->scan()))
+			if(!clust->has_label(labels::EXISTS) || !(clust->has_label(labels::DENSE_LABEL) && !clust->has_label(labels::DENSE_SCAN)))
 				continue;
 			int clusterCapacity = std::min(clust->weight() - clust->sum_incidentEdges_capacity(), clust->capacity());
 			if(clusterCapacity > greatestCapacity) {
 				greatestCapcityCluster = clust;
 				greatestCapacity = clusterCapacity;
 			} else {
-				label_incidentEdges(clust);
+				label_incidentEdges(clust, true);
 			}
-			clust->set_scan();
+			clust->add_label(labels::DENSE_SCAN);
 		}
 		if(greatestCapcityCluster) {
 			edge_ptr augmentingPath_edge = greatestCapcityCluster->prevEdge();
@@ -335,21 +343,21 @@ int cluster::distribute(edge_ptr edg)
 				LOG_WARNING("Should not be reached but ok..");
 			}
 			greatestCapcityCluster->set_capacity(greatestCapcityCluster->capacity() - modifier);
-			reset_childrenMarquers();
+			remove_label_recursive(labels::DENSE_LABEL | labels::DENSE_SCAN, false, true);
 			greatestCapcityCluster = nullptr;
 			greatestCapacity = 0;
-			edg->set_label();
+			edg->add_label(labels::DENSE_LABEL);
 			edg->set_capacity(edg->weight() - (edg->flow_a() + edg->flow_b()));
 		}		
 	}
 
 	int labeled_density = 0;
 	for(edge_ptr e : mSubClusters_edges) {
-		if(e->a()->label() && e->b()->label())
+		if(e->a()->has_label(labels::DENSE_LABEL) && e->b()->has_label(labels::DENSE_LABEL))
 			labeled_density += e->weight();
 	}
 	for(cluster_ptr clust : mSubClusters) {
-		if(clust->label())
+		if(clust->has_label(labels::DENSE_LABEL))
 			labeled_density -= clust->weight();
 	}
 
@@ -358,42 +366,44 @@ int cluster::distribute(edge_ptr edg)
 
 void cluster::add_cluster(cluster_ptr clust)
 {
-	set_childrenLabels(2, false);
-	label_incidentEdges(2);
-	if(clust->label() != 2) {
+	add_label_children(labels::MISC, false);
+	add_label_incidentEdges(labels::MISC);
+
+	if(!clust->has_label(labels::MISC)) {
 		mSubClusters.push_back(clust);
 		// mDensity -= clust->density();
 		for(edge_ptr edg : clust->incidentEdges()) {
-			if((edg->a()->label() == 2 || edg->b()->label() == 2)) {
+			if(edg->a()->has_label(labels::MISC) || edg->b()->has_label(labels::MISC)) {
 				mSubClusters_edges.push_back(edg);
 				// mDensity += edg->weight();
 				// edg->set_label(2);
 			} 
-			if(edg->label() == 2) {
+			if(edg->has_label(labels::MISC)) {
 				mIncidentEdges.erase(std::find(mIncidentEdges.begin(), mIncidentEdges.end(), edg));
-			} else if(edg->label() != 2) {
+			} else if(!edg->has_label(labels::MISC)) {
 				mIncidentEdges.push_back(edg);
 			}
 		}
 	}
-	set_childrenLabels(0, true);
-	compute_density();
+
+	remove_label_children(labels::MISC, false);
+	remove_label_incidentEdges(labels::MISC);
 }
 
-int cluster::sum_incidentEdges_capacity(bool labeled_only)
+int cluster::sum_incidentEdges_capacity(int labeled_only)
 {
 	int running_sum = 0;
 	for(edge_ptr edg : mIncidentEdges) {
-		if(!labeled_only || edg->label())
+		if(!labeled_only || edg->has_label(labeled_only))
 			running_sum += edg->capacity();
 	}
 	return running_sum;
 }
-int cluster::sum_incidentEdges_weight(bool labeled_only)
+int cluster::sum_incidentEdges_weight(int labeled_only)
 {
 	int running_sum = 0;
 	for(edge_ptr edg : mIncidentEdges) {
-		if(!labeled_only || edg->label())
+		if(!labeled_only || edg->has_label(labeled_only))
 			running_sum += edg->weight();
 	}
 	return running_sum;
@@ -411,25 +421,8 @@ int cluster::incidentEdges_density()
 void cluster::label_incidentEdges(cluster_ptr clust, bool with_flow)
 {
 	for(edge_ptr edg : clust->mIncidentEdges) {
-		if((edg->a() == clust && (with_flow || edg->flow_a() > 0)) || (edg->a() == clust && (with_flow || edg->flow_a() > 0)))
-			edg->set_label();
-	}
-}
-void cluster::label_incidentEdges(int val)
-{
-	for(edge_ptr edg : mIncidentEdges) {
-		edg->set_label(val);
-	}
-}
-void cluster::label_allNodes_recursive(int val)
-{
-	for(edge_ptr edg : mSubClusters_edges) {
-		edg->set_label(val);
-	}
-
-	for(cluster_ptr clus : mSubClusters) {
-		clus->set_label(val);
-		clus->label_allNodes_recursive(val);
+		if((edg->a() == clust && (!with_flow || edg->flow_a() > 0)) || (edg->a() == clust && (!with_flow || edg->flow_a() > 0)))
+			edg->add_label(labels::DENSE_LABEL);
 	}
 }
 
@@ -444,51 +437,103 @@ void cluster::add_incidentEdge(edge_ptr e)
 
 int cluster::density_around(cluster_ptr subClust)
 {
-	if(!subClust->exists())
+	if(!subClust->has_label(labels::EXISTS))
 		return 0;
 	int running_sum = 0;
 	for(edge_ptr edg : mSubClusters_edges) {
-		if(edg->exists() && edg->incident(subClust)) {
+		if(edg->has_label(labels::EXISTS) && edg->incident(subClust)) {
 			running_sum += -edg->weight() + edg->flow_a() + edg->flow_b();
 		}
 	}
 	return running_sum;
 }
 
+void cluster::add_label_incidentEdges(int lab)
+{
+	for(edge_ptr edg : mIncidentEdges) {
+		edg->add_label(lab);
+	}
+}
+void cluster::add_label_recursive(int lab, bool skip_self,  bool subedges)
+{
+	if(!skip_self)
+		add_label(lab);
+	if(subedges)
+		add_label_edges(lab);
+	for(cluster_ptr clust : mSubClusters) {
+		clust->add_label_recursive(lab, subedges);
+	}
+}
+void cluster::add_label_children(int lab,  bool subedges)
+{
+	for(cluster_ptr clust : mSubClusters) {
+		clust->add_label(lab);
+		if(subedges)
+			clust->add_label_edges(lab);
+	}
+}
+void cluster::add_label_edges(int lab)
+{
+	for(edge_ptr edg : mSubClusters_edges) {
+		edg->add_label(lab);
+	}
+}
+void cluster::remove_label_incidentEdges(int lab)
+{
+	for(edge_ptr edg : mIncidentEdges) {
+		edg->remove_label(lab);
+	}
+}
+void cluster::remove_label_recursive(int lab, bool skip_self, bool subedges)
+{
+	if(!skip_self)
+		remove_label(lab);
+	if(!skip_self && subedges)
+		remove_label_edges(lab);
+	for(cluster_ptr clust : mSubClusters) {
+		clust->remove_label_recursive(lab, false, subedges);
+	}
+}
+void cluster::remove_label_children(int lab,  bool subedges)
+{
+	for(cluster_ptr clust : mSubClusters) {
+		clust->remove_label(lab);
+		if(subedges)
+			clust->remove_label_edges(lab);
+	}
+}
+void cluster::remove_label_edges(int lab)
+{
+	for(edge_ptr edg : mSubClusters_edges) {
+		edg->remove_label(lab);
+	}
+}
+
 bool cluster::has_labeled_unscanned()
 {
 	for(cluster_ptr clust : mSubClusters) {
-		if(clust->label() && !clust->scan() && clust->exists())
+		if(clust->has_label(labels::DENSE_LABEL) && !clust->has_label(labels::DENSE_SCAN) && clust->has_label(labels::EXISTS))
 			return true;
 	}
 	for(edge_ptr edg : mSubClusters_edges) {
-		if(edg->label() && !edg->scan() && edg->exists())
+		if(edg->has_label(labels::DENSE_LABEL) && !edg->has_label(labels::DENSE_SCAN) && edg->has_label(labels::EXISTS))
 			return true;
 	}
 	return false;
 }
 
-void cluster::set_available_for_dense_recursive(bool available)
-{
-	set_available_for_dense(available);
-	for(cluster_ptr clus : mSubClusters) {
-		clus->set_available_for_dense_recursive(available);
-	}
-}
-
-
 cluster_ptr cluster::induced_graph(std::vector<cluster_ptr> clusters)
 {
-	reset_childrenMarquers();
+	remove_label_recursive(labels::DENSE_LABEL | labels::DENSE_SCAN);
 	for(cluster_ptr clust : clusters) {
-		clust->set_label();
+		clust->add_label(labels::DENSE_LABEL);
 	}
 
 	std::vector<edge_ptr> edges;
 	for(edge_ptr e : mSubClusters_edges) {
-		if(!e->exists())
+		if(!e->has_label(labels::EXISTS))
 			continue;
-		if(e->a()->label() && e->b()->label())
+		if(e->a()->has_label(labels::DENSE_LABEL) && e->b()->has_label(labels::DENSE_LABEL))
 			edges.push_back(e);
 	}
 	cluster_ptr graph(new cluster(0));
@@ -502,7 +547,7 @@ std::vector<cluster_ptr> cluster::labeled_clusters()
 {
 	std::vector<cluster_ptr> out;	
 	for(cluster_ptr clust : mSubClusters) {
-		if(clust->label())
+		if(clust->has_label(labels::DENSE_LABEL))
 			out.push_back(clust);
 	}
 	return out;
@@ -510,12 +555,13 @@ std::vector<cluster_ptr> cluster::labeled_clusters()
 
 void cluster::reroute_incidentEdges()
 {
-	label_allNodes_recursive(2);
+	add_label_recursive(labels::MISC, false, true);
+	// add_label_incidentEdges(labels::MISC);
 	std::vector<edge_ptr> newIncident;
 	for(edge_ptr edg : mIncidentEdges) {
 		cluster_ptr shared_this = shared_from_this();
 		if(!edg->incident(shared_this)) {
-			int lab_a = edg->a()->label(), lab_b = edg->b()->label();			
+			int lab_a = edg->a()->has_label(labels::DENSE_LABEL), lab_b = edg->b()->has_label(labels::DENSE_LABEL);			
 			if(lab_a == 2 && lab_b != 2) {
 				edge_ptr newEdge(new edge(shared_this, edg->b(), edg->weight()));
 				newIncident.push_back(newEdge);
@@ -528,7 +574,8 @@ void cluster::reroute_incidentEdges()
 		}
 	}
 	mIncidentEdges = newIncident;
-	label_allNodes_recursive(0);
+	remove_label_recursive(labels::MISC, false, true);
+	remove_label_incidentEdges(labels::MISC);
 }
 
 void cluster::for_each(std::function<void (cluster_ptr c)> func)
@@ -538,26 +585,6 @@ void cluster::for_each(std::function<void (cluster_ptr c)> func)
 	}
 }
 
-void cluster::reset_childrenMarquers()
-{
-	for(cluster_ptr clus : mSubClusters) {
-		clus->reset_marquers();
-		for(edge_ptr edg : clus->incidentEdges()) {
-			edg->reset_marquers();
-		} 
-	}
-}
-void cluster::set_childrenLabels(int val, bool incidentEdges_)
-{
-	for(cluster_ptr clus : mSubClusters) {
-		clus->set_label(val);
-		if(incidentEdges_) {
-			for(edge_ptr edg : clus->incidentEdges()) {
-				edg->set_label(val);
-			}
-		}
-	}
-}
 void cluster::reset_childrenPaths()
 {
 	for(cluster_ptr clus : mSubClusters) {
@@ -582,7 +609,7 @@ bool cluster::dense_k_positive(int k, std::vector<cluster_ptr>& outDense, cluste
 {
 	std::vector<cluster_ptr> G_;
 	for(cluster_ptr clust : mSubClusters) {
-		if(!clust->available_for_dense())
+		if(!clust->has_label(labels::DENSE_USABLE))
 			continue;
 		for(edge_ptr edg : mSubClusters_edges) {
 			if(!edg->incident(G_) || !edg->incident(clust))
@@ -601,7 +628,7 @@ bool cluster::dense_k_negative(int k, std::vector<cluster_ptr>& outDense, cluste
 {
 	std::vector<cluster_ptr> G_;
 	for(cluster_ptr clust : mSubClusters) {
-		if(!clust->available_for_dense())
+		if(!clust->has_label(labels::DENSE_USABLE))
 			continue;
 		for(edge_ptr edg : mSubClusters_edges) {
 			if(!edg->incident(G_) || !edg->incident(clust))
@@ -648,9 +675,7 @@ edge::edge(std::shared_ptr<cluster> a_, std::shared_ptr<cluster> b_, int w):
 	mCapacity(0),
 	mFlow_a(0),
 	mFlow_b(0),
-	mLabel(0),
-	mScan(0),
-	mExists(true),
+	mSuperLabel(cluster::labels::EXISTS),
 	mName(++counter)
 {
 	
@@ -664,14 +689,14 @@ void edge::set_endPointIncidence()
 
 bool edge::incident(cluster_ptr clust)
 {
-	return exists() && clust->exists() && (mA == clust || mB == clust);
+	return has_label(cluster::labels::EXISTS) && clust->has_label(cluster::labels::EXISTS) && (mA == clust || mB == clust);
 }
 bool edge::incident(std::vector<cluster_ptr> graph)
 {
-	if(!exists())
+	if(!has_label(cluster::labels::EXISTS))
 		return false;
 	for(cluster_ptr clust : graph) {
-		if(clust->exists() && (mA == clust || mB == clust))
+		if(clust->has_label(cluster::labels::EXISTS) && (mA == clust || mB == clust))
 			return true;
 	}
 	return false;

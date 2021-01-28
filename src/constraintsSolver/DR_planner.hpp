@@ -18,15 +18,15 @@ using edge_ptr = std::shared_ptr<edge>;
 using graph_ptr = std::shared_ptr<graph>;
 
 class cluster : public std::enable_shared_from_this<cluster> {
+public:
+	enum labels { DENSE_LABEL = 1, DENSE_SCAN = 2, EXISTS = 4, DENSE_USABLE = 8, MISC = 16 };
 private:
 	std::vector<cluster_ptr> mSubClusters;
 	std::vector<edge_ptr> mSubClusters_edges;
 	std::vector<edge_ptr> mIncidentEdges;
 	edge_ptr mPrevEdge;
 	int mWeight, mCapacity, mDensity;
-	int mLabel, mScan;
-	bool mExists;
-	bool mAvailable_for_dense;
+	int mSuperLabel;
 	int mName;
 	static int counter;
 public:
@@ -34,8 +34,8 @@ public:
 	cluster(std::vector<cluster_ptr> clusters, cluster* base = nullptr);
 	cluster(std::vector<cluster_ptr> clusters, std::vector<edge_ptr> edges, cluster* base = nullptr);
 
-	std::vector<cluster_ptr> clusters(int k);
-	cluster_ptr find_cluster(std::vector<cluster_ptr>& root_mask, int k);
+	std::vector<cluster_ptr> denseClusters(int k);
+	cluster_ptr find_denseCluster(std::vector<cluster_ptr>& root_mask, int k);
 	cluster_ptr simplify(int k);
 	cluster_ptr reduce(int k);
 	cluster_ptr extend(cluster_ptr min);
@@ -54,12 +54,11 @@ public:
 	int num_incidentEdges() const { return mIncidentEdges.size(); }
 	edge_ptr incidentEdge(unsigned int ind) { return ind < mIncidentEdges.size() ? mIncidentEdges[ind] : nullptr; }
 	std::vector<edge_ptr> incidentEdges() { return mIncidentEdges; }
-	int sum_incidentEdges_capacity(bool labeled_only = false);
-	int sum_incidentEdges_weight(bool labeled_only = false);
+	int sum_incidentEdges_capacity(int labeled_only = 0);
+	int sum_incidentEdges_weight(int labeled_only = 0);
 	int incidentEdges_density();
 	void label_incidentEdges(cluster_ptr clust, bool with_flow = false);
 	void label_incidentEdges(int val = 1);
-	void label_allNodes_recursive(int val);
 	void add_incidentEdge(edge_ptr e);
 	void clear_incidentEdges() { mIncidentEdges.clear(); }
 
@@ -72,21 +71,22 @@ public:
 	int density() const { return mDensity; }
 	int density_around(cluster_ptr subClust);
 
-	int label() const { return mLabel; }
-	int scan() const { return mScan; }
-	void set_label(int l = 1) { mLabel = l; }
-	void set_scan(int s = 1) { mScan = 1; }
-	void reset_label() { mLabel = 0; }
-	void reset_scan() { mScan = 0; }
-	void reset_marquers() { mLabel = 0; mScan = 0; }
+
+	bool has_label(int lab) const { return mSuperLabel & lab; }
+
+	void add_label(int lab) { mSuperLabel |= lab; }
+	void add_label_incidentEdges(int lab);
+	void add_label_recursive(int lab, bool skip_self = false, bool subedges = false);
+	void add_label_children(int lab, bool subedges = false);
+	void add_label_edges(int lab);
+
+	void remove_label(int lab) { mSuperLabel &= ~lab; };
+	void remove_label_incidentEdges(int lab);
+	void remove_label_recursive(int lab, bool skip_self = false, bool subedges = false);
+	void remove_label_children(int lab, bool subedges = false);
+	void remove_label_edges(int lab);
+	
 	bool has_labeled_unscanned();
-
-	bool available_for_dense() const { return mAvailable_for_dense; }
-	void set_available_for_dense(bool available) { mAvailable_for_dense = available; }
-	void set_available_for_dense_recursive(bool available);
-
-	bool exists() const { return mExists; }
-	void set_exists(bool e) { mExists = e; }
 
 	int name() const { return mName; }
 
@@ -96,8 +96,6 @@ public:
 	void reroute_incidentEdges();
 private:
 	void for_each(std::function<void (cluster_ptr c)> func);
-	void reset_childrenMarquers();
-	void set_childrenLabels(int val, bool incidentEdges_ = true);
 	void reset_childrenPaths();
 
 	int compute_density();
@@ -113,8 +111,7 @@ private:
 	int mWeight;
 	int mCapacity;
 	int mFlow_a, mFlow_b;
-	int mLabel, mScan;
-	bool mExists;
+	int mSuperLabel;
 	int mName;
 	static int counter;
 public:
@@ -136,16 +133,9 @@ public:
 	void incr_flow_a(int flow) { mFlow_a += flow; }
 	void incr_flow_b(int flow) { mFlow_b += flow; }
 
-	int label() const { return mLabel; }
-	int scan() const { return mScan; }
-	void set_label(int l = 1) { mLabel = l; }
-	void set_scan(int s = 1) { mScan = 1; }
-	void reset_label() { mLabel = 0; }
-	void reset_scan() { mScan = 0; }
-	void reset_marquers() { mLabel = 0; mScan = 0; }
-
-	bool exists() const { return mExists; }
-	void set_exists(bool e) { mExists = e; }
+	bool has_label(int lab) const { return mSuperLabel & lab; }
+	void add_label(int lab) { mSuperLabel |= lab; }
+	void remove_label(int lab) { mSuperLabel &= ~lab; };
 
 	int name() const { return mName; }
 
