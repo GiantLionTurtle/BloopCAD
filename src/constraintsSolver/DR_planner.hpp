@@ -26,17 +26,23 @@ private:
 	int mWeight, mCapacity, mDensity;
 	int mLabel, mScan;
 	bool mExists;
+	bool mAvailable_for_dense;
 	int mName;
 	static int counter;
 public:
 	cluster(int weight_);
-	cluster(std::vector<cluster_ptr> clusters, cluster_ptr base = nullptr);
-	cluster(std::vector<cluster_ptr> clusters, std::vector<edge_ptr> edges, cluster_ptr base = nullptr);
+	cluster(std::vector<cluster_ptr> clusters, cluster* base = nullptr);
+	cluster(std::vector<cluster_ptr> clusters, std::vector<edge_ptr> edges, cluster* base = nullptr);
 
+	std::vector<cluster_ptr> clusters(int k);
+	cluster_ptr find_cluster(std::vector<cluster_ptr>& root_mask, int k);
 	cluster_ptr simplify(int k);
+	cluster_ptr reduce(int k);
 	cluster_ptr extend(cluster_ptr min);
 	cluster_ptr minimal(int k);
+	cluster_ptr minimal(int k, std::vector<cluster_ptr> const& available_clusters);
 	bool dense(int k, std::vector<cluster_ptr>& outDense, cluster_ptr& lastAdded);
+	bool dense(int k, std::vector<cluster_ptr>& outDense, cluster_ptr& lastAdded, std::vector<cluster_ptr> const& available_clusters);
 	int distribute(edge_ptr e);
 
 	void set_prevEdge(edge_ptr e) { mPrevEdge = e; }
@@ -52,7 +58,8 @@ public:
 	int sum_incidentEdges_weight(bool labeled_only = false);
 	int incidentEdges_density();
 	void label_incidentEdges(cluster_ptr clust, bool with_flow = false);
-	void label_incidentEdges();
+	void label_incidentEdges(int val = 1);
+	void label_allNodes_recursive(int val);
 	void add_incidentEdge(edge_ptr e);
 	void clear_incidentEdges() { mIncidentEdges.clear(); }
 
@@ -74,6 +81,9 @@ public:
 	void reset_marquers() { mLabel = 0; mScan = 0; }
 	bool has_labeled_unscanned();
 
+	bool available_for_dense() const { return mAvailable_for_dense; }
+	void set_available_for_dense(bool available) { mAvailable_for_dense = available; }
+	void set_available_for_dense_recursive(bool available);
 
 	bool exists() const { return mExists; }
 	void set_exists(bool e) { mExists = e; }
@@ -82,10 +92,12 @@ public:
 
 	cluster_ptr induced_graph(std::vector<cluster_ptr> clusters);
 	std::vector<cluster_ptr> labeled_clusters();
+
+	void reroute_incidentEdges();
 private:
 	void for_each(std::function<void (cluster_ptr c)> func);
 	void reset_childrenMarquers();
-	void set_childrenLabels(int val);
+	void set_childrenLabels(int val, bool incidentEdges_ = true);
 	void reset_childrenPaths();
 
 	int compute_density();
