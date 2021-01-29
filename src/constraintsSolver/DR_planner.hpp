@@ -11,19 +11,18 @@
 // struct vertex;
 class cluster;
 class edge;
-class graph;
 // using vertex_ptr = std::shared_ptr<vertex>;
 using cluster_ptr = std::shared_ptr<cluster>;
 using edge_ptr = std::shared_ptr<edge>;
-using graph_ptr = std::shared_ptr<graph>;
+
 
 class cluster : public std::enable_shared_from_this<cluster> {
 public:
-	enum labels { DENSE_LABEL = 1, DENSE_SCAN = 2, EXISTS = 4, DENSE_USABLE = 8, MISC = 16 };
+	enum labels { DENSE_LABEL = 1, DENSE_SCAN = 2, EXISTS = 4, DENSE_USABLE = 8, MISC = 16, INCIDENT = 32 };
 private:
 	std::vector<cluster_ptr> mSubClusters;
 	std::vector<edge_ptr> mSubClusters_edges;
-	std::vector<edge_ptr> mIncidentEdges;
+	// std::vector<edge_ptr> mIncidentEdges;
 	edge_ptr mPrevEdge;
 	int mWeight, mCapacity, mDensity;
 	int mSuperLabel;
@@ -49,15 +48,15 @@ public:
 	edge_ptr prevEdge() { return mPrevEdge; }
 
 	std::vector<cluster_ptr> subClusters() { return mSubClusters; }
-	void add_cluster(cluster_ptr clust);
+	void add_cluster(cluster_ptr clust, std::vector<edge_ptr> incidentEdges);
 
-	edge_ptr incidentEdge(unsigned int ind) { return ind < mIncidentEdges.size() ? mIncidentEdges[ind] : nullptr; }
-	std::vector<edge_ptr> incidentEdges() { return mIncidentEdges; }
-	int sum_incidentEdges_capacity(int labeled_only = 0);
-	int sum_incidentEdges_weight(int labeled_only = 0);
+	// edge_ptr incidentEdge(unsigned int ind) { return ind < mIncidentEdges.size() ? mIncidentEdges[ind] : nullptr; }
+	std::vector<edge_ptr> incidentEdges(cluster_ptr clust);
+	int sum_incidentEdges_capacity(cluster_ptr clust, int labeled_only = 0);
+	int sum_incidentEdges_weight(cluster_ptr clust, int labeled_only = 0);
 
-	void add_incidentEdge(edge_ptr e);
-	void clear_incidentEdges() { mIncidentEdges.clear(); }
+	// void add_incidentEdge(edge_ptr e);
+	// void clear_incidentEdges() { mIncidentEdges.clear(); }
 
 	int weight() const { return mWeight; }
 	void set_weight(int w) { mWeight = w; }
@@ -72,13 +71,13 @@ public:
 	bool has_label(int lab) const { return mSuperLabel & lab; }
 
 	void add_label(int lab) { mSuperLabel |= lab; }
-	void add_label_incidentEdges(int lab, bool with_flow = false);
+	void add_label_incidentEdges(cluster_ptr clust, int lab, bool with_flow = false);
 	void add_label_recursive(int lab, bool skip_self = false, bool subedges = false);
 	void add_label_children(int lab, bool subedges = false);
 	void add_label_edges(int lab);
 
 	void remove_label(int lab) { mSuperLabel &= ~lab; };
-	void remove_label_incidentEdges(int lab);
+	void remove_label_incidentEdges(cluster_ptr clust, int lab);
 	void remove_label_recursive(int lab, bool skip_self = false, bool subedges = false);
 	void remove_label_children(int lab, bool subedges = false);
 	void remove_label_edges(int lab);
@@ -90,7 +89,7 @@ public:
 	cluster_ptr induced_graph(std::vector<cluster_ptr> clusters);
 	std::vector<cluster_ptr> labeled_clusters();
 
-	void reroute_incidentEdges();
+	// void reroute_incidentEdges();
 private:
 	void for_each(std::function<void (cluster_ptr c)> func);
 	void reset_childrenPaths();
@@ -136,7 +135,7 @@ public:
 
 	int name() const { return mName; }
 
-	void set_endPointIncidence();
+	// void set_endPointIncidence();
 
 	bool incident(cluster_ptr clust);
 	bool incident(std::vector<cluster_ptr> clust);
