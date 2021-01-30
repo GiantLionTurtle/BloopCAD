@@ -33,6 +33,7 @@ public:
 	cluster(std::vector<cluster_ptr> clusters, cluster* base = nullptr);
 	cluster(std::vector<cluster_ptr> clusters, std::vector<edge_ptr> edges, cluster* base = nullptr);
 
+	cluster_ptr skeletonize(std::vector<cluster_ptr> denseSubClusters);
 	std::vector<cluster_ptr> denseClusters(int k);
 	cluster_ptr find_denseCluster(std::vector<cluster_ptr>& root_mask, int k);
 	cluster_ptr simplify(int k);

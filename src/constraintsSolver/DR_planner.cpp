@@ -75,6 +75,45 @@ cluster::cluster(std::vector<cluster_ptr> clusters, std::vector<edge_ptr> edges,
 	compute_density();
 }
 
+cluster_ptr cluster::skeletonize(std::vector<cluster_ptr> denseSubClusters)
+{
+	std::vector<cluster_ptr> intersections;
+	std::vector<edge_ptr> edges; 
+
+	for(int i = 0; i < denseSubClusters.size()-1; ++i) {
+		cluster_ptr outer_cluster = denseSubClusters[i];
+		outer_cluster->add_label_children(labels::MISC);
+		for(int j = i+1; j < denseSubClusters.size(); ++j) {
+			for(cluster_ptr candidate : denseSubClusters[j]->subClusters()) {
+				if(candidate->has_label(labels::MISC))
+					intersections.push_back(candidate);
+			}
+			
+		}
+		outer_cluster->remove_label_children(labels::MISC);
+	}
+
+	for(cluster_ptr denseClust : denseSubClusters) {
+		std::vector<cluster_ptr> X;
+		denseClust->add_label_children(labels::MISC);
+		for(cluster_ptr inter : intersections) {
+			if(inter->has_label(labels::MISC))
+				X.push_back(inter);
+		}
+		denseClust->remove_label_children(labels::MISC);
+
+		if(X.size() >= 2) {
+			edges.push_back(edge_ptr(new edge(X[0], X[1], 0)));
+		}
+		if(X.size() > 2) {
+			for(int i = 2; i < X.size(); ++i) {
+				edges.push_back(edge_ptr(new edge(X[i], X[i-1], 0)));
+				edges.push_back(edge_ptr(new edge(X[i], X[i-2], 0)));
+			}
+		}
+	}
+	return cluster_ptr(new cluster(intersections, edges));
+}
 std::vector<cluster_ptr> cluster::denseClusters(int k)
 {
 	std::vector<cluster_ptr> out;
