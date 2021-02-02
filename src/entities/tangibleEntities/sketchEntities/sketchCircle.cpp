@@ -10,7 +10,7 @@ sketchCircle::sketchCircle(circle_abstr const& baseCircle, geom_3d::plane_abstr_
 	circle_abstr(baseCircle),
 	sketchEntity(basePlane_)
 {
-
+	init();
 }
 
 void sketchCircle::init()
@@ -53,9 +53,9 @@ void sketchCircle::init()
 	add(center_as_drawable);
 }
 
-void sketchCircle::move(glm::vec3 from, glm::vec3 to)
+void sketchCircle::move(glm::vec2 from, glm::vec2 to)
 {
-	set_radius(glm::length(glm::vec2(to) - mCenter->vec()));
+	set_radius(glm::length(to - mCenter->vec()));
 }
 
 void sketchCircle::update_VB()
@@ -96,7 +96,7 @@ void sketchCircle::draw_impl(camera_ptr cam, int frame)
 	mShader->unbind();
 }
 
-void sketchCircle::post_set_update()
+void sketchCircle::post_set_behavior()
 {
 	mRequire_VBUpdate = true;
 	set_require_redraw();
@@ -133,8 +133,8 @@ void sketchCircle::init_buffers()
 	// mIndices[5] = 0; // Second triangle
 
 	for(int i = 0; i < CIRCLE_RES; ++i) {
-		float angle = M_PI * 2.0f / (float)CIRCLE_RES * (float)i;
-		mVertices[i] = mBasePlane->to_worldPos(at(angle));
+		float t = (float)i / CIRCLE_RES;
+		mVertices[i] = mBasePlane->to_worldPos(at(t));
 		mIndices[2*i] = i;
 		mIndices[2*i+1] = i+1;
 	}

@@ -84,6 +84,13 @@ void sketchLine::init()
 	add(B_as_drawable);
 }
 
+void sketchLine::move(glm::vec2 from, glm::vec2 to)
+{
+	glm::vec2 d = from-to;
+	mA += d;
+	mB += d;
+}
+
 void sketchLine::notify_childUpdate()
 {
 	tangibleEntity::notify_childUpdate();

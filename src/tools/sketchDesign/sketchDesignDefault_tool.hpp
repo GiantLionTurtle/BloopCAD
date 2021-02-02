@@ -1,9 +1,10 @@
 
 #include <tools/common/simpleSelector_tool.hpp>
+#include <entities/tangibleEntities/sketchEntities/sketchEntity.hpp>
 
 class sketchDesignDefault_tool : public simpleSelector_tool {
 private:   
-    entity_ptr mDraggedEnt;
+    sketchEntity_ptr mDraggedEnt;
     bool mMoving;
     glm::vec2 mPrevPos;
 public:

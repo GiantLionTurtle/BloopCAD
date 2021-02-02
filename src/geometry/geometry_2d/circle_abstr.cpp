@@ -42,7 +42,7 @@ circle_abstr::~circle_abstr()
 
 glm::vec2 circle_abstr::at(float t)
 {
-	float angle = t / (M_PI * 2);
+	float angle = t * (M_PI * 2);
 	return center_vec() + glm::vec2(std::cos(angle), std::sin(angle)) * (float)mRadius->val();
 }
 

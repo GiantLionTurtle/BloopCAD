@@ -86,4 +86,15 @@ point_abstr_ptr operator-(point_abstr_ptr p, glm::vec2 v)
 	return std::make_shared<point_abstr>(p->vec() - v);
 }
 
+point_abstr_ptr operator+=(point_abstr_ptr p, glm::vec2 v)
+{
+	p->set(p->vec() + v);
+	return p;
+}
+point_abstr_ptr operator-=(point_abstr_ptr p, glm::vec2 v)
+{
+	p->set(p->vec() - v);
+	return p;
+}
+
 } // !geom_2d

@@ -37,7 +37,6 @@ bool circle_tool::manage_button_press(GdkEventButton* event)
 {
 	// Most of the code of this function will be abstracted eventually because projecting a point 
 	// on screen on a point on a plane is pretty basic
-
 	if(!mEnv->state()) {
 		LOG_WARNING("No valid state.");
 		return true;

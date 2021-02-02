@@ -47,7 +47,13 @@ public:
 
 		@return : A pointer to the entity under a point if it exists
 	*/
-	virtual entity_ptr entity_at_point(glm::vec2 point);
+	virtual entity_ptr entity_at_point(glm::vec2 pt);
+
+	template<typename T>
+	std::shared_ptr<T> entity_at_point_derived(glm::vec2 pt)
+	{
+		return std::dynamic_pointer_cast<T>(entity_at_point(pt));
+	}
 };
 
 #endif

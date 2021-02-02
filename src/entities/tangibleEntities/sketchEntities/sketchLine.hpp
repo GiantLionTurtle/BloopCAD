@@ -43,6 +43,7 @@ public:
 	virtual ~sketchLine() {}
 
 	virtual void init();
+	virtual void move(glm::vec2 from, glm::vec2 to);
 
 	virtual int selection_rank() { return 7; }
 

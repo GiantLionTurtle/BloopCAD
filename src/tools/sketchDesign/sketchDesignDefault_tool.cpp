@@ -28,7 +28,7 @@ void sketchDesignDefault_tool::init()
 bool sketchDesignDefault_tool::manage_button_press(GdkEventButton* event)
 {
 	if(event->button == 1) {
-		mDraggedEnt = entity_at_point(glm::vec2(event->x, event->y));
+		mDraggedEnt = entity_at_point_derived<sketchEntity>(glm::vec2(event->x, event->y));
 	}
 	simpleSelector_tool::manage_button_press(event);
 	return true;

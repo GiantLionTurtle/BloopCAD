@@ -51,6 +51,9 @@ std::ostream& operator<<(std::ostream& os, point_abstr const& p);
 point_abstr_ptr operator+(point_abstr_ptr p, glm::vec2 v);
 point_abstr_ptr operator-(point_abstr_ptr p, glm::vec2 v);
 
+point_abstr_ptr operator+=(point_abstr_ptr p, glm::vec2 v);
+point_abstr_ptr operator-=(point_abstr_ptr p, glm::vec2 v);
+
 } // !geom_2d
 
 #endif

@@ -43,6 +43,11 @@ void sketchPoint::init()
 	set_name("sketchPoint");
 }
 
+void sketchPoint::move(glm::vec2 from, glm::vec2 to)
+{
+	mPos->set(to);
+}
+
 void sketchPoint::update_VB()
 {
 	mVB->bind();
