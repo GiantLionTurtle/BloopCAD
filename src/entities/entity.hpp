@@ -9,7 +9,7 @@
 #include <graphics_utils/shader.hpp>
 #include <graphics_utils/camera.hpp>
 #include <constraintsSolver/equationsSystem.hpp>
-#include <constraintsSolver/expressionVector.hpp>
+#include <constraintsSolver/expressionVector3.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 

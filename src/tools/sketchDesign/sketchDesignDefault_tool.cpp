@@ -47,9 +47,9 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 			LOG_WARNING("No valid state.");
 			return true;
 		}
-		plane_abstract_ptr pl = sk->basePlane();
+		geom_3d::plane_abstr_ptr pl = sk->basePlane();
 		camera_ptr cam = mEnv->state()->cam;
-		glm::vec2 pos = pl->point_3d_to_2d(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
+		glm::vec2 pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 		if(mMoving) {
 			sk->backup_system();
 			mDraggedEnt->move(glm::vec3(pos, 0.0f), glm::vec3(mPrevPos, 0.0f));

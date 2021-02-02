@@ -3,11 +3,11 @@
 #define SVGENTITY_HPP_
 
 #include <utils/xmlParser.hpp>
-#include <entities/geometry/plane_abstract.hpp>
+#include <geometry/geometry_3d/plane_abstr.hpp>
 
 class svgEntity {
 public:
-	virtual XML_element* to_svg(plane_abstract* drawingPlane, glm::vec2 &min, glm::vec2 &max) = 0;
+	virtual XML_element* to_svg(geom_3d::plane_abstr* drawingPlane, glm::vec2 &min, glm::vec2 &max) = 0;
 protected:
 	void update_min_max(glm::vec2 pos, glm::vec2 &min, glm::vec2 &max)
 	{

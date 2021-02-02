@@ -5,7 +5,7 @@
 #include <actions/action.hpp>
 #include <graphics_utils/camera.hpp>
 #include <utils/animatable.hpp>
-#include <entities/geometry/plane_abstract.hpp>
+#include <geometry/geometry_3d/plane_abstr.hpp>
 
 class moveCamera_action : public action {
 private:
@@ -20,9 +20,9 @@ private:
 public:
 	moveCamera_action(camera_ptr cam, cameraState target, long duration_ms);
 
-	static std::shared_ptr<action> create_from_facingPlane(	plane_abstract_ptr toFace, float dist_to_plane, 
+	static std::shared_ptr<action> create_from_facingPlane(	geom_3d::plane_abstr_ptr toFace, float dist_to_plane, 
 															cameraState const& camSt, camera_ptr cam);
-	static std::shared_ptr<action> create_from_facingPlane(plane_abstract_ptr toFace, float dist_to_plane, camera_ptr cam);
+	static std::shared_ptr<action> create_from_facingPlane(geom_3d::plane_abstr_ptr toFace, float dist_to_plane, camera_ptr cam);
 
 	virtual bool do_work(document* caller);
 	virtual bool undo_work(document* caller);

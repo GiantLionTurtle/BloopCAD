@@ -6,12 +6,11 @@
 
 #include <memory>
 #include <vector>
+#include <map>
 #include <functional>
 
-// struct vertex;
 class cluster;
 class edge;
-// using vertex_ptr = std::shared_ptr<vertex>;
 using cluster_ptr = std::shared_ptr<cluster>;
 using edge_ptr = std::shared_ptr<edge>;
 
@@ -19,10 +18,9 @@ using edge_ptr = std::shared_ptr<edge>;
 class cluster : public std::enable_shared_from_this<cluster> {
 public:
 	enum labels { DENSE_LABEL = 1, DENSE_SCAN = 2, EXISTS = 4, DENSE_USABLE = 8, MISC = 16, INCIDENT = 32 };
-private:
+protected:
 	std::vector<cluster_ptr> mSubClusters;
 	std::vector<edge_ptr> mSubClusters_edges;
-	// std::vector<edge_ptr> mIncidentEdges;
 	edge_ptr mPrevEdge;
 	int mWeight, mCapacity, mDensity;
 	int mSuperLabel;
@@ -32,6 +30,7 @@ public:
 	cluster(int weight_);
 	cluster(std::vector<cluster_ptr> clusters, cluster* base = nullptr);
 	cluster(std::vector<cluster_ptr> clusters, std::vector<edge_ptr> edges, cluster* base = nullptr);
+	virtual ~cluster();
 
 	cluster_ptr skeletonize(std::vector<cluster_ptr> denseSubClusters);
 	std::vector<cluster_ptr> denseClusters(int k);
@@ -50,6 +49,8 @@ public:
 
 	std::vector<cluster_ptr> subClusters() { return mSubClusters; }
 	void add_cluster(cluster_ptr clust, std::vector<edge_ptr> incidentEdges);
+	void add_cluster(cluster_ptr clust);
+	void add_edge(edge_ptr edg);
 
 	// edge_ptr incidentEdge(unsigned int ind) { return ind < mIncidentEdges.size() ? mIncidentEdges[ind] : nullptr; }
 	std::vector<edge_ptr> incidentEdges(cluster_ptr clust);

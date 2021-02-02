@@ -1,18 +1,21 @@
 
-#ifndef PLANE_ABSTRACT_HPP_
-#define PLANE_ABSTRACT_HPP_
+#ifndef PLANE_ABSTRACT3_HPP_
+#define PLANE_ABSTRACT3_HPP_
 
-#include <memory>
+#include "geometry_3d_abstr.hpp"
+#include "point_abstr.hpp"
+#include <geometry/geometry_2d/point_abstr.hpp>
 
 #include <glm/glm.hpp>
 
-class plane_abstract;
-using plane_abstract_ptr = std::shared_ptr<plane_abstract>;
+#include <memory>
+
+namespace geom_3d {
 
 /*
 	@class plane_abstract describes an abstract representation of a plane
 */
-class plane_abstract {
+class plane_abstr {
 protected:
 	glm::vec3 mOrigin, mV, mW; // The origin point of the plane and two vectors that are on the plane and non-parallel
 	float mDir; // Multiplicative factor to inverse a plane
@@ -25,8 +28,9 @@ public:
 		@param w : 								The other vector that lies on the plane
 		@param reversed [defaults to false] : 	Wheter or not the direction should be inverted
 	*/
-	plane_abstract(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed = false);
-	virtual ~plane_abstract() {}
+	plane_abstr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed = false);
+	virtual ~plane_abstr();
+	
 	// static plane_abstract from_1Point1Vector(glm::vec3 origin, glm::vec3 n);
 	/*
 		@function from_1Point2Vectors creates a plane_abstract
@@ -38,7 +42,7 @@ public:
 
 		@return : The created plane
 	*/
-	static plane_abstract from_1Point2Vectors(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed = false); // this one is just a wrapper around the basic constructor
+	static plane_abstr from_1Point2Vectors(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed = false); // this one is just a wrapper around the basic constructor
 	// static plane_abstract from_3Points(glm::vec3 origin, glm::vec3 pt1, glm::vec3 pt2);
 
 	// static plane_abstract_ptr from_1Point1Vector_ptr(glm::vec3 origin, glm::vec3 n);
@@ -52,25 +56,25 @@ public:
 
 		@return : A pointer to the created plane
 	*/
-	static plane_abstract_ptr from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed = false); // this one is just a wrapper around the basic constructor
+	static plane_abstr_ptr from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed = false); // this one is just a wrapper around the basic constructor
 	// static plane_abstract_ptr from_3Points_ptr(glm::vec3 origin, glm::vec3 pt1, glm::vec3 pt2);
 
 	/*
-		@function dist gives the distance between a point and the plane
+		@function dist_to_point gives the distance between a point and the plane
 
 		@param point : The point from which to calculate the distance
 
 		@return : The absolute distance between a point and the plane
 	*/
-	float dist(glm::vec3 const& point) const;
+	virtual float dist_to_point(glm::vec3 const& pt);
 	/*
-		@function dist_signed gives the oriented distance between a point and the plane
+		@function dist_to_point_signed gives the oriented distance between a point and the plane
 
 		@param point : The point from which to calculate the signed distance
 
 		@return : The signed distance between a point and the plane
 	*/
-	float dist_signed(glm::vec3 const& point) const;
+	float dist_to_point_signed(glm::vec3 const& point);
 
 	/*
 		@function line_intersection gives the point of intersection between a line and the plane
@@ -82,8 +86,13 @@ public:
 	*/
 	glm::vec3 line_intersection(glm::vec3 const& point, glm::vec3 const& vec);
 
-	glm::vec2 point_3d_to_2d(glm::vec3 const& point);
-	glm::vec3 point_2d_to_3d(glm::vec2 const& point);
+	glm::vec2 to_planePos(glm::vec3 const& pt);
+	glm::vec2 to_planePos(point_abstr const& pt) { return to_planePos(pt.vec()); }
+	glm::vec2 to_planePos(point_abstr_ptr pt) { return to_planePos(pt->vec()); }
+	glm::vec3 to_worldPos(glm::vec2 const& pt);
+	glm::vec3 to_worldPos(geom_2d::point_abstr const& pt) { return to_worldPos(pt.vec()); }
+	glm::vec3 to_worldPos(geom_2d::point_abstr_ptr pt) { return to_worldPos(pt->vec()); }
+
 
 	/*
 		@function inverted tells if the plane has a manual inversion applied
@@ -111,5 +120,7 @@ public:
 	*/
 	glm::vec3 w() const { return mW; }
 };
+
+} // !geom_3d
 
 #endif

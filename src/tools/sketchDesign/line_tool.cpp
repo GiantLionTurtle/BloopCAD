@@ -34,8 +34,8 @@ bool line_tool::manage_mouse_move(GdkEventMotion* event)
 			return true;
 		}
 		camera_ptr cam = mEnv->state()->cam; // For ease of writing
-		plane_abstract_ptr pl = target->basePlane();
-		glm::vec2 line_pos = pl->point_3d_to_2d(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
+		geom_3d::plane_abstr_ptr pl = target->basePlane();
+		glm::vec2 line_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 		mEndPos->set(line_pos);	
 	}
 	return true;
@@ -58,14 +58,14 @@ bool line_tool::manage_button_press(GdkEventButton* event)
 
 	// Find where the ray intersectpos_on_plane
 	camera_ptr cam = mEnv->state()->cam; // For ease of writing
-	plane_abstract_ptr pl = target->basePlane();
-	glm::vec2 line_pos = pl->point_3d_to_2d(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
+	geom_3d::plane_abstr_ptr pl = target->basePlane();
+	glm::vec2 line_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 
 	if(!started) {
 		mEnv->state()->doc->make_glContext_current();
 		mStartPos = sketchPoint_ptr(new sketchPoint(line_pos, pl));
 		mEndPos = sketchPoint_ptr(new sketchPoint(line_pos, pl));
-		mLine = std::make_shared<sketchLine>(line_abstract(mStartPos, mEndPos));
+		mLine = std::make_shared<sketchLine>(geom_2d::line_abstr(mStartPos, mEndPos), pl);
 		started = true;
 
 		mEnv->state()->doc->push_action(std::make_shared<addEntity_action>(mLine, target)); // Doc is passed to activate glContext

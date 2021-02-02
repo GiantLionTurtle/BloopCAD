@@ -74,6 +74,10 @@ cluster::cluster(std::vector<cluster_ptr> clusters, std::vector<edge_ptr> edges,
 	remove_label_edges(labels::MISC);
 	compute_density();
 }
+cluster::~cluster()
+{
+
+}
 
 cluster_ptr cluster::skeletonize(std::vector<cluster_ptr> denseSubClusters)
 {
@@ -362,24 +366,31 @@ int cluster::distribute(edge_ptr edg)
 void cluster::add_cluster(cluster_ptr clust, std::vector<edge_ptr> incidentEdges)
 {
 	add_label_children(labels::MISC, false);
-
 	if(!clust->has_label(labels::MISC)) {
 		mSubClusters.push_back(clust);
-		// mDensity -= clust->density();
 		for(edge_ptr edg : incidentEdges) {
 			if(edg->a()->has_label(labels::MISC) || edg->b()->has_label(labels::MISC)) {
 				mSubClusters_edges.push_back(edg);
-				// mDensity += edg->weight();
-				// edg->set_label(2);
 			} 
-			// if(edg->has_label(labels::MISC)) {
-			// 	mIncidentEdges.erase(std::find(mIncidentEdges.begin(), mIncidentEdges.end(), edg));
-			// } else if(!edg->has_label(labels::MISC)) {
-			// 	mIncidentEdges.push_back(edg);
-			// }
 		}
 	}
+	remove_label_children(labels::MISC, false);
+}
 
+void cluster::add_cluster(cluster_ptr clust)
+{
+	add_label_children(labels::MISC, false);
+	if(!clust->has_label(labels::MISC)) {
+		mSubClusters.push_back(clust);
+	}
+	remove_label_children(labels::MISC, false);
+}
+void cluster::add_edge(edge_ptr edg)
+{
+	add_label_children(labels::MISC, false);
+	if(edg->a()->has_label(labels::MISC) && edg->b()->has_label(labels::MISC)) {
+		mSubClusters_edges.push_back(edg);
+	}
 	remove_label_children(labels::MISC, false);
 }
 

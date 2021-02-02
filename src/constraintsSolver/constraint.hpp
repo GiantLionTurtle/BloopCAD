@@ -4,7 +4,7 @@
 
 #include "expression.hpp"
 #include "equationsSystem.hpp"
-#include "entities/geometry/point_abstract.hpp"
+// #include "entities/geometry/point_abstract.hpp"
 
 #include <vector>
 
@@ -21,12 +21,12 @@ public:
     std::vector<variable_ptr> variables() const { return mVariables; }
 };
 
-class coincidence_constraint : public constraint {
-private:
-    point_abstract_ptr mP1, mP2;
-    bool mMerged;
-public:
-    coincidence_constraint(point_abstract_ptr p1, point_abstract_ptr p2);
-};
+// class coincidence_constraint : public constraint {
+// private:
+//     point_abstract_ptr mP1, mP2;
+//     bool mMerged;
+// public:
+//     coincidence_constraint(point_abstract_ptr p1, point_abstract_ptr p2);
+// };
 
 #endif

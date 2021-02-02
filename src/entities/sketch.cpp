@@ -6,13 +6,13 @@
 #include <entities/tangibleEntities/sketchEntities/sketchCircle.hpp>
 #include <utils/errorLogger.hpp>
 
-sketch::sketch(plane_abstract_ptr base_plane):
+sketch::sketch(geom_3d::plane_abstr_ptr base_plane):
 	mBasePlane(base_plane)
 {
 	set_name("sketch");
 	create_origin();
 }
-sketch::sketch(plane_abstract_ptr base_plane, entity* parent):
+sketch::sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent):
 	mBasePlane(base_plane),
 	entity(parent) // Follow that entity
 {
@@ -80,10 +80,10 @@ void sketch::create_origin()
 {
 	mOrigin = folder_ptr(new folder("skorigin"));
 	add(mOrigin);
-	mOrigin->add(std::make_shared<sketchLine>(line_abstract(std::make_shared<sketchPoint>(glm::vec2(0.0f,  1.0f), mBasePlane), 
-															std::make_shared<sketchPoint>(glm::vec2(0.0f, -1.0f), mBasePlane)), true));
-	mOrigin->add(std::make_shared<sketchLine>(line_abstract(std::make_shared<sketchPoint>(glm::vec2( 1.0f, 0.0f), mBasePlane), 
-															std::make_shared<sketchPoint>(glm::vec2(-1.0f, 0.0f), mBasePlane)), true));
+	mOrigin->add(std::make_shared<sketchLine>(geom_2d::line_abstr(	std::make_shared<sketchPoint>(glm::vec2(0.0f,  1.0f), mBasePlane), 
+																	std::make_shared<sketchPoint>(glm::vec2(0.0f, -1.0f), mBasePlane)), mBasePlane, true));
+	mOrigin->add(std::make_shared<sketchLine>(geom_2d::line_abstr(	std::make_shared<sketchPoint>(glm::vec2( 1.0f, 0.0f), mBasePlane), 
+																	std::make_shared<sketchPoint>(glm::vec2(-1.0f, 0.0f), mBasePlane)), mBasePlane, true));
 	mOrigin->add(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane, true));
 
 	// add(std::make_shared<sketchCircle>(circle_abstract(std::make_shared<sketchPoint>(glm::vec2(0.75f, 0.75f), mBasePlane), variable_ptr(new variable(0.5f))), mBasePlane));

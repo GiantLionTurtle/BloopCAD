@@ -27,9 +27,9 @@ bool circle_tool::manage_mouse_move(GdkEventMotion* event)
 	}
 	if(started) {
 		camera_ptr cam = mEnv->state()->cam; // For ease of writing
-		glm::vec2 circle_pos = mCircle->basePlane()->point_3d_to_2d(
+		glm::vec2 circle_pos = mCircle->basePlane()->to_planePos(
             mCircle->basePlane()->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
-        mCircle->set_radius(glm::length(circle_pos - mCircle->center_val()));
+        mCircle->set_radius(glm::length(circle_pos - mCircle->center_vec()));
 	}
 	return true;
 }
@@ -51,17 +51,16 @@ bool circle_tool::manage_button_press(GdkEventButton* event)
 
     // Find where the ray intersectpos_on_plane
     camera_ptr cam = mEnv->state()->cam; // For ease of writing
-    plane_abstract_ptr pl = target->basePlane();
-    glm::vec2 circle_pos = pl->point_3d_to_2d(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
+    geom_3d::plane_abstr_ptr pl = target->basePlane();
+    glm::vec2 circle_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 
 	if(!started) {
-
 		mEnv->state()->doc->make_glContext_current();
-		mCircle = sketchCircle_ptr(new sketchCircle(circle_abstract(std::make_shared<sketchPoint>(circle_pos, pl), 0.0f), pl));
+		mCircle = sketchCircle_ptr(new sketchCircle(geom_2d::circle_abstr(std::make_shared<sketchPoint>(circle_pos, pl), 0.0f), pl));
 		mEnv->state()->doc->push_action(std::make_shared<addEntity_action>(mCircle, target)); // Doc is passed to activate glContext
         started = true;
 	} else {
-        mCircle->set_radius(glm::length(circle_pos - mCircle->center_val()));
+        mCircle->set_radius(glm::length(circle_pos - mCircle->center_vec()));
         started = false;
 	}
 	return true;

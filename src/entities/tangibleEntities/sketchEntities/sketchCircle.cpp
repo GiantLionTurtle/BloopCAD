@@ -1,13 +1,19 @@
 
 #include "sketchCircle.hpp"
+#include "sketchPoint.hpp"
 
 #include <graphics_utils/GLCall.hpp>
 #include <graphics_utils/shadersPool.hpp>
 #include <utils/mathUtils.hpp>
 
-sketchCircle::sketchCircle(circle_abstract const& baseCircle, plane_abstract_ptr basePlane_):
-	circle_abstract(baseCircle),
-	sketchElement(basePlane_)
+sketchCircle::sketchCircle(circle_abstr const& baseCircle, geom_3d::plane_abstr_ptr basePlane_):
+	circle_abstr(baseCircle),
+	sketchEntity(basePlane_)
+{
+
+}
+
+void sketchCircle::init()
 {
 	set_name("sketchCircle");
 	init_buffers(); // Set all the vertices to the right values
@@ -38,9 +44,9 @@ sketchCircle::sketchCircle(circle_abstract const& baseCircle, plane_abstract_ptr
 	}
 	
 
-	std::shared_ptr<point> center_as_drawable = std::dynamic_pointer_cast<point>(mCenter);
+	std::shared_ptr<sketchPoint> center_as_drawable = std::dynamic_pointer_cast<sketchPoint>(mCenter);
 	if(!center_as_drawable) {
-		center_as_drawable = std::shared_ptr<point>(new point(mCenter));
+		center_as_drawable = std::shared_ptr<sketchPoint>(new sketchPoint(mCenter->var(), mBasePlane));
 		mCenter = center_as_drawable;
 	}
 
@@ -49,7 +55,7 @@ sketchCircle::sketchCircle(circle_abstract const& baseCircle, plane_abstract_ptr
 
 void sketchCircle::move(glm::vec3 from, glm::vec3 to)
 {
-	set_radius(glm::length(to - mCenter->pos_val()));
+	set_radius(glm::length(glm::vec2(to) - mCenter->vec()));
 }
 
 void sketchCircle::update_VB()
@@ -99,8 +105,8 @@ void sketchCircle::post_set_update()
 float sketchCircle::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
 {
 	glm::vec3 inter = mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor_pos));
-	glm::vec2 on_plane = mBasePlane->point_3d_to_2d(inter);
-	glm::vec4 closest_screen(mBasePlane->point_2d_to_3d(closestPoint(on_plane)), 1.0f);
+	glm::vec2 on_plane = mBasePlane->to_planePos(inter);
+	glm::vec4 closest_screen(mBasePlane->to_worldPos(closest_to_point(on_plane)), 1.0f);
 	closest_screen = cam->mvp() * closest_screen;
 	closest_screen /= closest_screen.w;
 	glm::vec2 on_screen_pix(map(closest_screen.x, -1.0f, 1.0f, 0.0f, cam->viewport().x), 
@@ -128,7 +134,7 @@ void sketchCircle::init_buffers()
 
 	for(int i = 0; i < CIRCLE_RES; ++i) {
 		float angle = M_PI * 2.0f / (float)CIRCLE_RES * (float)i;
-		mVertices[i] = mBasePlane->point_2d_to_3d(at(angle));
+		mVertices[i] = mBasePlane->to_worldPos(at(angle));
 		mIndices[2*i] = i;
 		mIndices[2*i+1] = i+1;
 	}

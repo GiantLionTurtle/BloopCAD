@@ -4,8 +4,13 @@
 #include <graphics_utils/GLCall.hpp>
 #include <graphics_utils/shadersPool.hpp>
 
-plane::plane(plane_abstract const& plane_):
-	plane_abstract(plane_)
+plane::plane(plane_abstr const& plane_):
+	plane_abstr(plane_)
+{
+	init();
+}
+
+void plane::init()
 {
 	set_name("plane");
 	init_buffers(); // Set all the vertices to the right values
@@ -42,7 +47,7 @@ void plane::draw_impl(camera_ptr cam, int frame)
 	mShader->bind();
 
 	glm::vec3 color;
-	if(dist_signed(cam->pos()) >= 0) {
+	if(dist_to_point_signed(cam->pos()) >= 0) {
 		color = mColorA;
 	} else {
 		color = mColorB;
@@ -72,7 +77,7 @@ float plane::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
 {
 	glm::vec3 pos = cam->pos();
 	glm::vec3 inter = line_intersection(pos, cam->cast_ray(cursor_pos));
-	glm::vec2 plane_pos = point_3d_to_2d(inter);
+	glm::vec2 plane_pos = to_planePos(inter);
 	if(std::abs(plane_pos.x) <= glm::length(mV) && std::abs(plane_pos.y) <= glm::length(mW)) {
 		return glm::length(pos-inter);
 	}

@@ -1,4 +1,3 @@
-add_subdirectory(geometry)
 add_subdirectory(tangibleEntities)
 
 set(entities_source_files

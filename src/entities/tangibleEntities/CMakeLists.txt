@@ -1,7 +1,6 @@
 add_subdirectory(sketchEntities)
 
 set(tangibleEntities_source_files
-  line.cpp
   plane.cpp
   point.cpp)
 

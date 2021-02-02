@@ -1,8 +1,6 @@
 
 #include "addEntity_action.hpp"
 #include <entities/sketch.hpp>
-#include <entities/tangibleEntities/line.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
 #include <utils/errorLogger.hpp>
 #include <document.hpp>
 

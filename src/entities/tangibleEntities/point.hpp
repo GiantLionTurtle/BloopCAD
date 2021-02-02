@@ -3,17 +3,19 @@
 #define POINT_HPP_
 
 #include "tangibleEntity.hpp"
-#include <entities/geometry/point_abstract.hpp>
+#include <geometry/geometry_3d/point_abstr.hpp>
 
 #include <glm/glm.hpp>
 
-class point : public tangibleEntity, public point_abstract {
+class point : public tangibleEntity, public geom_3d::point_abstr {
 private:
 	const glm::vec3 mColor = glm::vec3(0.0f, 0.89f, 0.725f); // Point color
 public:
-	point(point_abstract const& basePoint);
-	point(point_abstract_ptr basePoint);
+	point(point_abstr const& basePoint);
+	point(geom_3d::point_abstr_ptr basePoint);
 	virtual ~point() {}
+
+	virtual void init();
 
 	virtual int selection_rank() { return 5; }
 
@@ -28,8 +30,6 @@ protected:
 	virtual float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
 
 	virtual void post_set_update();
-
-	void create();
 };
 
 #endif

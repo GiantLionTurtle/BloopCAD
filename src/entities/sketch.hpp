@@ -3,7 +3,7 @@
 #define SKETCH_HPP_
 
 #include "entity.hpp"
-#include <entities/geometry/plane_abstract.hpp>
+#include <geometry/geometry_3d/plane_abstr.hpp>
 #include <entities/folder.hpp>
 #include <constraintsSolver/equationsSystem.hpp>
 #include <constraintsSolver/constraint.hpp>
@@ -20,7 +20,7 @@ using sketch_ptr = std::shared_ptr<sketch>;
 */
 class sketch : public entity {
 private:
-	plane_abstract_ptr mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
+	geom_3d::plane_abstr_ptr mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
 
 	folder_ptr mOrigin;
 
@@ -32,14 +32,14 @@ public:
 
 		@param base_plane : The plane onto which everything is constructed in the sketch
 	*/
-	sketch(plane_abstract_ptr base_plane);
+	sketch(geom_3d::plane_abstr_ptr base_plane);
 	/*
 		@function sketch creates a sketch
 
 		@param base_plane : The plane onto which everything is constructed in the sketch
 		@param parent : 	An entity that contains this sketch
 	*/
-	sketch(plane_abstract_ptr base_plane, entity* parent);
+	sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent);
 
 	virtual void add(entity_ptr elem);
 
@@ -48,7 +48,7 @@ public:
 
 		@return : The base plane of the sketch
 	*/
-	plane_abstract_ptr basePlane() { return mBasePlane; }
+	geom_3d::plane_abstr_ptr basePlane() { return mBasePlane; }
 
 	entity_ptr origin() const { return mOrigin; }
 

@@ -1,6 +1,6 @@
 
-#ifndef EXPRESSIONVECTOR_HPP_
-#define EXPRESSIONVECTOR_HPP_
+#ifndef EXPRESSIONVECTOR3_HPP_
+#define EXPRESSIONVECTOR3_HPP_
 
 #include "expression.hpp"
 

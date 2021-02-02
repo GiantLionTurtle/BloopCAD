@@ -25,16 +25,16 @@ void part::init_scene()
 	
 	// Create the 3 planes of the origin
 	mXY = std::shared_ptr<plane>(new plane(
-		plane_abstract::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f))));
+		geom_3d::plane_abstr::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f))));
 	mXY->set_name("XY plane");
 	mYZ = std::shared_ptr<plane>(new plane(
-		plane_abstract::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), true))); // Inverted due to openGL's z axis being kind of backward
+		geom_3d::plane_abstr::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), true))); // Inverted due to openGL's z axis being kind of backward
 	mYZ->set_name("YZ plane");
 	mZX = std::shared_ptr<plane>(new plane(
-		plane_abstract::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f))));
+		geom_3d::plane_abstr::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f))));
 	mZX->set_name("ZX plane");
 
-	std::shared_ptr<point> center = std::make_shared<point>(point_abstract(glm::vec3(0.0f, 0.0f, 0.0f)));
+	std::shared_ptr<point> center = std::make_shared<point>(geom_3d::point_abstr(glm::vec3(0.0f, 0.0f, 0.0f)));
 	center->set_name("originPoint");
 
 	mOrigin = folder_ptr(new folder("origin"));
@@ -54,7 +54,7 @@ void part::init_scene()
 	// add(mZX);
 
 	add(std::shared_ptr<plane>(new plane(
-		plane_abstract::from_1Point2Vectors(glm::vec3(-3.0f, 0.5f, 0.0f), glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.5f, 0.0f))))); // Temporary test plane
+		geom_3d::plane_abstr::from_1Point2Vectors(glm::vec3(-3.0f, 0.5f, 0.0f), glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.5f, 0.0f))))); // Temporary test plane
 }
 
 void part::set_handle(entityHandle* handle_)

@@ -20,7 +20,7 @@ moveCamera_action::moveCamera_action(camera_ptr cam, cameraState target, long du
 
 }
 
-std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	plane_abstract_ptr toFace, float dist_to_plane, 
+std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	geom_3d::plane_abstr_ptr toFace, float dist_to_plane, 
 																				cameraState const& camSt, camera_ptr cam)
 {
 	float dot_right_v 	= glm::dot(camSt.right, toFace->v()); // How similar is the camRight to the v vector?
@@ -44,7 +44,7 @@ std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	plane_abstra
 	targetCamState, 
 	preferences::get_instance().get_long("camtrans")));
 }
-std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	plane_abstract_ptr toFace, float dist_to_plane, camera_ptr cam)
+std::shared_ptr<action> moveCamera_action::create_from_facingPlane(geom_3d::plane_abstr_ptr toFace, float dist_to_plane, camera_ptr cam)
 {
 	return create_from_facingPlane(toFace, dist_to_plane, cam->state(), cam);
 }

@@ -1,5 +1,5 @@
 
-#include "expressionVector.hpp"
+#include "expressionVector3.hpp"
 
 expressionVector3::expressionVector3(expression_ptr x_, expression_ptr y_, expression_ptr z_):
 	x(x_),

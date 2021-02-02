@@ -20,11 +20,11 @@ constraint::constraint(subEquationsSystem const& sys):
 
 }
 
-coincidence_constraint::coincidence_constraint(point_abstract_ptr p1, point_abstract_ptr p2):
-	mP1(p1),
-	mP2(p2),
-	mMerged(false)
-{
-	mEquations = { p1->pos()->x->expr() - p2->pos()->x->expr(), p1->pos()->y->expr() - p2->pos()->y->expr() };
-	mVariables = { p1->pos()->x, p1->pos()->y, p2->pos()->x, p2->pos()->y };
-}
+// coincidence_constraint::coincidence_constraint(point_abstract_ptr p1, point_abstract_ptr p2):
+// 	mP1(p1),
+// 	mP2(p2),
+// 	mMerged(false)
+// {
+// 	mEquations = { p1->pos()->x->expr() - p2->pos()->x->expr(), p1->pos()->y->expr() - p2->pos()->y->expr() };
+// 	mVariables = { p1->pos()->x, p1->pos()->y, p2->pos()->x, p2->pos()->y };
+// }

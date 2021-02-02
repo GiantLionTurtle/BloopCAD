@@ -1,8 +1,8 @@
 
 #include "horizontality_tool.hpp"
 
-#include <entities/geometry/point_abstract.hpp>
-#include <entities/geometry/line_abstract.hpp>
+#include <geometry/geometry_2d/point_abstr.hpp>
+#include <geometry/geometry_2d/line_abstr.hpp>
 #include <constraintsSolver/constraint.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
@@ -11,8 +11,8 @@ horizontality_tool::horizontality_tool(workspace* env):
 	simpleSelector_tool(env)
 {
 	mFilter = [](entity_ptr ent) -> bool { 
-		return 	std::dynamic_pointer_cast<point_abstract>(ent).operator bool() ||
-				std::dynamic_pointer_cast<line_abstract>(ent).operator bool(); 
+		return 	std::dynamic_pointer_cast<geom_2d::point_abstr>(ent).operator bool() ||
+				std::dynamic_pointer_cast<geom_2d::line_abstr>(ent).operator bool(); 
 	};
 }
 

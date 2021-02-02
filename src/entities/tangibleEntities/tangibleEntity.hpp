@@ -20,6 +20,8 @@ public:
         mRequire_VBUpdate(false) {}
     virtual ~tangibleEntity() {}
 
+    virtual void init() = 0;
+
     virtual void notify_childUpdate()
     {
         if(mParent)

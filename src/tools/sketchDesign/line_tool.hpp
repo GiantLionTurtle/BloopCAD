@@ -5,8 +5,7 @@
 #include <tools/tool.hpp>
 
 #include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
-#include <entities/tangibleEntities/line.hpp>
-#include <entities/geometry/plane_abstract.hpp>
+#include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
 
 #include <glm/glm.hpp>
 
@@ -17,7 +16,7 @@
 class line_tool : public tool_abstract {
 private:
 	sketchPoint_ptr mStartPos, mEndPos; // start and end pos of the line
-	std::shared_ptr<line> mLine;
+	sketchLine_ptr mLine;
 	bool started; // Whether or not the drawing of the line has started
 public:
 	/*

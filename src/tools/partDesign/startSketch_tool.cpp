@@ -25,7 +25,7 @@ startSketch_tool::startSketch_tool(workspace* env):
 		LOG_WARNING("Glib::PixbufError: " + ex.what());
 	}
 
-	mFilter = [](entity_ptr ent) -> bool { return std::dynamic_pointer_cast<plane_abstract>(ent).operator bool(); };
+	mFilter = [](entity_ptr ent) -> bool { return std::dynamic_pointer_cast<geom_3d::plane_abstr>(ent).operator bool(); };
 }
 
 void startSketch_tool::init()
@@ -34,7 +34,7 @@ void startSketch_tool::init()
 		// Check if there is only one item in the document's selection stack and if it is a plane, use it
 		if(mEnv->state()->doc->selection_size() == 1) {
 			selection sel = mEnv->state()->doc->selection_at(0);
-			plane_abstract_ptr sketchPlane = std::dynamic_pointer_cast<plane_abstract>(sel.ent);
+			geom_3d::plane_abstr_ptr sketchPlane = std::dynamic_pointer_cast<geom_3d::plane_abstr>(sel.ent);
 			if(sketchPlane) {
 				start_sketch(sketchPlane, sel.camSt);
 				sel.ent->set_hover(false);
@@ -48,7 +48,7 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 	if(mEnv->state()) {
 		// If the hovered entity is a plane, start sketch
 		entity_ptr ent = entity_at_point(glm::vec2(event->x, event->y));
-		plane_abstract_ptr sketchPlane = std::dynamic_pointer_cast<plane_abstract>(ent);
+		geom_3d::plane_abstr_ptr sketchPlane = std::dynamic_pointer_cast<geom_3d::plane_abstr>(ent);
 		if(sketchPlane) {
 			start_sketch(sketchPlane, mEnv->state()->cam->state());
 			ent->set_hover(false);
@@ -60,10 +60,10 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 void startSketch_tool::act_on_entity(entity_ptr ent)
 {
 	if(mEnv->state() && mFilter(ent))
-		start_sketch(std::dynamic_pointer_cast<plane_abstract>(ent), mEnv->state()->cam->state());
+		start_sketch(std::dynamic_pointer_cast<geom_3d::plane_abstr>(ent), mEnv->state()->cam->state());
 }
 
-void startSketch_tool::start_sketch(plane_abstract_ptr sketchPlane, cameraState const& camState_)
+void startSketch_tool::start_sketch(geom_3d::plane_abstr_ptr sketchPlane, cameraState const& camState_)
 {
 	std::shared_ptr<part> target = std::dynamic_pointer_cast<part>(mEnv->state()->target); // Aquire the part that is worked on
 	if(!target) {

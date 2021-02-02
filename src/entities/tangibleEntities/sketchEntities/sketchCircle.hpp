@@ -2,23 +2,24 @@
 #ifndef SKETCHCIRCLE_HPP_
 #define SKETCHCIRCLE_HPP_
 
-#include <entities/geometry/circle_abstract.hpp>
-#include <entities/tangibleEntities/point.hpp>
-#include "sketchElement.hpp"
+#include <geometry/geometry_2d/circle_abstr.hpp>
+#include "sketchEntity.hpp"
 
 #define CIRCLE_RES 100
 
 class sketchCircle;
 using sketchCircle_ptr = std::shared_ptr<sketchCircle>;
 
-class sketchCircle : public tangibleEntity, public sketchElement, public circle_abstract {
+class sketchCircle : public sketchEntity, public geom_2d::circle_abstr {
 private:
 	const glm::vec3 mColor = glm::vec3(0.0f, 0.89f, 0.725f); // Curve color
 	glm::vec3 mVertices[CIRCLE_RES]; // The vertices describing the quand containing the circle
 	unsigned int mIndices[2*CIRCLE_RES];
 public:
-	sketchCircle(circle_abstract const& baseCircle, plane_abstract_ptr basePlane_);
+	sketchCircle(circle_abstr const& baseCircle, geom_3d::plane_abstr_ptr basePlane_);
 	virtual ~sketchCircle() {}
+
+	virtual void init();
 
 	virtual int selection_rank() { return 8; }
 

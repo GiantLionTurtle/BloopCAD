@@ -3,7 +3,7 @@
 #define PLANE_HPP_
 
 #include "tangibleEntity.hpp"
-#include <entities/geometry/plane_abstract.hpp>
+#include <geometry/geometry_3d/plane_abstr.hpp>
 
 #include <glm/glm.hpp>
 
@@ -16,7 +16,7 @@
 	@parent : entity
 	@parent : plane_abstract
 */
-class plane : public tangibleEntity, public plane_abstract {
+class plane : public tangibleEntity, public geom_3d::plane_abstr {
 private:
 	const glm::vec3 mColorA = glm::vec3(0.34f, 0.17f, 0.05f), 	// Both colors of a plane, depending on the side from which it is observed
 	mColorB = glm::vec3(0.15f, 0.0f, 0.25f); 					// Maybe it should be an option
@@ -30,8 +30,10 @@ public:
 		@param plane_ : 				The underlaying plane abstraction
 		@param label [defaults to ""] : The label of the plane (not supported yet)
 	*/
-	plane(plane_abstract const& plane_);
+	plane(plane_abstr const& plane_);
 	virtual ~plane() {}
+
+	virtual void init();
 
 	virtual int selection_rank() { return 10; }
 

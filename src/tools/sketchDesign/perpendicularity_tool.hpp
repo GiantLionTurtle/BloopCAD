@@ -3,7 +3,7 @@
 #define PERPENDICULARITY_TOOL_HPP_
 
 #include <tools/common/simpleSelector_tool.hpp>
-#include <constraintsSolver/expressionVector.hpp>
+#include <constraintsSolver/expressionVector3.hpp>
 
 class perpendicularity_tool : public simpleSelector_tool {
 private:
