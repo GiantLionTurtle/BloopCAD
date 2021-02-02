@@ -33,23 +33,45 @@ std::string expression_substr_funky::to_string()
 
 
 sketchLine::sketchLine(line_abstr const& baseLine, geom_3d::plane_abstr_ptr basePlane_, bool immovable /*= false*/):
-	sketchEntity(basePlane_),
-	line_abstr(baseLine)
+	line_abstr(baseLine),
+	sketchEntity(basePlane_)
 {
 	if(immovable) {
 		mA->set_constant();
 		mB->set_constant();
 	}
 
-	dirX = std::make_shared<expression_substr_funky>(mA->var()->expr()->x, mB->var()->expr()->x, 0.0);
-	dirY = std::make_shared<expression_substr_funky>(mA->var()->expr()->y, mB->var()->expr()->y, 0.0);
-	dir = std::make_shared<expressionVector2>(dirX, dirY);
+	init();
+}
+sketchLine::sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
+	line_abstr(ptA, ptB),
+	sketchEntity(basePlane_)
+	
+{
+	if(immovable) {
+		mA->set_constant();
+		mB->set_constant();
+	}
+	init();
+}
+sketchLine::sketchLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
+	line_abstr(sketchPoint_ptr(new sketchPoint(ptA, basePlane_)), sketchPoint_ptr(new sketchPoint(ptB, basePlane_))),
+	sketchEntity(basePlane_)
+{
+	if(immovable) {
+		mA->set_constant();
+		mB->set_constant();
+	}
 
 	init();
 }
 
 void sketchLine::init()
 {
+	dirX = std::make_shared<expression_substr_funky>(mA->var()->expr()->x, mB->var()->expr()->x, 0.0);
+	dirY = std::make_shared<expression_substr_funky>(mA->var()->expr()->y, mB->var()->expr()->y, 0.0);
+	dir = std::make_shared<expressionVector2>(dirX, dirY);
+
 	sketchPoint_ptr A_as_drawable = std::dynamic_pointer_cast<sketchPoint>(mA);
 	sketchPoint_ptr B_as_drawable = std::dynamic_pointer_cast<sketchPoint>(mB);
 	if(!A_as_drawable) {

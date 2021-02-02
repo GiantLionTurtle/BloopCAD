@@ -80,10 +80,8 @@ void sketch::create_origin()
 {
 	mOrigin = folder_ptr(new folder("skorigin"));
 	add(mOrigin);
-	mOrigin->add(std::make_shared<sketchLine>(geom_2d::line_abstr(	std::make_shared<sketchPoint>(glm::vec2(0.0f,  1.0f), mBasePlane), 
-																	std::make_shared<sketchPoint>(glm::vec2(0.0f, -1.0f), mBasePlane)), mBasePlane, true));
-	mOrigin->add(std::make_shared<sketchLine>(geom_2d::line_abstr(	std::make_shared<sketchPoint>(glm::vec2( 1.0f, 0.0f), mBasePlane), 
-																	std::make_shared<sketchPoint>(glm::vec2(-1.0f, 0.0f), mBasePlane)), mBasePlane, true));
+	mOrigin->add(std::make_shared<sketchLine>(glm::vec2(0.0f,  1.0f), glm::vec2(0.0f, -1.0f), mBasePlane, true));
+	mOrigin->add(std::make_shared<sketchLine>(glm::vec2( 1.0f, 0.0f), glm::vec2(-1.0f, 0.0f), mBasePlane, true));
 	mOrigin->add(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane, true));
 
 	// add(std::make_shared<sketchCircle>(circle_abstract(std::make_shared<sketchPoint>(glm::vec2(0.75f, 0.75f), mBasePlane), variable_ptr(new variable(0.5f))), mBasePlane));

@@ -65,7 +65,7 @@ bool line_tool::manage_button_press(GdkEventButton* event)
 		mEnv->state()->doc->make_glContext_current();
 		mStartPos = sketchPoint_ptr(new sketchPoint(line_pos, pl));
 		mEndPos = sketchPoint_ptr(new sketchPoint(line_pos, pl));
-		mLine = std::make_shared<sketchLine>(geom_2d::line_abstr(mStartPos, mEndPos), pl);
+		mLine = std::make_shared<sketchLine>(mStartPos, mEndPos, pl);
 		started = true;
 
 		mEnv->state()->doc->push_action(std::make_shared<addEntity_action>(mLine, target)); // Doc is passed to activate glContext

@@ -55,7 +55,7 @@ bool circle_tool::manage_button_press(GdkEventButton* event)
 
 	if(!started) {
 		mEnv->state()->doc->make_glContext_current();
-		mCircle = sketchCircle_ptr(new sketchCircle(geom_2d::circle_abstr(std::make_shared<sketchPoint>(circle_pos, pl), 0.0f), pl));
+		mCircle = sketchCircle_ptr(new sketchCircle(circle_pos, 0.0f, pl));
 		mEnv->state()->doc->push_action(std::make_shared<addEntity_action>(mCircle, target)); // Doc is passed to activate glContext
         started = true;
 	} else {

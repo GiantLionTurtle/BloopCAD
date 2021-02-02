@@ -12,6 +12,12 @@ sketchCircle::sketchCircle(circle_abstr const& baseCircle, geom_3d::plane_abstr_
 {
 	init();
 }
+sketchCircle::sketchCircle(glm::vec2 center, float radius, geom_3d::plane_abstr_ptr basePlane_):
+	circle_abstr(sketchPoint_ptr(new sketchPoint(center, basePlane_)), radius),
+	sketchEntity(basePlane_)
+{
+	init();
+}
 
 void sketchCircle::init()
 {

@@ -17,6 +17,7 @@ private:
 	unsigned int mIndices[2*CIRCLE_RES];
 public:
 	sketchCircle(circle_abstr const& baseCircle, geom_3d::plane_abstr_ptr basePlane_);
+	sketchCircle(glm::vec2 center, float radius, geom_3d::plane_abstr_ptr basePlane_);
 	virtual ~sketchCircle() {}
 
 	virtual void init();

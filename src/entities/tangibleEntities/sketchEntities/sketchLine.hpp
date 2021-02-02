@@ -3,6 +3,7 @@
 #define SKETCHLINE_HPP_
 
 #include "sketchEntity.hpp"
+#include "sketchPoint.hpp"
 #include <geometry/geometry_2d/line_abstr.hpp>
 
 class sketchLine;
@@ -40,6 +41,8 @@ private:
 	glm::vec3 mVertices[2]; // The vertices describing the line
 public:
 	sketchLine(line_abstr const& baseLine, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
+	sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
+	sketchLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
 	virtual ~sketchLine() {}
 
 	virtual void init();
