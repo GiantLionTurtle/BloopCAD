@@ -116,7 +116,7 @@ public:
 	bool manage_button_press(GdkEventButton* event);
 	/*
 		@function manage_button_release passes the button releases to the current tool
-	*/		
+	*/
 	bool manage_button_release(GdkEventButton* event);
 
 	/*

@@ -7,7 +7,7 @@
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 
-horizontality_tool::horizontality_tool(workspace* env):
+horizontality_tool::horizontality_tool(sketchDesign* env):
 	simpleSelector_tool(env)
 {
 	mFilter = [](entity_ptr ent) -> bool { 

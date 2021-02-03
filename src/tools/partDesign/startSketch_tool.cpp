@@ -13,7 +13,7 @@
 #include <actions/common/moveCamera_action.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-startSketch_tool::startSketch_tool(workspace* env):
+startSketch_tool::startSketch_tool(partDesign* env):
 	simpleSelector_tool(env)
 {
 	// Attempt to load the cursor icon

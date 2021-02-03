@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 
 orbit_tool::orbit_tool(workspace* env):
-	tool_abstract(env, compositeCursor_ptr(new compositeCursor
+	tool(env, compositeCursor_ptr(new compositeCursor
 		{Gdk::Cursor::create(Gdk::CROSSHAIR), nullptr, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f)})), // CROSSHAIR is the closest cursor if it can't load the icon
 	is_moving(false)
 {

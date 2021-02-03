@@ -6,15 +6,16 @@
 
 #include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchCircle.hpp>
+#include <workspaces/sketchDesign.hpp>
 
 #include <glm/glm.hpp>
 
-class circle_tool : public tool_abstract {
+class circle_tool : public tool<sketchDesign> {
 private:
 	std::shared_ptr<sketchCircle> mCircle;
 	bool started; // Whether or not the drawing of the circle has started
 public:
-	circle_tool(workspace* env);
+	circle_tool(sketchDesign* env);
 
 	/*
 		@function init makes sure the started flag is down

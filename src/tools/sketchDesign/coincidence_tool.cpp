@@ -7,7 +7,7 @@
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 
-coincidence_tool::coincidence_tool(workspace* env):
+coincidence_tool::coincidence_tool(sketchDesign* env):
 	simpleSelector_tool(env)
 {
     mFilter = [](entity_ptr ent) -> bool { 

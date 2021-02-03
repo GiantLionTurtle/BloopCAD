@@ -13,7 +13,7 @@
 
 #include <iostream>
 
-partDesignDefault_tool::partDesignDefault_tool(workspace* env):
+partDesignDefault_tool::partDesignDefault_tool(partDesign* env):
 	simpleSelector_tool(env)
 {
 

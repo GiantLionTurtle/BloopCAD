@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-sketchDesignDefault_tool::sketchDesignDefault_tool(workspace* env):
+sketchDesignDefault_tool::sketchDesignDefault_tool(sketchDesign* env):
 	simpleSelector_tool(env),
 	mDraggedEnt(nullptr),
 	mMoving(false)

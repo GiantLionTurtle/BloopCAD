@@ -9,8 +9,8 @@
 
 #include <glm/gtx/quaternion.hpp>
 
-point_tool::point_tool(workspace* env):
-	tool_abstract(env)
+point_tool::point_tool(sketchDesign* env):
+	tool(env)
 {
 	
 }

@@ -4,13 +4,14 @@
 
 #include <tools/common/simpleSelector_tool.hpp>
 #include <constraintsSolver/equationsSystem.hpp>
+#include <workspaces/sketchDesign.hpp>
 
-class verticality_tool : public simpleSelector_tool {
+class verticality_tool : public simpleSelector_tool<sketchDesign> {
 private:
 	subEquationsSystem mSysA, mSysB;
 	bool mStarted;
 public:
-	verticality_tool(workspace* env);
+	verticality_tool(sketchDesign* env);
 
 	virtual void init();
 

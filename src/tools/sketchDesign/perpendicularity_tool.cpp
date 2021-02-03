@@ -7,7 +7,7 @@
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 
-perpendicularity_tool::perpendicularity_tool(workspace* env):
+perpendicularity_tool::perpendicularity_tool(sketchDesign* env):
 	simpleSelector_tool(env)
 {
     mFilter = [](entity_ptr ent) -> bool { 

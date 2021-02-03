@@ -7,7 +7,7 @@
 #include <geometry/geometry_3d/plane_abstr.hpp>
 
 zoom_tool::zoom_tool(workspace* env): 
-	tool_abstract(env)
+	tool(env)
 {
 	// Attempt to load the cursor icon
 	try {

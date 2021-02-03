@@ -4,15 +4,17 @@
 
 #include <tools/tool.hpp>
 #include <entities/forward_entities.hpp>
+#include <workspaces/workspace.hpp>
+#include <document.hpp>
 
 #include <functional>
 /*
 	@class simpleSelector_tool describes a tool used to select entities in a document
 */
-class simpleSelector_tool : public tool_abstract {
+template<typename wst>
+class simpleSelector_tool : public tool<wst> {
 protected:
 	entity_ptr mCurrentHover; // The entity under the mouse, if there is one
-
 	std::function<bool (entity_ptr)> mFilter;
 public: 
 	/*
@@ -20,23 +22,56 @@ public:
 
 		@param env : The workspace owning the tool
 	*/
-	simpleSelector_tool(workspace* env);
+	simpleSelector_tool(wst* env): 
+		tool<wst>(env),
+		mCurrentHover(nullptr), // No entity is under the mouse
+		mFilter([](entity_ptr) { return true; })
+	{
+		
+	}
 	virtual ~simpleSelector_tool() {};
 
-	virtual bool should_hover(entity_ptr ent);
+	virtual bool should_hover(entity_ptr ent) {	return mFilter(ent); }
 
 	/*
 		@function manage_button_press manages selection when clicking at a point on screen
 
 		@param event : The event handed out by gtk
 	*/
-	virtual bool manage_button_press(GdkEventButton* event);
+	virtual bool manage_button_press(GdkEventButton* event)
+	{
+		if(tool<wst>::mEnv->state() && event->button == 1) {
+			// Here it lets the document manage it's selection
+			// it hands over the shift&ctrl
+			// mEnv->state()->doc->toggle_select(
+			// 	entity_at_point(glm::vec2(event->x, event->y)), 
+			// 	mEnv->state()->cam->state(),
+			// 	event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK);		
+		}
+		return true;
+	}
 	/*
 		@function manage_mouse_move manages hovering when moving the mouse on screen
 
 		@param event : The event handed out by gtk
 	*/
-	virtual bool manage_mouse_move(GdkEventMotion* event);
+	virtual bool manage_mouse_move(GdkEventMotion* event)
+	{
+		if(tool<wst>::mEnv->state()) {
+			entity_ptr ent = entity_at_point(glm::vec2(event->x, event->y));
+			// Toggle hovering
+			if(ent != mCurrentHover) {
+				if(mCurrentHover) {
+					mCurrentHover->set_hover(false);
+				}
+				if(ent) {
+					ent->set_hover(true);
+				}
+				mCurrentHover = ent;
+			}
+		}
+		return true;
+	}
 
 	virtual std::string name() { return "simple selector"; }
 
@@ -47,8 +82,12 @@ public:
 
 		@return : A pointer to the entity under a point if it exists
 	*/
-	virtual entity_ptr entity_at_point(glm::vec2 pt);
-
+	virtual entity_ptr entity_at_point(glm::vec2 pt)
+	{
+		// return mEnv->state()->doc->target()->hovered_child(mEnv->state()->cam, pt, mFilter);
+		return nullptr;
+	}
+	
 	template<typename T>
 	std::shared_ptr<T> entity_at_point_derived(glm::vec2 pt)
 	{

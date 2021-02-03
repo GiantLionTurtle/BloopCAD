@@ -8,8 +8,8 @@
 
 #include <glm/gtx/quaternion.hpp>
 
-circle_tool::circle_tool(workspace* env):
-	tool_abstract(env)
+circle_tool::circle_tool(sketchDesign* env):
+	tool(env)
 {
 	
 }

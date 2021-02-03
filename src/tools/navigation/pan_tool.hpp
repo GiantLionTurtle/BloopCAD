@@ -8,7 +8,7 @@
 	@class pan_tool describes the tool that moves the model 
 	@parent : tool_abstract
 */
-class pan_tool : public tool_abstract {
+class pan_tool : public tool<workspace> {
 private:
 	glm::vec2 prevPos; // Helper record of the position of the mouse on the previous update
 	bool is_moving; // If the mouse is currently moving

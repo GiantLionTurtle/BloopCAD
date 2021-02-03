@@ -15,6 +15,9 @@ class workspace; // Forward declaration necesary for pointer
 struct compositeCursor;
 using compositeCursor_ptr = std::shared_ptr<compositeCursor>;
 
+class tool_abstract;
+using tool_abstract_ptr = std::shared_ptr<tool_abstract>;
+
 /*
 	@struct compositeCursor describes a cursor that has both an image and a cursor type
 */
@@ -24,15 +27,11 @@ struct compositeCursor {
 	glm::vec2 upRight, downLeft; // Unused for now
 };
 
-class tool_abstract;
-using tool_abstract_ptr = std::shared_ptr<tool_abstract>;
-
 /*
 	@class tool_abstract describes a wire frame for tools
 */
 class tool_abstract {
 protected:
-	workspace* mEnv; // The workspace owning the tool
 	compositeCursor_ptr mCursor; // The tool's cursor
 public:
 	/*
@@ -40,14 +39,14 @@ public:
 
 		@param env : The workspace owning the tool
 	*/
-	tool_abstract(workspace* env): mEnv(env), mCursor(compositeCursor_ptr(new compositeCursor{Gdk::Cursor::create(Gdk::ARROW), nullptr, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f)})) {};
+	tool_abstract(): mCursor(compositeCursor_ptr(new compositeCursor{Gdk::Cursor::create(Gdk::ARROW), nullptr, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f)})) {};
 	/*
 		@function tool_abstract creates a tool_abstract object with a given cursor
 
 		@param env : 		The workspace owning the tool
 		@param cursor_ : 	The cursor the tool will have	
 	*/
-	tool_abstract(workspace* env, compositeCursor_ptr cursor_): mEnv(env), mCursor(cursor_) {};
+	tool_abstract(compositeCursor_ptr cursor_): mCursor(cursor_) {};
 
 	/*
 		@function init is an overridable init routine
@@ -106,6 +105,16 @@ public:
 	virtual bool should_hover(entity_ptr ent) { return true; }
 
 	virtual std::string name() { return "unkown tool"; }
+};
+
+template<typename wst>
+class tool : public tool_abstract {
+protected:
+	static_assert(std::is_base_of<workspace, wst>::value, "Workspace type must derive from workspace");
+    wst* mEnv;
+public:
+    tool(wst* env): mEnv(env) {}
+    tool(wst* env, compositeCursor_ptr cursor_): tool_abstract(cursor_), mEnv(env) {}
 };
 
 #endif

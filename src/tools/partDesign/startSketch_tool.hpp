@@ -3,6 +3,7 @@
 #define STARTSKETCH_TOOL_HPP_
 
 #include <tools/common/simpleSelector_tool.hpp>
+#include <workspaces/partDesign.hpp>
 #include <entities/sketch.hpp>
 
 struct cameraState;
@@ -13,7 +14,7 @@ struct cameraState;
 
 	@note : The plane it is hovering are notified via the simpleSelector_tool inheritance
 */
-class startSketch_tool : public simpleSelector_tool {
+class startSketch_tool : public simpleSelector_tool<partDesign> {
 private:
 	sketch_ptr mCurrentSketch;
 public:
@@ -22,7 +23,7 @@ public:
 
 		@param env : The workspace that owns the tool
 	*/
-	startSketch_tool(workspace* env);
+	startSketch_tool(partDesign* env);
 
 	/*
 		@function init checks if a plane has already been selected when the tool was activated

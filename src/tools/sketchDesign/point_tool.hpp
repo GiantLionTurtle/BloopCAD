@@ -5,10 +5,11 @@
 #include <tools/tool.hpp>
 
 #include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
+#include <workspaces/sketchDesign.hpp>
 
 #include <glm/glm.hpp>
 
-class point_tool : public tool_abstract {
+class point_tool : public tool<sketchDesign> {
 private:
 	sketchPoint_ptr mCurrentPoint;
 public:
@@ -17,7 +18,7 @@ public:
 
 		@param env : The workspace that owns the tool
 	*/
-	point_tool(workspace* env);
+	point_tool(sketchDesign* env);
 
 	/*
 		@function manage_button_press starts or end&push lines on sketch

@@ -8,7 +8,7 @@
 	@class zoom_tool describe the tool used to zoom the model
 	@parent : tool_abstract
 */
-class zoom_tool : public tool_abstract {
+class zoom_tool : public tool<workspace> {
 private:
 	glm::vec2 prevPos; // Helper previous position of mouse, on last update
 	glm::vec2 zoomStart; // Position of the mouse when the zoom start (with mouse move zoom)

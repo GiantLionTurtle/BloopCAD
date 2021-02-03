@@ -10,8 +10,8 @@
 
 #include <glm/gtx/quaternion.hpp>
 
-line_tool::line_tool(workspace* env):
-	tool_abstract(env)
+line_tool::line_tool(sketchDesign* env):
+	tool(env)
 {
 	
 }
@@ -28,7 +28,7 @@ bool line_tool::manage_mouse_move(GdkEventMotion* event)
 		return true;
 	}
 	if(started) {
-		sketch_ptr target = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);		
+		sketch_ptr target = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);
 		if(!target) {
 			LOG_WARNING("No valid target.");
 			return true;

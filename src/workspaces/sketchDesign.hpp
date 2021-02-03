@@ -30,6 +30,8 @@ public:
 	*/
 	sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
 
+	
+
 	/*
 		@function line invokes the line tool
 	*/

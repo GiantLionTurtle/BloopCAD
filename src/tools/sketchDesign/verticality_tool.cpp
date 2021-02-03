@@ -7,7 +7,7 @@
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 
-verticality_tool::verticality_tool(workspace* env):
+verticality_tool::verticality_tool(sketchDesign* env):
 	simpleSelector_tool(env)
 {
 	mFilter = [](entity_ptr ent) -> bool { 

@@ -6,6 +6,7 @@
 
 #include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
+#include <workspaces/sketchDesign.hpp>
 
 #include <glm/glm.hpp>
 
@@ -13,7 +14,7 @@
 	@class line_tool describes the tool used to make lines and polylines on a sketch
 	@parent : tool_abstract
 */
-class line_tool : public tool_abstract {
+class line_tool : public tool<sketchDesign> {
 private:
 	sketchPoint_ptr mStartPos, mEndPos; // start and end pos of the line
 	sketchLine_ptr mLine;
@@ -24,7 +25,7 @@ public:
 
 		@param env : The workspace that owns the tool
 	*/
-	line_tool(workspace* env);
+	line_tool(sketchDesign* env);
 
 	/*
 		@function init makes sure the started flag is down

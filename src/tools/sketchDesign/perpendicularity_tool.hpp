@@ -4,13 +4,14 @@
 
 #include <tools/common/simpleSelector_tool.hpp>
 #include <constraintsSolver/expressionVector3.hpp>
+#include <workspaces/sketchDesign.hpp>
 
-class perpendicularity_tool : public simpleSelector_tool {
+class perpendicularity_tool : public simpleSelector_tool<sketchDesign> {
 private:
 	subEquationsSystem_vec mSysA, mSysB;
 	bool mStarted;
 public:
-	perpendicularity_tool(workspace* env);
+	perpendicularity_tool(sketchDesign* env);
 
 	virtual void init();
 

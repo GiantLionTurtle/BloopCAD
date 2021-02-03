@@ -1,14 +1,15 @@
 
 #include <tools/common/simpleSelector_tool.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchEntity.hpp>
+#include <workspaces/sketchDesign.hpp>
 
-class sketchDesignDefault_tool : public simpleSelector_tool {
+class sketchDesignDefault_tool : public simpleSelector_tool<sketchDesign> {
 private:   
     sketchEntity_ptr mDraggedEnt;
     bool mMoving;
     glm::vec2 mPrevPos;
 public:
-    sketchDesignDefault_tool(workspace* env);
+    sketchDesignDefault_tool(sketchDesign* env);
     virtual ~sketchDesignDefault_tool() {};
     
     virtual void init();
