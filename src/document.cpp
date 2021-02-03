@@ -21,17 +21,17 @@ document::document(bloop* parent) :
 	mViewport.set_required_version(3, 2);
 	connect_signals();	
 	// Create the workspace states, their cameras and all
-	mWorkspaceStates["partDesign"] 			= workspaceState_ptr(new workspaceState);
-	mWorkspaceStates.at("partDesign")->cam 	= camera_ptr(new camera(glm::vec3(0.0f, 0.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f)));
-	mWorkspaceStates.at("partDesign")->cam->set_orientation(glm::vec3(0.615480037895f, -M_PI_4, 0.0f));
+	mPartState 		= workspaceState_ptr(new workspaceState);
+	mPartState->cam = camera_ptr(new camera(glm::vec3(0.0f, 0.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f)));
+	mPartState->cam->set_orientation(glm::vec3(0.615480037895f, -M_PI_4, 0.0f));
 
-	mWorkspaceStates.at("partDesign")->doc 	= this;
-	mWorkspaceStates.at("partDesign")->workspaceName = "partDesign";
+	mPartState->doc 			= this;
+	mPartState->workspaceName 	= bloop::workspace_types::PART;
 
-	mWorkspaceStates["sketchDesign"] 		= workspaceState_ptr(new workspaceState);
-	mWorkspaceStates.at("sketchDesign")->cam = camera_ptr(new camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f)));
-	mWorkspaceStates.at("sketchDesign")->doc = this;
-	mWorkspaceStates.at("sketchDesign")->workspaceName = "sketchDesign";
+	mSketchState 		= workspaceState_ptr(new workspaceState);
+	mSketchState->cam = camera_ptr(new camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f)));
+	mSketchState->doc = this;
+	mSketchState->workspaceName = bloop::workspace_types::SKETCH;
 
 	// Now any part of the program can change the background color hehehe
 	mBackgroundColor = preferences::get_instance().get_vec3("background");
@@ -70,7 +70,7 @@ void document::do_realize()
 		mPart = std::shared_ptr<part>(new part());
 
 		// Start with the part design workspace
-		set_workspace("partDesign");
+		set_workspace(bloop::workspace_types::PART);
 		// Setyp tools and all
 		if(mParentBloop->currentWorkspace())
 			mCurrentWorkspaceState->currentTool = mParentBloop->currentWorkspace()->defaultTool();
@@ -191,21 +191,28 @@ void document::connect_signals()
 	mViewport.set_vexpand(true);
 }
 
-workspace_ptr document::set_workspace(std::string const& name) 
+workspace_ptr document::set_workspace(int name) 
 {
-	if(mWorkspaceStates.find(name) != mWorkspaceStates.end()) {
-		mCurrentWorkspaceState = mWorkspaceStates[name];
-		mCurrentWorkspaceState->cam->set_viewport(glm::vec2((float)get_width(), (float)get_height())); // The dimensions might have changed, who knows?
-		mSideBar->set_workspaceState(mCurrentWorkspaceState);
-		
-		return mParentBloop->set_workspace(name, mCurrentWorkspaceState); // Enforce change of workspace
+	switch(name) {
+	case bloop::workspace_types::SKETCH:
+		mCurrentWorkspaceState = mSketchState;
+		break;
+	case bloop::workspace_types::PART:
+		mCurrentWorkspaceState = mPartState;
+		break;
+	default:
+		LOG_WARNING("Trying to set workspace state to \"" + std::to_string(name) + "\". No such workspace state exist.");
+		return nullptr;
 	}
-	return nullptr;
+	mCurrentWorkspaceState->cam->set_viewport(glm::vec2((float)get_width(), (float)get_height())); // The dimensions might have changed, who knows?
+	mSideBar->set_workspaceState(mCurrentWorkspaceState);
+		
+	return mParentBloop->set_workspace(name, mCurrentWorkspaceState); // Enforce change of workspace
 }
 
 workspace_ptr document::set_workspace() 
 {
-	if(mCurrentWorkspaceState && mWorkspaceStates.find(mCurrentWorkspaceState->workspaceName) != mWorkspaceStates.end()) {
+	if(mCurrentWorkspaceState) {
 		mCurrentWorkspaceState->cam->set_viewport(glm::vec2((float)get_width(), (float)get_height()));
 		mSideBar->set_workspaceState(mCurrentWorkspaceState);
 
@@ -213,9 +220,9 @@ workspace_ptr document::set_workspace()
 	}
 	return nullptr;
 }
-bool document::has_workspace(std::string const& name)
+bool document::has_workspace(int name)
 {
-	if(mWorkspaceStates.find(name) != mWorkspaceStates.end())
+	if(name == bloop::workspace_types::SKETCH || name == bloop::workspace_types::PART)
 		return true;
 	return false;
 }

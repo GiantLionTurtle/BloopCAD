@@ -7,6 +7,9 @@
 #include <tools/tool.hpp>
 #include <workspaces/workspace.hpp>
 #include <workspaces/navigationBar.hpp>
+#include "workspaces/partDesign.hpp"
+#include "workspaces/sketchDesign.hpp"
+#include "workspaces/home.hpp"
 
 #include <gtkmm.h>
 #include <string>
@@ -72,11 +75,16 @@ public:
 	@note : Kind of a dumpster fire at this point
 */
 class bloop : public Gtk::Window {
+public:
+	enum workspace_types { SKETCH, PART, HOME };
 private:
 	std::vector<std::tuple<tabButton, Gtk::Overlay, document_ptr>> mDocuments; // All the document with their tab and overlay over which they render
 	document_ptr mCurrentDocument; // The current document object
 
-	std::map<std::string, workspace_ptr> mWorkspaces; // All the existing workspaces indexed by name
+	// std::map<std::string, workspace_ptr> mWorkspaces; // All the existing workspaces indexed by name
+	std::shared_ptr<sketchDesign> mSketchWorkspace;
+	std::shared_ptr<partDesign> mPartDesignWorkspace;
+	std::shared_ptr<home> mHomeWorkspace;
 	workspace_ptr mCurrentWorkspace; // The currently used workspace
 
 	compositeCursor_ptr mCursor; // The current cursor
@@ -115,6 +123,9 @@ public:
 		@return the currently used workspace
 	*/
 	workspace_ptr currentWorkspace() { return mCurrentWorkspace; }
+	std::shared_ptr<sketchDesign> sketchWorkspace() { return mSketchWorkspace; }
+	std::shared_ptr<partDesign> partWorkspace() { return mPartDesignWorkspace; }
+	std::shared_ptr<home> homeWorkspace() { return mHomeWorkspace; }
 
 	/*
 		@function set_workspace sets the currently used workspace with a named workspace
@@ -124,7 +135,8 @@ public:
 
 		@return : The set workspace or nullptr
 	*/
-	workspace_ptr set_workspace(std::string const& name, workspaceState_ptr state);
+	workspace_ptr set_workspace(int name, workspaceState_ptr state);
+	workspace_ptr set_workspace(workspace_ptr wrkspc, workspaceState_ptr state);
 	void notify_set_tool(std::string const& name);
 
 	void set_sideBar(Gtk::Widget* to_show);

@@ -39,6 +39,8 @@ public:
 		@function open_file will eventually open an openfile dialog of some sort
 	*/
 	void open_file();
+
+	virtual std::string name() { return "home"; }
 };
 
 #endif

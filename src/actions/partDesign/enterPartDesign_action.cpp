@@ -1,9 +1,10 @@
 
 #include "enterPartDesign_action.hpp"
 #include <document.hpp>
+#include <bloop.hpp>
 
 enterPartDesign_action::enterPartDesign_action(bool set_camera):
-	switchWorkspace_action("partDesign", set_camera),
+	switchWorkspace_action(bloop::PART, set_camera),
 	mTarget(nullptr),
 	mInitialTarget(nullptr)
 {

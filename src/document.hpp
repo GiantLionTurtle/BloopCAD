@@ -51,7 +51,9 @@ private:
 	std::shared_ptr<part> mPart; // Curently, documents only work on a single part
 	std::vector<selection> mSelection; // This will be kept linear for as long as there is no need for large selections
 
-	std::map<std::string, workspaceState_ptr> mWorkspaceStates; // All the workspace states for the various workspaces
+	// std::map<std::string, workspaceState_ptr> mWorkspaceStates; // All the workspace states for the various workspaces
+	workspaceState_ptr mSketchState;
+	workspaceState_ptr mPartState;
 	workspaceState_ptr mCurrentWorkspaceState; // The workspace state for the current workspace working on the document
 
 	std::vector<std::shared_ptr<action>> mActionStack; // The stack of actions done in the document
@@ -116,7 +118,7 @@ public:
 
 		@return : The set workspace, or nullptr 
 	*/
-	workspace_ptr set_workspace(std::string const& name);
+	workspace_ptr set_workspace(int name);
 	/*
 		@function set_workspace enforces the current workspace in the bloop window
 
@@ -130,7 +132,7 @@ public:
 
 		@return : Whether or not said workspace exists 
 	*/
-	bool has_workspace(std::string const& name);
+	bool has_workspace(int name);
 
 	/*
 		@function currentWorkspaceState

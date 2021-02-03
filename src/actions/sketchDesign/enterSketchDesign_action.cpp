@@ -1,9 +1,10 @@
 
 #include "enterSketchDesign_action.hpp"
 #include <document.hpp>
+#include <bloop.hpp>
 
 enterSketchDesign_action::enterSketchDesign_action(sketch_ptr target, bool set_camera):
-	switchWorkspace_action("sketchDesign", set_camera),
+	switchWorkspace_action(bloop::workspace_types::SKETCH, set_camera),
 	mPlane(nullptr),
 	mTarget(target)
 {

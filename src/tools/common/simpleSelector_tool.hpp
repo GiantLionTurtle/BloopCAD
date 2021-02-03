@@ -84,8 +84,7 @@ public:
 	*/
 	virtual entity_ptr entity_at_point(glm::vec2 pt)
 	{
-		// return mEnv->state()->doc->target()->hovered_child(mEnv->state()->cam, pt, mFilter);
-		return nullptr;
+		return tool<wst>::mEnv->state()->doc->target()->hovered_child(tool<wst>::mEnv->state()->cam, pt, mFilter);
 	}
 	
 	template<typename T>

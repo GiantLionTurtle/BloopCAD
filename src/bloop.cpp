@@ -1,9 +1,6 @@
 
 #include "bloop.hpp"
 #include <utils/errorLogger.hpp>
-#include "workspaces/partDesign.hpp"
-#include "workspaces/sketchDesign.hpp"
-#include "workspaces/home.hpp"
 
 statusBar::statusBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder):
 	Gtk::Box(cobject)
@@ -49,9 +46,9 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	get_style_context()->add_class("bloop");
 
 	// Create all possible workspaces
-	mWorkspaces["home"]			= workspace_ptr(new home(builder, this));
-	mWorkspaces["sketchDesign"] = workspace_ptr(new sketchDesign(builder, this));
-	mWorkspaces["partDesign"] 	= workspace_ptr(new partDesign(builder, this));
+	mHomeWorkspace 			= std::shared_ptr<home>(new home(builder, this));
+	mSketchWorkspace 		= std::shared_ptr<sketchDesign>(new sketchDesign(builder, this));
+	mPartDesignWorkspace 	= std::shared_ptr<partDesign>(new partDesign(builder, this));
 
 	// Create the window's widget
 	builder->get_widget("documentIndexer", mDocumentIndexer);
@@ -106,34 +103,42 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	
 	// Add all possible upper bars in a stack
 	if(mUI_upperBar) {
-		mUI_upperBar->add(*mWorkspaces.at("home")->upperBar());
-		mUI_upperBar->add(*mWorkspaces.at("sketchDesign")->upperBar());
-		mUI_upperBar->add(*mWorkspaces.at("partDesign")->upperBar());
+		mUI_upperBar->add(*mHomeWorkspace->upperBar());
+		mUI_upperBar->add(*mSketchWorkspace->upperBar());
+		mUI_upperBar->add(*mPartDesignWorkspace->upperBar());
 	} else {
 		LOG_ERROR("Cold not build upper bar.");
 	}
 
 	// Start at home workspace
-	set_workspace("home", nullptr);
+	set_workspace(workspace_types::HOME, nullptr);
 
 	connect_signals();
 	show_all();	// Make sure nothing is hidden for some reason
 }
 
-workspace_ptr bloop::set_workspace(std::string const& name, std::shared_ptr<workspaceState> state)
+workspace_ptr bloop::set_workspace(int name, std::shared_ptr<workspaceState> state)
 {
-	if(mWorkspaces.find(name) != mWorkspaces.end()) {
-		mUI_upperBar->set_visible_child(*mWorkspaces.at(name)->upperBar()); // Update the upper bar
-		mCurrentWorkspace = mWorkspaces.at(name); // new workspace is set
-		mCurrentWorkspace->set_state(state); // Whoopsie, this surely should be fetching a new state from the document. TODO: Fix this please
-
-		mNavigationBar->set_workspace(mCurrentWorkspace);
-		mStatusBar->update(statusBar::WORKSPACE, name);
-		return mCurrentWorkspace;
+	switch(name) {
+	case workspace_types::HOME:
+		mCurrentWorkspace = mHomeWorkspace;
+		break;
+	case workspace_types::SKETCH:
+		mCurrentWorkspace = mSketchWorkspace;
+		break;
+	case workspace_types::PART:
+		mCurrentWorkspace = mPartDesignWorkspace;
+		break;
+	default:
+		LOG_WARNING("Trying to set workspace to \"" + std::to_string(name) + "\". No such workspace exist.");
+		return nullptr;
 	}
-	
-	LOG_WARNING("Trying to set workspace to \"" + name + "\". No such workspace exist.");
-	return nullptr;
+	mUI_upperBar->set_visible_child(*mCurrentWorkspace->upperBar()); // Update the upper bar
+	mCurrentWorkspace->set_state(state); // Whoopsie, this surely should be fetching a new state from the document. TODO: Fix this please
+	mNavigationBar->set_workspace(mCurrentWorkspace);
+	mStatusBar->update(statusBar::WORKSPACE, mCurrentWorkspace->name());
+
+	return mCurrentWorkspace;
 }
 
 void bloop::notify_set_tool(std::string const& name)
@@ -213,7 +218,7 @@ void bloop::manage_tab_switch(Gtk::Widget* widget, unsigned int tab_ind)
 		mCurrentDocument->set_workspace();
 	} else {
 		mCurrentDocument = nullptr;
-		set_workspace("home", nullptr);
+		set_workspace(workspace_types::HOME, nullptr);
 	}
 }
 

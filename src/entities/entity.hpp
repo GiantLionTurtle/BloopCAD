@@ -19,6 +19,9 @@
 #include <functional>
 #include <tuple>
 
+class bloop;
+class document;
+
 class entity;
 class entityHandle;
 
@@ -231,12 +234,14 @@ public:
 	virtual void set_constant() {}
 	virtual void set_tmpConstant(bool const_) {}
 
-	virtual std::vector<variable_ptr> variables() { return {}; };
+	virtual std::vector<variable_ptr> variables() { return {}; }
 
 	virtual subEquationsSystem coincidence() { return {}; }
 	virtual subEquationsSystem_vec direction() { return {}; }
 	virtual std::vector<subEquationsSystem> verticality() { return {}; }
-	virtual std::vector<subEquationsSystem> horizontality() { return {}; };
+	virtual std::vector<subEquationsSystem> horizontality() { return {}; }
+
+	virtual void invoke_workspace(bloop* window, document* doc) {}
 protected:
 	/*
 		@function draw_impl is an overiddable function for children classes to draw themselves
@@ -244,9 +249,9 @@ protected:
 		@param cam : 	The camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	virtual void draw_impl(camera_ptr cam, int frame) {};
+	virtual void draw_impl(camera_ptr cam, int frame) {}
 
-	virtual void update_impl() {};
+	virtual void update_impl() {}
 
 	bool should_draw_self(draw_type type, bool on_required);
 

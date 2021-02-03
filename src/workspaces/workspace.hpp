@@ -28,7 +28,7 @@ struct workspaceState {
 	camera_ptr cam; // The camera rendering the scene for that workspace in the doc
 	cameraState startCamState;
 	tool_abstract_ptr currentTool; // The tool being used by the workspace in the doc
-	std::string workspaceName; // The name of the workspace it is describing
+	int workspaceName; // The name of the workspace it is describing
 };
 
 class workspace;
@@ -139,6 +139,7 @@ public:
 	*/
 	Gtk::Box* upperBar() { return mUpperBar; }
 
+	virtual std::string name() { return "no workspace"; }
 };
 
 #endif

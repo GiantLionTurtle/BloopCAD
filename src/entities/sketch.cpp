@@ -5,6 +5,8 @@
 #include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchCircle.hpp>
 #include <utils/errorLogger.hpp>
+#include <bloop.hpp>
+#include <document.hpp>
 
 sketch::sketch(geom_3d::plane_abstr_ptr base_plane):
 	mBasePlane(base_plane)
@@ -69,6 +71,11 @@ void sketch::revert_system_to_backup()
 {
 	mSystem.set(mSystemBackup);
 	update();
+}
+
+void sketch::invoke_workspace(bloop* window, document* doc)
+{
+
 }
 
 void sketch::draw_impl(camera_ptr cam, int frame)

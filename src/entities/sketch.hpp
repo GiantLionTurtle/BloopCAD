@@ -59,6 +59,8 @@ public:
 
 	void backup_system();
 	void revert_system_to_backup();
+
+	virtual void invoke_workspace(bloop* window, document* doc);
 protected:
 	/*
 		@function draw_impl draws the part on screen, it calls draw on all it's components

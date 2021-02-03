@@ -24,7 +24,7 @@ workspace::workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> c
 	mTools["orbit"] 				= tool_abstract_ptr(new orbit_tool(this));
 	mTools["zoom"] 					= tool_abstract_ptr(new zoom_tool(this));
 	mTools["pan"] 					= tool_abstract_ptr(new pan_tool(this));
-	mTools["simpleSelector"] 		= tool_abstract_ptr(new simpleSelector_tool(this));
+	mTools["simpleSelector"] 		= tool_abstract_ptr(new simpleSelector_tool<workspace>(this));
 }
 
 bool workspace::manage_key_press(GdkEventKey* event)

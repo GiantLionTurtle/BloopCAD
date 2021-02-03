@@ -3,7 +3,7 @@
 #include <utils/errorLogger.hpp>
 #include <document.hpp>
 
-switchWorkspace_action::switchWorkspace_action(std::string const& workspaceName, bool set_camera):
+switchWorkspace_action::switchWorkspace_action(int workspaceName, bool set_camera):
 	mTargetWorkspaceName(workspaceName),
 	mSet_camera(set_camera)
 {
@@ -15,7 +15,6 @@ bool switchWorkspace_action::do_work(document* caller)
 	if(caller) {
 		if(caller->state()) {
 			mInitWorkspaceName = caller->state()->workspaceName; // save the document's current workspace
-
 			mValid = caller->has_workspace(mTargetWorkspaceName); // Check if the target workspace exists within the target document
 		} else {
 			LOG_WARNING("No workspace state.");
@@ -40,7 +39,7 @@ bool switchWorkspace_action::undo_work(document* caller)
 	return true;
 }
 
-void switchWorkspace_action::switch_workspace(document* caller, std::string const& name)
+void switchWorkspace_action::switch_workspace(document* caller, int name)
 {
 	if(mValid) {
 		workspace_ptr space = caller->set_workspace(name);

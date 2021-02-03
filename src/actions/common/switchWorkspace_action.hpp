@@ -12,7 +12,7 @@
 */
 class switchWorkspace_action : public action {
 private:
-	std::string mInitWorkspaceName, mTargetWorkspaceName; // The workspace it was in initialy, and the workspace it will be in after
+	int mInitWorkspaceName, mTargetWorkspaceName; // The workspace it was in initialy, and the workspace it will be in after
 	bool mValid; // If the action is valid
 	bool mSet_camera; 
 public:
@@ -22,7 +22,7 @@ public:
 		@param doc : 			The document onto which to perform the action
 		@param workspaceNme : 	The name of the target workspace
 	*/
-	switchWorkspace_action(std::string const& workspaceName, bool set_camera = false);
+	switchWorkspace_action(int workspaceName, bool set_camera = false);
 
 	/*
 		@function do_work switches to desired workspace if it exists
@@ -33,7 +33,7 @@ public:
 	*/
 	virtual bool undo_work(document* caller);
 
-	void switch_workspace(document* caller, std::string const& wrksp);
+	void switch_workspace(document* caller, int wrksp);
 };
 
 #endif

@@ -3,6 +3,7 @@
 #define SKETCHDESIGN_HPP_
 
 #include "workspace.hpp"
+#include <entities/sketch.hpp>
 
 #include <map>
 
@@ -13,6 +14,7 @@
 class sketchDesign : public workspace {
 private:
 	std::map<std::string, std::pair<Gtk::Button*, Gtk::Image*>> mButtons; // Buttons with names and icons
+	sketch_ptr mTarget;
 public:
 	/*
 		@function sketchDesign creates an empty workspace
@@ -30,7 +32,8 @@ public:
 	*/
 	sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
 
-	
+	void set_target(sketch_ptr sk) { mTarget = sk; }
+	sketch_ptr target() { return mTarget; }
 
 	/*
 		@function line invokes the line tool
@@ -117,6 +120,8 @@ public:
 		@function finish exits the sketch workspace
 	*/
 	void finish();
+
+	virtual std::string name() { return "sketch design"; }
 };
 
 #endif

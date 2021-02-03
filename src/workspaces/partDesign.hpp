@@ -36,6 +36,8 @@ public:
 		@note : This tool doesn't exist yet
 	*/
 	void extrusion();
+
+	virtual std::string name() { return "part design"; }
 };
 
 #endif
