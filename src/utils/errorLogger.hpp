@@ -101,10 +101,10 @@ private:
 
 // #define RELEASE_MODE
 #ifdef RELEASE_MODE
-#define DEBUG_ASSERT(condition, action)
+#define DEBUG_ASSERT(condition, reaction)
 #else
-#define DEBUG_ASSERT(condition, action) if(condition) \
-	action;
+//#define DEBUG_ASSERT(condition, reaction) std::cout<<"a.\n"; if(static_cast<bool>(condition)) reaction; std::cout<<"b\n";
+#define DEBUG_ASSERT(x, msg) { if(!static_cast<bool>(x)) { errorLogger::get_instance().log("Assertion failed: ", __FILE__, __FUNCTION__, __LINE__, msg); exit(EXIT_FAILURE); } }
 #endif // !RELEASE_MODE
 
 #endif // !ERRORLOGGER_HPP_

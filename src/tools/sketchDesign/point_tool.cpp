@@ -12,12 +12,12 @@
 point_tool::point_tool(sketchDesign* env):
 	tool(env)
 {
-	
+
 }
 
 void point_tool::init()
 {
-	DEBUG_ASSERT(!mEnv->state(), LOG_ERROR("No valid state."));
+	DEBUG_ASSERT(mEnv->state(), "No valid state.");
 }
 
 bool point_tool::manage_button_press(GdkEventButton* event)
@@ -25,7 +25,7 @@ bool point_tool::manage_button_press(GdkEventButton* event)
 	// Most of the code of this function will be abstracted eventually because projecting a point 
 	// on screen on a point on a plane is pretty basic
 	sketch_ptr target = mEnv->target();	
-	DEBUG_ASSERT(!target, LOG_ERROR("No valid target."));
+	DEBUG_ASSERT(target, "No valid target.");
 
 	// Find where the ray intersectpos_on_plane
 	camera_ptr cam = mEnv->state()->cam; // For ease of writing

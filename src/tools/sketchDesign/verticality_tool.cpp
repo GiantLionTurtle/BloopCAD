@@ -10,7 +10,7 @@
 verticality_tool::verticality_tool(sketchDesign* env):
 	simpleSelector_tool(env)
 {
-	DEBUG_ASSERT(!mEnv, LOG_ERROR("No valid workspace."));
+	DEBUG_ASSERT(mEnv, "No valid workspace.");
 
 	mFilter = [](entity_ptr ent) -> bool { 
 		return 	std::dynamic_pointer_cast<geom_2d::point_abstr>(ent).operator bool() ||
@@ -20,7 +20,7 @@ verticality_tool::verticality_tool(sketchDesign* env):
 
 void verticality_tool::init()
 {
-	DEBUG_ASSERT(!mEnv->state(), LOG_ERROR("No valid state."));
+	DEBUG_ASSERT(mEnv->state(), "No valid state.");
 
 	// Check if there is only one item in the document's selection stack and if it is a plane, use it
 	if(mEnv->state()->doc->selection_size() > 0 && mFilter(mEnv->state()->doc->selection_at(0).ent)) {
@@ -65,7 +65,7 @@ bool verticality_tool::set_systems(std::vector<subEquationsSystem> sys)
 void verticality_tool::add_constraint()
 {
 	sketch_ptr sk = mEnv->target();
-	DEBUG_ASSERT(!sk, LOG_ERROR("No valid sketch."));
+	DEBUG_ASSERT(sk, "No valid sketch.");
 
 	sk->backup_system();
 	// Try to move only one point at a time

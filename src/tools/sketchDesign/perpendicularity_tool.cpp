@@ -10,7 +10,7 @@
 perpendicularity_tool::perpendicularity_tool(sketchDesign* env):
 	simpleSelector_tool(env)
 {
-	DEBUG_ASSERT(!mEnv, LOG_ERROR("No valid workspace."));
+	DEBUG_ASSERT(mEnv, "No valid workspace.");
 
     mFilter = [](entity_ptr ent) -> bool { 
 		return 	std::dynamic_pointer_cast<geom_2d::line_abstr>(ent).operator bool(); 
@@ -21,7 +21,7 @@ void perpendicularity_tool::init()
 {
 	mStarted = false;
 
-	DEBUG_ASSERT(!mEnv->state(), LOG_ERROR("No valid state."));
+	DEBUG_ASSERT(mEnv->state(), "No valid state.");
 
 	// Check if there is only one item in the document's selection stack and if it is a plane, use it
 	if(mEnv->state()->doc->selection_size() > 0 && mFilter(mEnv->state()->doc->selection_at(0).ent)) {
@@ -57,8 +57,8 @@ bool perpendicularity_tool::manage_button_press(GdkEventButton* event)
 void perpendicularity_tool::add_constraint()
 {
 	sketch_ptr sk = mEnv->target();
-	DEBUG_ASSERT(!sk, LOG_ERROR("No valid sketch."));
-	DEBUG_ASSERT(!mSysA.equations || !mSysB.equations, LOG_ERROR("No valid equation."));
+	DEBUG_ASSERT(sk, "No valid sketch.");
+	DEBUG_ASSERT(mSysA.equations || !mSysB.equations, "No valid equation.");
 
 	sk->backup_system();	
     std::vector<variable_ptr> vars;
