@@ -10,6 +10,9 @@
 verticality_tool::verticality_tool(sketchDesign* env):
 	simpleSelector_tool(env)
 {
+	if(!mEnv) {
+		LOG_ERROR("No valid workspace.");
+	}
 	mFilter = [](entity_ptr ent) -> bool { 
 		return 	std::dynamic_pointer_cast<geom_2d::point_abstr>(ent).operator bool() ||
 				std::dynamic_pointer_cast<geom_2d::line_abstr>(ent).operator bool(); 
@@ -34,10 +37,7 @@ void verticality_tool::init()
 
 bool verticality_tool::manage_button_press(GdkEventButton* event)
 {
-	if(!mEnv) {
-		LOG_WARNING("No valid workspace.");
-		return true;
-	}
+
 	
 	entity_ptr ent = entity_at_point(glm::vec2(event->x, event->y));
 	if(!ent) {
@@ -69,7 +69,7 @@ bool verticality_tool::set_systems(std::vector<subEquationsSystem> sys)
 
 void verticality_tool::add_constraint()
 {
-	sketch_ptr sk = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);
+	sketch_ptr sk = mEnv->target();
 	if(!sk) {
 		LOG_WARNING("No valid sketch.");
 		return;

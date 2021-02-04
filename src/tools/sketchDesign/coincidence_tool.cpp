@@ -62,7 +62,7 @@ bool coincidence_tool::manage_button_press(GdkEventButton* event)
 
 void coincidence_tool::add_constraint()
 {
-	sketch_ptr sk = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);
+	sketch_ptr sk = mEnv->target();
 	if(!sk) {
 		LOG_WARNING("No valid sketch.");
 		return;

@@ -214,7 +214,7 @@ void sketchDesign::to_svg()
 	if(mState && mState->target) {
 		mState->target->for_each([&svg, &min, &max, this](entity_ptr ent) {
 			std::shared_ptr<svgEntity> svgEnt = std::dynamic_pointer_cast<svgEntity>(ent);
-			sketch_ptr sk = std::dynamic_pointer_cast<sketch>(mState->target);
+			sketch_ptr sk = target();
 			if(svgEnt && sk) {
 				svg->add_lastChild(svgEnt->to_svg(sk->basePlane().get(), min, max));
 			}
@@ -230,7 +230,7 @@ void sketchDesign::to_svg()
 void sketchDesign::finish()
 {
 	mState->doc->push_action(std::shared_ptr<action>(new serial_action({
-		std::shared_ptr<action>(new quitSketchDesign_action(std::dynamic_pointer_cast<sketch>(mState->target))),
+		std::shared_ptr<action>(new quitSketchDesign_action(target())),
 		std::shared_ptr<action>(new enterPartDesign_action(true)),
 		std::shared_ptr<action>(new moveCamera_action(nullptr, mState->startCamState, preferences::get_instance().get_long("camtrans")))
 	})));

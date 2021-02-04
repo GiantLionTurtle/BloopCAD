@@ -13,7 +13,7 @@
 line_tool::line_tool(sketchDesign* env):
 	tool(env)
 {
-	
+
 }
 
 void line_tool::init()
@@ -24,11 +24,11 @@ void line_tool::init()
 bool line_tool::manage_mouse_move(GdkEventMotion* event)
 {
 	if(!mEnv->state()) {
-		LOG_WARNING("No valid state.");
-		return true;
+		LOG_ERROR("No valid state.");
 	}
+	
 	if(started) {
-		sketch_ptr target = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);
+		sketch_ptr target = mEnv->target();
 		if(!target) {
 			LOG_WARNING("No valid target.");
 			return true;
@@ -43,16 +43,15 @@ bool line_tool::manage_mouse_move(GdkEventMotion* event)
 bool line_tool::manage_button_press(GdkEventButton* event)
 {
 	// Most of the code of this function will be abstracted eventually because projecting a point 
-	// on screen on a point on a plane is pretty basic
-
+	// on screen on a point on a plane is pretty basic	
 	if(!mEnv->state()) {
-		LOG_WARNING("No valid state.");
-		return true;
+		LOG_ERROR("No valid state.");
 	}
+
+	sketch_ptr target = mEnv->target();	
 	
-	sketch_ptr target = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);		
 	if(!target) {
-		LOG_WARNING("No valid target.");
+		LOG_ERROR("No valid target.");
 		return true;
 	}
 

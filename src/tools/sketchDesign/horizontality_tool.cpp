@@ -69,7 +69,7 @@ bool horizontality_tool::set_systems(std::vector<subEquationsSystem> sys)
 
 void horizontality_tool::add_constraint()
 {
-	sketch_ptr sk = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);
+	sketch_ptr sk = mEnv->target();
 	if(!sk) {
 		LOG_WARNING("No valid sketch.");
 		return;

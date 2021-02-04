@@ -141,6 +141,8 @@ public:
 	*/
 	workspaceState_ptr state() { return mCurrentWorkspaceState; };
 
+	bloop* window() { return mParentBloop; }
+
 	/*
 		@function target
 

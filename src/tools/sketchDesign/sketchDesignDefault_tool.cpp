@@ -42,7 +42,7 @@ bool sketchDesignDefault_tool::manage_button_release(GdkEventButton* event)
 bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event) 
 {
 	if(mDraggedEnt) {
-		sketch_ptr sk = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);
+		sketch_ptr sk = mEnv->target();
 		if(!sk) {
 			LOG_WARNING("No valid state.");
 			return true;

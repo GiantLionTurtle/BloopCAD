@@ -18,7 +18,7 @@ using sketch_ptr = std::shared_ptr<sketch>;
 	@class sketch describes a sketch which is a bunch of geometries with constraints
 	@parent : entity
 */
-class sketch : public entity {
+class sketch : public entity, public std::enable_shared_from_this<sketch> {
 private:
 	geom_3d::plane_abstr_ptr mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
 
@@ -60,7 +60,7 @@ public:
 	void backup_system();
 	void revert_system_to_backup();
 
-	virtual void invoke_workspace(bloop* window, document* doc);
+	virtual void invoke_workspace(document* doc);
 protected:
 	/*
 		@function draw_impl draws the part on screen, it calls draw on all it's components

@@ -13,6 +13,7 @@ enterSketchDesign_action::enterSketchDesign_action(sketch_ptr target, bool set_c
 
 bool enterSketchDesign_action::do_work(document* caller)
 {
+	caller->window()->sketchWorkspace()->set_target(mTarget);
 	switchWorkspace_action::do_work(caller);
 	if(mPlane) {
 		mPlane->hide();

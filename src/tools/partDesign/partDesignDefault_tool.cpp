@@ -16,22 +16,12 @@
 partDesignDefault_tool::partDesignDefault_tool(partDesign* env):
 	simpleSelector_tool(env)
 {
-
+	if(!mEnv) {
+		LOG_ERROR("Null environnement in tool.");
+	}
 }
 
 void partDesignDefault_tool::act_on_entity(entity_ptr ent)
 {
-	if(!mEnv) {
-		LOG_WARNING("Null environnement in tool.");
-		return;
-	}
-
-	sketch_ptr sk = std::dynamic_pointer_cast<sketch>(ent);
-	if(sk) {		
-		mEnv->state()->doc->push_action(std::shared_ptr<serial_action>(new serial_action({
-			std::shared_ptr<action>(new enterSketchDesign_action(sk, true)),
-			std::shared_ptr<action>(new quitPartDesign_action()),
-			moveCamera_action::create_from_facingPlane(sk->basePlane(), 8.0, mEnv->state()->cam->state(), nullptr)
-		})));
-	}
+	ent->invoke_workspace(mEnv->state()->doc);
 }

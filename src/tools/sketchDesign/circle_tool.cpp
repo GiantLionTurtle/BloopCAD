@@ -42,7 +42,7 @@ bool circle_tool::manage_button_press(GdkEventButton* event)
 		return true;
 	}
 	
-	sketch_ptr target = std::dynamic_pointer_cast<sketch>(mEnv->state()->target);		
+	sketch_ptr target = mEnv->target();		
 	if(!target) {
 		LOG_WARNING("No valid target.");
 		return true;

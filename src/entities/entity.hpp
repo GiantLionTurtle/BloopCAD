@@ -241,7 +241,7 @@ public:
 	virtual std::vector<subEquationsSystem> verticality() { return {}; }
 	virtual std::vector<subEquationsSystem> horizontality() { return {}; }
 
-	virtual void invoke_workspace(bloop* window, document* doc) {}
+	virtual void invoke_workspace(document* doc) {}
 protected:
 	/*
 		@function draw_impl is an overiddable function for children classes to draw themselves

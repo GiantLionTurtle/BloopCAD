@@ -4,6 +4,10 @@
 #include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchCircle.hpp>
+#include <actions/common/serial_action.hpp>
+#include <actions/common/moveCamera_action.hpp>
+#include <actions/sketchDesign/enterSketchDesign_action.hpp>
+#include <actions/partDesign/quitPartDesign_action.hpp>
 #include <utils/errorLogger.hpp>
 #include <bloop.hpp>
 #include <document.hpp>
@@ -73,9 +77,13 @@ void sketch::revert_system_to_backup()
 	update();
 }
 
-void sketch::invoke_workspace(bloop* window, document* doc)
+void sketch::invoke_workspace(document* doc)
 {
-
+	doc->push_action(std::shared_ptr<serial_action>(new serial_action({
+		std::shared_ptr<action>(new enterSketchDesign_action(shared_from_this(), true)),
+		std::shared_ptr<action>(new quitPartDesign_action()),
+		moveCamera_action::create_from_facingPlane(basePlane(), 8.0, doc->state()->cam->state(), nullptr)
+	})));
 }
 
 void sketch::draw_impl(camera_ptr cam, int frame)
