@@ -21,10 +21,7 @@ void circle_tool::init()
 
 bool circle_tool::manage_mouse_move(GdkEventMotion* event)
 {
-	if(!mEnv->state()) {
-		LOG_WARNING("No valid state.");
-		return true;
-	}
+	DEBUG_ASSERT(!mEnv->state(), LOG_ERROR("No valid state."));
 	if(started) {
 		camera_ptr cam = mEnv->state()->cam; // For ease of writing
 		glm::vec2 circle_pos = mCircle->basePlane()->to_planePos(
@@ -37,16 +34,10 @@ bool circle_tool::manage_button_press(GdkEventButton* event)
 {
 	// Most of the code of this function will be abstracted eventually because projecting a point 
 	// on screen on a point on a plane is pretty basic
-	if(!mEnv->state()) {
-		LOG_WARNING("No valid state.");
-		return true;
-	}
+	DEBUG_ASSERT(!mEnv->state(), LOG_ERROR("No valid state."));
 	
 	sketch_ptr target = mEnv->target();		
-	if(!target) {
-		LOG_WARNING("No valid target.");
-		return true;
-	}
+	DEBUG_ASSERT(!target, LOG_ERROR("No valid target."));
 
     // Find where the ray intersectpos_on_plane
     camera_ptr cam = mEnv->state()->cam; // For ease of writing

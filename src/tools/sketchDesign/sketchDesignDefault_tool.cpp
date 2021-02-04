@@ -43,10 +43,8 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 {
 	if(mDraggedEnt) {
 		sketch_ptr sk = mEnv->target();
-		if(!sk) {
-			LOG_WARNING("No valid state.");
-			return true;
-		}
+		DEBUG_ASSERT(!sk, LOG_ERROR("No valid sketch."));
+
 		geom_3d::plane_abstr_ptr pl = sk->basePlane();
 		camera_ptr cam = mEnv->state()->cam;
 		glm::vec2 pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));

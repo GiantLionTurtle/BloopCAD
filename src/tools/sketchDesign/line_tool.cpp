@@ -13,26 +13,21 @@
 line_tool::line_tool(sketchDesign* env):
 	tool(env)
 {
-
+	DEBUG_ASSERT(!mEnv, LOG_ERROR("No valid workspace."));
 }
 
 void line_tool::init()
 {
+	DEBUG_ASSERT(!mEnv->state(), LOG_ERROR("No valid state."));
 	started = false; // Bring flag down
 }
 
 bool line_tool::manage_mouse_move(GdkEventMotion* event)
 {
-	if(!mEnv->state()) {
-		LOG_ERROR("No valid state.");
-	}
-	
 	if(started) {
 		sketch_ptr target = mEnv->target();
-		if(!target) {
-			LOG_WARNING("No valid target.");
-			return true;
-		}
+		DEBUG_ASSERT(!target, LOG_ERROR("No valid target."));
+
 		camera_ptr cam = mEnv->state()->cam; // For ease of writing
 		geom_3d::plane_abstr_ptr pl = target->basePlane();
 		glm::vec2 line_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
@@ -44,16 +39,8 @@ bool line_tool::manage_button_press(GdkEventButton* event)
 {
 	// Most of the code of this function will be abstracted eventually because projecting a point 
 	// on screen on a point on a plane is pretty basic	
-	if(!mEnv->state()) {
-		LOG_ERROR("No valid state.");
-	}
-
 	sketch_ptr target = mEnv->target();	
-	
-	if(!target) {
-		LOG_ERROR("No valid target.");
-		return true;
-	}
+	DEBUG_ASSERT(!target, LOG_ERROR("No valid target."));	
 
 	// Find where the ray intersectpos_on_plane
 	camera_ptr cam = mEnv->state()->cam; // For ease of writing

@@ -65,16 +65,9 @@ void startSketch_tool::act_on_entity(entity_ptr ent)
 
 void startSketch_tool::start_sketch(geom_3d::plane_abstr_ptr sketchPlane, cameraState const& camState_)
 {
-	std::shared_ptr<part> target = std::dynamic_pointer_cast<part>(mEnv->state()->target); // Aquire the part that is worked on
-	if(!target) {
-		LOG_WARNING("Invalid target.");
-	}
-
-	mEnv->state()->doc->make_glContext_current();
 	mCurrentSketch = std::make_shared<sketch>(sketchPlane);
-
 	mEnv->state()->doc->push_action(std::shared_ptr<serial_action>(new serial_action({
-		std::shared_ptr<action>(new addEntity_action(mCurrentSketch, target)),
+		std::shared_ptr<action>(new addEntity_action(mCurrentSketch, mEnv->state()->target)),
 		std::shared_ptr<action>(new enterSketchDesign_action(mCurrentSketch, true)),
 		std::shared_ptr<action>(new quitPartDesign_action()),
 		moveCamera_action::create_from_facingPlane(sketchPlane, 8.0, camState_, nullptr)

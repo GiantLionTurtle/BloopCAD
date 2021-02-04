@@ -20,6 +20,8 @@ public:
 	*/
 	point_tool(sketchDesign* env);
 
+	virtual void init();
+
 	/*
 		@function manage_button_press starts or end&push lines on sketch
 

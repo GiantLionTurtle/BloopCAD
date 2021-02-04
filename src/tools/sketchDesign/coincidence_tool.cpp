@@ -10,6 +10,8 @@
 coincidence_tool::coincidence_tool(sketchDesign* env):
 	simpleSelector_tool(env)
 {
+	DEBUG_ASSERT(!mEnv, LOG_ERROR("No valid workspace."));
+
     mFilter = [](entity_ptr ent) -> bool { 
 		return 	std::dynamic_pointer_cast<geom_2d::point_abstr>(ent).operator bool() ||
 				std::dynamic_pointer_cast<geom_2d::line_abstr>(ent).operator bool(); 
@@ -20,10 +22,8 @@ void coincidence_tool::init()
 {
 	mStarted = false;
 
-	if(!mEnv->state()) {
-		LOG_WARNING("No valid state.");
-		return;
-	}
+	DEBUG_ASSERT(!mEnv->state(), LOG_ERROR("No valid state."));
+
 	// Check if there is only one item in the document's selection stack and if it is a plane, use it
 	if(mEnv->state()->doc->selection_size() > 0 && mFilter(mEnv->state()->doc->selection_at(0).ent)) {
 		mSysA = mEnv->state()->doc->selection_at(0).ent->coincidence();
@@ -38,12 +38,7 @@ void coincidence_tool::init()
 }
 
 bool coincidence_tool::manage_button_press(GdkEventButton* event)
-{
-	if(!mEnv) {
-		LOG_WARNING("No valid workspace.");
-		return true;
-	}
-	
+{	
 	entity_ptr ent = entity_at_point(glm::vec2(event->x, event->y));
 	if(!ent) {
 		return true;
@@ -63,10 +58,7 @@ bool coincidence_tool::manage_button_press(GdkEventButton* event)
 void coincidence_tool::add_constraint()
 {
 	sketch_ptr sk = mEnv->target();
-	if(!sk) {
-		LOG_WARNING("No valid sketch.");
-		return;
-	}
+	DEBUG_ASSERT(!sk, LOG_ERROR("No valid sketch."));
 
 	sk->backup_system();
 	// Try to move only one point at a time

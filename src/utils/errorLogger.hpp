@@ -99,4 +99,12 @@ private:
 #define LOG_WARNING(msg) 			errorLogger::get_instance().log("WARNING", __FILE__, __FUNCTION__, __LINE__, msg)
 #define BLOOP_MARKER				errorLogger::get_instance().log("MARKER", __FILE__, __FUNCTION__, __LINE__, "")
 
-#endif
+// #define RELEASE_MODE
+#ifdef RELEASE_MODE
+#define DEBUG_ASSERT(condition, action)
+#else
+#define DEBUG_ASSERT(condition, action) if(condition) \
+	action;
+#endif // !RELEASE_MODE
+
+#endif // !ERRORLOGGER_HPP_
