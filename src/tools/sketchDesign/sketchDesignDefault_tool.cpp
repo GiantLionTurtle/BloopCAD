@@ -29,10 +29,10 @@ bool sketchDesignDefault_tool::manage_button_press(GdkEventButton* event)
 {
 	if(event->button == 1) {
 		mDraggedEnt = entity_at_point_derived<sketchEntity>(glm::vec2(event->x, event->y));
-		std::shared_ptr<geom_2d::geometry_2d_abstr> geom = mEnv->target()->get_geom_at_point(glm::vec2(event->x, event->y));
-		if(geom) {
+		// std::shared_ptr<geom_2d::geometry_2d_abstr> geom = mEnv->target()->get_geom_at_point(glm::vec2(event->x, event->y));
+		// if(geom) {
 			
-		}
+		// }
 	}
 	simpleSelector_tool::manage_button_press(event);
 	return true;

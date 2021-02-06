@@ -13,7 +13,7 @@
 line_tool::line_tool(sketchDesign* env):
 	tool(env)
 {
-	DEBUG_ASSERT(!mEnv, "No valid workspace.");
+	DEBUG_ASSERT(mEnv, "No valid workspace.");
 }
 
 void line_tool::init()
