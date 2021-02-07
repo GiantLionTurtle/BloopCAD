@@ -1,16 +1,16 @@
 
-#ifndef GEOMETRY_ABSTRACT_HPP_
-#define GEOMETRY_ABSTRACT_HPP_
+// #ifndef GEOMETRY_ABSTRACT_HPP_
+// #define GEOMETRY_ABSTRACT_HPP_
 
-#include <constraintsSolver/DR_planner.hpp>
-#include <glm/glm.hpp>
+// #include <constraintsSolver/DR_planner.hpp>
+// #include <glm/glm.hpp>
 
-class geometry_abstract : public cluster {
-public:
-	geometry_abstract(int dof);
-	virtual ~geometry_abstract();
+// class geometry_abstract : public cluster {
+// public:
+// 	geometry_abstract(int dof);
+// 	virtual ~geometry_abstract();
 
-	int DOF() const { return weight(); }
-};
+// 	int DOF() const { return weight(); }
+// };
 
-#endif
+// #endif

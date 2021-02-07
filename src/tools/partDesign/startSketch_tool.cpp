@@ -6,7 +6,7 @@
 #include <document.hpp>
 #include <entities/part.hpp>
 #include <entities/tangibleEntities/plane.hpp>
-#include <actions/common/addEntity_action.hpp>
+#include <actions/common/enableEntity_action.hpp>
 #include <actions/sketchDesign/enterSketchDesign_action.hpp>
 #include <actions/partDesign/quitPartDesign_action.hpp>
 #include <actions/common/serial_action.hpp>
@@ -67,8 +67,9 @@ void startSketch_tool::start_sketch(geom_3d::plane_abstr_ptr sketchPlane, camera
 {
 	mEnv->state()->doc->make_glContext_current();
 	mCurrentSketch = std::make_shared<sketch>(sketchPlane);
+	mEnv->target()->add_sketch(mCurrentSketch);
 	mEnv->state()->doc->push_action(std::shared_ptr<serial_action>(new serial_action({
-		std::shared_ptr<action>(new addEntity_action(mCurrentSketch, mEnv->state()->target)),
+		std::shared_ptr<action>(new enableEntity_action(mCurrentSketch)),
 		std::shared_ptr<action>(new enterSketchDesign_action(mCurrentSketch, true)),
 		std::shared_ptr<action>(new quitPartDesign_action()),
 		moveCamera_action::create_from_facingPlane(sketchPlane, 8.0, camState_, nullptr)

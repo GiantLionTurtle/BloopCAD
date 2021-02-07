@@ -1,22 +1,20 @@
 
 #include "sketchCircle.hpp"
-#include "sketchPoint.hpp"
 
 #include <graphics_utils/GLCall.hpp>
 #include <graphics_utils/shadersPool.hpp>
 #include <utils/mathUtils.hpp>
 
-sketchCircle::sketchCircle(circle_abstr const& baseCircle, geom_3d::plane_abstr_ptr basePlane_):
-	circle_abstr(baseCircle),
-	sketchEntity(basePlane_)
+sketchCircle::sketchCircle(glm::vec2 center_, float radius_, geom_3d::plane_abstr_ptr basePlane_):
+	sketchEntity(basePlane_, 3),
+	mCenter(sketchPoint_ptr(new sketchPoint(center_, basePlane_))),
+	mRadius(variable_ptr(new variable(radius_)))
 {
 	init();
 }
-sketchCircle::sketchCircle(glm::vec2 center, float radius, geom_3d::plane_abstr_ptr basePlane_):
-	circle_abstr(sketchPoint_ptr(new sketchPoint(center, basePlane_)), radius),
-	sketchEntity(basePlane_)
+sketchCircle::~sketchCircle()
 {
-	init();
+
 }
 
 void sketchCircle::init()
@@ -48,20 +46,22 @@ void sketchCircle::init()
 		{"resources/shaders/lineShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because line is expanded on the gpu
 		shadersPool::get_instance().add("line", mShader);
 	}
-	
-
-	std::shared_ptr<sketchPoint> center_as_drawable = std::dynamic_pointer_cast<sketchPoint>(mCenter);
-	if(!center_as_drawable) {
-		center_as_drawable = std::shared_ptr<sketchPoint>(new sketchPoint(mCenter->var(), mBasePlane));
-		mCenter = center_as_drawable;
-	}
-
-	add(center_as_drawable);
 }
 
 void sketchCircle::move(glm::vec2 from, glm::vec2 to)
 {
-	set_radius(glm::length(to - mCenter->vec()));
+	set_radius(glm::length(to - mCenter->pos()));
+}
+
+void sketchCircle::for_each(std::function<void (entity_ptr)> func)
+{
+	func(mCenter);
+}
+
+void sketchCircle::set_radius(float newval)
+{
+	mRadius->set(newval);
+	set_require_VBUpdate();
 }
 
 void sketchCircle::update_VB()

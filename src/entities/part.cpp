@@ -37,45 +37,44 @@ void part::init_scene()
 	std::shared_ptr<point> center = std::make_shared<point>(geom_3d::point_abstr(glm::vec3(0.0f, 0.0f, 0.0f)));
 	center->set_name("originPoint");
 
-	mOrigin = folder_ptr(new folder("origin"));
+	mOrigin = folder_ptr(new folder("origin", this));
 	
-	add(mOrigin);
 	mOrigin->add(center);
 	mOrigin->add(mXY);
 	mOrigin->add(mYZ);
 	mOrigin->add(mZX);
-
-	// std::cout<<glm::to_string(mXY->selectionID())<<"\n";
-	// std::cout<<glm::to_string(mYZ->selectionID())<<"\n";
-	// std::cout<<glm::to_string(mZX->selectionID())<<"\n";
-
-	// add(mXY);
-	// add(mYZ);
-	// add(mZX);
-
-	add(std::shared_ptr<plane>(new plane(
+	mOrigin->add(std::shared_ptr<plane>(new plane(
 		geom_3d::plane_abstr::from_1Point2Vectors(glm::vec3(-3.0f, 0.5f, 0.0f), glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.5f, 0.0f))))); // Temporary test plane
 }
 
 void part::set_handle(entityHandle* handle_)
 {
 	mHandle = handle_;
-	for(int i = 0; i < mChildren.size(); ++i) {
-		if(mChildren[i]->handle())
-			delete mChildren[i]->handle();
-		
-		mChildren[i]->set_handle(new entityHandle(mChildren[i], mHandle->view(), mHandle));	
+	
+	for_each([this](entity_ptr ent) {
+		if(ent->handle())
+			delete ent->handle();
+			
+		ent->set_handle(new entityHandle(ent, mHandle->view(), mHandle));	
+	});
+}
+void part::add_sketch(sketch_ptr sk)
+{
+	if(sk) {
+		set_require_redraw();
+		sk->set_parent(this);
+		mSketches.push_back(sk);
+		if(mHandle)
+			sk->set_handle(new entityHandle(sk, mHandle->view(), mHandle));
 	}
 }
-void part::add(entity_ptr elem)
+
+void part::for_each(std::function<void (entity_ptr)> func)
 {
-	sketch_ptr sk = std::dynamic_pointer_cast<sketch>(elem);
-	if(sk)
-		mSketches.push_back(sk);
-	entity::add(elem);
-	if(elem && mHandle) {
-		elem->set_handle(new entityHandle(elem, mHandle->view(), mHandle));
+	for(sketch_ptr sk : mSketches) {
+		func(sk);
 	}
+	func(mOrigin);
 }
 
 sketch_ptr part::get_sketch(int ind)

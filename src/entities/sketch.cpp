@@ -26,11 +26,20 @@ sketch::sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent):
 	create_origin();
 }
 
-void sketch::add(entity_ptr elem)
+void sketch::add_geometry(sketchEntity_ptr ent)
 {
-	if(elem)
-		mSystem.add_variables(elem->variables());
-	entity::add(elem);
+	if(ent) {
+		set_require_redraw();
+		ent->set_parent(this);
+		mGeometries.push_back(ent);
+	}
+}
+void sketch::for_each(std::function<void (entity_ptr)> func)
+{
+	for(sketchEntity_ptr ent : mGeometries) {
+		func(ent);
+	}
+	func(mOrigin);
 }
 
 bool sketch::add_constraint(std::shared_ptr<constraint> cons) 
@@ -94,10 +103,10 @@ void sketch::draw_impl(camera_ptr cam, int frame)
 void sketch::create_origin()
 {
 	mOrigin = folder_ptr(new folder("skorigin"));
-	add(mOrigin);
-	mOrigin->add(std::make_shared<sketchLine>(glm::vec2(0.0f,  1.0f), glm::vec2(0.0f, -1.0f), mBasePlane, true));
-	mOrigin->add(std::make_shared<sketchLine>(glm::vec2( 1.0f, 0.0f), glm::vec2(-1.0f, 0.0f), mBasePlane, true));
-	mOrigin->add(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane, true));
+
+	add_geometry(std::make_shared<sketchLine>(glm::vec2(0.0f,  1.0f), glm::vec2(0.0f, -1.0f), mBasePlane, true));
+	add_geometry(std::make_shared<sketchLine>(glm::vec2( 1.0f, 0.0f), glm::vec2(-1.0f, 0.0f), mBasePlane, true));
+	add_geometry(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane, true));
 
 	// add(std::make_shared<sketchCircle>(circle_abstract(std::make_shared<sketchPoint>(glm::vec2(0.75f, 0.75f), mBasePlane), variable_ptr(new variable(0.5f))), mBasePlane));
 }

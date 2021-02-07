@@ -10,16 +10,12 @@
 namespace geom_2d {
 
 class line_abstr : public geometry_2d_abstr {
-protected:
-	point_abstr_ptr mA, mB;
 public:
-	line_abstr(glm::vec2 ptA, glm::vec2 ptB);
-	line_abstr(point_abstr ptA, point_abstr ptB);
-	line_abstr(point_abstr_ptr ptA, point_abstr_ptr ptB);
+	line_abstr();
 	virtual ~line_abstr();
 
-	point_abstr_ptr A() const { return mA; }
-	point_abstr_ptr B() const { return mB; }
+	virtual glm::vec2 A() = 0;
+	virtual glm::vec2 B() = 0;
 
 	virtual glm::vec2 at(float t);
 	virtual glm::vec2 closest_to_point(glm::vec2 const& pt);
@@ -31,6 +27,16 @@ protected:
 	virtual void post_set_update() {}
 
 	glm::vec2 as_vec();
+};
+
+class simple_line : public line_abstr {
+private:
+	glm::vec2 mA, mB;
+public:
+	simple_line(glm::vec2 a, glm::vec2 b);
+
+	virtual glm::vec2 A() { return mA; }
+	virtual glm::vec2 B() { return mB; }
 };
 
 } // !geom_2ds

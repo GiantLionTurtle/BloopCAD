@@ -199,6 +199,7 @@ workspace_ptr document::set_workspace(int name)
 		break;
 	case bloop::workspace_types::PART:
 		mCurrentWorkspaceState = mPartState;
+		mParentBloop->partWorkspace()->set_target(mPart);
 		break;
 	default:
 		LOG_WARNING("Trying to set workspace state to \"" + std::to_string(name) + "\". No such workspace state exist.");
@@ -212,12 +213,8 @@ workspace_ptr document::set_workspace(int name)
 
 workspace_ptr document::set_workspace() 
 {
-	if(mCurrentWorkspaceState) {
-		mCurrentWorkspaceState->cam->set_viewport(glm::vec2((float)get_width(), (float)get_height()));
-		mSideBar->set_workspaceState(mCurrentWorkspaceState);
-
-		return mParentBloop->set_workspace(mCurrentWorkspaceState->workspaceName, mCurrentWorkspaceState); // Enforce workspace choice
-	}
+	if(mCurrentWorkspaceState)
+		return set_workspace(mCurrentWorkspaceState->workspaceName);
 	return nullptr;
 }
 bool document::has_workspace(int name)

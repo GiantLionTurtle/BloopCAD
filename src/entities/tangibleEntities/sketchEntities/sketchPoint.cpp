@@ -8,15 +8,17 @@
 
 
 sketchPoint::sketchPoint(glm::vec2 pos_2d, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
-	sketchEntity(basePlane_),
-	point_abstr(pos_2d, immovable)
+	sketchEntity(basePlane_, 2),
+	mPos(variableVector2_ptr(new variableVector2(pos_2d)))
 {
 	init();
 }
 sketchPoint::sketchPoint(variableVector2_ptr pos_2d, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
-	sketchEntity(basePlane_),
-	point_abstr(pos_2d, immovable)
+	sketchEntity(basePlane_, 2),
+	mPos(pos_2d)
 {
+	if(immovable)
+		mPos->set_constant();
 	init();
 }
 
@@ -28,7 +30,7 @@ void sketchPoint::init()
 	layout.add_proprety_float(3);
 	mVA->bind();
 
-	glm::vec3 pos_tmp = mBasePlane->to_worldPos(vec());
+	glm::vec3 pos_tmp = mBasePlane->to_worldPos(pos());
 	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(&pos_tmp[0], sizeof(glm::vec3)));
 	mVA->add_buffer(*mVB.get(), layout);
 
@@ -46,12 +48,13 @@ void sketchPoint::init()
 void sketchPoint::move(glm::vec2 from, glm::vec2 to)
 {
 	mPos->set(to);
+	set_require_VBUpdate();
 }
 
 void sketchPoint::update_VB()
 {
 	mVB->bind();
-	glm::vec3 pos_tmp = mBasePlane->to_worldPos(vec());
+	glm::vec3 pos_tmp = mBasePlane->to_worldPos(pos());
 	mVB->set(&pos_tmp[0], sizeof(glm::vec3));
 	mVB->unbind();
 	set_require_redraw();
@@ -110,7 +113,7 @@ void sketchPoint::draw_impl(camera_ptr cam, int frame)
 
 float sketchPoint::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
 {
-	glm::vec4 screenPos = cam->mvp() * glm::vec4(mBasePlane->to_worldPos(vec()), 1.0f);
+	glm::vec4 screenPos = cam->mvp() * glm::vec4(mBasePlane->to_worldPos(pos()), 1.0f);
 	glm::vec2 screenPos_2d(	map(screenPos.x / screenPos.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
 							map(screenPos.y / screenPos.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
 	

@@ -7,6 +7,7 @@
 #include <entities/folder.hpp>
 #include <constraintsSolver/equationsSystem.hpp>
 #include <constraintsSolver/constraint.hpp>
+#include <entities/tangibleEntities/sketchEntities/sketchEntity.hpp>
 
 #include <memory>
 #include <vector>
@@ -22,6 +23,7 @@ class sketch : public entity, public std::enable_shared_from_this<sketch> {
 private:
 	geom_3d::plane_abstr_ptr mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
 
+	std::vector<sketchEntity_ptr> mGeometries;
 	folder_ptr mOrigin;
 
 	equationsSystem mSystem;
@@ -41,7 +43,9 @@ public:
 	*/
 	sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent);
 
-	virtual void add(entity_ptr elem);
+	void add_geometry(sketchEntity_ptr ent);
+
+	virtual void for_each(std::function<void (entity_ptr)> func);
 
 	/*
 		@function basePlane
@@ -50,7 +54,7 @@ public:
 	*/
 	geom_3d::plane_abstr_ptr basePlane() { return mBasePlane; }
 
-	entity_ptr origin() const { return mOrigin; }
+	folder_ptr origin() const { return mOrigin; }
 
 	bool add_constraint(std::shared_ptr<constraint> cons);
 	bool add_constraint(subEquationsSystem const& subSystem);

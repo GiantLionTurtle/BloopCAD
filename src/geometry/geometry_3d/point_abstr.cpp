@@ -6,7 +6,6 @@
 namespace geom_3d {
 
 point_abstr::point_abstr(glm::vec3 pos, bool immovable /*= false*/): 
-	geometry_3d_abstr(3),
 	mPos(new variableVector3(pos)) 
 {
 	if(immovable) {
@@ -14,7 +13,6 @@ point_abstr::point_abstr(glm::vec3 pos, bool immovable /*= false*/):
 	}
 }
 point_abstr::point_abstr(variableVector3_ptr pos, bool immovable /*= false*/): 
-	geometry_3d_abstr(3),
 	mPos(pos) 
 {
 	if(immovable) {

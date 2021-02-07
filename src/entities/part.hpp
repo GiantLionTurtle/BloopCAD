@@ -15,6 +15,9 @@
 class document; // The forward declaration of document is needed for pointer declaration
 class modelColumns;
 
+class part;
+using part_ptr = std::shared_ptr<part>;
+
 /*
 	@class part describes a part, which is composed of sub entities and sketches
 	@parent : entity
@@ -45,7 +48,9 @@ public:
 
 	virtual void set_handle(entityHandle* handle_);
 
-	virtual void add(entity_ptr elem);
+	void add_sketch(sketch_ptr sk);
+
+	virtual void for_each(std::function<void (entity_ptr)> func);
 
 	/*
 		@function get_sketch grants linear access to the part's sketches
@@ -58,7 +63,7 @@ public:
 
 	bool has_volume() const { return false; }
 
-	entity_ptr origin() const { return mOrigin; }
+	folder_ptr origin() const { return mOrigin; }
 protected:
 	/*
 		@function draw_impl draws the part on screen, it calls draw on all it's components

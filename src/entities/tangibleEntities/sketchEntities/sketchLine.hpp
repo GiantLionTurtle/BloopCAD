@@ -39,14 +39,24 @@ private:
 
 	const glm::vec3 mColor = glm::vec3(0.0f, 0.89f, 0.725f); // Line color
 	glm::vec3 mVertices[2]; // The vertices describing the line
+
+	sketchPoint_ptr mA, mB;
 public:
-	sketchLine(line_abstr const& baseLine, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
 	sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
 	sketchLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
 	virtual ~sketchLine() {}
 
+	virtual void notify(int msg = 0) { set_require_VBUpdate(); }
+
 	virtual void init();
+
+	virtual void for_each(std::function<void (entity_ptr)> func);
+
 	virtual void move(glm::vec2 from, glm::vec2 to);
+
+	virtual glm::vec2 A() { return mA->pos(); }
+	virtual glm::vec2 B() { return mB->pos(); }
+
 
 	virtual int selection_rank() { return 7; }
 

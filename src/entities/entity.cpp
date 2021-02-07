@@ -48,7 +48,6 @@ entity_ptr entity::hovered_child(camera_ptr cam, glm::vec2 cursor_pos, std::func
 	entity_ptr candidate_child(nullptr);
 	float min_dist = std::numeric_limits<float>::max();
 	hovered_child_internal(cam, cursor_pos, candidate_child, min_dist, filter_func);
-
 	return candidate_child;
 }
 
@@ -160,37 +159,6 @@ bool entity::active() const
 	return hovered() || selected();
 }
 
-void entity::add(entity_ptr elem)
-{
-	if(elem) {
-		set_require_redraw();
-		elem->mParent = this;
-		mChildren.push_back(elem);
-	}
-}
-
-entity_ptr entity::get(size_t ind) const
-{
-	return (ind < size() ? mChildren[ind] : entity_ptr(nullptr)); // Basic range check
-}
-entity_ptr entity::get_last() const
-{
-	if(mChildren.empty())
-		return nullptr;
-	return mChildren.back();
-}
-
-entity_ptr entity::operator[](size_t ind) const
-{
-	return get(ind);
-}
-void entity::for_each(std::function<void (entity_ptr)> func)
-{
-	for(size_t i = 0; i < mChildren.size(); ++i) {
-		func(mChildren[i]);
-	}
-}
-
 void entity::set_require_redraw(bool self /*= true*/)
 {
 	if(mParent) {
@@ -222,17 +190,17 @@ bool entity::should_draw_self(draw_type type, bool on_required)
 
 void entity::hovered_child_internal(camera_ptr cam, glm::vec2 cursor_pos, entity_ptr& candidate, float& min_dist, std::function<bool (entity_ptr)> filter_func)
 {
-	for(int i = 0; i < mChildren.size(); ++i) {
-		mChildren[i]->hovered_child_internal(cam, cursor_pos, candidate, min_dist, filter_func);
+	for_each([&](entity_ptr ent) {
+		ent->hovered_child_internal(cam, cursor_pos, candidate, min_dist, filter_func);
 
-		if(mChildren[i]->visible() && filter_func(mChildren[i])) {
-			float dist = mChildren[i]->selection_depth(cam, cursor_pos);
+		if(ent->visible() && filter_func(ent)) {
+			float dist = ent->selection_depth(cam, cursor_pos);
 			if(dist > 0.0f) {
-				if((dist < (min_dist)) || (dist == min_dist && (!candidate || candidate->selection_rank() > mChildren[i]->selection_rank()))) {
-					candidate = mChildren[i];
+				if((dist < (min_dist)) || (dist == min_dist && (!candidate || candidate->selection_rank() > ent->selection_rank()))) {
+					candidate = ent;
 					min_dist = dist;
 				}
 			}
-		} 
-	}
+		}
+	});
 }

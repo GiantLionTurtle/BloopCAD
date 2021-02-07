@@ -2,29 +2,13 @@
 #include "line_abstr.hpp"
 
 #include <glm/gtx/string_cast.hpp>
+#include <glm/gtx/norm.hpp>
 
 namespace geom_2d {
 
-line_abstr::line_abstr(glm::vec2 ptA, glm::vec2 ptB):
-	geometry_2d_abstr(2),
-	mA(point_abstr_ptr(new point_abstr(ptA))),
-	mB(point_abstr_ptr(new point_abstr(ptB)))
+line_abstr::line_abstr()
 {
 
-}
-line_abstr::line_abstr(point_abstr ptA, point_abstr ptB):
-	geometry_2d_abstr(2),
-	mA(point_abstr_ptr(new point_abstr(ptA))),
-	mB(point_abstr_ptr(new point_abstr(ptB)))
-{
-
-}
-line_abstr::line_abstr(point_abstr_ptr ptA, point_abstr_ptr ptB):
-	geometry_2d_abstr(2),
-	mA(ptA),
-	mB(ptB)
-{
-	
 }
 line_abstr::~line_abstr()
 {
@@ -70,20 +54,19 @@ line_abstr::~line_abstr()
 
 glm::vec2 line_abstr::at(float t)
 {
-	return (A()->vec() - t * as_vec());
+	return (A() - t * as_vec());
 }
 glm::vec2 line_abstr::closest_to_point(glm::vec2 const& pt)
 {
 	float len2 = length2();
 	if(len2 == 0) {
-		return mA->vec();
+		return A();
 	}
-	glm::vec2 line_vec = as_vec();
-	float t = glm::dot(line_vec, mA->vec()-pt) / len2;
+	float t = glm::dot(as_vec(), A()-pt) / len2;
 	if(t <= 0) { // First point
-		return mA->vec();
+		return A();
 	} else if(t >= 1) { // Second point 
-		return mB->vec();
+		return B();
 	} else {
 		return at(t);
 	}
@@ -95,16 +78,23 @@ float line_abstr::dist_to_point(glm::vec2 const& pt)
 
 float line_abstr::length()
 {
-	return mA->dist_to_point(mB->vec());
+	return glm::distance(A(), B());
 }
 float line_abstr::length2()
 {
-	return mA->dist_to_point_2(mB);
+	return glm::distance2(A(), B());
 }
 
 glm::vec2 line_abstr::as_vec()
 {
-	return mA->vec() - mB->vec();
+	return A() - B();
+}
+
+simple_line::simple_line(glm::vec2 a, glm::vec2 b):
+	mA(a),
+	mB(b)
+{
+	
 }
 
 } // !geom_2d

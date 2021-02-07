@@ -4,8 +4,7 @@
 
 namespace geom_3d {
 
-geometry_3d_abstr::geometry_3d_abstr(int dof): 
-    geometry_abstract(dof) 
+geometry_3d_abstr::geometry_3d_abstr()
 {
 
 }

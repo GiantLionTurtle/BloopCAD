@@ -4,7 +4,7 @@
 #include <document.hpp>
 #include <entities/part.hpp>
 #include <entities/sketch.hpp>
-#include <actions/common/addEntity_action.hpp>
+#include <actions/common/enableEntity_action.hpp>
 #include <utils/mathUtils.hpp>
 
 #include <glm/gtx/quaternion.hpp>
@@ -12,7 +12,7 @@
 point_tool::point_tool(sketchDesign* env):
 	tool(env)
 {
-
+	DEBUG_ASSERT(mEnv, "No valid workspace.");
 }
 
 void point_tool::init()
@@ -34,6 +34,7 @@ bool point_tool::manage_button_press(GdkEventButton* event)
 
 	mEnv->state()->doc->make_glContext_current();
 	mCurrentPoint = sketchPoint_ptr(new sketchPoint(point_pos, pl));
-	mEnv->state()->doc->push_action(std::make_shared<addEntity_action>(mCurrentPoint, target)); // Doc is passed to activate glContext
+	target->add_geometry(mCurrentPoint);
+	mEnv->state()->doc->push_action(std::make_shared<enableEntity_action>(mCurrentPoint)); // Doc is passed to activate glContext
 	return true;
 }

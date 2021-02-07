@@ -46,11 +46,8 @@ protected:
 
 	bool mRequire_redraw, mRequire_selfRedraw;
 
-	float mHoverDistance;
-
 	std::string mName;
 
-	std::vector<entity_ptr> mChildren; // The entities container
 	entity* mParent;
 
 	entityHandle* mHandle;
@@ -75,8 +72,9 @@ public:
 
 	void update();
 
-	entity_ptr hovered_child(camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (entity_ptr)> filter_func = 
-	std::function<bool (entity_ptr)>([](entity_ptr ent) { return true; }));
+	entity_ptr hovered_child(camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (entity_ptr)> filter_func = ([](entity_ptr ent) { return true; }));
+
+	virtual void notify(int msg = 0) {}
 
 	/*
 		@function set_selected sets the selected
@@ -178,53 +176,15 @@ public:
 	virtual void set_handle(entityHandle* handle_) { mHandle = handle_; }
 
 	/*
-		@function add adds an element to the indexer and increments the index
-
-		@param elem : The element to add
-	*/
-	virtual void add(entity_ptr elem);
-
-	/*
-		@function is the size getter
-
-		@return : the number of entities indexed
-	*/
-	size_t size() const { return mChildren.size(); }
-
-	/*
-		@function get gives access to the indexer in a linear fashion
-
-		@param ind : The linear index of the researched entity
-
-		@return : The entity at a peculiar linear index, it it exists
-	*/
-	entity_ptr get(size_t ind) const;
-
-	/*
-		@function get_last returns the last element added
-
-		@return : The last entity of the list
-	*/
-	entity_ptr get_last() const;
-
-	/*
-		@operator [] is a wrapper for the get function
-	*/
-	entity_ptr operator[](size_t ind) const;
-
-	/*
-		@function for_each applies a function to all entities stored
-
-		@param func : The function to apply. It takes a entity_ptr
-	*/
-	void for_each(std::function<void (entity_ptr)> func);
-
-	/*
 		@function is_following
 
 		@return : Wheter or not the indexer is following another indexer
 	*/
 	bool is_following() const { if(mParent) return true; return false; }
+	entity* parent() const { return mParent; }
+	void set_parent(entity* parent_) { mParent = parent_; }
+
+	virtual void for_each(std::function<void (entity_ptr)> func) {}
 
 	void set_require_redraw(bool self = true);
 	bool require_redraw() const { return mRequire_redraw; }

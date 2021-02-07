@@ -31,23 +31,13 @@ std::string expression_substr_funky::to_string()
 	return "(" + mLeft->to_string() + " - " + mRight->to_string() + ")";
 }
 
-
-sketchLine::sketchLine(line_abstr const& baseLine, geom_3d::plane_abstr_ptr basePlane_, bool immovable /*= false*/):
-	line_abstr(baseLine),
-	sketchEntity(basePlane_)
-{
-	if(immovable) {
-		mA->set_constant();
-		mB->set_constant();
-	}
-
-	init();
-}
 sketchLine::sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
-	line_abstr(ptA, ptB),
-	sketchEntity(basePlane_)
-	
+	sketchEntity(basePlane_, 2),
+	mA(ptA),
+	mB(ptB)
 {
+	mA->set_parent(this);
+	mB->set_parent(this);
 	if(immovable) {
 		mA->set_constant();
 		mB->set_constant();
@@ -55,14 +45,16 @@ sketchLine::sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, geom_3d::plane_
 	init();
 }
 sketchLine::sketchLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
-	line_abstr(sketchPoint_ptr(new sketchPoint(ptA, basePlane_)), sketchPoint_ptr(new sketchPoint(ptB, basePlane_))),
-	sketchEntity(basePlane_)
+	sketchEntity(basePlane_, 2),
+	mA(sketchPoint_ptr(new sketchPoint(ptA, basePlane_, immovable))),
+	mB(sketchPoint_ptr(new sketchPoint(ptB, basePlane_, immovable)))
 {
+	mA->set_parent(this);
+	mB->set_parent(this);
 	if(immovable) {
 		mA->set_constant();
 		mB->set_constant();
 	}
-
 	init();
 }
 
@@ -72,24 +64,13 @@ void sketchLine::init()
 	dirY = std::make_shared<expression_substr_funky>(mA->var()->expr()->y, mB->var()->expr()->y, 0.0);
 	dir = std::make_shared<expressionVector2>(dirX, dirY);
 
-	sketchPoint_ptr A_as_drawable = std::dynamic_pointer_cast<sketchPoint>(mA);
-	sketchPoint_ptr B_as_drawable = std::dynamic_pointer_cast<sketchPoint>(mB);
-	if(!A_as_drawable) {
-		A_as_drawable = std::shared_ptr<sketchPoint>(new sketchPoint(mA->var(), mBasePlane));
-		mA = A_as_drawable;
-	}
-	if(!B_as_drawable) {
-		B_as_drawable = std::shared_ptr<sketchPoint>(new sketchPoint(mB->var(), mBasePlane));
-		mB = B_as_drawable;
-	}
-
 	set_name("line");
 	mVA = std::shared_ptr<vertexArray>(new vertexArray());
 	vertexBufferLayout layout;
 	layout.add_proprety_float(3);
 	mVA->bind();
 
-	glm::vec3 tmp[2] = { mBasePlane->to_worldPos(mA->vec()), mBasePlane->to_worldPos(mB->vec()) };
+	glm::vec3 tmp[2] = { mBasePlane->to_worldPos(mA->pos()), mBasePlane->to_worldPos(mB->pos()) };
 	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(&tmp[0], sizeof(glm::vec3) * 2));
 	mVA->add_buffer(*mVB.get(), layout);
 
@@ -101,22 +82,26 @@ void sketchLine::init()
 		{"resources/shaders/lineShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because line is expanded on the gpu
 		shadersPool::get_instance().add("line", mShader);
 	}
-	
-	add(A_as_drawable);
-	add(B_as_drawable);
+}
+
+void sketchLine::for_each(std::function<void (entity_ptr)> func)
+{
+	func(mA);
+	func(mB);
 }
 
 void sketchLine::move(glm::vec2 from, glm::vec2 to)
 {
 	glm::vec2 d = from-to;
-	mA += d;
-	mB += d;
+	mA->set(mA->pos() + d);
+	mB->set(mB->pos() + d);
+	set_require_VBUpdate();
 }
 
 void sketchLine::notify_childUpdate()
 {
 	tangibleEntity::notify_childUpdate();
-	glm::vec2 dir = mA->vec() - mB->vec();
+	glm::vec2 dir = mA->pos() - mB->pos();
 	if(glm::length2(dir) == 0.0f) {
 		dirX->funk(true);
 		dirY->funk(true);
@@ -131,7 +116,7 @@ void sketchLine::notify_childUpdate()
 void sketchLine::update_VB()
 {
 	mRequire_VBUpdate = false;
-	glm::vec3 tmp[2] = { mBasePlane->to_worldPos(mA->vec()), mBasePlane->to_worldPos(mB->vec()) };
+	glm::vec3 tmp[2] = { mBasePlane->to_worldPos(mA->pos()), mBasePlane->to_worldPos(mB->pos()) };
 	mVB->bind();
 	mVB->set(&tmp[0], sizeof(glm::vec3) * 2);
 	mVB->unbind();
@@ -195,18 +180,15 @@ void sketchLine::draw_impl(camera_ptr cam, int frame)
 
 float sketchLine::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
 {
-	glm::vec4 screenPos_a = cam->mvp() * glm::vec4(mA->vec(), 0.0f, 1.0f);
-	glm::vec2 screenPos_a_2d(	map(screenPos_a.x / screenPos_a.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
-								map(screenPos_a.y / screenPos_a.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
-
-	glm::vec4 screenPos_b = cam->mvp() * glm::vec4(mB->vec(), 0.0f, 1.0f);
-	glm::vec2 screenPos_b_2d(	map(screenPos_b.x / screenPos_b.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
-								map(screenPos_b.y / screenPos_b.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
-
-	line_abstr screen_line(screenPos_a_2d, screenPos_b_2d);
-	float line_point = 0;
-	if(glm::distance2(screen_line.closest_to_point(cursor_pos), cursor_pos) < 25) {
-		return glm::length(cam->pos() - mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor_pos)));		
+	glm::vec3 inter = mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor_pos));
+	glm::vec2 on_plane = mBasePlane->to_planePos(inter);
+	glm::vec4 closest_screen(mBasePlane->to_worldPos(closest_to_point(on_plane)), 1.0f);
+	closest_screen = cam->mvp() * closest_screen;
+	closest_screen /= closest_screen.w;
+	glm::vec2 on_screen_pix(map(closest_screen.x, -1.0f, 1.0f, 0.0f, cam->viewport().x), 
+							map(closest_screen.y, -1.0f, 1.0f, cam->viewport().y, 0.0f));
+	if(glm::length2(cursor_pos - on_screen_pix) < 50) {
+		return glm::length(cam->pos() - inter);
 	}
 	return -1.0f;
 }

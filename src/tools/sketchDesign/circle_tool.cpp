@@ -3,7 +3,7 @@
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <entities/sketch.hpp>
-#include <actions/common/addEntity_action.hpp>
+#include <actions/common/enableEntity_action.hpp>
 #include <utils/mathUtils.hpp>
 
 #include <glm/gtx/quaternion.hpp>
@@ -11,22 +11,22 @@
 circle_tool::circle_tool(sketchDesign* env):
 	tool(env)
 {
-
+	DEBUG_ASSERT(mEnv, "No valid workspace.");
 }
 
 void circle_tool::init()
 {
+	DEBUG_ASSERT(mEnv->state(), "No valid state.");
 	started = false; // Bring flag down
 }
 
 bool circle_tool::manage_mouse_move(GdkEventMotion* event)
 {
-	DEBUG_ASSERT(mEnv->state(), "No valid state.");
 	if(started) {
 		camera_ptr cam = mEnv->state()->cam; // For ease of writing
 		glm::vec2 circle_pos = mCircle->basePlane()->to_planePos(
             mCircle->basePlane()->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
-        mCircle->set_radius(glm::length(circle_pos - mCircle->center_vec()));
+        mCircle->set_radius(glm::length(circle_pos - mCircle->center()));
 	}
 	return true;
 }
@@ -47,10 +47,11 @@ bool circle_tool::manage_button_press(GdkEventButton* event)
 	if(!started) {
 		mEnv->state()->doc->make_glContext_current();
 		mCircle = sketchCircle_ptr(new sketchCircle(circle_pos, 0.0f, pl));
-		mEnv->state()->doc->push_action(std::make_shared<addEntity_action>(mCircle, target)); // Doc is passed to activate glContext
+		target->add_geometry(mCircle);
+		mEnv->state()->doc->push_action(std::make_shared<enableEntity_action>(mCircle)); // Doc is passed to activate glContext
         started = true;
 	} else {
-        mCircle->set_radius(glm::length(circle_pos - mCircle->center_vec()));
+        mCircle->set_radius(glm::length(circle_pos - mCircle->center()));
         started = false;
 	}
 	return true;
