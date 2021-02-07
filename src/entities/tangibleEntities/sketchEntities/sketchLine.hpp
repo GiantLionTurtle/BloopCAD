@@ -5,6 +5,7 @@
 #include "sketchEntity.hpp"
 #include "sketchPoint.hpp"
 #include <geometry/geometry_2d/line_abstr.hpp>
+#include <entities/sketch.hpp>
 
 class sketchLine;
 using sketchLine_ptr = std::shared_ptr<sketchLine>;
@@ -42,33 +43,35 @@ private:
 
 	sketchPoint_ptr mA, mB;
 public:
-	sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
-	sketchLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
+	sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, sketch* parent_sk, bool immovable = false);
+	sketchLine(glm::vec2 ptA, glm::vec2 ptB, sketch* parent_sk, bool immovable = false);
 	virtual ~sketchLine() {}
 
-	virtual void notify(int msg = 0) { set_require_VBUpdate(); }
+	void notify(int msg = 0) { set_require_VBUpdate(); }
 
-	virtual void init();
+	void init();
 
-	virtual void for_each(std::function<void (entity_ptr)> func);
+	void for_each(std::function<void (entity_ptr)> func);
 
-	virtual void move(glm::vec2 from, glm::vec2 to);
+	void move(glm::vec2 from, glm::vec2 to);
 
-	virtual glm::vec2 A() { return mA->pos(); }
-	virtual glm::vec2 B() { return mB->pos(); }
+	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);
+
+	void notify_childUpdate();
+
+	glm::vec2 A() { return mA->pos(); }
+	glm::vec2 B() { return mB->pos(); }
 
 
-	virtual int selection_rank() { return 7; }
+	int selection_rank() { return 3; }
 
-    virtual void notify_childUpdate();
+	std::vector<variable_ptr> variables();
 
-	virtual std::vector<variable_ptr> variables();
-
-	virtual subEquationsSystem coincidence();
-	virtual subEquationsSystem_vec direction();
-	virtual std::vector<subEquationsSystem> verticality();
-	virtual std::vector<subEquationsSystem> horizontality();
-	virtual void update_VB();
+	subEquationsSystem coincidence();
+	subEquationsSystem_vec direction();
+	std::vector<subEquationsSystem> verticality();
+	std::vector<subEquationsSystem> horizontality();
+	void update_VB();
 protected:
 	/*
 		@function draw_impl draws the line on screen
@@ -76,11 +79,9 @@ protected:
 		@param cam : 	The camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	virtual void draw_impl(camera_ptr cam, int frame);
+	void draw_impl(camera_ptr cam, int frame);
 
-	virtual float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
-
-	virtual void post_set_behavior() {}
+	// float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
 };
 
 #endif 

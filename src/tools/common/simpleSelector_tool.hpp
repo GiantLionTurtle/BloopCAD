@@ -43,10 +43,10 @@ public:
 		if(tool<wst>::mEnv->state() && event->button == 1) {
 			// Here it lets the document manage it's selection
 			// it hands over the shift&ctrl
-			// mEnv->state()->doc->toggle_select(
-			// 	entity_at_point(glm::vec2(event->x, event->y)), 
-			// 	mEnv->state()->cam->state(),
-			// 	event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK);		
+			tool<wst>::mEnv->state()->doc->toggle_select(
+				entity_at_point(glm::vec2(event->x, event->y)), 
+				tool<wst>::mEnv->state()->cam->state(),
+				event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK);		
 		}
 		return true;
 	}
@@ -85,12 +85,6 @@ public:
 	virtual entity_ptr entity_at_point(glm::vec2 pt)
 	{
 		return tool<wst>::mEnv->state()->doc->target()->hovered_child(tool<wst>::mEnv->state()->cam, pt, mFilter);
-	}
-	
-	template<typename T>
-	std::shared_ptr<T> entity_at_point_derived(glm::vec2 pt)
-	{
-		return std::dynamic_pointer_cast<T>(entity_at_point(pt));
 	}
 };
 

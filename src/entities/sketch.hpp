@@ -43,6 +43,8 @@ public:
 	*/
 	sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent);
 
+	sketchEntity_ptr geometry_at_point(camera_ptr cam, glm::vec2 cursor);
+
 	void add_geometry(sketchEntity_ptr ent);
 
 	virtual void for_each(std::function<void (entity_ptr)> func);

@@ -19,32 +19,35 @@ public:
 	sketchPoint(variableVector2_ptr pos_2d, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
 	virtual ~sketchPoint() {}
 
-	virtual void init();
+	void init();
 
-	virtual glm::vec2 pos() { return mPos->get(); }
+	glm::vec2 pos() { return mPos->get(); }
 
-	virtual void move(glm::vec2 from, glm::vec2 to);
+	void move(glm::vec2 from, glm::vec2 to);
+
+	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);
+
 	variableVector2_ptr var() { return mPos; }
 	void set(glm::vec2 pt) { mPos->set(pt); set_require_VBUpdate(); }
 
-	virtual void set_constant() { mPos->set_constant(); }
-	virtual void set_tmpConstant(bool const_) { mPos->set_tmpConstant(const_); }
+	void set_constant() { mPos->set_constant(); }
+	void set_tmpConstant(bool const_) { mPos->set_tmpConstant(const_); }
 
-	virtual int selection_rank() { return 5; }
+	int selection_rank() { return 5; }
 
-	virtual void update_VB();
+	void update_VB();
 
-	virtual std::vector<variable_ptr> variables();
+	std::vector<variable_ptr> variables();
 
-	virtual subEquationsSystem coincidence();
-	virtual std::vector<subEquationsSystem> verticality();
-	virtual std::vector<subEquationsSystem> horizontality();
+	subEquationsSystem coincidence();
+	std::vector<subEquationsSystem> verticality();
+	std::vector<subEquationsSystem> horizontality();
 protected:
-	virtual void draw_impl(camera_ptr cam, int frame);
+	void draw_impl(camera_ptr cam, int frame);
 
-	virtual float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
+	// float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
 
-	virtual void post_set_behavior();
+	void post_set_behavior();
 };
 
 #endif 

@@ -31,7 +31,8 @@ bool line_tool::manage_mouse_move(GdkEventMotion* event)
 		camera_ptr cam = mEnv->state()->cam; // For ease of writing
 		geom_3d::plane_abstr_ptr pl = target->basePlane();
 		glm::vec2 line_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
-		mEndPos->set(line_pos);	
+		mEndPos->set(line_pos);
+		target->update();
 	}
 	return true;
 }
@@ -51,7 +52,7 @@ bool line_tool::manage_button_press(GdkEventButton* event)
 		mEnv->state()->doc->make_glContext_current();
 		mStartPos = sketchPoint_ptr(new sketchPoint(line_pos, pl));
 		mEndPos = sketchPoint_ptr(new sketchPoint(line_pos, pl));
-		mLine = std::make_shared<sketchLine>(mStartPos, mEndPos, pl);
+		mLine = std::make_shared<sketchLine>(mStartPos, mEndPos, target.get());
 		started = true;
 		target->add_geometry(mLine);
 		mEnv->state()->doc->push_action(std::make_shared<enableEntity_action>(mLine)); // Doc is passed to activate glContext

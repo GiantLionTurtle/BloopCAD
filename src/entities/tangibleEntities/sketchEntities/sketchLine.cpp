@@ -31,26 +31,30 @@ std::string expression_substr_funky::to_string()
 	return "(" + mLeft->to_string() + " - " + mRight->to_string() + ")";
 }
 
-sketchLine::sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
-	sketchEntity(basePlane_, 2),
+sketchLine::sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, sketch* parent_sk, bool immovable/* = false*/):
+	sketchEntity(parent_sk->basePlane(), 2),
 	mA(ptA),
 	mB(ptB)
 {
-	mA->set_parent(this);
-	mB->set_parent(this);
+	parent_sk->add_geometry(mA);
+	parent_sk->add_geometry(mB);
+	// mA->set_parent(this);
+	// mB->set_parent(this);
 	if(immovable) {
 		mA->set_constant();
 		mB->set_constant();
 	}
 	init();
 }
-sketchLine::sketchLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
-	sketchEntity(basePlane_, 2),
-	mA(sketchPoint_ptr(new sketchPoint(ptA, basePlane_, immovable))),
-	mB(sketchPoint_ptr(new sketchPoint(ptB, basePlane_, immovable)))
+sketchLine::sketchLine(glm::vec2 ptA, glm::vec2 ptB, sketch* parent_sk, bool immovable/* = false*/):
+	sketchEntity(parent_sk->basePlane(), 2),
+	mA(sketchPoint_ptr(new sketchPoint(ptA, parent_sk->basePlane(), immovable))),
+	mB(sketchPoint_ptr(new sketchPoint(ptB, parent_sk->basePlane(), immovable)))
 {
-	mA->set_parent(this);
-	mB->set_parent(this);
+	parent_sk->add_geometry(mA);
+	parent_sk->add_geometry(mB);
+	// mA->set_parent(this);
+	// mB->set_parent(this);
 	if(immovable) {
 		mA->set_constant();
 		mB->set_constant();
@@ -86,16 +90,26 @@ void sketchLine::init()
 
 void sketchLine::for_each(std::function<void (entity_ptr)> func)
 {
-	func(mA);
-	func(mB);
+	// func(mA);
+	// func(mB);
 }
 
 void sketchLine::move(glm::vec2 from, glm::vec2 to)
 {
-	glm::vec2 d = from-to;
+	glm::vec2 d = to-from;
 	mA->set(mA->pos() + d);
 	mB->set(mB->pos() + d);
 	set_require_VBUpdate();
+}
+
+bool sketchLine::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor)
+{
+	glm::vec4 onscreen_ndc = cam->mvp()	* glm::vec4(mBasePlane->to_worldPos(closest_to_point(planepos)), 1.0f);
+	glm::vec2 onscreen(	map(onscreen_ndc.x / onscreen_ndc.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
+						map(onscreen_ndc.y / onscreen_ndc.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
+	if(glm::distance2(onscreen, cursor) < 50)
+		return true;
+	return false;
 }
 
 void sketchLine::notify_childUpdate()
@@ -178,17 +192,17 @@ void sketchLine::draw_impl(camera_ptr cam, int frame)
 	mShader->unbind();
 }
 
-float sketchLine::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
-{
-	glm::vec3 inter = mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor_pos));
-	glm::vec2 on_plane = mBasePlane->to_planePos(inter);
-	glm::vec4 closest_screen(mBasePlane->to_worldPos(closest_to_point(on_plane)), 1.0f);
-	closest_screen = cam->mvp() * closest_screen;
-	closest_screen /= closest_screen.w;
-	glm::vec2 on_screen_pix(map(closest_screen.x, -1.0f, 1.0f, 0.0f, cam->viewport().x), 
-							map(closest_screen.y, -1.0f, 1.0f, cam->viewport().y, 0.0f));
-	if(glm::length2(cursor_pos - on_screen_pix) < 50) {
-		return glm::length(cam->pos() - inter);
-	}
-	return -1.0f;
-}
+// float sketchLine::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
+// {
+// 	glm::vec3 inter = mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor_pos));
+// 	glm::vec2 on_plane = mBasePlane->to_planePos(inter);
+// 	glm::vec4 closest_screen(mBasePlane->to_worldPos(closest_to_point(on_plane)), 1.0f);
+// 	closest_screen = cam->mvp() * closest_screen;
+// 	closest_screen /= closest_screen.w;
+// 	glm::vec2 on_screen_pix(map(closest_screen.x, -1.0f, 1.0f, 0.0f, cam->viewport().x), 
+// 							map(closest_screen.y, -1.0f, 1.0f, cam->viewport().y, 0.0f));
+// 	if(glm::length2(cursor_pos - on_screen_pix) < 50) {
+// 		return glm::length(cam->pos() - inter);
+// 	}
+// 	return -1.0f;
+// }

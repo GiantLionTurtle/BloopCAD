@@ -11,6 +11,8 @@ sketchPoint::sketchPoint(glm::vec2 pos_2d, geom_3d::plane_abstr_ptr basePlane_, 
 	sketchEntity(basePlane_, 2),
 	mPos(variableVector2_ptr(new variableVector2(pos_2d)))
 {
+	if(immovable)
+		mPos->set_constant();
 	init();
 }
 sketchPoint::sketchPoint(variableVector2_ptr pos_2d, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
@@ -49,6 +51,16 @@ void sketchPoint::move(glm::vec2 from, glm::vec2 to)
 {
 	mPos->set(to);
 	set_require_VBUpdate();
+}
+
+bool sketchPoint::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor)
+{
+	glm::vec4 onscreen_ndc = cam->mvp()	* glm::vec4(mBasePlane->to_worldPos(closest_to_point(planepos)), 1.0f);
+	glm::vec2 onscreen(	map(onscreen_ndc.x / onscreen_ndc.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
+						map(onscreen_ndc.y / onscreen_ndc.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
+	if(glm::distance2(onscreen, cursor) < 25)
+		return true;
+	return false;
 }
 
 void sketchPoint::update_VB()
@@ -111,17 +123,17 @@ void sketchPoint::draw_impl(camera_ptr cam, int frame)
 	mShader->unbind();
 }
 
-float sketchPoint::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
-{
-	glm::vec4 screenPos = cam->mvp() * glm::vec4(mBasePlane->to_worldPos(pos()), 1.0f);
-	glm::vec2 screenPos_2d(	map(screenPos.x / screenPos.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
-							map(screenPos.y / screenPos.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
+// float sketchPoint::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
+// {
+// 	glm::vec4 screenPos = cam->mvp() * glm::vec4(mBasePlane->to_worldPos(pos()), 1.0f);
+// 	glm::vec2 screenPos_2d(	map(screenPos.x / screenPos.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
+// 							map(screenPos.y / screenPos.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
 	
-	if(glm::length(screenPos_2d - cursor_pos) < 5) {
-		return glm::length(cam->pos() - mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor_pos)));
-	}
-	return -1.0f;
-}
+// 	if(glm::length(screenPos_2d - cursor_pos) < 5) {
+// 		return glm::length(cam->pos() - mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor_pos)));
+// 	}
+// 	return -1.0f;
+// }
 
 void sketchPoint::post_set_behavior()
 {

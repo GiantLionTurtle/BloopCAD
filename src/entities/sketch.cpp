@@ -9,6 +9,7 @@
 #include <actions/sketchDesign/enterSketchDesign_action.hpp>
 #include <actions/partDesign/quitPartDesign_action.hpp>
 #include <utils/errorLogger.hpp>
+#include <utils/mathUtils.hpp>
 #include <bloop.hpp>
 #include <document.hpp>
 
@@ -24,6 +25,20 @@ sketch::sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent):
 {
 	set_name("sketch");
 	create_origin();
+}
+
+sketchEntity_ptr sketch::geometry_at_point(camera_ptr cam, glm::vec2 cursor)
+{
+	glm::vec2 planepos = mBasePlane->to_planePos(mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor)));
+	int maxpriority = -1;
+	sketchEntity_ptr candidate = nullptr;
+	for(sketchEntity_ptr geom : mGeometries) {
+		if(geom->selection_rank() > maxpriority && geom->in_selection_range(planepos, cam, cursor)) {
+			maxpriority = geom->selection_rank();
+			candidate = geom;
+		}
+	}
+	return candidate;
 }
 
 void sketch::add_geometry(sketchEntity_ptr ent)
@@ -104,8 +119,8 @@ void sketch::create_origin()
 {
 	mOrigin = folder_ptr(new folder("skorigin"));
 
-	add_geometry(std::make_shared<sketchLine>(glm::vec2(0.0f,  1.0f), glm::vec2(0.0f, -1.0f), mBasePlane, true));
-	add_geometry(std::make_shared<sketchLine>(glm::vec2( 1.0f, 0.0f), glm::vec2(-1.0f, 0.0f), mBasePlane, true));
+	add_geometry(std::make_shared<sketchLine>(glm::vec2(0.0f,  1.0f), glm::vec2(0.0f, -1.0f), this, true));
+	add_geometry(std::make_shared<sketchLine>(glm::vec2( 1.0f, 0.0f), glm::vec2(-1.0f, 0.0f), this, true));
 	add_geometry(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane, true));
 
 	// add(std::make_shared<sketchCircle>(circle_abstract(std::make_shared<sketchPoint>(glm::vec2(0.75f, 0.75f), mBasePlane), variable_ptr(new variable(0.5f))), mBasePlane));

@@ -5,6 +5,7 @@
 #include <geometry/geometry_2d/circle_abstr.hpp>
 #include "sketchPoint.hpp"
 #include "sketchEntity.hpp"
+#include <entities/sketch.hpp>
 
 #define CIRCLE_RES 100
 
@@ -20,28 +21,30 @@ private:
 	sketchPoint_ptr mCenter;
 	variable_ptr mRadius;
 public:
-	sketchCircle(glm::vec2 center_, float radius_, geom_3d::plane_abstr_ptr basePlane_);
+	sketchCircle(glm::vec2 center_, float radius_, sketch* parent_sk);
 	virtual ~sketchCircle();
 
-	virtual void init();
+	void init();
 
-	virtual void move(glm::vec2 from, glm::vec2 to);
+	void move(glm::vec2 from, glm::vec2 to);
 
-	virtual void for_each(std::function<void (entity_ptr)> func);
+	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);
 
-	virtual glm::vec2 center() { return mCenter->pos(); }
-	virtual float radius() { return mRadius->val(); }
+	void for_each(std::function<void (entity_ptr)> func);
+
+	glm::vec2 center() { return mCenter->pos(); }
+	float radius() { return mRadius->val(); }
 	void set_radius(float newval);
 
-	virtual int selection_rank() { return 8; }
+	int selection_rank() { return 4; }
 
-	virtual void update_VB();
+	void update_VB();
 protected:
-	virtual void draw_impl(camera_ptr cam, int frame);
+	void draw_impl(camera_ptr cam, int frame);
 
-	virtual void post_set_behavior();
+	void post_set_behavior();
 	
-	virtual float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
+	// float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
 
 	void init_buffers();
 };

@@ -5,11 +5,12 @@
 #include <graphics_utils/shadersPool.hpp>
 #include <utils/mathUtils.hpp>
 
-sketchCircle::sketchCircle(glm::vec2 center_, float radius_, geom_3d::plane_abstr_ptr basePlane_):
-	sketchEntity(basePlane_, 3),
-	mCenter(sketchPoint_ptr(new sketchPoint(center_, basePlane_))),
+sketchCircle::sketchCircle(glm::vec2 center_, float radius_, sketch* parent_sk):
+	sketchEntity(parent_sk->basePlane(), 3),
+	mCenter(sketchPoint_ptr(new sketchPoint(center_, parent_sk->basePlane()))),
 	mRadius(variable_ptr(new variable(radius_)))
 {
+	parent_sk->add_geometry(mCenter);
 	init();
 }
 sketchCircle::~sketchCircle()
@@ -53,9 +54,19 @@ void sketchCircle::move(glm::vec2 from, glm::vec2 to)
 	set_radius(glm::length(to - mCenter->pos()));
 }
 
+bool sketchCircle::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor)
+{
+	glm::vec4 onscreen_ndc = cam->mvp()	* glm::vec4(mBasePlane->to_worldPos(closest_to_point(planepos)), 1.0f);
+	glm::vec2 onscreen(	map(onscreen_ndc.x / onscreen_ndc.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
+						map(onscreen_ndc.y / onscreen_ndc.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
+	if(glm::distance2(onscreen, cursor) < 50)
+		return true;
+	return false;
+}
+
 void sketchCircle::for_each(std::function<void (entity_ptr)> func)
 {
-	func(mCenter);
+	// func(mCenter);
 }
 
 void sketchCircle::set_radius(float newval)
@@ -108,20 +119,20 @@ void sketchCircle::post_set_behavior()
 	set_require_redraw();
 }
 
-float sketchCircle::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
-{
-	glm::vec3 inter = mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor_pos));
-	glm::vec2 on_plane = mBasePlane->to_planePos(inter);
-	glm::vec4 closest_screen(mBasePlane->to_worldPos(closest_to_point(on_plane)), 1.0f);
-	closest_screen = cam->mvp() * closest_screen;
-	closest_screen /= closest_screen.w;
-	glm::vec2 on_screen_pix(map(closest_screen.x, -1.0f, 1.0f, 0.0f, cam->viewport().x), 
-							map(closest_screen.y, -1.0f, 1.0f, cam->viewport().y, 0.0f));
-	if(glm::length2(cursor_pos - on_screen_pix) < 50) {
-		return glm::length(cam->pos() - inter);
-	}
-	return -1.0f;
-}
+// float sketchCircle::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
+// {
+// 	glm::vec3 inter = mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor_pos));
+// 	glm::vec2 on_plane = mBasePlane->to_planePos(inter);
+// 	glm::vec4 closest_screen(mBasePlane->to_worldPos(closest_to_point(on_plane)), 1.0f);
+// 	closest_screen = cam->mvp() * closest_screen;
+// 	closest_screen /= closest_screen.w;
+// 	glm::vec2 on_screen_pix(map(closest_screen.x, -1.0f, 1.0f, 0.0f, cam->viewport().x), 
+// 							map(closest_screen.y, -1.0f, 1.0f, cam->viewport().y, 0.0f));
+// 	if(glm::length2(cursor_pos - on_screen_pix) < 50) {
+// 		return glm::length(cam->pos() - inter);
+// 	}
+// 	return -1.0f;
+// }
 
 void sketchCircle::init_buffers()
 {

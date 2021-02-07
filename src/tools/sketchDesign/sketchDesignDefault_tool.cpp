@@ -12,8 +12,9 @@
 #include <iostream>
 
 sketchDesignDefault_tool::sketchDesignDefault_tool(sketchDesign* env):
-	simpleSelector_tool(env),
+	tool<sketchDesign>(env),
 	mDraggedEnt(nullptr),
+	mHoveredEnt(nullptr),
 	mMoving(false)
 {
 
@@ -27,14 +28,8 @@ void sketchDesignDefault_tool::init()
 
 bool sketchDesignDefault_tool::manage_button_press(GdkEventButton* event)
 {
-	if(event->button == 1) {
-		mDraggedEnt = entity_at_point_derived<sketchEntity>(glm::vec2(event->x, event->y));
-		// std::shared_ptr<geom_2d::geometry_2d_abstr> geom = mEnv->target()->get_geom_at_point(glm::vec2(event->x, event->y));
-		// if(geom) {
-			
-		// }
-	}
-	simpleSelector_tool::manage_button_press(event);
+	if(event->button == 1)
+		mDraggedEnt = mEnv->target()->geometry_at_point(mEnv->state()->cam, glm::vec2(event->x, event->y));
 	return true;
 }
 bool sketchDesignDefault_tool::manage_button_release(GdkEventButton* event)
@@ -54,7 +49,7 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 		glm::vec2 pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 		if(mMoving) {
 			sk->backup_system();
-			mDraggedEnt->move(glm::vec3(pos, 0.0f), glm::vec3(mPrevPos, 0.0f));
+			mDraggedEnt->move(mPrevPos, pos);
 			mDraggedEnt->set_tmpConstant(true); 	
 			if(!sk->update_constraints()) {
 				mDraggedEnt->set_tmpConstant(false);
@@ -65,8 +60,17 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 		}
 		mMoving = true;
 		mPrevPos = pos;
+	} else {
+		sketchEntity_ptr candidate = mEnv->target()->geometry_at_point(mEnv->state()->cam, glm::vec2(event->x, event->y));
+		if(candidate != mHoveredEnt) {
+			if(mHoveredEnt) {
+				mHoveredEnt->set_hover(false);
+			}
+			if(candidate) {
+				candidate->set_hover(true);
+			}
+			mHoveredEnt = candidate;
+		}
 	}
-	
-	simpleSelector_tool::manage_mouse_move(event);
 	return true;
 }
