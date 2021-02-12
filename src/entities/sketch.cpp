@@ -57,18 +57,18 @@ void sketch::for_each(std::function<void (entity_ptr)> func)
 	func(mOrigin);
 }
 
-bool sketch::add_constraint(std::shared_ptr<constraint> cons) 
-{
-	mSystem.add_equations(cons->equations());
-	mSystem.add_variables(cons->variables());
+// bool sketch::add_constraint(std::shared_ptr<constraint> cons) 
+// {
+// 	mSystem.add_equations(cons->equations());
+// 	mSystem.add_variables(cons->variables());
 
-	if(mSystem.solve() >= 0) {
-		update();
-		// backup_system();
-		return true;
-	}
-	return false;
-}
+// 	if(mSystem.solve() >= 0) {
+// 		update();
+// 		// backup_system();
+// 		return true;
+// 	}
+// 	return false;
+// }
 bool sketch::add_constraint(subEquationsSystem const& subSystem)
 {
 	mSystem.add_equations(subSystem.equations);

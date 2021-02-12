@@ -16,28 +16,32 @@ expression_ptr expConst::pi2(new expression_const(M_PI_2));
 variable::variable():
 	mName(""),
 	mVal(0.0f),
-	mFixed(false)
+	mFixed(false),
+	tmp_flag(0)
 {
 
 }
 variable::variable(double val_, bool fixed_):
 	mName(""),
 	mVal(val_),
-	mFixed(fixed_)
+	mFixed(fixed_),
+	tmp_flag(0)
 {
 
 }
 variable::variable(std::string name_):
 	mName(name_),
 	mVal(0.0f),
-	mFixed(false)
+	mFixed(false),
+	tmp_flag(0)
 {
 
 }
 variable::variable(std::string name_, double val_, bool fixed_):
 	mName(name_),
 	mVal(val_),
-	mFixed(fixed_)
+	mFixed(fixed_),
+	tmp_flag(0)
 {
 
 }
@@ -71,9 +75,14 @@ expression_ptr variable::expr()
 }
 
 expression::expression():
-	mParam(nullptr)
+	tmp_flag(0)
 {
 
+}
+
+expression::~expression()
+{
+	
 }
 
 expression_ptr expression::d()
@@ -113,7 +122,7 @@ binary_expression::binary_expression(expression_ptr left, expression_ptr right):
 /* -------------- Const -------------- */
 expression_const::expression_const(double val)
 {
-	mParam = variable_ptr(new variable("", val));
+	mVal = val;//= variable_ptr(new variable("", val));
 	mOp = operationType::CONST;
 }
 
@@ -124,7 +133,7 @@ expression_ptr expression_const::make(double val)
 
 double expression_const::eval()
 {
-	return mParam->val();
+	return mVal;//mParam->val();
 }
 expression_ptr expression_const::derivative()
 {
@@ -133,7 +142,7 @@ expression_ptr expression_const::derivative()
 
 std::string expression_const::to_string()
 {
-	return std::to_string(mParam->val());
+	return std::to_string(mVal);
 }
 /* -------------- End const -------------- */
 /* -------------- Variable -------------- */

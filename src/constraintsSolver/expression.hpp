@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <functional>
 
 class expression;
 class variable;
@@ -40,6 +41,8 @@ public:
 	void set_tmpConstant(bool const_);
 
 	std::string to_string();
+
+	int tmp_flag;
 };
 
 class expression {
@@ -47,9 +50,9 @@ public:
 	enum operationType { UNKNOWN, VARIABLE, CONST, ADD, SUBSTR, MULT, DIV, PLUS, MINUS, POW, EXP, LOG, SIN, COS, TAN, ASIN, ACOS, ATAN2, CSC, SEC, COT };
 protected:
 	operationType mOp;
-	variable_ptr mParam;
 public:
 	expression();
+	virtual ~expression();
 
 	virtual double eval() = 0;
 	virtual expression_ptr derivative() = 0;
@@ -58,6 +61,10 @@ public:
 	virtual std::string to_string() = 0;
 
 	virtual bool fixed() = 0;
+
+	virtual void for_each_var(std::function<void (variable_ptr var)>) {}
+
+	int tmp_flag;
 private:
 	bool unary(operationType op);
 };
@@ -70,6 +77,8 @@ public:
 	unary_expression(expression_ptr operand);
 
 	virtual bool fixed() { return mOperand->fixed(); }
+
+	virtual void for_each_var(std::function<void (variable_ptr var)> func) { mOperand->for_each_var(func); }
 };
 
 class binary_expression : public expression {
@@ -80,9 +89,13 @@ public:
 	binary_expression(expression_ptr left, expression_ptr right);
 
 	virtual bool fixed() { return mLeft->fixed() && mRight->fixed(); }
+
+	virtual void for_each_var(std::function<void (variable_ptr var)> func) { mLeft->for_each_var(func); mRight->for_each_var(func); }
 };
 
 class expression_const : public expression {
+private:
+	double mVal;
 public:
 	expression_const(double val);
 
@@ -97,6 +110,8 @@ public:
 };
 
 class expression_variable : public expression {
+private:
+	variable_ptr mParam;
 public:
 	expression_variable(double val);
 	expression_variable(variable_ptr var);
@@ -107,6 +122,8 @@ public:
 	virtual std::string to_string();
 
 	virtual bool fixed() { return mParam->fixed(); }
+	
+	virtual void for_each_var(std::function<void (variable_ptr var)> func) { func(mParam); }
 };
 
 class expression_plus : public unary_expression {

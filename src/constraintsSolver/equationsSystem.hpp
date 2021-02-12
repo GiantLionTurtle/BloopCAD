@@ -43,9 +43,11 @@ public:
 	equationsSystem();
 	equationsSystem(std::vector<expression_ptr> eqs, std::vector<variable_ptr> vars = {});
 
+	std::vector<expression_ptr> equations() { return mEquations; }
 	void add_equation(expression_ptr eq);
 	void add_equations(std::vector<expression_ptr> eqs);
 
+	std::vector<variable_ptr> variables() { return mVariables; }
 	void add_variable(variable_ptr var);
 	void add_variables(std::vector<variable_ptr> vars);
 
