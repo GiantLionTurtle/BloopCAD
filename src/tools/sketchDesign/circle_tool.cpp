@@ -26,7 +26,7 @@ bool circle_tool::manage_mouse_move(GdkEventMotion* event)
 		camera_ptr cam = mEnv->state()->cam; // For ease of writing
 		glm::vec2 circle_pos = mCircle->basePlane()->to_planePos(
             mCircle->basePlane()->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
-        mCircle->set_radius(glm::length(circle_pos - mCircle->center()));
+        mCircle->set_radius(glm::length(circle_pos - mCircle->posCenter()));
 	}
 	return true;
 }
@@ -51,7 +51,7 @@ bool circle_tool::manage_button_press(GdkEventButton* event)
 		mEnv->state()->doc->push_action(std::make_shared<enableEntity_action>(mCircle)); // Doc is passed to activate glContext
         started = true;
 	} else {
-        mCircle->set_radius(glm::length(circle_pos - mCircle->center()));
+        mCircle->set_radius(glm::length(circle_pos - mCircle->posCenter()));
         started = false;
 	}
 	return true;

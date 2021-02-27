@@ -1,14 +1,15 @@
 
 #include "sketchCircle.hpp"
+#include <entities/sketch.hpp>
 
 #include <graphics_utils/GLCall.hpp>
 #include <graphics_utils/shadersPool.hpp>
 #include <utils/mathUtils.hpp>
 
 sketchCircle::sketchCircle(glm::vec2 center_, float radius_, sketch* parent_sk):
-	sketchEntity(parent_sk->basePlane(), 3),
+	sketchEntity(parent_sk->basePlane(), types::CIRCLE),
 	mCenter(sketchPoint_ptr(new sketchPoint(center_, parent_sk->basePlane()))),
-	mRadius(variable_ptr(new variable(radius_)))
+	mRadius(expression_variable::make(radius_))
 {
 	parent_sk->add_geometry(mCenter);
 	init();

@@ -3,12 +3,12 @@
 #define COINCIDENCE_TOOL_HPP_
 
 #include <tools/common/simpleSelector_tool.hpp>
-#include <constraintsSolver/equationsSystem.hpp>
+// #include <constraintsSolver/equationsSystem.hpp>
 #include <workspaces/sketchDesign.hpp>
 
 class coincidence_tool : public simpleSelector_tool<sketchDesign> {
 private:
-	subEquationsSystem mSysA, mSysB;
+	// subEquationsSystem mSysA, mSysB;
 	bool mStarted;
 public:
 	coincidence_tool(sketchDesign* env);

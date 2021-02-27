@@ -8,46 +8,13 @@
 #include <functional>
 
 class expression;
-class variable;
+class expression_variable;
 using expression_ptr = std::shared_ptr<expression>;
-using variable_ptr = std::shared_ptr<variable>;
-
-class variable : public std::enable_shared_from_this<variable> {
-private:
-	std::string mName;
-	double mVal;
-	int mFixed;
-
-	enum fixedType { FREE, FIXED, TMP_CONST, CONST };
-public:
-	variable();
-	variable(double val_, bool fixed_ = true);
-	variable(std::string name_);
-	variable(std::string name_, double val_, bool fixed_ = true);
-
-	expression_ptr expr();
-
-	std::string name() const { return mName; }
-	void set_name(std::string name_) { mName = name_; }
-
-	double val() const { return mVal; }
-	void set(double val_);
-
-	bool fixed() const { return mFixed > fixedType::FREE; }
-	void set_fixed(bool fixed_) { if(mFixed < fixedType::TMP_CONST) mFixed = fixed_; }
-
-	bool constant() const { return mFixed >= fixedType::TMP_CONST; }
-	void set_constant() { mFixed = fixedType::CONST; }
-	void set_tmpConstant(bool const_);
-
-	std::string to_string();
-
-	int tmp_flag;
-};
+using variable_ptr = std::shared_ptr<expression_variable>;
 
 class expression {
 public:
-	enum operationType { UNKNOWN, VARIABLE, CONST, ADD, SUBSTR, MULT, DIV, PLUS, MINUS, POW, EXP, LOG, SIN, COS, TAN, ASIN, ACOS, ATAN2, CSC, SEC, COT };
+	enum operationType { UNKNOWN, VARIABLE, CONST, ADD, SUBSTR, MULT, DIV, PLUS, MINUS, POW, EXP, LOG, SIN, COS, TAN, ASIN, ACOS, ATAN2, CSC, SEC, COT, ABS, MOD };
 protected:
 	operationType mOp;
 public:
@@ -59,12 +26,6 @@ public:
 	expression_ptr d();
 
 	virtual std::string to_string() = 0;
-
-	virtual bool fixed() = 0;
-
-	virtual void for_each_var(std::function<void (variable_ptr var)>) {}
-
-	int tmp_flag;
 private:
 	bool unary(operationType op);
 };
@@ -75,10 +36,6 @@ protected:
 public:
 	unary_expression();
 	unary_expression(expression_ptr operand);
-
-	virtual bool fixed() { return mOperand->fixed(); }
-
-	virtual void for_each_var(std::function<void (variable_ptr var)> func) { mOperand->for_each_var(func); }
 };
 
 class binary_expression : public expression {
@@ -87,10 +44,6 @@ protected:
 public:
 	binary_expression();
 	binary_expression(expression_ptr left, expression_ptr right);
-
-	virtual bool fixed() { return mLeft->fixed() && mRight->fixed(); }
-
-	virtual void for_each_var(std::function<void (variable_ptr var)> func) { mLeft->for_each_var(func); mRight->for_each_var(func); }
 };
 
 class expression_const : public expression {
@@ -105,25 +58,81 @@ public:
 	virtual expression_ptr derivative();
 
 	virtual std::string to_string();
-
-	virtual bool fixed() { return true; }
 };
-
-class expression_variable : public expression {
-private:
-	variable_ptr mParam;
+class expression_coefficient : public expression {
+protected:
+	double mVal;
+	int mUnit;
+	double mUnit_to_internalFormat, mInternalFormat_to_unit;
 public:
-	expression_variable(double val);
-	expression_variable(variable_ptr var);
+	expression_coefficient();
 
 	virtual double eval();
 	virtual expression_ptr derivative();
 
 	virtual std::string to_string();
 
-	virtual bool fixed() { return mParam->fixed(); }
-	
-	virtual void for_each_var(std::function<void (variable_ptr var)> func) { func(mParam); }
+	void set_unit(int unit_, bool convert_currentValue_to_newUnit);
+	int unit();
+	void set_val(double val_);
+	double val(); // not to confuse with eval. val() returns the value in the current unit
+protected:
+	virtual std::string unit_symbol(int unit_) { return ""; }
+	virtual double unit_to_internalFormat(int unit_) { return 1.0; }
+	virtual double internalFormat_to_unit(int unit_) { return 1.0 / unit_to_internalFormat(unit_); }
+};
+
+class expression_coefficientAngle : public expression_coefficient {
+public:
+	enum units { RAD, DEG };
+public:
+	expression_coefficientAngle(double angle, int unit_ = units::RAD);
+
+	virtual double eval();
+
+	static std::shared_ptr<expression_coefficientAngle> make(double angle, int unit_ = units::RAD);
+protected:
+	virtual std::string unit_symbol(int unit_);
+	virtual double unit_to_internalFormat(int unit_);
+};
+class expression_coefficientLength : public expression_coefficient {
+public:
+	enum units { MM, CM, DM, M, IN, FT };
+public:
+	expression_coefficientLength(double length, int unit_ = units::CM);
+
+	static std::shared_ptr<expression_coefficientLength> make(double length, int unit_ = units::CM);
+protected:
+	virtual std::string unit_symbol(int unit_);
+	virtual double unit_to_internalFormat(int unit_);
+};
+
+class expression_variable : public expression {
+private:
+	double mVal;
+	int mAs_coef;
+	bool mIs_coef;
+public:
+	expression_variable(double val, bool is_coefficient = false);
+
+	virtual double eval();
+	virtual expression_ptr derivative();
+
+	virtual std::string to_string();
+
+	static variable_ptr make(double val, bool is_coeficient = false);
+
+	bool is_deriv_zero() { return mAs_coef || mIs_coef; }
+
+	bool is_coef() { return mIs_coef; }
+    void set_is_coef(bool coef) { mIs_coef = coef; }
+
+	void set_as_coef() { mAs_coef++; }
+	void set_as_var() { mAs_coef--; }
+	void reset_to_coef() { mAs_coef = 1; }
+	void reset_to_var() { mAs_coef = 0; }
+
+	void set(double val);
 };
 
 class expression_plus : public unary_expression {
@@ -230,7 +239,27 @@ public:
 
 	virtual std::string to_string();
 };
+class expression_abs : public unary_expression { 
+public:
+	expression_abs(expression_ptr operand);
 
+	virtual double eval();
+	virtual expression_ptr derivative();
+
+	virtual std::string to_string();
+};
+// This one is tricky, it won't have a derivative so to speak, it is a unary expression, but has two component (one is fixed)
+class expression_mod : public unary_expression {
+private:
+	double mMod;
+public:
+	expression_mod(expression_ptr operand, double modulo);
+
+	virtual double eval();
+	virtual expression_ptr derivative();
+
+	virtual std::string to_string();
+};
 
 class expression_add : public binary_expression {
 public:
@@ -282,46 +311,6 @@ public:
 	virtual std::string to_string();
 };
 
-class expression_exp : public binary_expression {
-public:
-	expression_exp(expression_ptr base, expression_ptr exponent);
-
-	virtual double eval();
-	virtual expression_ptr derivative();
-
-	virtual std::string to_string();
-};
-
-class expression_exp_e : public unary_expression {
-public:
-	expression_exp_e(expression_ptr exponent);
-
-	virtual double eval();
-	virtual expression_ptr derivative();
-
-	virtual std::string to_string();
-};
-
-class expression_log : public binary_expression {
-public:
-	expression_log(expression_ptr base, expression_ptr arg);
-
-	virtual double eval();
-	virtual expression_ptr derivative();
-
-	virtual std::string to_string();
-};
-
-class expression_ln : public unary_expression {
-public:
-	expression_ln(expression_ptr arg);
-
-	virtual double eval();
-	virtual expression_ptr derivative();
-
-	virtual std::string to_string();
-};
-
 expression_ptr operator+(expression_ptr left, expression_ptr right);
 expression_ptr operator-(expression_ptr left, expression_ptr right);
 expression_ptr operator*(expression_ptr left, expression_ptr right);
@@ -349,11 +338,10 @@ expression_ptr sec(expression_ptr expr);
 expression_ptr tan(expression_ptr expr);
 expression_ptr atan2(expression_ptr left, expression_ptr right);
 expression_ptr cot(expression_ptr expr);
+expression_ptr abs(expression_ptr expr);
+expression_ptr mod(expression_ptr expr, double modulo);
 
-expression_ptr exp(expression_ptr base, expression_ptr exponent);
-expression_ptr exp(expression_ptr exponent);
-expression_ptr log(expression_ptr base, expression_ptr arg);
-expression_ptr ln(expression_ptr arg);
+expression_ptr dot(expression_ptr x1, expression_ptr y1, expression_ptr x2, expression_ptr y2);
 
 std::ostream& operator <<(std::ostream& os, expression_ptr expr);
 std::ostream& operator <<(std::ostream& os, variable_ptr var);

@@ -8,8 +8,6 @@
 #include <graphics_utils/indexBuffer.hpp>
 #include <graphics_utils/shader.hpp>
 #include <graphics_utils/camera.hpp>
-#include <constraintsSolver/equationsSystem.hpp>
-#include <constraintsSolver/expressionVector3.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -190,16 +188,6 @@ public:
 	bool require_redraw() const { return mRequire_redraw; }
 
 	virtual void notify_childUpdate() {}
-
-	virtual void set_constant() {}
-	virtual void set_tmpConstant(bool const_) {}
-
-	virtual std::vector<variable_ptr> variables() { return {}; }
-
-	virtual subEquationsSystem coincidence() { return {}; }
-	virtual subEquationsSystem_vec direction() { return {}; }
-	virtual std::vector<subEquationsSystem> verticality() { return {}; }
-	virtual std::vector<subEquationsSystem> horizontality() { return {}; }
 
 	virtual void invoke_workspace(document* doc) {}
 protected:

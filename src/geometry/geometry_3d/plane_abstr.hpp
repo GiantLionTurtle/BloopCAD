@@ -87,8 +87,8 @@ public:
 	glm::vec3 line_intersection(glm::vec3 const& point, glm::vec3 const& vec);
 
 	glm::vec2 to_planePos(glm::vec3 const& pt);
-	glm::vec2 to_planePos(point_abstr& pt) { return to_planePos(pt.vec()); }
-	glm::vec2 to_planePos(point_abstr_ptr pt) { return to_planePos(pt->vec()); }
+	glm::vec2 to_planePos(point_abstr& pt) { return to_planePos(pt.pos()); }
+	glm::vec2 to_planePos(point_abstr_ptr pt) { return to_planePos(pt->pos()); }
 	glm::vec3 to_worldPos(glm::vec2 const& pt);
 	glm::vec3 to_worldPos(geom_2d::point_abstr& pt) { return to_worldPos(pt.pos()); }
 	glm::vec3 to_worldPos(geom_2d::point_abstr_ptr pt) { return to_worldPos(pt->pos()); }

@@ -5,7 +5,6 @@
 #include "sketchEntity.hpp"
 #include "sketchPoint.hpp"
 #include <geometry/geometry_2d/line_abstr.hpp>
-#include <entities/sketch.hpp>
 
 class sketchLine;
 using sketchLine_ptr = std::shared_ptr<sketchLine>;
@@ -35,13 +34,14 @@ public:
 
 class sketchLine : public sketchEntity, public geom_2d::line_abstr {
 private:
-	std::shared_ptr<expression_substr_funky> dirX, dirY;
-	expressionVector2_ptr dir;
+	// std::shared_ptr<expression_substr_funky> dirX, dirY;
+	// expressionVector2_ptr dir;
 
 	const glm::vec3 mColor = glm::vec3(0.0f, 0.89f, 0.725f); // Line color
 	glm::vec3 mVertices[2]; // The vertices describing the line
 
 	sketchPoint_ptr mA, mB;
+	expression_ptr mLength2;
 public:
 	sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, sketch* parent_sk, bool immovable = false);
 	sketchLine(glm::vec2 ptA, glm::vec2 ptB, sketch* parent_sk, bool immovable = false);
@@ -59,18 +59,15 @@ public:
 
 	void notify_childUpdate();
 
-	glm::vec2 A() { return mA->pos(); }
-	glm::vec2 B() { return mB->pos(); }
+	glm::vec2 posA() { return mA->pos(); }
+	glm::vec2 posB() { return mB->pos(); }
+	sketchPoint_ptr A() { return mA; }
+	sketchPoint_ptr B() { return mB; }
 
+	expression_ptr length2() { return mLength2; }
 
 	int selection_rank() { return 3; }
 
-	std::vector<variable_ptr> variables();
-
-	subEquationsSystem coincidence();
-	subEquationsSystem_vec direction();
-	std::vector<subEquationsSystem> verticality();
-	std::vector<subEquationsSystem> horizontality();
 	void update_VB();
 protected:
 	/*

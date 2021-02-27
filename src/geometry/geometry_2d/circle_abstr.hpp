@@ -13,8 +13,8 @@ public:
 	circle_abstr();
 	virtual ~circle_abstr();
 
-	virtual glm::vec2 center() = 0;
-	virtual float radius() = 0;
+	virtual glm::vec2 posCenter() = 0;
+	virtual float valRadius() = 0;
 
 	virtual glm::vec2 at(float t);
 

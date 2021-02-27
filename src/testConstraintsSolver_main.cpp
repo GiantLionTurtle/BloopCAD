@@ -1,6 +1,6 @@
 
 
-#include <constraintsSolver/DR_planner.hpp>
+// #include <constraintsSolver/DR_planner.hpp>
 #include <utils/errorLogger.hpp>
 
 #include <iostream>
@@ -8,8 +8,23 @@
 
 int main()
 {
+	errorLogger::get_instance().init();
 	
+	// variable_ptr x1(new variable("x1", 0.0, false));
+	// variable_ptr y1(new variable("y1", 0.0, false));
+	// variable_ptr x2(new variable("x2", 10.0, false)); 
+	// variable_ptr y2(new variable("y2", 10.0, false)); 
+
+	// expression_ptr eq = pow(x1->expr()-x2->expr(), 2.0) - pow(y1->expr()-y2->expr(), 2.0);
+	// equationsSystem sys({ eq }, { x1, y1, x2, y2 });
+	
+	// std::cout<<"Sys size: "<<sys.vars_size()<<",  "<<sys.equs_size()<<"\n";
+	// std::cout<<"Attempting solve...\n";
+	// int out = sys.solve(true);
+	// std::cout<<"output: "<<out<<"\n";
+	// std::cout<<"p1: ("<<x1<<",  "<<y1<<") ; p2: ("<<x2<<",  "<<y2<<")\n";
 }
+
 
 // int main() 
 // {	

@@ -9,3 +9,6 @@
 * https://www.sciencedirect.com/science/article/pii/S0377042704001256?via%3Dihub
 * https://www.sciencedirect.com/science/article/pii/S0377042714005433
 * https://www.youtube.com/watch?v=P-Qa0qR2rCU
+* http://users.ics.forth.gr/~lourakis/levmar/levmar.pdf
+
+* http://www2.imm.dtu.dk/pubdb/edoc/imm3215.pdf

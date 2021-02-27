@@ -14,12 +14,12 @@ geometry_3d_abstr::~geometry_3d_abstr()
 }
 glm::vec3 geometry_3d_abstr::closest_to_point(point_abstr const& pt)
 {
-    return closest_to_point(pt.vec());
+    return closest_to_point(pt.pos());
 }
 
 float geometry_3d_abstr::dist_to_point(point_abstr const& pt)
 {
-    return dist_to_point(pt.vec());
+    return dist_to_point(pt.pos());
 }
 
 } // !geom_3d

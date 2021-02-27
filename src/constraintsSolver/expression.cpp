@@ -1,9 +1,6 @@
 
 #include "expression.hpp"
 
-#include <utils/errorLogger.hpp>
-#include "equationsSystem.hpp"
-
 #include <cmath>
 
 expression_ptr expConst::zero(new expression_const(0.0f));
@@ -13,73 +10,10 @@ expression_ptr expConst::e(new expression_const(M_E));
 expression_ptr expConst::pi(new expression_const(M_PI));
 expression_ptr expConst::pi2(new expression_const(M_PI_2));
 
-variable::variable():
-	mName(""),
-	mVal(0.0f),
-	mFixed(false),
-	tmp_flag(0)
+expression::expression()
 {
 
 }
-variable::variable(double val_, bool fixed_):
-	mName(""),
-	mVal(val_),
-	mFixed(fixed_),
-	tmp_flag(0)
-{
-
-}
-variable::variable(std::string name_):
-	mName(name_),
-	mVal(0.0f),
-	mFixed(false),
-	tmp_flag(0)
-{
-
-}
-variable::variable(std::string name_, double val_, bool fixed_):
-	mName(name_),
-	mVal(val_),
-	mFixed(fixed_),
-	tmp_flag(0)
-{
-
-}
-
-void variable::set(double val_) 
-{
-	if(mFixed < fixedType::TMP_CONST)
-		mVal = val_;
-}
-
-void variable::set_tmpConstant(bool const_) 
-{
-	if(mFixed == fixedType::CONST)
-		return;
-	if(const_) 
-		mFixed = fixedType::TMP_CONST; 
-	else 
-		mFixed = fixedType::FREE; 
-}
-
-std::string variable::to_string()
-{
-	return mName + " = " + std::to_string(mVal);
-}
-
-
-
-expression_ptr variable::expr()
-{
-	return expression_ptr(new expression_variable(this->shared_from_this()));
-}
-
-expression::expression():
-	tmp_flag(0)
-{
-
-}
-
 expression::~expression()
 {
 	
@@ -145,36 +79,168 @@ std::string expression_const::to_string()
 	return std::to_string(mVal);
 }
 /* -------------- End const -------------- */
-/* -------------- Variable -------------- */
-expression_variable::expression_variable(double val)
+/* -------------- Coefficient -------------- */
+expression_coefficient::expression_coefficient()
 {
-	mParam = variable_ptr(new variable);
-	mOp = operationType::VARIABLE;
+
 }
-expression_variable::expression_variable(variable_ptr var)
+
+double expression_coefficient::eval()
 {
-	mParam = var;
+	return mVal;
+}
+expression_ptr expression_coefficient::derivative()
+{
+	return expConst::zero;
+}
+std::string expression_coefficient::to_string()
+{
+	return std::to_string(val()) + unit_symbol(mUnit);
+}
+void expression_coefficient::set_unit(int unit_, bool convert_currentValue_to_newUnit)
+{
+	if(convert_currentValue_to_newUnit) {
+		double oldUnit_val = val();
+		mUnit = unit_;
+		set_val(oldUnit_val);
+	} else {
+		mUnit = unit_;
+	}
+	mUnit_to_internalFormat = unit_to_internalFormat(unit_);
+	mInternalFormat_to_unit = internalFormat_to_unit(unit_);
+}
+int expression_coefficient::unit()
+{
+	return mUnit;
+}
+void expression_coefficient::set_val(double val)
+{
+	mVal = val * mUnit_to_internalFormat;
+}
+double expression_coefficient::val()
+{
+	return mVal * mInternalFormat_to_unit;
+}
+
+/* -------------- End coefficient -------------- */
+/* -------------- Coefficient angle -------------- */
+expression_coefficientAngle::expression_coefficientAngle(double angle, int unit_)
+{
+	set_unit(unit_, false);
+	set_val(angle);
+}
+double expression_coefficientAngle::eval()
+{
+	return std::fmod(expression_coefficient::eval(), M_PI * 2.0);
+}
+std::shared_ptr<expression_coefficientAngle> expression_coefficientAngle::make(double angle, int unit_)
+{
+	return std::make_shared<expression_coefficientAngle>(angle, unit_);
+}
+std::string expression_coefficientAngle::unit_symbol(int unit_)
+{
+	switch(mUnit) {
+	case units::DEG:
+		return " deg";
+	default:
+		return " rad";
+	};
+}
+double expression_coefficientAngle::unit_to_internalFormat(int unit_)
+{
+	switch(mUnit) {
+	case units::DEG:
+		return M_PI / 180.0;
+	default:
+		return 1.0;
+	};
+}
+/* -------------- End coefficient angle -------------- */
+/* -------------- Coefficient length -------------- */
+expression_coefficientLength::expression_coefficientLength(double length, int unit_)
+{
+	set_unit(unit_, false);
+	set_val(length);
+}
+std::shared_ptr<expression_coefficientLength> expression_coefficientLength::make(double length, int unit_)
+{
+	return std::make_shared<expression_coefficientLength>(length, unit_);
+}
+std::string expression_coefficientLength::unit_symbol(int unit_)
+{
+	switch(mUnit) {
+	case units::MM:
+		return " mm";
+	case units::CM:
+		return " cm";
+	case units::DM:
+		return " dm";
+	case units::M:
+		return " m";
+	case units::IN:
+		return " in";
+	case units::FT:
+		return " ft";
+	default:
+		return " cm";
+	};
+}
+double expression_coefficientLength::unit_to_internalFormat(int unit_)
+{
+	switch(mUnit) {
+	case units::MM:
+		return 1.0e-1;
+	case units::CM:
+		return 1.0;
+	case units::DM:
+		return 1.0e1;
+	case units::M:
+		return 1.0e2;
+	case units::IN:
+		return 2.54;
+	case units::FT:
+		return 30.48;
+	default:
+		return 1.0;
+	};
+}
+/* -------------- End coefficient length -------------- */
+
+/* -------------- Variable -------------- */
+expression_variable::expression_variable(double val, bool is_coeficient):
+	mVal(val),
+	mAs_coef(true),
+	mIs_coef(is_coeficient)
+{
 	mOp = operationType::VARIABLE;
 }
 
 double expression_variable::eval()
 {
-	return mParam->val();
+	return mVal;
 }
 expression_ptr expression_variable::derivative()
 {
-	if(mParam->fixed())
+	if(is_deriv_zero())
 		return expConst::zero;
 	return expConst::one;
 }
 
 std::string expression_variable::to_string()
 {
-	if(mParam->fixed())
-		return std::to_string(mParam->val());
-	return mParam->name();
+	return "[" + std::to_string(mVal) + "]";
+}
+variable_ptr expression_variable::make(double val, bool is_coeficient)
+{
+	return variable_ptr(new expression_variable(val, is_coeficient));
+}
+void expression_variable::set(double val)
+{
+	if(!is_coef())
+		mVal = val;
 }
 /* -------------- End variable -------------- */
+
 
 /* -------------- Plus -------------- */
 expression_plus::expression_plus(expression_ptr operand):
@@ -410,8 +476,52 @@ std::string expression_cot::to_string()
 {
 	return  "cot(" + mOperand->to_string() + ")";
 }
-/* -------------- End tan -------------- */
+/* -------------- End cot -------------- */
+/* -------------- Abs -------------- */
+expression_abs::expression_abs(expression_ptr operand):
+	unary_expression(operand)
+{
+	mOp = operationType::ABS;
+}
 
+double expression_abs::eval()
+{
+	return std::abs(mOperand->eval());
+}
+expression_ptr expression_abs::derivative()
+{
+	if(eval() > 0) 
+		return mOperand->derivative();
+	return -mOperand->derivative(); // not legit for eval() == 0
+}
+
+std::string expression_abs::to_string()
+{
+	return  "|" + mOperand->to_string() + "|";
+}
+/* -------------- End abs -------------- */
+/* -------------- Mod -------------- */
+expression_mod::expression_mod(expression_ptr operand, double modulo):
+	unary_expression(operand),
+	mMod(modulo)
+{
+	mOp = operationType::MOD;
+}
+
+double expression_mod::eval()
+{
+	return std::fmod(mOperand->eval(), mMod);
+}
+expression_ptr expression_mod::derivative()
+{
+	return mOperand->derivative(); // reeeeeeeeeeeeee
+}
+
+std::string expression_mod::to_string()
+{
+	return  mOperand->to_string() + " % " + std::to_string(mMod);
+}
+/* -------------- End mod -------------- */
 
 /* -------------- Add -------------- */
 expression_add::expression_add(expression_ptr left, expression_ptr right):
@@ -476,7 +586,7 @@ expression_ptr expression_mult::derivative()
 
 std::string expression_mult::to_string()
 {
-	return "(" + mLeft->to_string() + " * " + mRight->to_string() + ")";
+	return mLeft->to_string() + " * " + mRight->to_string();
 }
 /* -------------- End mult -------------- */
 
@@ -490,7 +600,7 @@ expression_div::expression_div(expression_ptr left, expression_ptr right):
 double expression_div::eval()
 {
 	double right_val = mRight->eval();
-	if(std::abs(right_val) < equationsSystem::kEpsilon)
+	if(std::abs(right_val) < 1e-5)
 		right_val = 1.0f;
 	return mLeft->eval() / right_val;
 }
@@ -501,7 +611,7 @@ expression_ptr expression_div::derivative()
 
 std::string expression_div::to_string()
 {
-	return "(" + mLeft->to_string() + " / " + mRight->to_string() + ")";
+	return mLeft->to_string() + " / " + mRight->to_string();
 }
 /* -------------- End div -------------- */
 
@@ -526,96 +636,6 @@ std::string expression_pow::to_string()
 	return  "(" + mLeft->to_string() + "^" + mRight->to_string() + ")";
 }
 /* -------------- End pow -------------- */
-
-/* -------------- Exp -------------- */
-expression_exp::expression_exp(expression_ptr base, expression_ptr exponent):
-	binary_expression(base, exponent)
-{
-	mOp = operationType::EXP;
-}
-
-double expression_exp::eval()
-{
-	return std::pow(mLeft->eval(), mRight->eval());
-}
-expression_ptr expression_exp::derivative()
-{
-	if(mLeft->fixed()) {
-		return exp(mLeft, mRight) * ln(mLeft) * mRight->derivative();
-	} else {
-		return exp(mLeft, mRight) * (ln(mLeft) * mRight)->derivative();
-	}
-}
-
-std::string expression_exp::to_string()
-{
-	return  "(" + mLeft->to_string() + "^" + mRight->to_string() + ")";
-}
-/* -------------- End exp -------------- */
-/* -------------- Exp_e -------------- */
-expression_exp_e::expression_exp_e(expression_ptr exponent):
-	unary_expression(exponent)
-{
-	mOp = operationType::EXP;
-}
-
-double expression_exp_e::eval()
-{
-	return std::pow(M_E, mOperand->eval());
-}
-expression_ptr expression_exp_e::derivative()
-{
-	return exp(mOperand) * mOperand->derivative();
-}
-
-std::string expression_exp_e::to_string()
-{
-	return  "e^" + mOperand->to_string();
-}
-/* -------------- End exp_e -------------- */
-/* -------------- Log -------------- */
-expression_log::expression_log(expression_ptr base, expression_ptr arg):
-	binary_expression(base, arg)
-{
-	mOp = operationType::LOG;
-}
-
-double expression_log::eval()
-{
-	return std::log(mRight->eval()) / std::log(mLeft->eval());
-}
-expression_ptr expression_log::derivative()
-{
-	return expConst::one / (mRight * ln(mLeft)) * mRight->derivative();
-}
-
-std::string expression_log::to_string()
-{
-	return  "log[" + mLeft->to_string() + "](" + mRight->to_string() + ")";
-}
-/* -------------- End log -------------- */
-/* -------------- Ln -------------- */
-expression_ln::expression_ln(expression_ptr arg):
-	unary_expression(arg)
-{
-	mOp = operationType::LOG;
-}
-
-double expression_ln::eval()
-{
-	return std::log(mOperand->eval());
-}
-expression_ptr expression_ln::derivative()
-{
-	return exp(mOperand) * mOperand->derivative();
-}
-
-std::string expression_ln::to_string()
-{
-	return  "ln(" + mOperand->to_string() + ")";
-}
-/* -------------- End ln -------------- */
-
 
 expression_ptr operator+(expression_ptr left, expression_ptr right)
 {
@@ -725,31 +745,22 @@ expression_ptr cot(expression_ptr expr)
 {
 	return expression_ptr(new expression_cot(expr));
 }
+expression_ptr abs(expression_ptr expr)
+{
+	return expression_ptr(new expression_abs(expr));
+}
+expression_ptr mod(expression_ptr expr, double modulo)
+{
+	return expression_ptr(new expression_mod(expr, modulo));
+}
 
-expression_ptr exp(expression_ptr base, expression_ptr exponent)
+expression_ptr dot(expression_ptr x1, expression_ptr y1, expression_ptr x2, expression_ptr y2)
 {
-	return expression_ptr(new expression_exp(base, exponent));
-}
-expression_ptr exp(expression_ptr exponent)
-{
-	return expression_ptr(new expression_exp_e(exponent));
-}
-expression_ptr log(expression_ptr base, expression_ptr arg)
-{
-	return expression_ptr(new expression_log(base, arg));
-}
-expression_ptr ln(expression_ptr arg)
-{
-	return expression_ptr(new expression_ln(arg));
+	return x1 * x2 + y1 * y2;
 }
 
 std::ostream& operator <<(std::ostream& os, expression_ptr expr)
 {
 	os<<expr->to_string();
-	return os;
-}
-std::ostream& operator <<(std::ostream& os, variable_ptr var)
-{
-	os<<var->to_string();
 	return os;
 }

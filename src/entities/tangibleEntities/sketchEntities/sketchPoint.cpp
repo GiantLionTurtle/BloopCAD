@@ -8,19 +8,25 @@
 
 
 sketchPoint::sketchPoint(glm::vec2 pos_2d, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
-	sketchEntity(basePlane_, 2),
-	mPos(variableVector2_ptr(new variableVector2(pos_2d)))
+	sketchEntity(basePlane_, types::POINT),
+	mX(expression_variable::make(pos_2d.x)),
+	mY(expression_variable::make(pos_2d.y))
 {
-	if(immovable)
-		mPos->set_constant();
+	if(immovable) {
+		mX->set_is_coef(true);
+		mY->set_is_coef(true);
+	}
 	init();
 }
-sketchPoint::sketchPoint(variableVector2_ptr pos_2d, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
-	sketchEntity(basePlane_, 2),
-	mPos(pos_2d)
+sketchPoint::sketchPoint(variable_ptr x_, variable_ptr y_, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
+	sketchEntity(basePlane_, types::POINT),
+	mX(x_),
+	mY(y_)
 {
-	if(immovable)
-		mPos->set_constant();
+	if(immovable) {
+		mX->set_is_coef(true);
+		mY->set_is_coef(true);
+	}
 	init();
 }
 
@@ -49,8 +55,7 @@ void sketchPoint::init()
 
 void sketchPoint::move(glm::vec2 from, glm::vec2 to)
 {
-	mPos->set(to);
-	set_require_VBUpdate();
+	set(to);
 }
 
 bool sketchPoint::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor)
@@ -63,6 +68,24 @@ bool sketchPoint::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::ve
 	return false;
 }
 
+void sketchPoint::set(glm::vec2 p)
+{
+	mX->set(p.x);
+	mY->set(p.y);
+	set_require_VBUpdate();
+}
+
+void sketchPoint::set_constant()
+{
+	mX->set_is_coef(true);
+	mY->set_is_coef(true);
+}
+void sketchPoint::set_tmpConstant(bool const_)
+{
+	mX->set_as_coef();
+	mY->set_as_coef();
+}
+
 void sketchPoint::update_VB()
 {
 	mVB->bind();
@@ -72,24 +95,6 @@ void sketchPoint::update_VB()
 	set_require_redraw();
 	if(mParent)
             mParent->notify_childUpdate();
-}
-
-std::vector<variable_ptr> sketchPoint::variables()
-{
-	return { mPos->x, mPos->y };
-}
-
-subEquationsSystem sketchPoint::coincidence()
-{
-	return { {}, { mPos->x->expr(), mPos->y->expr() } };
-}
-std::vector<subEquationsSystem> sketchPoint::verticality()
-{
-	return { { {}, { mPos->x->expr() } } };
-}
-std::vector<subEquationsSystem> sketchPoint::horizontality()
-{
-	return { { {}, { mPos->y->expr() } } };
 }
 
 void sketchPoint::draw_impl(camera_ptr cam, int frame)

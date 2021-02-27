@@ -26,10 +26,10 @@ void coincidence_tool::init()
 
 	// Check if there is only one item in the document's selection stack and if it is a plane, use it
 	if(mEnv->state()->doc->selection_size() > 0 && mFilter(mEnv->state()->doc->selection_at(0).ent)) {
-		mSysA = mEnv->state()->doc->selection_at(0).ent->coincidence();
+		// mSysA = mEnv->state()->doc->selection_at(0).ent->coincidence();
 		mStarted = true;
 		if(mEnv->state()->doc->selection_size() > 1 && mFilter(mEnv->state()->doc->selection_at(0).ent)) {
-			mSysB = mEnv->state()->doc->selection_at(1).ent->coincidence();
+			// mSysB = mEnv->state()->doc->selection_at(1).ent->coincidence();
 			mStarted = false;
 			add_constraint();
 		}
@@ -44,10 +44,10 @@ bool coincidence_tool::manage_button_press(GdkEventButton* event)
 		return true;
 	}
 	if(!mStarted) {
-		mSysA = ent->coincidence();
+		// mSysA = ent->coincidence();
 		mStarted = true;
 	} else {
-		mSysB = ent->coincidence();
+		// mSysB = ent->coincidence();
 		mStarted = false;
 
 		add_constraint();
@@ -62,18 +62,18 @@ void coincidence_tool::add_constraint()
 
 	sk->backup_system();
 	// Try to move only one point at a time
-	mSysA.set_tmpConstant(true);
-	if(!sk->add_constraint(mSysA - mSysB)) {
-		mSysA.set_tmpConstant(false);
-		mSysA.set_tmpConstant(true);
-		if(!sk->update_constraints()) {
-			mSysA.set_tmpConstant(false);
-			if(!sk->update_constraints()) {
-				sk->revert_system_to_backup();
-				LOG_WARNING("Could not solve system.");
-			}
-		}
-	}
-	mSysA.set_tmpConstant(false);
-	mSysA.set_tmpConstant(false);
+	// mSysA.set_tmpConstant(true);
+	// if(!sk->add_constraint(mSysA - mSysB)) {
+	// 	mSysA.set_tmpConstant(false);
+	// 	mSysA.set_tmpConstant(true);
+	// 	if(!sk->update_constraints()) {
+	// 		mSysA.set_tmpConstant(false);
+	// 		if(!sk->update_constraints()) {
+	// 			sk->revert_system_to_backup();
+	// 			LOG_WARNING("Could not solve system.");
+	// 		}
+	// 	}
+	// }
+	// mSysA.set_tmpConstant(false);
+	// mSysA.set_tmpConstant(false);
 }

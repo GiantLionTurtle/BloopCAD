@@ -5,15 +5,11 @@
 #include "entity.hpp"
 #include <geometry/geometry_3d/plane_abstr.hpp>
 #include <entities/folder.hpp>
-#include <constraintsSolver/equationsSystem.hpp>
-#include <constraintsSolver/constraint.hpp>
+#include <constraintsSolver/constraintSystem.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchEntity.hpp>
 
 #include <memory>
 #include <vector>
-
-class sketch;
-using sketch_ptr = std::shared_ptr<sketch>;
 
 /*
 	@class sketch describes a sketch which is a bunch of geometries with constraints
@@ -26,7 +22,7 @@ private:
 	std::vector<sketchEntity_ptr> mGeometries;
 	folder_ptr mOrigin;
 
-	equationsSystem mSystem;
+	constraintSystem mSystem;
 	std::vector<double> mSystemBackup;
 public:
 	/*
@@ -58,8 +54,8 @@ public:
 
 	folder_ptr origin() const { return mOrigin; }
 
-	// bool add_constraint(std::shared_ptr<constraint> cons);
-	bool add_constraint(subEquationsSystem const& subSystem);
+	bool add_constraint(std::shared_ptr<constraint_abstract> cons);
+	// bool add_constraint(subEquationsSystem const& subSystem);
 
 	bool update_constraints();
 

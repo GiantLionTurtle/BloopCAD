@@ -14,8 +14,8 @@ public:
 	line_abstr();
 	virtual ~line_abstr();
 
-	virtual glm::vec2 A() = 0;
-	virtual glm::vec2 B() = 0;
+	virtual glm::vec2 posA() = 0;
+	virtual glm::vec2 posB() = 0;
 
 	virtual glm::vec2 at(float t);
 	virtual glm::vec2 closest_to_point(glm::vec2 const& pt);
@@ -35,8 +35,8 @@ private:
 public:
 	simple_line(glm::vec2 a, glm::vec2 b);
 
-	virtual glm::vec2 A() { return mA; }
-	virtual glm::vec2 B() { return mB; }
+	virtual glm::vec2 posA() { return mA; }
+	virtual glm::vec2 posB() { return mB; }
 };
 
 } // !geom_2ds

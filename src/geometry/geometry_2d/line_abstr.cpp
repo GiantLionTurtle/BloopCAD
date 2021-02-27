@@ -54,19 +54,19 @@ line_abstr::~line_abstr()
 
 glm::vec2 line_abstr::at(float t)
 {
-	return (A() - t * as_vec());
+	return (posA() - t * as_vec());
 }
 glm::vec2 line_abstr::closest_to_point(glm::vec2 const& pt)
 {
 	float len2 = length2();
 	if(len2 == 0) {
-		return A();
+		return posA();
 	}
-	float t = glm::dot(as_vec(), A()-pt) / len2;
+	float t = glm::dot(as_vec(), posA()-pt) / len2;
 	if(t <= 0) { // First point
-		return A();
+		return posA();
 	} else if(t >= 1) { // Second point 
-		return B();
+		return posB();
 	} else {
 		return at(t);
 	}
@@ -78,16 +78,16 @@ float line_abstr::dist_to_point(glm::vec2 const& pt)
 
 float line_abstr::length()
 {
-	return glm::distance(A(), B());
+	return glm::distance(posA(), posB());
 }
 float line_abstr::length2()
 {
-	return glm::distance2(A(), B());
+	return glm::distance2(posA(), posB());
 }
 
 glm::vec2 line_abstr::as_vec()
 {
-	return A() - B();
+	return posA() - posB();
 }
 
 simple_line::simple_line(glm::vec2 a, glm::vec2 b):

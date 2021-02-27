@@ -6,16 +6,22 @@
 #include <graphics_utils/shadersPool.hpp>
 #include <utils/mathUtils.hpp>
 
-point::point(point_abstr const& basePoint):
-	point_abstr(basePoint)
-{	
-	init();
-}
-point::point(geom_3d::point_abstr_ptr basePoint):
-	point_abstr(basePoint->var())
+point::point(glm::vec3 const& basePoint)
 {
+	// glm::vec3 pos = basePoint.pos();
+	mX = expression_variable::make(basePoint.x);
+	mY = expression_variable::make(basePoint.y);
+	mZ = expression_variable::make(basePoint.z);
 	init();
 }
+// point::point(geom_3d::point_abstr_ptr basePoint)
+// {
+// 	glm::vec3 pos = basePoint->pos();
+// 	mX = expression_variable::make(pos.x);
+// 	mY = expression_variable::make(pos.y);
+// 	mZ = expression_variable::make(pos.z);
+// 	init();
+// }
 
 void point::init()
 {
@@ -24,7 +30,7 @@ void point::init()
 	layout.add_proprety_float(3);
 	mVA->bind();
 
-	glm::vec3 pos_tmp = vec();
+	glm::vec3 pos_tmp = pos();
 	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(&pos_tmp[0], sizeof(glm::vec3)));
 	mVA->add_buffer(*mVB.get(), layout);
 
@@ -41,21 +47,32 @@ void point::init()
 
 void point::move(glm::vec3 from, glm::vec3 to) 
 {
-	mPos->set(to);
+	set(to);
+}
+
+glm::vec3 point::pos() const
+{
+	return glm::vec3(mX->eval(), mY->eval(), mZ->eval());
+}
+void point::set(glm::vec3 const& p)
+{
+
 }
 void point::set_constant()
 {
-	point_abstr::set_constant();
+	mX->set_is_coef(true);
+	mY->set_is_coef(true);
 }
 void point::set_tmpConstant(bool const_)
 {
-	point_abstr::set_tmpConstant(const_);
+	mX->set_as_coef();
+	mY->set_as_coef();
 }
 
 void point::update_VB()
 {
 	mVB->bind();
-	glm::vec3 pos_tmp = vec();
+	glm::vec3 pos_tmp = pos();
 	mVB->set(&pos_tmp[0], sizeof(glm::vec3));
 	mVB->unbind();
 	set_require_redraw();
@@ -96,12 +113,12 @@ void point::draw_impl(camera_ptr cam, int frame)
 
 float point::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
 {
-	glm::vec4 screenPos = cam->mvp() * glm::vec4(vec(), 1.0f);
+	glm::vec4 screenPos = cam->mvp() * glm::vec4(pos(), 1.0f);
 	glm::vec2 screenPos_2d(	map(screenPos.x / screenPos.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
 							map(screenPos.y / screenPos.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
 	
 	if(glm::length(screenPos_2d - cursor_pos) < 5) {
-		return glm::length(cam->pos() - geom_3d::plane_abstr(vec(), cam->right(), cam->up()).line_intersection(cam->pos(), cam->cast_ray(cursor_pos)));
+		return glm::length(cam->pos() - geom_3d::plane_abstr(pos(), cam->right(), cam->up()).line_intersection(cam->pos(), cam->cast_ray(cursor_pos)));
 	}
 	return -1.0f;
 }

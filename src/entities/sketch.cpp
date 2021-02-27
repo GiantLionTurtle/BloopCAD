@@ -57,30 +57,18 @@ void sketch::for_each(std::function<void (entity_ptr)> func)
 	func(mOrigin);
 }
 
-// bool sketch::add_constraint(std::shared_ptr<constraint> cons) 
-// {
-// 	mSystem.add_equations(cons->equations());
-// 	mSystem.add_variables(cons->variables());
-
-// 	if(mSystem.solve() >= 0) {
-// 		update();
-// 		// backup_system();
-// 		return true;
-// 	}
-// 	return false;
-// }
-bool sketch::add_constraint(subEquationsSystem const& subSystem)
+bool sketch::add_constraint(std::shared_ptr<constraint_abstract> cons) 
 {
-	mSystem.add_equations(subSystem.equations);
-	mSystem.add_variables(subSystem.variables);
-
-	if(mSystem.solve() >= 0) {
+	mSystem.add_constraint(cons);
+	if(mSystem.solve() == constraintSystem::solveOutput::SUCCESS) {
 		update();
 		// backup_system();
 		return true;
-	}
+	} 
+	LOG_WARNING("*cries*");
 	return false;
 }
+
 bool sketch::update_constraints()
 {
 	if(mSystem.solve() >= 0) {
@@ -93,11 +81,11 @@ bool sketch::update_constraints()
 
 void sketch::backup_system()
 {
-	mSystemBackup = mSystem.state();
+	mSystemBackup = mSystem.varState();
 }
 void sketch::revert_system_to_backup()
 {
-	mSystem.set(mSystemBackup);
+	mSystem.set_varState(mSystemBackup);
 	update();
 }
 

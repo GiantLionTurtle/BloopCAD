@@ -34,7 +34,7 @@ void part::init_scene()
 		geom_3d::plane_abstr::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f))));
 	mZX->set_name("ZX plane");
 
-	std::shared_ptr<point> center = std::make_shared<point>(geom_3d::point_abstr(glm::vec3(0.0f, 0.0f, 0.0f)));
+	std::shared_ptr<point> center = std::make_shared<point>(glm::vec3(0.0f, 0.0f, 0.0f));
 	center->set_name("originPoint");
 
 	mOrigin = folder_ptr(new folder("origin", this));

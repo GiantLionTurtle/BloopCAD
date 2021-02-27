@@ -4,15 +4,18 @@
 
 #include "tangibleEntity.hpp"
 #include <geometry/geometry_3d/point_abstr.hpp>
+#include <constraintsSolver/expression.hpp>
 
 #include <glm/glm.hpp>
 
 class point : public tangibleEntity, public geom_3d::point_abstr {
 private:
 	const glm::vec3 mColor = glm::vec3(0.0f, 0.89f, 0.725f); // Point color
+
+	variable_ptr mX, mY, mZ;
 public:
-	point(point_abstr const& basePoint);
-	point(geom_3d::point_abstr_ptr basePoint);
+	point(glm::vec3 const& basePoint);
+	// point(geom_3d::point_abstr_ptr basePoint);
 	virtual ~point() {}
 
 	virtual void init();
@@ -20,6 +23,10 @@ public:
 	virtual int selection_rank() { return 5; }
 
 	virtual void move(glm::vec3 from, glm::vec3 to);
+
+	glm::vec3 pos() const;
+	void set(glm::vec3 const& p);
+
 	virtual void set_constant();
 	virtual void set_tmpConstant(bool const_);
 

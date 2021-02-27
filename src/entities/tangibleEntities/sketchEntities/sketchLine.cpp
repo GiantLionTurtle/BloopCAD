@@ -1,6 +1,7 @@
 
 #include "sketchLine.hpp"
 #include "sketchPoint.hpp"
+#include <entities/sketch.hpp>
 
 #include <graphics_utils/shadersPool.hpp>
 #include <utils/errorLogger.hpp>
@@ -32,7 +33,7 @@ std::string expression_substr_funky::to_string()
 }
 
 sketchLine::sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, sketch* parent_sk, bool immovable/* = false*/):
-	sketchEntity(parent_sk->basePlane(), 2),
+	sketchEntity(parent_sk->basePlane(), types::LINE),
 	mA(ptA),
 	mB(ptB)
 {
@@ -47,7 +48,7 @@ sketchLine::sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, sketch* parent_
 	init();
 }
 sketchLine::sketchLine(glm::vec2 ptA, glm::vec2 ptB, sketch* parent_sk, bool immovable/* = false*/):
-	sketchEntity(parent_sk->basePlane(), 2),
+	sketchEntity(parent_sk->basePlane(), types::LINE),
 	mA(sketchPoint_ptr(new sketchPoint(ptA, parent_sk->basePlane(), immovable))),
 	mB(sketchPoint_ptr(new sketchPoint(ptB, parent_sk->basePlane(), immovable)))
 {
@@ -64,9 +65,11 @@ sketchLine::sketchLine(glm::vec2 ptA, glm::vec2 ptB, sketch* parent_sk, bool imm
 
 void sketchLine::init()
 {
-	dirX = std::make_shared<expression_substr_funky>(mA->var()->expr()->x, mB->var()->expr()->x, 0.0);
-	dirY = std::make_shared<expression_substr_funky>(mA->var()->expr()->y, mB->var()->expr()->y, 0.0);
-	dir = std::make_shared<expressionVector2>(dirX, dirY);
+	// dirX = std::make_shared<expression_substr_funky>(mA->var()->expr()->x, mB->var()->expr()->x, 0.0);
+	// dirY = std::make_shared<expression_substr_funky>(mA->var()->expr()->y, mB->var()->expr()->y, 0.0);
+	// dir = std::make_shared<expressionVector2>(dirX, dirY);
+
+	mLength2 = (pow(mA->x()-mB->x(), 2.0) + pow(mA->y()-mB->y(), 2.0));
 
 	set_name("line");
 	mVA = std::shared_ptr<vertexArray>(new vertexArray());
@@ -116,15 +119,15 @@ void sketchLine::notify_childUpdate()
 {
 	tangibleEntity::notify_childUpdate();
 	glm::vec2 dir = mA->pos() - mB->pos();
-	if(glm::length2(dir) == 0.0f) {
-		dirX->funk(true);
-		dirY->funk(true);
-	} else {
-		dirX->funk(false);
-		dirY->funk(false);
-		dirX->set_funk(dir.x);
-		dirY->set_funk(dir.y);
-	}
+	// if(glm::length2(dir) == 0.0f) {
+	// 	dirX->funk(true);
+	// 	dirY->funk(true);
+	// } else {
+	// 	dirX->funk(false);
+	// 	dirY->funk(false);
+	// 	dirX->set_funk(dir.x);
+	// 	dirY->set_funk(dir.y);
+	// }
 }
 
 void sketchLine::update_VB()
@@ -134,33 +137,6 @@ void sketchLine::update_VB()
 	mVB->bind();
 	mVB->set(&tmp[0], sizeof(glm::vec3) * 2);
 	mVB->unbind();
-}
-
-std::vector<variable_ptr> sketchLine::variables()
-{
-	return { mA->var()->x, mA->var()->y, mB->var()->x, mB->var()->y };
-}
-
-subEquationsSystem sketchLine::coincidence()
-{
-	variable_ptr t = std::make_shared<variable>(0.5f);
-	return { 	{ t }, 
-				{ mA->var()->x->expr() - t->expr() * (mA->var()->x->expr() - mB->var()->x->expr()),
-				  mA->var()->y->expr() - t->expr() * (mA->var()->y->expr() - mB->var()->y->expr()) }};
-}
-subEquationsSystem_vec sketchLine::direction()
-{
-	return { {}, dir };
-}
-std::vector<subEquationsSystem> sketchLine::verticality()
-{
-	return { { {}, { mA->var()->x->expr() } },
-			 { {}, { mB->var()->x->expr() } }};
-}
-std::vector<subEquationsSystem> sketchLine::horizontality()
-{
-	return { { {}, { mA->var()->y->expr() } },
-			 { {}, { mB->var()->y->expr() } }};
 }
 
 void sketchLine::draw_impl(camera_ptr cam, int frame)

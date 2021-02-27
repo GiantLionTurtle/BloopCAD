@@ -50,13 +50,13 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 		if(mMoving) {
 			sk->backup_system();
 			mDraggedEnt->move(mPrevPos, pos);
-			mDraggedEnt->set_tmpConstant(true); 	
+			// mDraggedEnt->set_tmpConstant(true); 	
 			if(!sk->update_constraints()) {
-				mDraggedEnt->set_tmpConstant(false);
+				// mDraggedEnt->set_tmpConstant(false);
 				if(!sk->update_constraints())
 					sk->revert_system_to_backup();
 			}
-			mDraggedEnt->set_tmpConstant(false);
+			// mDraggedEnt->set_tmpConstant(false);
 		}
 		mMoving = true;
 		mPrevPos = pos;

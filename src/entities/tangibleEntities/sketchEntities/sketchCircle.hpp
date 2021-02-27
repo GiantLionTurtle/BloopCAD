@@ -5,7 +5,6 @@
 #include <geometry/geometry_2d/circle_abstr.hpp>
 #include "sketchPoint.hpp"
 #include "sketchEntity.hpp"
-#include <entities/sketch.hpp>
 
 #define CIRCLE_RES 100
 
@@ -32,8 +31,10 @@ public:
 
 	void for_each(std::function<void (entity_ptr)> func);
 
-	glm::vec2 center() { return mCenter->pos(); }
-	float radius() { return mRadius->val(); }
+	glm::vec2 posCenter() { return mCenter->pos(); }
+	sketchPoint_ptr center() { return mCenter; }
+	float valRadius() { return mRadius->eval(); }
+	variable_ptr radius() { return mRadius; }
 	void set_radius(float newval);
 
 	int selection_rank() { return 4; }

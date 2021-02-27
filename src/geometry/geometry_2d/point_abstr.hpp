@@ -2,7 +2,6 @@
 #ifndef POINT_ABSTR2_HPP_
 #define POINT_ABSTR2_HPP_
 
-#include <constraintsSolver/expressionVector2.hpp>
 #include "geometry_2d_abstr.hpp"
 
 #include <glm/glm.hpp>
@@ -14,7 +13,8 @@ public:
 	point_abstr();
     virtual ~point_abstr();
 
-	virtual glm::vec2 pos() = 0;
+	virtual glm::vec2 pos() const = 0;
+	virtual void set(glm::vec2 p) = 0;
 
 	virtual glm::vec2 at(float t) { return pos(); }
 
