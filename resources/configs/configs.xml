@@ -3,4 +3,6 @@
 <configs>
     <background type="vec3">1.0 ; 0.3 ; 1.0</background>
     <camtrans type="long">500</camtrans>
+    <seldistpoint2 type="float">50.0</seldistpoint2>
+    <seldistcurve2 type="float">25.0</seldistcurve2>
 </configs>

@@ -37,6 +37,9 @@ private:
 	// std::shared_ptr<expression_substr_funky> dirX, dirY;
 	// expressionVector2_ptr dir;
 
+	static float kSelDist2;
+	static bool kFisrstInst;
+
 	const glm::vec3 mColor = glm::vec3(0.0f, 0.89f, 0.725f); // Line color
 	glm::vec3 mVertices[2]; // The vertices describing the line
 

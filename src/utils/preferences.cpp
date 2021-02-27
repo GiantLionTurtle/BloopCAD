@@ -28,6 +28,43 @@ void preferences::add_callback(std::string const& pref, std::function<void(glm::
 	add_callback_to_map(pref, mPrefs_vec3, func); // Select the vec3 map
 }
 
+int preferences::num_callback_float(std::string const& pref)
+{
+	if(mPrefs_float.find(pref) != mPrefs_float.end()) {
+		return mPrefs_float.at(pref).second.size();
+	}
+	return 0;
+}
+int preferences::num_callback_long(std::string const& pref)
+{
+	if(mPrefs_long.find(pref) != mPrefs_long.end()) {
+		return mPrefs_long.at(pref).second.size();
+	}
+	return 0;
+}
+int preferences::num_callback_vec3(std::string const& pref)
+{
+	if(mPrefs_vec3.find(pref) != mPrefs_vec3.end()) {
+		return mPrefs_vec3.at(pref).second.size();
+	}
+	return 0;
+}
+int preferences::num_callback(std::string const& pref)
+{
+	int out = 0;
+
+	out = num_callback_float(pref);
+	if(out)
+		return out;
+	out = num_callback_long(pref);
+	if(out)
+		return out;
+	out = num_callback_vec3(pref);
+	if(out)
+		return out;
+	return 0;
+}
+
 void preferences::set(std::string const& pref, long val)
 {
 	set_in_map(pref, mPrefs_long, val); // Select the long map

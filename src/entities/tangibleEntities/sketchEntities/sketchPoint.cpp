@@ -5,7 +5,10 @@
 #include <graphics_utils/shadersPool.hpp>
 #include <utils/mathUtils.hpp>
 #include <graphics_utils/GLCall.hpp>
+#include <utils/preferences.hpp>
 
+float sketchPoint::kSelDist2 = 0.0f;
+bool sketchPoint::kFisrstInst = true;
 
 sketchPoint::sketchPoint(glm::vec2 pos_2d, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
 	sketchEntity(basePlane_, types::POINT),
@@ -50,6 +53,11 @@ void sketchPoint::init()
 		{"resources/shaders/pointShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because point is expanded on the gpu
 		shadersPool::get_instance().add("point", mShader);
 	}
+	if(kFisrstInst) {
+		kSelDist2 = preferences::get_instance().get_float("seldistpoint2");
+		preferences::get_instance().add_callback("seldistpoint2", std::function<void(float)>([this](float val) { kSelDist2 = val; }));
+		kFisrstInst = false;
+	}
 	set_name("sketchPoint");
 }
 
@@ -71,7 +79,7 @@ bool sketchPoint::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::ve
 	glm::vec4 onscreen_ndc = cam->mvp()	* glm::vec4(mBasePlane->to_worldPos(closest_to_point(planepos)), 1.0f);
 	glm::vec2 onscreen(	map(onscreen_ndc.x / onscreen_ndc.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
 						map(onscreen_ndc.y / onscreen_ndc.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
-	if(glm::distance2(onscreen, cursor) < 25)
+	if(glm::distance2(onscreen, cursor) < 50)
 		return true;
 	return false;
 }

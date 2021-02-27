@@ -6,6 +6,7 @@
 #include <graphics_utils/shadersPool.hpp>
 #include <utils/errorLogger.hpp>
 #include <utils/mathUtils.hpp>
+#include <utils/preferences.hpp>
 #include <graphics_utils/GLCall.hpp>
 
 expression_substr_funky::expression_substr_funky(expression_ptr left, expression_ptr right, double funkval):
@@ -31,6 +32,9 @@ std::string expression_substr_funky::to_string()
 {
 	return "(" + mLeft->to_string() + " - " + mRight->to_string() + ")";
 }
+
+float sketchLine::kSelDist2 = 0.0f;
+bool sketchLine::kFisrstInst = true;
 
 sketchLine::sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, sketch* parent_sk, bool immovable/* = false*/):
 	sketchEntity(parent_sk->basePlane(), types::LINE),
@@ -89,6 +93,11 @@ void sketchLine::init()
 		{"resources/shaders/lineShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because line is expanded on the gpu
 		shadersPool::get_instance().add("line", mShader);
 	}
+	if(kFisrstInst) {
+		kSelDist2 = preferences::get_instance().get_float("seldistcurve2");
+		preferences::get_instance().add_callback("seldistcurve2", std::function<void(float)>([this](float val) { kSelDist2 = val; }));
+		kFisrstInst = false;
+	}
 }
 
 void sketchLine::print(int depth)
@@ -118,7 +127,7 @@ bool sketchLine::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec
 	glm::vec4 onscreen_ndc = cam->mvp()	* glm::vec4(mBasePlane->to_worldPos(closest_to_point(planepos)), 1.0f);
 	glm::vec2 onscreen(	map(onscreen_ndc.x / onscreen_ndc.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
 						map(onscreen_ndc.y / onscreen_ndc.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
-	if(glm::distance2(onscreen, cursor) < 50)
+	if(glm::distance2(onscreen, cursor) < kSelDist2)
 		return true;
 	return false;
 }
