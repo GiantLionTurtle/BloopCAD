@@ -2,23 +2,18 @@
 #ifndef COINCIDENCE_TOOL_HPP_
 #define COINCIDENCE_TOOL_HPP_
 
-#include <tools/common/simpleSelector_tool.hpp>
-// #include <constraintsSolver/equationsSystem.hpp>
-#include <workspaces/sketchDesign.hpp>
+#include "constraint_tool.hpp"
 
-class coincidence_tool : public simpleSelector_tool<sketchDesign> {
-private:
-	// subEquationsSystem mSysA, mSysB;
-	bool mStarted;
+class coincidence_tool : public constraint_tool {
 public:
 	coincidence_tool(sketchDesign* env);
 
 	virtual void init();
 
-	virtual bool manage_button_press(GdkEventButton* event);
+	std::string name() { return "coincidence"; }
+protected:
+	int could_add_entity(sketchEntity_ptr ent);
 
-	virtual std::string name() { return "coincidence"; }
-private:
 	void add_constraint();
 };
 

@@ -4,6 +4,7 @@ project(BloopCAD)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 SET ( CMAKE_CXX_FLAGS "-std=c++17 -ggdb")
+# SET ( CMAKE_CXX_FLAGS "-std=c++17 -O3")
 
 find_package(PkgConfig)
 pkg_check_modules(GTKMM gtkmm-3.0)

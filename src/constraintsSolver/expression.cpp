@@ -490,9 +490,9 @@ double expression_abs::eval()
 }
 expression_ptr expression_abs::derivative()
 {
-	if(eval() > 0) 
+	if(mOperand->eval() > 0) 
 		return mOperand->derivative();
-	return -mOperand->derivative(); // not legit for eval() == 0
+	return -mOperand->derivative(); // not legit if the operands evaluates at 0 because abs'() is not defined at 0
 }
 
 std::string expression_abs::to_string()

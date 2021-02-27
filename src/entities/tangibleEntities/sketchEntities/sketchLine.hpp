@@ -51,6 +51,8 @@ public:
 
 	void init();
 
+	virtual void print(int depth = 0);
+
 	void for_each(std::function<void (entity_ptr)> func);
 
 	void move(glm::vec2 from, glm::vec2 to);

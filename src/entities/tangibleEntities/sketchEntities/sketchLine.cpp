@@ -91,6 +91,14 @@ void sketchLine::init()
 	}
 }
 
+void sketchLine::print(int depth)
+{
+	for(int i = 0; i < depth; ++i) {
+		std::cout<<"\t";
+	}
+	std::cout<<name()<<"[("<<mA->x()->eval()<<",  "<<mA->y()->eval()<<") ; ("<<mB->x()->eval()<<",  "<<mB->y()->eval()<<")]\n";
+}
+
 void sketchLine::for_each(std::function<void (entity_ptr)> func)
 {
 	// func(mA);

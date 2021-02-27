@@ -53,6 +53,14 @@ void sketchPoint::init()
 	set_name("sketchPoint");
 }
 
+void sketchPoint::print(int depth)
+{
+	for(int i = 0; i < depth; ++i) {
+		std::cout<<"\t";
+	}
+	std::cout<<name()<<"("<<mX->eval()<<",  "<<mY->eval()<<")\n";
+}
+
 void sketchPoint::move(glm::vec2 from, glm::vec2 to)
 {
 	set(to);

@@ -159,6 +159,15 @@ bool entity::active() const
 	return hovered() || selected();
 }
 
+void entity::print(int depth)
+{
+	for(int i = 0; i < depth; ++i) {
+		std::cout<<'\t';
+	}
+	std::cout<<name()<<'\n';
+	for_each([&depth](entity_ptr child) { child->print(depth+1); });
+}
+
 void entity::set_require_redraw(bool self /*= true*/)
 {
 	if(mParent) {
@@ -203,4 +212,15 @@ void entity::hovered_child_internal(camera_ptr cam, glm::vec2 cursor_pos, entity
 			}
 		}
 	});
+}
+
+std::ostream& operator<<(std::ostream& os, entity& ent)
+{
+	ent.print();
+	return os;
+}
+std::ostream& operator<<(std::ostream& os, entity ent)
+{
+	ent.print();
+	return os;
 }

@@ -8,79 +8,43 @@
 #include <document.hpp>
 
 verticality_tool::verticality_tool(sketchDesign* env):
-	simpleSelector_tool(env)
+	constraint_tool(env)
 {
-	DEBUG_ASSERT(mEnv, "No valid workspace.");
 
-	mFilter = [](entity_ptr ent) -> bool { 
-		return 	std::dynamic_pointer_cast<geom_2d::point_abstr>(ent).operator bool() ||
-				std::dynamic_pointer_cast<geom_2d::line_abstr>(ent).operator bool(); 
-	};
 }
 
 void verticality_tool::init()
 {
 	DEBUG_ASSERT(mEnv->state(), "No valid state.");
-
-	// // Check if there is only one item in the document's selection stack and if it is a plane, use it
-	// if(mEnv->state()->doc->selection_size() > 0 && mFilter(mEnv->state()->doc->selection_at(0).ent)) {
-	// 	if(!set_systems(mEnv->state()->doc->selection_at(0).ent->verticality()) && 
-	// 	mEnv->state()->doc->selection_size() > 1 && mFilter(mEnv->state()->doc->selection_at(0).ent)) {
-	// 		set_systems(mEnv->state()->doc->selection_at(1).ent->verticality());
-	// 	}
-		
-	// }
 }
 
-bool verticality_tool::manage_button_press(GdkEventButton* event)
+int verticality_tool::could_add_entity(sketchEntity_ptr ent)
 {
-	entity_ptr ent = entity_at_point(glm::vec2(event->x, event->y));
 	if(!ent) {
-		return true;
+		return add_states::COULDNT_ADD;
+	} else if(mEntA) {
+		if(is_point(ent))
+			return add_states::WOULD_BE_COMPLETE;
+	} else {
+		if(is_point(ent)) {
+			return add_states::COULD_ADD;
+		} else if(is_line(ent)) {
+			return add_states::WOULD_BE_COMPLETE;
+		}
 	}
-	// set_systems(ent->verticality());
-	return true;
+	return add_states::COULDNT_ADD;
 }
-
-// bool verticality_tool::set_systems(std::vector<subEquationsSystem> sys)
-// {
-// 	// if(!mStarted && sys.size() == 1) {
-// 	// 	mSysA = sys[0];
-// 	// 	mStarted = true;
-// 	// 	return false;
-// 	// } else if(mStarted && sys.size() == 1) {
-// 	// 	mSysB = sys[0];
-// 	// 	mStarted = false;
-// 	// 	add_constraint();
-// 	// 	return true;
-// 	// } else if(!mStarted && sys.size() == 2) {
-// 	// 	mSysA = sys[0];
-// 	// 	mSysB = sys[1];
-// 	// 	add_constraint();
-// 	// 	return true;
-// 	// }
-// 	return false;
-// }
 
 void verticality_tool::add_constraint()
 {
-	sketch_ptr sk = mEnv->target();
-	DEBUG_ASSERT(sk, "No valid sketch.");
+	if(!mEntA && !mEntB) {
+		LOG_WARNING("Attempting to add incomplete constraint.");
+		return;
+	}
 
-	// sk->backup_system();
-	// // Try to move only one point at a time
-	// mSysA.set_tmpConstant(true);
-	// if(!sk->add_constraint(mSysA - mSysB)) {
-	// 	mSysA.set_tmpConstant(false);
-	// 	mSysA.set_tmpConstant(true);
-	// 	if(!sk->update_constraints()) {
-	// 		mSysA.set_tmpConstant(false);
-	// 		if(!sk->update_constraints()) {
-	// 			sk->revert_system_to_backup();
-	// 			LOG_WARNING("Could not solve system.");
-	// 		}
-	// 	}
-	// }
-	// mSysA.set_tmpConstant(false);
-	// mSysA.set_tmpConstant(false);
+	if(!mEntB) {
+		mEnv->target()->add_constraint(pointPoint_verticality::make(std::static_pointer_cast<sketchLine>(mEntA)));
+	} else {
+		mEnv->target()->add_constraint(pointPoint_verticality::make(std::static_pointer_cast<sketchPoint>(mEntA), std::static_pointer_cast<sketchPoint>(mEntB)));
+	}
 }

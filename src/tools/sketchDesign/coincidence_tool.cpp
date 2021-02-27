@@ -8,72 +8,54 @@
 #include <document.hpp>
 
 coincidence_tool::coincidence_tool(sketchDesign* env):
-	simpleSelector_tool(env)
+	constraint_tool(env)
 {
-	DEBUG_ASSERT(mEnv, "No valid workspace.");
 
-    mFilter = [](entity_ptr ent) -> bool { 
-		return 	std::dynamic_pointer_cast<geom_2d::point_abstr>(ent).operator bool() ||
-				std::dynamic_pointer_cast<geom_2d::line_abstr>(ent).operator bool(); 
-	};
 }
 
 void coincidence_tool::init()
 {
-	mStarted = false;
-
 	DEBUG_ASSERT(mEnv->state(), "No valid state.");
-
-	// Check if there is only one item in the document's selection stack and if it is a plane, use it
-	if(mEnv->state()->doc->selection_size() > 0 && mFilter(mEnv->state()->doc->selection_at(0).ent)) {
-		// mSysA = mEnv->state()->doc->selection_at(0).ent->coincidence();
-		mStarted = true;
-		if(mEnv->state()->doc->selection_size() > 1 && mFilter(mEnv->state()->doc->selection_at(0).ent)) {
-			// mSysB = mEnv->state()->doc->selection_at(1).ent->coincidence();
-			mStarted = false;
-			add_constraint();
-		}
-		
-	}
 }
 
-bool coincidence_tool::manage_button_press(GdkEventButton* event)
-{	
-	entity_ptr ent = entity_at_point(glm::vec2(event->x, event->y));
+int coincidence_tool::could_add_entity(sketchEntity_ptr ent)
+{
 	if(!ent) {
-		return true;
-	}
-	if(!mStarted) {
-		// mSysA = ent->coincidence();
-		mStarted = true;
+		return add_states::COULDNT_ADD;
+	} else if(mEntA) {
+		if(is_curve(mEntA) && is_point(ent)) {
+			return add_states::WOULD_BE_COMPLETE;
+		} else if(is_point(mEntA) && is_point_or_curve(ent)) {
+			return add_states::WOULD_BE_COMPLETE;
+		}
+		return add_states::COULDNT_ADD;
 	} else {
-		// mSysB = ent->coincidence();
-		mStarted = false;
-
-		add_constraint();
+		return is_point_or_curve(ent) ? add_states::COULD_ADD : add_states::COULDNT_ADD;
 	}
-	return true;
 }
 
 void coincidence_tool::add_constraint()
 {
-	sketch_ptr sk = mEnv->target();
-	DEBUG_ASSERT(sk, "No valid sketch.");
+	if(!mEntA || !mEntB) {
+		LOG_WARNING("Attempting to add incomplete constraint.");
+		return;
+	}
 
-	sk->backup_system();
-	// Try to move only one point at a time
-	// mSysA.set_tmpConstant(true);
-	// if(!sk->add_constraint(mSysA - mSysB)) {
-	// 	mSysA.set_tmpConstant(false);
-	// 	mSysA.set_tmpConstant(true);
-	// 	if(!sk->update_constraints()) {
-	// 		mSysA.set_tmpConstant(false);
-	// 		if(!sk->update_constraints()) {
-	// 			sk->revert_system_to_backup();
-	// 			LOG_WARNING("Could not solve system.");
-	// 		}
-	// 	}
-	// }
-	// mSysA.set_tmpConstant(false);
-	// mSysA.set_tmpConstant(false);
+	sketchEntity_ptr curve;
+	sketchPoint_ptr pt;
+	if(is_point(mEntA)) {
+		pt = std::static_pointer_cast<sketchPoint>(mEntA);
+		curve = mEntB;
+	} else {
+		pt = std::static_pointer_cast<sketchPoint>(mEntB);
+		curve = mEntA;
+	}
+
+	if(curve->type() == sketchEntity::LINE) {
+		mEnv->target()->add_constraint(pointLine_distance::make(pt, std::static_pointer_cast<sketchLine>(curve), expConst::zero));
+	} else if(curve->type() == sketchEntity::CIRCLE) {
+		mEnv->target()->add_constraint(pointCircle_distance::make(pt, std::static_pointer_cast<sketchCircle>(curve)));
+	} else {
+		mEnv->target()->add_constraint(pointPoint_distance::make(pt, std::static_pointer_cast<sketchPoint>(curve), expConst::zero));
+	}
 }

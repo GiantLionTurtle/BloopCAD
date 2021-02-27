@@ -18,6 +18,8 @@ sketch::sketch(geom_3d::plane_abstr_ptr base_plane):
 {
 	set_name("sketch");
 	create_origin();
+
+	mSystem.set_solver(constraintSystem::LevenbergMarquardt);
 }
 sketch::sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent):
 	mBasePlane(base_plane),
@@ -25,6 +27,20 @@ sketch::sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent):
 {
 	set_name("sketch");
 	create_origin();
+
+	mSystem.set_solver(constraintSystem::LevenbergMarquardt);
+}
+
+void sketch::print(int depth)
+{
+	for(int i = 0; i < depth; ++i) {
+		std::cout<<'\t';
+	}
+	std::cout<<name()<<'\n';
+
+	for(int i = 7; i < mGeometries.size(); ++i) {
+		mGeometries[i]->print(depth+1);
+	}
 }
 
 sketchEntity_ptr sketch::geometry_at_point(camera_ptr cam, glm::vec2 cursor)

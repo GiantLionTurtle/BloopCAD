@@ -39,6 +39,8 @@ public:
 	*/
 	sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent);
 
+	void print(int depth = 0);
+
 	sketchEntity_ptr geometry_at_point(camera_ptr cam, glm::vec2 cursor);
 
 	void add_geometry(sketchEntity_ptr ent);

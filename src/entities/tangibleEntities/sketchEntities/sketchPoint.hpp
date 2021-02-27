@@ -20,6 +20,8 @@ public:
 	sketchPoint(variable_ptr x_, variable_ptr y_, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
 	virtual ~sketchPoint() {}
 
+	void print(int depth = 0);
+
 	void init();
 
 	glm::vec2 pos() const { return glm::vec2(mX->eval(), mY->eval()); }

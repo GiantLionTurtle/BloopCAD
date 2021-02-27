@@ -170,6 +170,8 @@ public:
 	std::string name() const { return mName; }
 	void set_name(std::string const& name_) { mName = name_; }
 
+	virtual void print(int depth = 0);
+
 	entityHandle* handle() const { return mHandle; }
 	virtual void set_handle(entityHandle* handle_) { mHandle = handle_; }
 
@@ -207,5 +209,9 @@ protected:
 
 	void hovered_child_internal(camera_ptr cam, glm::vec2 cursor_pos, entity_ptr& candidate, float& min_dist, std::function<bool (entity_ptr)> filter_func);
 };
+
+std::ostream& operator<<(std::ostream& os, entity_ptr ent);
+std::ostream& operator<<(std::ostream& os, entity& ent);
+std::ostream& operator<<(std::ostream& os, entity ent);
 
 #endif

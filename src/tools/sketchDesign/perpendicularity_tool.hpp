@@ -2,23 +2,18 @@
 #ifndef PERPENDICULARITY_TOOL_HPP_
 #define PERPENDICULARITY_TOOL_HPP_
 
-#include <tools/common/simpleSelector_tool.hpp>
-// #include <constraintsSolver/expressionVector3.hpp>
-#include <workspaces/sketchDesign.hpp>
+#include "constraint_tool.hpp"
 
-class perpendicularity_tool : public simpleSelector_tool<sketchDesign> {
-private:
-	// subEquationsSystem_vec mSysA, mSysB;
-	bool mStarted;
+class perpendicularity_tool : public constraint_tool {
 public:
 	perpendicularity_tool(sketchDesign* env);
 
-	virtual void init();
+	void init();
 
-	virtual bool manage_button_press(GdkEventButton* event);
+	std::string name() { return "perpendicularity"; }
+protected:
+	int could_add_entity(sketchEntity_ptr ent);
 
-	virtual std::string name() { return "perpendicularity"; }
-private:
 	void add_constraint();
 };
 

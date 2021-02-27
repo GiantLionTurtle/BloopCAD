@@ -203,28 +203,29 @@ void sketchDesign::equality()
 
 void sketchDesign::to_svg()
 {
-	XML_document svgDoc;
-	XML_declaration* dec = new XML_declaration;
-	dec->add_lastAttribute(new XML_attribute("version", "1.0"));
-	dec->add_lastAttribute(new XML_attribute("encoding", "utf-8"));
-	svgDoc.add_lastChild(dec);
-	XML_element* svg = new XML_element("svg");
-	svgDoc.add_lastChild(svg);
-	glm::vec2 min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max()), max(std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
-	if(mState && mState->target) {
-		mState->target->for_each([&svg, &min, &max, this](entity_ptr ent) {
-			std::shared_ptr<svgEntity> svgEnt = std::dynamic_pointer_cast<svgEntity>(ent);
-			sketch_ptr sk = target();
-			if(svgEnt && sk) {
-				svg->add_lastChild(svgEnt->to_svg(sk->basePlane().get(), min, max));
-			}
-		});
-	}
-	svg->set_attribute("width", "800");
-	svg->set_attribute("height", "600");
-	svg->set_attribute("viewbox", std::to_string(min.x) + " " + std::to_string(min.y) + " " + std::to_string(max.x-min.x) + " " + std::to_string(max.y-min.y));
-	std::cout<<"Saving sketch in output.svg!\n";
-	svgDoc.save("output.svg");
+	// XML_document svgDoc;
+	// XML_declaration* dec = new XML_declaration;
+	// dec->add_lastAttribute(new XML_attribute("version", "1.0"));
+	// dec->add_lastAttribute(new XML_attribute("encoding", "utf-8"));
+	// svgDoc.add_lastChild(dec);
+	// XML_element* svg = new XML_element("svg");
+	// svgDoc.add_lastChild(svg);
+	// glm::vec2 min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max()), max(std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
+	// if(mState && mState->target) {
+	// 	mState->target->for_each([&svg, &min, &max, this](entity_ptr ent) {
+	// 		std::shared_ptr<svgEntity> svgEnt = std::dynamic_pointer_cast<svgEntity>(ent);
+	// 		sketch_ptr sk = target();
+	// 		if(svgEnt && sk) {
+	// 			svg->add_lastChild(svgEnt->to_svg(sk->basePlane().get(), min, max));
+	// 		}
+	// 	});
+	// }
+	// svg->set_attribute("width", "800");
+	// svg->set_attribute("height", "600");
+	// svg->set_attribute("viewbox", std::to_string(min.x) + " " + std::to_string(min.y) + " " + std::to_string(max.x-min.x) + " " + std::to_string(max.y-min.y));
+	// std::cout<<"Saving sketch in output.svg!\n";
+	// svgDoc.save("output.svg");
+	target()->print();
 }
 
 void sketchDesign::finish()

@@ -47,7 +47,7 @@ int constraintSystem::solve()
 				output = std::max(clust->solve_DL(), output);
 				break;
 			case algorithm::LevenbergMarquardt:
-				output = std::max(clust->solve_LM(), output);
+				output = std::max(clust->solve_LM2(), output);
 				break;
 			default:
 				std::cout<<"Unknown solver "<<mAlgorithm<<"\n";
@@ -65,7 +65,7 @@ void constraintSystem::breakDown_problem()
 	std::vector<int> constr_clust(mConstraints.size()), var_clust(mVariables.size());
 	int num_clusters = g.connected_clusters(constr_clust, var_clust);
 	for(int i = 0; i < num_clusters; ++i) {
-		mSubClusters.push_back(new constraintCluster({}, {}, 1));
+		mSubClusters.push_back(new constraintCluster({}, {}, 0));
 	}
 
 	for (size_t i = 0; i < constr_clust.size(); ++i) {

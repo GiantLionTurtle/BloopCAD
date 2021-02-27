@@ -14,7 +14,7 @@ class sketchEntity;
 using sketchEntity_ptr = std::shared_ptr<sketchEntity>;
 
 class sketchEntity : public tangibleEntity {
-public: 
+public:
 	enum types { POINT, LINE, CIRCLE };
 protected:
 	geom_3d::plane_abstr_ptr mBasePlane;
