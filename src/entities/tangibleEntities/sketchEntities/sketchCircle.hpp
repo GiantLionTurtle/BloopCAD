@@ -23,7 +23,7 @@ private:
 	sketchPoint_ptr mCenter;
 	variable_ptr mRadius;
 public:
-	sketchCircle(glm::vec2 center_, float radius_, sketch* parent_sk);
+	sketchCircle(glm::vec2 center_, float radius_, geom_3d::plane_abstr_ptr basePlane_);
 	virtual ~sketchCircle();
 
 	void init();
@@ -36,6 +36,7 @@ public:
 	void set_tmpConstant(bool const_);
 
 	void for_each(std::function<void (entity_ptr)> func);
+	void for_each(std::function<void(sketchEntity_ptr geom)> func);
 
 	glm::vec2 posCenter() { return mCenter->pos(); }
 	sketchPoint_ptr center() { return mCenter; }

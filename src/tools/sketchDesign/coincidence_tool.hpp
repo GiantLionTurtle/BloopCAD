@@ -8,8 +8,6 @@ class coincidence_tool : public constraint_tool {
 public:
 	coincidence_tool(sketchDesign* env);
 
-	virtual void init();
-
 	std::string name() { return "coincidence"; }
 protected:
 	int could_add_entity(sketchEntity_ptr ent);

@@ -8,8 +8,6 @@ class verticality_tool : public constraint_tool {
 public:
 	verticality_tool(sketchDesign* env);
 
-	void init();
-
 	std::string name() { return "verticality_tool"; }
 protected:
 	int could_add_entity(sketchEntity_ptr ent);

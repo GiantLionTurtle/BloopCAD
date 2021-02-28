@@ -16,9 +16,10 @@
 */
 class line_tool : public tool<sketchDesign> {
 private:
-	sketchPoint_ptr mStartPos, mEndPos; // start and end pos of the line
-	sketchLine_ptr mLine;
+	sketchPoint_ptr mEndPos; // end pos of the last line added
+	sketchLine_ptr mLinePreview;
 	bool started; // Whether or not the drawing of the line has started
+	bool mIsMultiline;
 public:
 	/*
 		@function line_tool creates a line_tool object
@@ -30,7 +31,10 @@ public:
 	/*
 		@function init makes sure the started flag is down
 	*/
-	virtual void init();
+	void init();
+	void finish();
+	
+	virtual bool manage_key_press(GdkEventKey* event);
 
 	/*
 		@function manage_mouse_move will update a temporary line to display a non placed line

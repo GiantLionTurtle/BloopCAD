@@ -13,11 +13,6 @@ horizontality_tool::horizontality_tool(sketchDesign* env):
 
 }
 
-void horizontality_tool::init()
-{
-	DEBUG_ASSERT(mEnv->state(), "No valid state.");
-}
-
 int horizontality_tool::could_add_entity(sketchEntity_ptr ent)
 {
 	if(!ent) {

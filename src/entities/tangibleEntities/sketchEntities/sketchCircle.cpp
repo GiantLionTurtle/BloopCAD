@@ -10,12 +10,12 @@
 float sketchCircle::kSelDist2 = 0.0f;
 bool sketchCircle::kFisrstInst = true;
 
-sketchCircle::sketchCircle(glm::vec2 center_, float radius_, sketch* parent_sk):
-	sketchEntity(parent_sk->basePlane(), types::CIRCLE),
-	mCenter(sketchPoint_ptr(new sketchPoint(center_, parent_sk->basePlane()))),
+sketchCircle::sketchCircle(glm::vec2 center_, float radius_, geom_3d::plane_abstr_ptr basePlane_):
+	sketchEntity(basePlane_, types::CIRCLE),
+	mCenter(sketchPoint_ptr(new sketchPoint(center_, basePlane_))),
 	mRadius(expression_variable::make(radius_))
 {
-	parent_sk->add_geometry(mCenter);
+	mCenter->set_parent(this);
 	init();
 }
 sketchCircle::~sketchCircle()
@@ -89,7 +89,11 @@ void sketchCircle::set_tmpConstant(bool const_)
 
 void sketchCircle::for_each(std::function<void (entity_ptr)> func)
 {
-	// func(mCenter);
+	func(mCenter);
+}
+void sketchCircle::for_each(std::function<void (sketchEntity_ptr)> func)
+{
+	func(mCenter);
 }
 
 void sketchCircle::set_radius(float newval)

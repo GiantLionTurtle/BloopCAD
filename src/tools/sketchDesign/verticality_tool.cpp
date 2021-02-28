@@ -13,11 +13,6 @@ verticality_tool::verticality_tool(sketchDesign* env):
 
 }
 
-void verticality_tool::init()
-{
-	DEBUG_ASSERT(mEnv->state(), "No valid state.");
-}
-
 int verticality_tool::could_add_entity(sketchEntity_ptr ent)
 {
 	if(!ent) {

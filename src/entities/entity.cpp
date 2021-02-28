@@ -140,12 +140,12 @@ void entity::set_exists(bool exists_)
 		mState |= BLOOP_ENTITY_EXISTS_FLAG;
 	} else {
 		mState &= ~BLOOP_ENTITY_EXISTS_FLAG;
-	}		
-	if(!exists()) {
-		set_hover(false);
-		set_selected(false);
-		set_hidden(false);
 	}
+	// if(!exists()) {
+	// 	set_hover(false);
+	// 	set_selected(false);
+	// 	set_hidden(false);
+	// }
 	if(mHandle)
 		mHandle->set_exists(exists_);
 }
@@ -172,7 +172,7 @@ void entity::set_require_redraw(bool self /*= true*/)
 {
 	if(mParent) {
 		mParent->set_require_redraw(false);
-	} 
+	}
 	if(self) {
 		mRequire_selfRedraw = true;
 	} else {

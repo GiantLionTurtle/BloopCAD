@@ -13,6 +13,9 @@ constraint_tool::constraint_tool(sketchDesign* env):
 void constraint_tool::init()
 {
 	DEBUG_ASSERT(mEnv->state(), "No valid state.");
+	mEntA = nullptr;
+	mEntB = nullptr;
+	mCurrentHover = nullptr;
 }
 
 bool constraint_tool::manage_button_press(GdkEventButton* event)

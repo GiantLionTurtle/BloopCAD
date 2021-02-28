@@ -13,11 +13,6 @@ coincidence_tool::coincidence_tool(sketchDesign* env):
 
 }
 
-void coincidence_tool::init()
-{
-	DEBUG_ASSERT(mEnv->state(), "No valid state.");
-}
-
 int coincidence_tool::could_add_entity(sketchEntity_ptr ent)
 {
 	if(!ent) {

@@ -13,11 +13,6 @@ perpendicularity_tool::perpendicularity_tool(sketchDesign* env):
 
 }
 
-void perpendicularity_tool::init()
-{
-	DEBUG_ASSERT(mEnv->state(), "No valid state.");
-}
-
 int perpendicularity_tool::could_add_entity(sketchEntity_ptr ent)
 {
 	if(!ent) {

@@ -36,28 +36,24 @@ std::string expression_substr_funky::to_string()
 float sketchLine::kSelDist2 = 0.0f;
 bool sketchLine::kFisrstInst = true;
 
-sketchLine::sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, sketch* parent_sk, bool immovable/* = false*/):
-	sketchEntity(parent_sk->basePlane(), types::LINE),
+sketchLine::sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
+	sketchEntity(basePlane_,  types::LINE),
 	mA(ptA),
 	mB(ptB)
 {
-	parent_sk->add_geometry(mA);
-	parent_sk->add_geometry(mB);
-	// mA->set_parent(this);
-	// mB->set_parent(this);
+	mA->set_parent(this);
+	mB->set_parent(this);
 	if(immovable) 
 		set_constant();
 	init();
 }
-sketchLine::sketchLine(glm::vec2 ptA, glm::vec2 ptB, sketch* parent_sk, bool immovable/* = false*/):
-	sketchEntity(parent_sk->basePlane(), types::LINE),
-	mA(sketchPoint_ptr(new sketchPoint(ptA, parent_sk->basePlane(), immovable))),
-	mB(sketchPoint_ptr(new sketchPoint(ptB, parent_sk->basePlane(), immovable)))
+sketchLine::sketchLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
+	sketchEntity(basePlane_, types::LINE),
+	mA(sketchPoint_ptr(new sketchPoint(ptA, basePlane_, immovable))),
+	mB(sketchPoint_ptr(new sketchPoint(ptB, basePlane_, immovable)))
 {
-	parent_sk->add_geometry(mA);
-	parent_sk->add_geometry(mB);
-	// mA->set_parent(this);
-	// mB->set_parent(this);
+	mA->set_parent(this);
+	mB->set_parent(this);
 	if(immovable) 
 		set_constant();
 	init();
@@ -106,8 +102,13 @@ void sketchLine::print(int depth)
 
 void sketchLine::for_each(std::function<void (entity_ptr)> func)
 {
-	// func(mA);
-	// func(mB);
+	func(mA);
+	func(mB);
+}
+void sketchLine::for_each(std::function<void(sketchEntity_ptr geom)> func)
+{
+	func(mA);
+	func(mB);
 }
 
 void sketchLine::move(glm::vec2 from, glm::vec2 to)
@@ -152,6 +153,11 @@ void sketchLine::notify_childUpdate()
 	// 	dirX->set_funk(dir.x);
 	// 	dirY->set_funk(dir.y);
 	// }
+}
+
+sketchLine_ptr sketchLine::clone()
+{
+	return std::make_shared<sketchLine>(mA->pos(), mB->pos(), mBasePlane);
 }
 
 void sketchLine::update_VB()

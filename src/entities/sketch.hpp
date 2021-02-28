@@ -11,6 +11,9 @@
 #include <memory>
 #include <vector>
 
+class sketch;
+using sketch_ptr = std::shared_ptr<sketch>;
+
 /*
 	@class sketch describes a sketch which is a bunch of geometries with constraints
 	@parent : entity
@@ -20,6 +23,8 @@ private:
 	geom_3d::plane_abstr_ptr mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
 
 	std::vector<sketchEntity_ptr> mGeometries;
+	std::vector<sketchEntity_ptr> mToolPreviewGeometries;
+
 	folder_ptr mOrigin;
 
 	constraintSystem mSystem;
@@ -44,6 +49,8 @@ public:
 	sketchEntity_ptr geometry_at_point(camera_ptr cam, glm::vec2 cursor);
 
 	void add_geometry(sketchEntity_ptr ent);
+	void add_toolPreviewGeometry(sketchEntity_ptr ent);
+	void clear_toolPreviewGeometries();
 
 	virtual void for_each(std::function<void (entity_ptr)> func);
 

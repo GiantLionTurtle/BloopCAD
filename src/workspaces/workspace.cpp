@@ -29,13 +29,11 @@ workspace::workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> c
 
 bool workspace::manage_key_press(GdkEventKey* event)
 {
-	if(event->keyval == GDK_KEY_Escape) { // Switch tool on escape, will be changed for multistate tools
-		if(mState && mState->currentTool) {
+	if(mState && mState->currentTool) {
+		if(mState->currentTool->manage_key_press(event) && event->keyval == GDK_KEY_Escape) {
 			mState->currentTool->finish(); // Terminate the tool before switching to the default tool
 			set_tool(mDefaultTool);
 		}
-	} else if(mState && mState->currentTool) {
-		return mState->currentTool->manage_key_press(event); // Just pass the event deeper
 	}
 	return true;
 }

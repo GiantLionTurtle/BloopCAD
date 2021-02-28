@@ -7,9 +7,6 @@
 
 #include <memory>
 
-class sketch;
-using sketch_ptr = std::shared_ptr<sketch>;
-
 class sketchEntity;
 using sketchEntity_ptr = std::shared_ptr<sketchEntity>;
 
@@ -25,6 +22,8 @@ public:
 		mBasePlane(basePlane_)
 	{}
 	virtual ~sketchEntity() {}
+
+	virtual void for_each(std::function<void(sketchEntity_ptr geom)> func) {}
 
 	virtual void move(glm::vec2 from, glm::vec2 to) {}
 

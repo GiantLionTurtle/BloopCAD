@@ -46,8 +46,8 @@ private:
 	sketchPoint_ptr mA, mB;
 	expression_ptr mLength2;
 public:
-	sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, sketch* parent_sk, bool immovable = false);
-	sketchLine(glm::vec2 ptA, glm::vec2 ptB, sketch* parent_sk, bool immovable = false);
+	sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
+	sketchLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
 	virtual ~sketchLine() {}
 
 	void notify(int msg = 0) { set_require_VBUpdate(); }
@@ -57,7 +57,8 @@ public:
 	virtual void print(int depth = 0);
 
 	void for_each(std::function<void (entity_ptr)> func);
-
+	void for_each(std::function<void(sketchEntity_ptr geom)> func);
+	
 	void move(glm::vec2 from, glm::vec2 to);
 
 	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);
@@ -71,6 +72,8 @@ public:
 	glm::vec2 posB() { return mB->pos(); }
 	sketchPoint_ptr A() { return mA; }
 	sketchPoint_ptr B() { return mB; }
+
+	sketchLine_ptr clone();
 
 	expression_ptr length2() { return mLength2; }
 
