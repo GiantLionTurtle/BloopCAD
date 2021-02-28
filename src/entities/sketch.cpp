@@ -19,7 +19,7 @@ sketch::sketch(geom_3d::plane_abstr_ptr base_plane):
 	set_name("sketch");
 	create_origin();
 
-	mSystem.set_solver(constraintSystem::LevenbergMarquardt);
+	// mSystem.set_solver(constraintSystem::LevenbergMarquardt);
 }
 sketch::sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent):
 	mBasePlane(base_plane),
@@ -28,7 +28,7 @@ sketch::sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent):
 	set_name("sketch");
 	create_origin();
 
-	mSystem.set_solver(constraintSystem::LevenbergMarquardt);
+	// mSystem.set_solver(constraintSystem::LevenbergMarquardt);
 }
 
 void sketch::print(int depth)
@@ -73,36 +73,50 @@ void sketch::for_each(std::function<void (entity_ptr)> func)
 	func(mOrigin);
 }
 
-bool sketch::add_constraint(std::shared_ptr<constraint_abstract> cons) 
+bool sketch::add_constraint(std::shared_ptr<constraint_abstract> cons, sketchEntity_ptr immovable_hint) 
 {
 	mSystem.add_constraint(cons);
+
+	if(immovable_hint) {
+		immovable_hint->set_tmpConstant(true);
+		backup_system();
+		int output = mSystem.solve();
+		immovable_hint->set_tmpConstant(false);
+		if(output == constraintSystem::SUCCESS) {
+			update();
+			return true;
+		}
+		revert_system_to_backup();
+	}
+
+	backup_system();
 	if(mSystem.solve() == constraintSystem::solveOutput::SUCCESS) {
 		update();
-		// backup_system();
 		return true;
 	} 
+	revert_system_to_backup();
 	LOG_WARNING("*cries*");
 	return false;
 }
 
 bool sketch::update_constraints()
 {
-	if(mSystem.solve() >= 0) {
+	backup_system();
+	if(mSystem.solve() == constraintSystem::SUCCESS) {
 		update();
-		// backup_system();
 		return true;
 	}
+	revert_system_to_backup();
 	return false;
 }
 
 void sketch::backup_system()
 {
-	mSystemBackup = mSystem.varState();
+	mSystem.varState(mSystemBackup);
 }
 void sketch::revert_system_to_backup()
 {
 	mSystem.set_varState(mSystemBackup);
-	update();
 }
 
 void sketch::invoke_workspace(document* doc)

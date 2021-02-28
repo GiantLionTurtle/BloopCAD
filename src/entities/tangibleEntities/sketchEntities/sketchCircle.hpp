@@ -32,6 +32,9 @@ public:
 
 	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);
 
+	void set_constant();
+	void set_tmpConstant(bool const_);
+
 	void for_each(std::function<void (entity_ptr)> func);
 
 	glm::vec2 posCenter() { return mCenter->pos(); }

@@ -48,15 +48,16 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 		camera_ptr cam = mEnv->state()->cam;
 		glm::vec2 pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 		if(mMoving) {
-			sk->backup_system();
 			mDraggedEnt->move(mPrevPos, pos);
-			// mDraggedEnt->set_tmpConstant(true); 	
-			if(!sk->update_constraints()) {
-				// mDraggedEnt->set_tmpConstant(false);
-				if(!sk->update_constraints())
-					sk->revert_system_to_backup();
+			mDraggedEnt->set_tmpConstant(true);
+			bool update_attempt = sk->update_constraints();
+			mDraggedEnt->set_tmpConstant(false);
+			if(!update_attempt) {
+				LOG_WARNING("Failed update, attempting to recover.");
+				update_attempt = sk->update_constraints();
+				if(!update_attempt)
+					LOG_WARNING("Could not recover from previous error.");
 			}
-			// mDraggedEnt->set_tmpConstant(false);
 		}
 		mMoving = true;
 		mPrevPos = pos;

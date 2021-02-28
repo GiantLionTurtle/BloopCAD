@@ -30,6 +30,9 @@ public:
 
 	virtual bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor) { return false; }
 
+	virtual void set_constant() = 0;
+	virtual void set_tmpConstant(bool const_) = 0;
+
 	geom_3d::plane_abstr_ptr basePlane() const { return mBasePlane; }
 	virtual void set_basePlane(geom_3d::plane_abstr_ptr basePlane_) { mBasePlane = basePlane_; set_require_VBUpdate(); }
 

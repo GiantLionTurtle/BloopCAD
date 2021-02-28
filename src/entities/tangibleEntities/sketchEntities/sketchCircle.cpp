@@ -74,6 +74,19 @@ bool sketchCircle::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::v
 	return false;
 }
 
+void sketchCircle::set_constant()
+{
+	mRadius->set_is_coef(true);
+}
+void sketchCircle::set_tmpConstant(bool const_)
+{
+	if(const_) {
+		mRadius->set_as_coef();
+	} else {
+		mRadius->set_as_var();
+	}
+}
+
 void sketchCircle::for_each(std::function<void (entity_ptr)> func)
 {
 	// func(mCenter);

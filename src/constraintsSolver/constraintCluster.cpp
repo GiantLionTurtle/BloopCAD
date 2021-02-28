@@ -366,6 +366,9 @@ int constraintCluster::solve_DL(double eps)
         }
     }
 
+    if(e.squaredNorm() >= eps*eps)
+        output = solveOutput::FAILURE;
+
     if(mVerboseLevel) {
         switch(output) {
         case solveOutput::SUCCESS:

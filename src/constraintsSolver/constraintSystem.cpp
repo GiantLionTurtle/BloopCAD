@@ -65,7 +65,7 @@ void constraintSystem::breakDown_problem()
 	std::vector<int> constr_clust(mConstraints.size()), var_clust(mVariables.size());
 	int num_clusters = g.connected_clusters(constr_clust, var_clust);
 	for(int i = 0; i < num_clusters; ++i) {
-		mSubClusters.push_back(new constraintCluster({}, {}, 0));
+		mSubClusters.push_back(new constraintCluster({}, {}, 1));
 	}
 
 	for (size_t i = 0; i < constr_clust.size(); ++i) {
@@ -86,13 +86,12 @@ void constraintSystem::clear_subClusters()
 	mSubClusters.clear();
 }
 
-std::vector<double> constraintSystem::varState()
+void constraintSystem::varState(std::vector<double>& state)
 {
-	std::vector<double> out(mVariables.size());
+	state.resize(mVariables.size());
 	for(int i = 0; i < mVariables.size(); ++i) {
-		out[i] = mVariables[i]->eval();
+		state[i] = mVariables[i]->eval();
 	}
-	return out;
 }
 void constraintSystem::set_varState(std::vector<double> state)
 {

@@ -52,10 +52,10 @@ void coincidence_tool::add_constraint()
 	}
 
 	if(curve->type() == sketchEntity::LINE) {
-		mEnv->target()->add_constraint(pointLine_distance::make(pt, std::static_pointer_cast<sketchLine>(curve), expConst::zero));
+		mEnv->target()->add_constraint(pointLine_distance::make(pt, std::static_pointer_cast<sketchLine>(curve), expConst::zero), curve);
 	} else if(curve->type() == sketchEntity::CIRCLE) {
-		mEnv->target()->add_constraint(pointCircle_distance::make(pt, std::static_pointer_cast<sketchCircle>(curve)));
+		mEnv->target()->add_constraint(pointCircle_distance::make(pt, std::static_pointer_cast<sketchCircle>(curve)), curve);
 	} else {
-		mEnv->target()->add_constraint(pointPoint_distance::make(pt, std::static_pointer_cast<sketchPoint>(curve), expConst::zero));
+		mEnv->target()->add_constraint(pointPoint_distance::make(pt, std::static_pointer_cast<sketchPoint>(curve), expConst::zero), mEntB);
 	}
 }

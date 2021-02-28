@@ -15,10 +15,8 @@ sketchPoint::sketchPoint(glm::vec2 pos_2d, geom_3d::plane_abstr_ptr basePlane_, 
 	mX(expression_variable::make(pos_2d.x)),
 	mY(expression_variable::make(pos_2d.y))
 {
-	if(immovable) {
-		mX->set_is_coef(true);
-		mY->set_is_coef(true);
-	}
+	if(immovable)
+		set_constant();
 	init();
 }
 sketchPoint::sketchPoint(variable_ptr x_, variable_ptr y_, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
@@ -26,10 +24,8 @@ sketchPoint::sketchPoint(variable_ptr x_, variable_ptr y_, geom_3d::plane_abstr_
 	mX(x_),
 	mY(y_)
 {
-	if(immovable) {
-		mX->set_is_coef(true);
-		mY->set_is_coef(true);
-	}
+	if(immovable) 
+		set_constant();
 	init();
 }
 
@@ -98,8 +94,13 @@ void sketchPoint::set_constant()
 }
 void sketchPoint::set_tmpConstant(bool const_)
 {
-	mX->set_as_coef();
-	mY->set_as_coef();
+	if(const_) {
+		mX->set_as_coef();
+		mY->set_as_coef();
+	} else {
+		mX->set_as_var();
+		mY->set_as_var();
+	}
 }
 
 void sketchPoint::update_VB()

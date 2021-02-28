@@ -45,10 +45,8 @@ sketchLine::sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, sketch* parent_
 	parent_sk->add_geometry(mB);
 	// mA->set_parent(this);
 	// mB->set_parent(this);
-	if(immovable) {
-		mA->set_constant();
-		mB->set_constant();
-	}
+	if(immovable) 
+		set_constant();
 	init();
 }
 sketchLine::sketchLine(glm::vec2 ptA, glm::vec2 ptB, sketch* parent_sk, bool immovable/* = false*/):
@@ -60,10 +58,8 @@ sketchLine::sketchLine(glm::vec2 ptA, glm::vec2 ptB, sketch* parent_sk, bool imm
 	parent_sk->add_geometry(mB);
 	// mA->set_parent(this);
 	// mB->set_parent(this);
-	if(immovable) {
-		mA->set_constant();
-		mB->set_constant();
-	}
+	if(immovable) 
+		set_constant();
 	init();
 }
 
@@ -130,6 +126,17 @@ bool sketchLine::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec
 	if(glm::distance2(onscreen, cursor) < kSelDist2)
 		return true;
 	return false;
+}
+
+void sketchLine::set_constant()
+{
+	mA->set_constant();
+	mB->set_constant();
+}
+void sketchLine::set_tmpConstant(bool const_)
+{
+	mA->set_tmpConstant(const_);
+	mB->set_tmpConstant(const_);
 }
 
 void sketchLine::notify_childUpdate()

@@ -62,6 +62,9 @@ public:
 
 	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);
 
+	void set_constant();
+	void set_tmpConstant(bool const_);
+
 	void notify_childUpdate();
 
 	glm::vec2 posA() { return mA->pos(); }

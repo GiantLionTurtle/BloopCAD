@@ -36,7 +36,7 @@ public:
 
 	void clear_subClusters();
 
-	std::vector<double> varState();
+	void varState(std::vector<double>& state);
 	void set_varState(std::vector<double> state);
 private:
 	class constraintGraph {
