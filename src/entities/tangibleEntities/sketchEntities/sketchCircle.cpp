@@ -9,6 +9,8 @@
 
 float sketchCircle::kSelDist2 = 0.0f;
 bool sketchCircle::kFisrstInst = true;
+glm::vec3 sketchCircle::kColor = glm::vec3(0.0); 
+glm::vec3 sketchCircle::kColorHovered = glm::vec3(0.0);
 
 sketchCircle::sketchCircle(glm::vec2 center_, float radius_, geom_3d::plane_abstr_ptr basePlane_):
 	sketchEntity(basePlane_, types::CIRCLE),
@@ -55,6 +57,11 @@ void sketchCircle::init()
 	if(kFisrstInst) {
 		kSelDist2 = preferences::get_instance().get_float("seldistcurve2");
 		preferences::get_instance().add_callback("seldistcurve2", std::function<void(float)>([this](float val) { kSelDist2 = val; }));
+		kColor = preferences::get_instance().get_vec3("sketchEntityColor");
+		preferences::get_instance().add_callback("sketchEntityColor", std::function<void(glm::vec3)>([this](glm::vec3 val) { kColor = val; }));
+		kColorHovered = preferences::get_instance().get_vec3("sketchEntityColorHovered");
+		preferences::get_instance().add_callback("sketchEntityColorHovered", std::function<void(glm::vec3)>([this](glm::vec3 val) { kColorHovered = val; }));
+
 		kFisrstInst = false;
 	}
 }
@@ -116,9 +123,9 @@ void sketchCircle::draw_impl(camera_ptr cam, int frame)
 		update_VB();
 
 	mShader->bind();
-	glm::vec4 color = glm::vec4(mColor, 1.0f);
+	glm::vec4 color = glm::vec4(kColor, 1.0f);
 	if(hovered()) {
-		color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		color = glm::vec4(kColorHovered, 1.0f);
 	} else if(selected()) {
 		color = glm::vec4(0.01f, 0.70f, 0.99f, 1.0f);
 	}

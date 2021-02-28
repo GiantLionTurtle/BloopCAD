@@ -15,8 +15,8 @@ class sketchCircle : public sketchEntity, public geom_2d::circle_abstr {
 private:
 	static float kSelDist2;
 	static bool kFisrstInst;
+	static glm::vec3 kColor, kColorHovered; // Line color
 
-	const glm::vec3 mColor = glm::vec3(0.0f, 0.89f, 0.725f); // Curve color
 	glm::vec3 mVertices[CIRCLE_RES]; // The vertices describing the quand containing the circle
 	unsigned int mIndices[2*CIRCLE_RES];
 

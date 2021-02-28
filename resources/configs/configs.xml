@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <configs>
-    <background type="vec3">1.0 ; 0.3 ; 1.0</background>
+    <background type="vec3">0.576 ; 0.467 ; 0.561</background>
+    <sketchEntityColor type="vec3">0.722 ; 0.0 ; 0.475</sketchEntityColor>
+    <sketchEntityColorHovered type="vec3">0.0 ; 0.0 ; 0.0</sketchEntityColorHovered>    
     <camtrans type="long">500</camtrans>
     <seldistpoint2 type="float">50.0</seldistpoint2>
     <seldistcurve2 type="float">25.0</seldistcurve2>

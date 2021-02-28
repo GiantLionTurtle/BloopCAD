@@ -39,8 +39,8 @@ private:
 
 	static float kSelDist2;
 	static bool kFisrstInst;
+	static glm::vec3 kColor, kColorHovered; // Line color
 
-	const glm::vec3 mColor = glm::vec3(0.0f, 0.89f, 0.725f); // Line color
 	glm::vec3 mVertices[2]; // The vertices describing the line
 
 	sketchPoint_ptr mA, mB;
