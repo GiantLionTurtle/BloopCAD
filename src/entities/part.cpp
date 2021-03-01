@@ -6,13 +6,15 @@
 #include "tangibleEntities/point.hpp"
 
 part::part():
-	entity()
+	entity(),
+	quad(glm::vec3(1.0f, 1.0f, 1.0f), 20, 20, "resources/textures/images/icons/icon.png")
 {
 	set_name("Part");
 	init_scene();
 }
 part::part(entity* parent):
-	entity(parent)
+	entity(parent),
+	quad(glm::vec3(1.0f, 1.0f, 1.0f), 20, 20, "resources/textures/images/icons/icon.png")
 {
 	set_name("Part");
 	init_scene();
@@ -90,5 +92,5 @@ sketch_ptr part::get_sketch(int ind)
 
 void part::draw_impl(camera_ptr cam, int frame)
 {
-
+	quad.draw(cam, frame);
 }

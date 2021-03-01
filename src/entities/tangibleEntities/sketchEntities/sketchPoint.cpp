@@ -33,7 +33,7 @@ sketchPoint::sketchPoint(variable_ptr x_, variable_ptr y_, geom_3d::plane_abstr_
 
 void sketchPoint::init()
 {
-	mRequire_VBUpdate = true;
+	mRequire_VBUpdate = false;
 	mVA = std::shared_ptr<vertexArray>(new vertexArray());
 	vertexBufferLayout layout;
 	layout.add_proprety_float(3);
@@ -119,14 +119,14 @@ void sketchPoint::update_VB()
 	set_require_redraw();
 	if(mParent)
             mParent->notify_childUpdate();
+	mRequire_VBUpdate = false;
 }
 
 void sketchPoint::draw_impl(camera_ptr cam, int frame)
 {
-	if(mRequire_VBUpdate) { // very sketch
+	if(mRequire_VBUpdate) // very sketch
 		update_VB();
-		mRequire_VBUpdate = false;
-	}
+		
 	mShader->bind();
 	glm::vec4 color = glm::vec4(kColor, 1.0f);
 	if(hovered()) {

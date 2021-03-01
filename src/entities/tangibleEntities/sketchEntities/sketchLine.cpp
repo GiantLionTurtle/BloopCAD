@@ -66,7 +66,8 @@ void sketchLine::init()
 	// dirX = std::make_shared<expression_substr_funky>(mA->var()->expr()->x, mB->var()->expr()->x, 0.0);
 	// dirY = std::make_shared<expression_substr_funky>(mA->var()->expr()->y, mB->var()->expr()->y, 0.0);
 	// dir = std::make_shared<expressionVector2>(dirX, dirY);
-
+	mRequire_VBUpdate = false;
+	
 	mLength2 = (pow(mA->x()-mB->x(), 2.0) + pow(mA->y()-mB->y(), 2.0));
 
 	set_name("line");

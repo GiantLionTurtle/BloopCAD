@@ -2,7 +2,6 @@
 #include "line_tool.hpp"
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
-#include <entities/part.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
 #include <entities/sketch.hpp>
 #include <actions/common/enableEntity_action.hpp>

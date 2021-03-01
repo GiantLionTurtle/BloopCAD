@@ -4,7 +4,6 @@
 #include <bloop.hpp>
 #include <tools/partDesign/partDesignDefault_tool.hpp>
 #include <tools/partDesign/startSketch_tool.hpp>
-#include <entities/part.hpp>
 
 #include <memory>
 

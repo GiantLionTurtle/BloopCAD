@@ -27,6 +27,7 @@ sketchCircle::~sketchCircle()
 
 void sketchCircle::init()
 {
+	mRequire_VBUpdate = false;
 	set_name("sketchCircle");
 	init_buffers(); // Set all the vertices to the right values
 	

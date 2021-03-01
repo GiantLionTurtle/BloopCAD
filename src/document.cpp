@@ -5,8 +5,6 @@
 #include "bloop.hpp"
 #include "graphics_utils/GLCall.hpp"
 
-#include "entities/part.hpp"
-
 document::document(bloop* parent) :
 	mParentBloop(parent),
 	mCurrentWorkspaceState(nullptr),

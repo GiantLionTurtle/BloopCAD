@@ -4,7 +4,6 @@
 #include <utils/preferences.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
-#include <entities/part.hpp>
 #include <entities/tangibleEntities/plane.hpp>
 #include <actions/common/enableEntity_action.hpp>
 #include <actions/sketchDesign/enterSketchDesign_action.hpp>
