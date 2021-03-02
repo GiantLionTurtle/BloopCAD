@@ -88,6 +88,31 @@ void sketch::clear_toolPreviewGeometries()
 	mToolPreviewGeometries.clear();
 }
 
+void sketch::add_selectedGeometry(sketchEntity_ptr ent)
+{
+	if(!ent) {
+		LOG_WARNING("Trying to add null geometry.");
+		return;
+	}
+	ent->select();
+	set_require_redraw();
+	mSelectedGeometries.push_back(ent);
+}
+void sketch::remove_selectedGeometry(sketchEntity_ptr ent)
+{
+	for(int i = 0; i < mSelectedGeometries.size(); ++i) {
+		if(ent == mSelectedGeometries[i]) {
+			ent->unselect();
+			mSelectedGeometries.erase(std::find(mSelectedGeometries.begin(), mSelectedGeometries.end(), ent));
+		}
+	}
+}
+void sketch::clear_selectedGeometries()
+{
+	for_each_selected([](sketchEntity_ptr ent) { ent->unselect(); });
+	mSelectedGeometries.clear();
+}
+
 void sketch::for_each(std::function<void (entity_ptr)> func)
 {
 	for(sketchEntity_ptr ent : mGeometries) {
@@ -97,6 +122,12 @@ void sketch::for_each(std::function<void (entity_ptr)> func)
 		func(ent);
 	}
 	func(mOrigin);
+}
+void sketch::for_each_selected(std::function<void (sketchEntity_ptr)> func)
+{
+	for(sketchEntity_ptr ent : mSelectedGeometries) {
+		func(ent);
+	}
 }
 
 bool sketch::add_constraint(std::shared_ptr<constraint_abstract> cons, sketchEntity_ptr immovable_hint) 

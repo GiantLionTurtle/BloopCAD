@@ -1,7 +1,6 @@
 
 #include "partDesignDefault_tool.hpp"
 
-#include <entities/sketch.hpp>
 #include <utils/errorLogger.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>

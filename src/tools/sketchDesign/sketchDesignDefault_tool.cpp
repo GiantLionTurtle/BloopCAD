@@ -28,8 +28,16 @@ void sketchDesignDefault_tool::init()
 
 bool sketchDesignDefault_tool::manage_button_press(GdkEventButton* event)
 {
-	if(event->button == 1)
+	if(event->button == 1) {
 		mDraggedEnt = mEnv->target()->geometry_at_point(mEnv->state()->cam, glm::vec2(event->x, event->y));
+		if(mDraggedEnt && !mDraggedEnt->selected()) {
+			if(!(event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK))
+				mEnv->target()->clear_selectedGeometries();
+			mEnv->target()->add_selectedGeometry(mDraggedEnt);
+		} else if(!mDraggedEnt) {
+			mEnv->target()->clear_selectedGeometries();
+		}
+	}
 	return true;
 }
 bool sketchDesignDefault_tool::manage_button_release(GdkEventButton* event)
@@ -48,10 +56,14 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 		camera_ptr cam = mEnv->state()->cam;
 		glm::vec2 pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 		if(mMoving) {
-			mDraggedEnt->move(mPrevPos, pos);
-			mDraggedEnt->set_tmpConstant(true);
+			mEnv->target()->for_each_selected([&](sketchEntity_ptr ent) { 
+				ent->move(mPrevPos, pos); 
+				ent->set_tmpConstant(true);
+			});
 			bool update_attempt = sk->update_constraints();
-			mDraggedEnt->set_tmpConstant(false);
+			mEnv->target()->for_each_selected([&](sketchEntity_ptr ent) { 
+				ent->set_tmpConstant(false);
+			});
 			if(!update_attempt) {
 				LOG_WARNING("Failed update, attempting to recover.");
 				update_attempt = sk->update_constraints();

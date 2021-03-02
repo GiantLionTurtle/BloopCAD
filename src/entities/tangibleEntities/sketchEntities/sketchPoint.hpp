@@ -14,7 +14,7 @@ class sketchPoint : public sketchEntity, public geom_2d::point_abstr {
 private:
 	static float kSelDist2;
 	static bool kFisrstInst;
-	static glm::vec3 kColor, kColorHovered; // Line color
+	static glm::vec3 kColor, kColorHovered, kColorSelected; // Point color
 
 	variable_ptr mX, mY;
 public:

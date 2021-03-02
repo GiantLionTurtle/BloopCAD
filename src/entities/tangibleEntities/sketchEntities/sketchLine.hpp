@@ -39,7 +39,7 @@ private:
 
 	static float kSelDist2;
 	static bool kFisrstInst;
-	static glm::vec3 kColor, kColorHovered; // Line color
+	static glm::vec3 kColor, kColorHovered, kColorSelected; // Line color
 
 	glm::vec3 mVertices[2]; // The vertices describing the line
 

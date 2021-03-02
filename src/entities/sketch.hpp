@@ -24,6 +24,7 @@ private:
 
 	std::vector<sketchEntity_ptr> mGeometries;
 	std::vector<sketchEntity_ptr> mToolPreviewGeometries;
+	std::vector<sketchEntity_ptr> mSelectedGeometries;
 
 	folder_ptr mOrigin;
 
@@ -51,8 +52,12 @@ public:
 	void add_geometry(sketchEntity_ptr ent);
 	void add_toolPreviewGeometry(sketchEntity_ptr ent);
 	void clear_toolPreviewGeometries();
+	void add_selectedGeometry(sketchEntity_ptr ent);
+	void remove_selectedGeometry(sketchEntity_ptr ent);
+	void clear_selectedGeometries();
 
-	virtual void for_each(std::function<void (entity_ptr)> func);
+	void for_each(std::function<void (entity_ptr)> func);
+	void for_each_selected(std::function<void (sketchEntity_ptr)> func);
 
 	/*
 		@function basePlane
@@ -64,8 +69,6 @@ public:
 	folder_ptr origin() const { return mOrigin; }
 
 	bool add_constraint(std::shared_ptr<constraint_abstract> cons, sketchEntity_ptr immovable_hint = nullptr);
-	// bool add_constraint(subEquationsSystem const& subSystem);
-
 	bool update_constraints();
 
 	void backup_system();

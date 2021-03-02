@@ -11,6 +11,7 @@ float sketchPoint::kSelDist2 = 0.0f;
 bool sketchPoint::kFisrstInst = true;
 glm::vec3 sketchPoint::kColor = glm::vec3(0.0); 
 glm::vec3 sketchPoint::kColorHovered = glm::vec3(0.0);
+glm::vec3 sketchPoint::kColorSelected = glm::vec3(0.0);
 
 sketchPoint::sketchPoint(glm::vec2 pos_2d, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
 	sketchEntity(basePlane_, types::POINT),
@@ -58,6 +59,8 @@ void sketchPoint::init()
 		preferences::get_instance().add_callback("sketchEntityColor", std::function<void(glm::vec3)>([this](glm::vec3 val) { kColor = val; }));
 		kColorHovered = preferences::get_instance().get_vec3("sketchEntityColorHovered");
 		preferences::get_instance().add_callback("sketchEntityColorHovered", std::function<void(glm::vec3)>([this](glm::vec3 val) { kColorHovered = val; }));
+		kColorSelected = preferences::get_instance().get_vec3("sketchEntityColorSelected");
+		preferences::get_instance().add_callback("sketchEntityColorSelected", std::function<void(glm::vec3)>([this](glm::vec3 val) { kColorSelected = val; }));
 
 		kFisrstInst = false;
 	}
@@ -129,11 +132,12 @@ void sketchPoint::draw_impl(camera_ptr cam, int frame)
 		
 	mShader->bind();
 	glm::vec4 color = glm::vec4(kColor, 1.0f);
-	if(hovered()) {
+	if(selected()) {
+		color = glm::vec4(kColorSelected, 1.0f);
+	} else if(hovered()) {
 		color = glm::vec4(kColorHovered, 1.0f);
-	} else if(selected()) {
-		color = glm::vec4(0.01f, 0.70f, 0.99f, 1.0f);
 	}
+	
 	mShader->setUniform4f("u_Color", color);
 	mShader->setUniform1f("u_Diameter", 5);
 	// mShader->setUniform1f("u_Feather", 0.6);

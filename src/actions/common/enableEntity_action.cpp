@@ -1,6 +1,5 @@
 
 #include "enableEntity_action.hpp"
-#include <entities/sketch.hpp>
 #include <utils/errorLogger.hpp>
 #include <document.hpp>
 
