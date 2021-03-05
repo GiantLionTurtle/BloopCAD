@@ -17,20 +17,20 @@ protected:
 	geom_3d::plane_abstr_ptr mBasePlane;
 	int mType;
 public:
-	sketchEntity(geom_3d::plane_abstr_ptr basePlane_, int type):
-		mType(type),
+	sketchEntity(geom_3d::plane_abstr_ptr basePlane_, int type_):
+		mType(type_),
 		mBasePlane(basePlane_)
 	{}
 	virtual ~sketchEntity() {}
-
+	
 	virtual void for_each(std::function<void(sketchEntity_ptr geom)> func) {}
 
 	virtual void move(glm::vec2 from, glm::vec2 to) {}
 
 	virtual bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor) { return false; }
 
-	virtual void set_constant() = 0;
-	virtual void set_tmpConstant(bool const_) = 0;
+	virtual void set_constant() {};
+	virtual void set_tmpConstant(bool const_) {}
 
 	geom_3d::plane_abstr_ptr basePlane() const { return mBasePlane; }
 	virtual void set_basePlane(geom_3d::plane_abstr_ptr basePlane_) { mBasePlane = basePlane_; set_require_VBUpdate(); }

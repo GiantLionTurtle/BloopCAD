@@ -2,15 +2,14 @@
 #ifndef SKETCHPOINT_HPP_
 #define SKETCHPOINT_HPP_
 
-#include "sketchEntity.hpp"
+#include "sketchGeometry.hpp"
 #include <geometry/geometry_2d/point_abstr.hpp>
-#include <geometry/geometry_3d/plane_abstr.hpp>
 #include <constraintsSolver/expression.hpp>
 
 class sketchPoint;
 using sketchPoint_ptr = std::shared_ptr<sketchPoint>;
 
-class sketchPoint : public sketchEntity, public geom_2d::point_abstr {
+class sketchPoint : public sketchGeometry, public geom_2d::point_abstr {
 private:
 	static float kSelDist2;
 	static bool kFisrstInst;
@@ -42,6 +41,10 @@ public:
 	int selection_rank() { return 5; }
 
 	void update_VB();
+
+	void on_added_constraintAnnotation();
+
+	glm::vec2 annotation_pixelOffset(int ind);
 protected:
 	void draw_impl(camera_ptr cam, int frame);
 

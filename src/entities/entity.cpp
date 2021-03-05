@@ -9,7 +9,8 @@ entity::entity():
 	mParent(nullptr),
 	mHandle(nullptr),
 	mRequire_redraw(false),
-	mRequire_selfRedraw(false)
+	mRequire_selfRedraw(false),
+	mInited(false)
 {
 
 }
@@ -18,7 +19,8 @@ entity::entity(entity* parent):
 	mParent(parent),
 	mHandle(nullptr),
 	mRequire_redraw(false),
-	mRequire_selfRedraw(false)
+	mRequire_selfRedraw(false),
+	mInited(false)
 {
 
 }
@@ -26,6 +28,10 @@ entity::entity(entity* parent):
 void entity::draw(camera_ptr cam, int frame, draw_type type /*= draw_type::ALL*/, bool on_required /*= false*/)
 {
 	if(exists()) { // Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
+		if(!mInited) {
+			init();
+			mInited = true;
+		}
 		bool on_require_child = !visible();
 		bool draw_self = should_draw_self(type, on_required);
 		if(draw_self)

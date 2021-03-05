@@ -64,7 +64,7 @@ void startSketch_tool::act_on_entity(entity_ptr ent)
 
 void startSketch_tool::start_sketch(geom_3d::plane_abstr_ptr sketchPlane, cameraState const& camState_)
 {
-	mEnv->state()->doc->make_glContext_current();
+	// mEnv->state()->doc->make_glContext_current();
 	mCurrentSketch = std::make_shared<sketch>(sketchPlane);
 	mEnv->target()->add_sketch(mCurrentSketch);
 	mEnv->state()->doc->push_action(std::shared_ptr<serial_action>(new serial_action({

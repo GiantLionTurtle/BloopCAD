@@ -6,7 +6,7 @@
 #include <geometry/geometry_3d/plane_abstr.hpp>
 #include <entities/folder.hpp>
 #include <constraintsSolver/constraintSystem.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchEntity.hpp>
+#include <entities/tangibleEntities/sketchEntities/sketchGeometry.hpp>
 
 #include <memory>
 #include <vector>
@@ -22,7 +22,7 @@ class sketch : public entity, public std::enable_shared_from_this<sketch> {
 private:
 	geom_3d::plane_abstr_ptr mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
 
-	std::vector<sketchEntity_ptr> mGeometries;
+	std::vector<sketchGeometry_ptr> mGeometries;
 	std::vector<sketchEntity_ptr> mToolPreviewGeometries;
 	std::vector<sketchEntity_ptr> mSelectedGeometries;
 
@@ -45,11 +45,13 @@ public:
 	*/
 	sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent);
 
+	void init();
+
 	void print(int depth = 0);
 
 	sketchEntity_ptr geometry_at_point(camera_ptr cam, glm::vec2 cursor);
 
-	void add_geometry(sketchEntity_ptr ent);
+	void add_geometry(sketchGeometry_ptr ent);
 	void add_toolPreviewGeometry(sketchEntity_ptr ent);
 	void clear_toolPreviewGeometries();
 	void add_selectedGeometry(sketchEntity_ptr ent);
@@ -83,8 +85,6 @@ protected:
 		@param frame : 	The current frame id
 	*/
 	virtual void draw_impl(camera_ptr cam, int frame);
-	
-	void create_origin();
 };
 
 #endif

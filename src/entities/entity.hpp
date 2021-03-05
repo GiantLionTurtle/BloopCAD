@@ -41,7 +41,7 @@ public:
 	enum draw_type { ALL, TRANSLUCID, ACTIVE, INACTIVE };
 protected:
 	int mState;	// The state of the entity, described by the above flags
-
+	bool mInited;
 	bool mRequire_redraw, mRequire_selfRedraw;
 
 	std::string mName;
@@ -69,6 +69,8 @@ public:
 	void draw(camera_ptr cam, int frame, draw_type type = draw_type::ALL, bool on_required = false);
 
 	void update();
+
+	virtual void init() {}
 
 	entity_ptr hovered_child(camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (entity_ptr)> filter_func = ([](entity_ptr ent) { return true; }));
 

@@ -7,7 +7,7 @@
 plane::plane(plane_abstr const& plane_):
 	plane_abstr(plane_)
 {
-	init();
+	// init();
 }
 
 void plane::init()

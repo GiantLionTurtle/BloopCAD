@@ -39,7 +39,7 @@ glm::vec3 sketchLine::kColorHovered = glm::vec3(0.0);
 glm::vec3 sketchLine::kColorSelected = glm::vec3(0.0);
 
 sketchLine::sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
-	sketchEntity(basePlane_,  types::LINE),
+	sketchGeometry(basePlane_,  types::LINE),
 	mA(ptA),
 	mB(ptB)
 {
@@ -47,10 +47,10 @@ sketchLine::sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, geom_3d::plane_
 	mB->set_parent(this);
 	if(immovable) 
 		set_constant();
-	init();
+	// init();
 }
 sketchLine::sketchLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
-	sketchEntity(basePlane_, types::LINE),
+	sketchGeometry(basePlane_, types::LINE),
 	mA(sketchPoint_ptr(new sketchPoint(ptA, basePlane_, immovable))),
 	mB(sketchPoint_ptr(new sketchPoint(ptB, basePlane_, immovable)))
 {
@@ -58,7 +58,7 @@ sketchLine::sketchLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr_ptr ba
 	mB->set_parent(this);
 	if(immovable) 
 		set_constant();
-	init();
+	// init();
 }
 
 void sketchLine::init()
@@ -114,11 +114,13 @@ void sketchLine::for_each(std::function<void (entity_ptr)> func)
 {
 	func(mA);
 	func(mB);
+	sketchGeometry::for_each(func);
 }
 void sketchLine::for_each(std::function<void(sketchEntity_ptr geom)> func)
 {
 	func(mA);
 	func(mB);
+	sketchGeometry::for_each(func);
 }
 
 void sketchLine::move(glm::vec2 from, glm::vec2 to)
@@ -172,11 +174,34 @@ sketchLine_ptr sketchLine::clone()
 
 void sketchLine::update_VB()
 {
+	if(!mInited)
+		return;
 	mRequire_VBUpdate = false;
 	glm::vec3 tmp[2] = { mBasePlane->to_worldPos(mA->pos()), mBasePlane->to_worldPos(mB->pos()) };
 	mVB->bind();
 	mVB->set(&tmp[0], sizeof(glm::vec3) * 2);
 	mVB->unbind();
+
+	for(int i = 0; i < mAnnotations.size(); ++i) {
+		mAnnotations[i]->set_pos((mA->pos() + mB->pos()) / 2.0f);
+		mAnnotations[i]->set_pixelOffset(annotation_pixelOffset(i));
+	}
+}
+
+void sketchLine::on_added_constraintAnnotation()
+{
+	mAnnotations.back()->set_pos((mA->pos() + mB->pos()) / 2.0f);
+}
+
+glm::vec2 sketchLine::annotation_pixelOffset(int ind)
+{
+	glm::vec2 dir = glm::normalize(mA->pos() - mB->pos());
+	glm::vec2 normal = glm::cross(glm::vec3(dir, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+	int line_side = ind % 2 == 0 ? 1 : -1;
+	bool icon_dir = line_side == -1 ? ind % 4 ? -1 : 1 : ind % 3 ? -1 : 1;
+	float dir_offset = line_side == 1 ? ind : ind - 1;
+	return dir * 100.0f * (float)icon_dir * dir_offset + normal * 150.0f * (float)line_side;
 }
 
 void sketchLine::draw_impl(camera_ptr cam, int frame)

@@ -13,12 +13,12 @@ glm::vec3 sketchCircle::kColorHovered = glm::vec3(0.0);
 glm::vec3 sketchCircle::kColorSelected = glm::vec3(0.0);
 
 sketchCircle::sketchCircle(glm::vec2 center_, float radius_, geom_3d::plane_abstr_ptr basePlane_):
-	sketchEntity(basePlane_, types::CIRCLE),
+	sketchGeometry(basePlane_, types::CIRCLE),
 	mCenter(sketchPoint_ptr(new sketchPoint(center_, basePlane_))),
 	mRadius(expression_variable::make(radius_))
 {
 	mCenter->set_parent(this);
-	init();
+	// init();
 }
 sketchCircle::~sketchCircle()
 {
@@ -100,10 +100,12 @@ void sketchCircle::set_tmpConstant(bool const_)
 void sketchCircle::for_each(std::function<void (entity_ptr)> func)
 {
 	func(mCenter);
+	sketchGeometry::for_each(func);
 }
 void sketchCircle::for_each(std::function<void (sketchEntity_ptr)> func)
 {
 	func(mCenter);
+	sketchGeometry::for_each(func);
 }
 
 void sketchCircle::set_radius(float newval)
@@ -114,6 +116,8 @@ void sketchCircle::set_radius(float newval)
 
 void sketchCircle::update_VB()
 {
+	if(!mInited)
+		return;
 	init_buffers();
 	mVB->bind();
 	mVB->set(mVertices, sizeof(glm::vec3) * CIRCLE_RES);

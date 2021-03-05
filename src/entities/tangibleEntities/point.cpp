@@ -12,7 +12,7 @@ point::point(glm::vec3 const& basePoint)
 	mX = expression_variable::make(basePoint.x);
 	mY = expression_variable::make(basePoint.y);
 	mZ = expression_variable::make(basePoint.z);
-	init();
+	// init();
 }
 // point::point(geom_3d::point_abstr_ptr basePoint)
 // {
@@ -20,7 +20,7 @@ point::point(glm::vec3 const& basePoint)
 // 	mX = expression_variable::make(pos.x);
 // 	mY = expression_variable::make(pos.y);
 // 	mZ = expression_variable::make(pos.z);
-// 	init();
+	// // init();
 // }
 
 void point::init()

@@ -2,7 +2,7 @@
 #ifndef SKETCHLINE_HPP_
 #define SKETCHLINE_HPP_
 
-#include "sketchEntity.hpp"
+#include "sketchGeometry.hpp"
 #include "sketchPoint.hpp"
 #include <geometry/geometry_2d/line_abstr.hpp>
 
@@ -31,8 +31,7 @@ public:
 	}
 };
 
-
-class sketchLine : public sketchEntity, public geom_2d::line_abstr {
+class sketchLine : public sketchGeometry, public geom_2d::line_abstr {
 private:
 	// std::shared_ptr<expression_substr_funky> dirX, dirY;
 	// expressionVector2_ptr dir;
@@ -57,7 +56,7 @@ public:
 	virtual void print(int depth = 0);
 
 	void for_each(std::function<void (entity_ptr)> func);
-	void for_each(std::function<void(sketchEntity_ptr geom)> func);
+	void for_each(std::function<void(sketchEntity_ptr ent)> func);
 	
 	void move(glm::vec2 from, glm::vec2 to);
 
@@ -80,6 +79,10 @@ public:
 	int selection_rank() { return 3; }
 
 	void update_VB();
+
+	void on_added_constraintAnnotation();
+
+	glm::vec2 annotation_pixelOffset(int ind);
 protected:
 	/*
 		@function draw_impl draws the line on screen

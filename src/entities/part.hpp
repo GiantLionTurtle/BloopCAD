@@ -42,10 +42,10 @@ public:
 	part(entity* parent);
 
 	/*
-		@function init_scene sets up the scene by :
+		@function init sets up the scene by :
 		*creating the origin planes
 	*/
-	virtual void init_scene();
+	virtual void init();
 
 	virtual void set_handle(entityHandle* handle_);
 

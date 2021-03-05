@@ -14,22 +14,22 @@ glm::vec3 sketchPoint::kColorHovered = glm::vec3(0.0);
 glm::vec3 sketchPoint::kColorSelected = glm::vec3(0.0);
 
 sketchPoint::sketchPoint(glm::vec2 pos_2d, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
-	sketchEntity(basePlane_, types::POINT),
+	sketchGeometry(basePlane_, types::POINT),
 	mX(expression_variable::make(pos_2d.x)),
 	mY(expression_variable::make(pos_2d.y))
 {
 	if(immovable)
 		set_constant();
-	init();
+	// init();
 }
 sketchPoint::sketchPoint(variable_ptr x_, variable_ptr y_, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
-	sketchEntity(basePlane_, types::POINT),
+	sketchGeometry(basePlane_, types::POINT),
 	mX(x_),
 	mY(y_)
 {
 	if(immovable) 
 		set_constant();
-	init();
+	// init();
 }
 
 void sketchPoint::init()
@@ -115,6 +115,8 @@ void sketchPoint::set_tmpConstant(bool const_)
 
 void sketchPoint::update_VB()
 {
+	if(!mInited)
+		return;
 	mVB->bind();
 	glm::vec3 pos_tmp = mBasePlane->to_worldPos(pos());
 	mVB->set(&pos_tmp[0], sizeof(glm::vec3));
@@ -123,6 +125,24 @@ void sketchPoint::update_VB()
 	if(mParent)
             mParent->notify_childUpdate();
 	mRequire_VBUpdate = false;
+
+	for(int i = 0; i < mAnnotations.size(); ++i) {
+		mAnnotations[i]->set_pos(pos());
+	}
+}
+
+void sketchPoint::on_added_constraintAnnotation()
+{
+	mAnnotations.back()->set_pos(pos());
+	mAnnotations.back()->set_pixelOffset(annotation_pixelOffset(mAnnotations.size()-1));
+}
+
+glm::vec2 sketchPoint::annotation_pixelOffset(int ind)
+{
+	int level = ind / 6;
+	float angle = (float)(ind % 6) / 6.0f * M_PI * 2.0 + M_PI_2;
+
+	return glm::vec2(std::cos(angle) * (float)(ind+1) * 150.0, std::sin(angle) * (float)(ind+1) * 150.0);
 }
 
 void sketchPoint::draw_impl(camera_ptr cam, int frame)

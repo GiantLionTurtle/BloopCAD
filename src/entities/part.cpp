@@ -10,18 +10,20 @@ part::part():
 	quad(glm::vec3(1.0f, 1.0f, 1.0f), 20, 20, "resources/textures/images/icons/icon.png")
 {
 	set_name("Part");
-	init_scene();
+	// init();
+	// init_scene();
 }
 part::part(entity* parent):
 	entity(parent),
 	quad(glm::vec3(1.0f, 1.0f, 1.0f), 20, 20, "resources/textures/images/icons/icon.png")
 {
 	set_name("Part");
-	init_scene();
+	// init();
+	// init_scene();
 }
 
 
-void part::init_scene()
+void part::init()
 {
 	// Maybe this whole function should just be in the constructor
 	
@@ -76,7 +78,8 @@ void part::for_each(std::function<void (entity_ptr)> func)
 	for(sketch_ptr sk : mSketches) {
 		func(sk);
 	}
-	func(mOrigin);
+	if(mOrigin)
+		func(mOrigin);
 }
 
 sketch_ptr part::get_sketch(int ind)

@@ -22,7 +22,7 @@ void line_tool::init()
 {
 	DEBUG_ASSERT(mEnv->state(), "No valid state.");
 	if(!mLinePreview) {
-		mEnv->state()->doc->make_glContext_current();
+		// mEnv->state()->doc->make_glContext_current();
 		mLinePreview = sketchLine_ptr(new sketchLine(glm::vec2(0.0), glm::vec2(0.0), mEnv->target()->basePlane()));
 	}
 	mIsMultiline = true;
@@ -80,7 +80,7 @@ bool line_tool::manage_button_press(GdkEventButton* event)
 		mLinePreview->set_exists(true);
 		started = true;
 	} else {
-		mEnv->state()->doc->make_glContext_current();
+		// mEnv->state()->doc->make_glContext_current();
 		sketchLine_ptr doneLine = mLinePreview->clone();
 		target->add_geometry(doneLine);
 		mEnv->state()->doc->push_action(std::make_shared<enableEntity_action>(doneLine)); // Doc is passed to activate glContext

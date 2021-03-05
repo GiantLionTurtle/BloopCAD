@@ -17,7 +17,7 @@ sketch::sketch(geom_3d::plane_abstr_ptr base_plane):
 	mBasePlane(base_plane)
 {
 	set_name("sketch");
-	create_origin();
+	// create_origin();
 
 	// mSystem.set_solver(constraintSystem::LevenbergMarquardt);
 }
@@ -26,9 +26,20 @@ sketch::sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent):
 	entity(parent) // Follow that entity
 {
 	set_name("sketch");
-	create_origin();
+	// create_origin();
 
 	// mSystem.set_solver(constraintSystem::LevenbergMarquardt);
+}
+
+void sketch::init()
+{
+	mOrigin = folder_ptr(new folder("skorigin"));
+
+	add_geometry(std::make_shared<sketchLine>(glm::vec2(0.0f,  1.0f), glm::vec2(0.0f, -1.0f), basePlane(), true));
+	add_geometry(std::make_shared<sketchLine>(glm::vec2( 1.0f, 0.0f), glm::vec2(-1.0f, 0.0f), basePlane(), true));
+	add_geometry(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane, true));
+
+	// add(std::make_shared<sketchCircle>(circle_abstract(std::make_shared<sketchPoint>(glm::vec2(0.75f, 0.75f), mBasePlane), variable_ptr(new variable(0.5f))), mBasePlane));
 }
 
 void sketch::print(int depth)
@@ -63,7 +74,7 @@ sketchEntity_ptr sketch::geometry_at_point(camera_ptr cam, glm::vec2 cursor)
 	return candidate;
 }
 
-void sketch::add_geometry(sketchEntity_ptr ent)
+void sketch::add_geometry(sketchGeometry_ptr ent)
 {
 	if(!ent) {
 		LOG_WARNING("Trying to add null geometry.");
@@ -188,15 +199,4 @@ void sketch::invoke_workspace(document* doc)
 void sketch::draw_impl(camera_ptr cam, int frame)
 {
 
-}
-
-void sketch::create_origin()
-{
-	mOrigin = folder_ptr(new folder("skorigin"));
-
-	add_geometry(std::make_shared<sketchLine>(glm::vec2(0.0f,  1.0f), glm::vec2(0.0f, -1.0f), basePlane(), true));
-	add_geometry(std::make_shared<sketchLine>(glm::vec2( 1.0f, 0.0f), glm::vec2(-1.0f, 0.0f), basePlane(), true));
-	add_geometry(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane, true));
-
-	// add(std::make_shared<sketchCircle>(circle_abstract(std::make_shared<sketchPoint>(glm::vec2(0.75f, 0.75f), mBasePlane), variable_ptr(new variable(0.5f))), mBasePlane));
 }

@@ -4,14 +4,14 @@
 
 #include <geometry/geometry_2d/circle_abstr.hpp>
 #include "sketchPoint.hpp"
-#include "sketchEntity.hpp"
+#include "sketchGeometry.hpp"
 
 #define CIRCLE_RES 100
 
 class sketchCircle;
 using sketchCircle_ptr = std::shared_ptr<sketchCircle>;
 
-class sketchCircle : public sketchEntity, public geom_2d::circle_abstr {
+class sketchCircle : public sketchGeometry, public geom_2d::circle_abstr {
 private:
 	static float kSelDist2;
 	static bool kFisrstInst;
@@ -36,7 +36,7 @@ public:
 	void set_tmpConstant(bool const_);
 
 	void for_each(std::function<void (entity_ptr)> func);
-	void for_each(std::function<void(sketchEntity_ptr geom)> func);
+	void for_each(std::function<void(sketchEntity_ptr ent)> func);
 
 	glm::vec2 posCenter() { return mCenter->pos(); }
 	sketchPoint_ptr center() { return mCenter; }

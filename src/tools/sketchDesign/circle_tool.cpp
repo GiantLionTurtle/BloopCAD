@@ -45,7 +45,7 @@ bool circle_tool::manage_button_press(GdkEventButton* event)
     glm::vec2 circle_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 
 	if(!started) {
-		mEnv->state()->doc->make_glContext_current();
+		// mEnv->state()->doc->make_glContext_current();
 		mCircle = sketchCircle_ptr(new sketchCircle(circle_pos, 0.0f, target->basePlane()));
 		target->add_geometry(mCircle);
 		mEnv->state()->doc->push_action(std::make_shared<enableEntity_action>(mCircle)); // Doc is passed to activate glContext
