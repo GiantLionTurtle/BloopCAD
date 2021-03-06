@@ -1,5 +1,6 @@
 set(constraintsSolver_source_files
   expression.cpp
+  constraint.cpp
   constraintCluster.cpp
   constraintSystem.cpp)
 

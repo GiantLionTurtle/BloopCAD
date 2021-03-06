@@ -66,7 +66,7 @@ void entity::set_selected(bool select)
 		} else {
 			mState &= ~BLOOP_ENTITY_SELECTED_FLAG;
 		}
-
+		select_impl(select);
 		if(mHandle)
 			mHandle->set_selected(select);
 	}
@@ -97,7 +97,7 @@ void entity::set_hover(bool hover)
 		} else {
 			mState &= ~BLOOP_ENTITY_HOVERED_FLAG;
 		}
-
+		hover_impl(hover);
 		if(mHandle)
 			mHandle->set_hovered(hover);
 	}

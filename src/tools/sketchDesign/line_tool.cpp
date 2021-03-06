@@ -85,7 +85,7 @@ bool line_tool::manage_button_press(GdkEventButton* event)
 		target->add_geometry(doneLine);
 		mEnv->state()->doc->push_action(std::make_shared<enableEntity_action>(doneLine)); // Doc is passed to activate glContext
 		if(mEndPos) {
-			mEnv->target()->add_constraint(pointPoint_distance::make(doneLine->A(), mEndPos, expConst::zero));
+			mEnv->target()->add_constraint(pointPoint_distance::make_coincident(doneLine->A(), mEndPos));
 		}
 		mEndPos = doneLine->B();
 		mLinePreview->A()->set(mEndPos->pos());

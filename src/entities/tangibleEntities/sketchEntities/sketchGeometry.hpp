@@ -34,10 +34,22 @@ public:
 	{
 		if(annot) {
 			mAnnotations.push_back(annot);
+			if(selected()) {
+				annot->set_hidden(false);
+			} else {
+				annot->set_hidden(true);
+			}
+			on_added_constraintAnnotation();
 		}
-		on_added_constraintAnnotation();
 	}
 	virtual void on_added_constraintAnnotation() {}
+
+	void select_impl(bool sel)
+	{
+		for(std::shared_ptr<constraintAnnotation> annot : mAnnotations) {
+			annot->set_hidden(!sel);
+		}
+	}
 };
 
 

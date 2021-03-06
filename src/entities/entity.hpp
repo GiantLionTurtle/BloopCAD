@@ -205,6 +205,9 @@ protected:
 
 	virtual void update_impl() {}
 
+	virtual void select_impl(bool sel) {}
+	virtual void hover_impl(bool hov) {}
+
 	bool should_draw_self(draw_type type, bool on_required);
 
 	virtual float selection_depth(camera_ptr cam, glm::vec2 cursor_pos) { return -1.0f; }

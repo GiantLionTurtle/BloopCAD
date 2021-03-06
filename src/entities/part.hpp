@@ -6,7 +6,6 @@
 #include "folder.hpp"
 #include "tangibleEntities/plane.hpp"
 #include "sketch.hpp"
-#include <graphics_utils/textures/fixedSizeTexturedQuad.hpp>
 
 #include <gtkmm.h>
 
@@ -27,7 +26,6 @@ private:
 	std::shared_ptr<plane> mXY, mYZ, mZX; // Origin planes
 	folder_ptr mOrigin;
 	std::vector<sketch_ptr> mSketches; // Sketches drawn in the part
-	fixedSizeTexturedQuad quad;
 public:
 	/*
 		@function part creates an empty part
