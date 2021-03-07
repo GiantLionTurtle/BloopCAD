@@ -1,13 +1,15 @@
 
 #include "constraintAnnotation.hpp"
 
+#include <constraintsSolver/constraint.hpp>
 #include <graphics_utils/textures/image.hpp>
 #include <graphics_utils/shadersPool.hpp>
 #include <graphics_utils/GLCall.hpp>
 
-constraintAnnotation::constraintAnnotation(glm::vec2 pos_, geom_3d::plane_abstr_ptr basePlane_, std::string const& filepath):
+constraintAnnotation::constraintAnnotation(glm::vec2 pos_, geom_3d::plane_abstr_ptr basePlane_, int constraintType):
 	sketchEntity(basePlane_, -1),
-	mTexture(new image(filepath)),
+	mType(constraintType),
+	mTexture(nullptr),
 	mWidth(20),
 	mHeight(20),
 	mPos(pos_)
@@ -21,6 +23,32 @@ constraintAnnotation::~constraintAnnotation()
 
 void constraintAnnotation::init()
 {
+	if(kTextures.find(mType) == kTextures.end()) {
+		switch(mType) {
+		case constraint_abstract::COINCIDENCE:
+			mTexture = std::make_shared<image>("resources/textures/images/icons/sketch/constraints/coincidence.png");
+			break;
+		case constraint_abstract::HORIZONTALITY:
+			mTexture = std::make_shared<image>("resources/textures/images/icons/sketch/constraints/horizontality.png");
+			break;
+		case constraint_abstract::VERTICALITY:
+			mTexture = std::make_shared<image>("resources/textures/images/icons/sketch/constraints/verticality.png");
+			break;
+		case constraint_abstract::PARALLELISM:
+			mTexture = std::make_shared<image>("resources/textures/images/icons/sketch/constraints/parallelism.png");
+			break;
+		case constraint_abstract::PERPENDICULARITY:
+			mTexture = std::make_shared<image>("resources/textures/images/icons/sketch/constraints/perpendicularity.png");
+			break;
+		default:
+			mTexture = std::make_shared<image>("resources/textures/images/icons/icon.png");
+			break;
+		}
+		kTextures[mType] = mTexture;
+	} else {
+		mTexture = kTextures[mType];
+	}
+
 	mRequire_VBUpdate = false;
 	mVA = std::make_shared<vertexArray>();
 	vertexBufferLayout layout;

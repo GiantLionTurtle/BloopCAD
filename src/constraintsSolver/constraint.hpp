@@ -12,6 +12,13 @@
 
 class constraint_abstract {
 public:
+	enum constraint_types { NONE, COINCIDENCE, PERPENDICULARITY, PARALLELISM, HORIZONTALITY, VERTICALITY }; // high level representation (for little annotations and such)
+protected:
+	int mType;
+public:
+	constraint_abstract(int type):
+		mType(type)
+	{}
 	virtual double error() = 0;
 	virtual bool satisfied() = 0;
 	virtual double derivative(variable_ptr withRespectTo) = 0;
@@ -21,6 +28,8 @@ public:
 	virtual size_t n_var() = 0;
 
 	virtual std::string name() = 0;
+
+	int type() { return mType; }
 };
 
 template<size_t nV>
@@ -29,7 +38,8 @@ protected:
 	expression_ptr mEqu;
 	std::array<variable_ptr, nV> mVars;
 public:
-	constraint(expression_ptr equ, std::array<variable_ptr, nV> vars):
+	constraint(expression_ptr equ, std::array<variable_ptr, nV> vars, int type):
+		constraint_abstract(type),
 		mEqu(equ),
 		mVars(vars)
 	{
@@ -57,19 +67,6 @@ public:
 	variable_ptr var(size_t ind) { return mVars.at(ind); }
 	size_t n_var() { return mVars.size(); }
 };
-
-// class coincidence : public constraint<2, 4> {
-// public:
-// 	coincidence(sketchPoint_ptr p1, sketchPoint_ptr p2):
-// 		constraint<2, 4>({ p1->x() - p2->x(), p1->y() - p2->y()}, { p1->x(), p1->y(), p2->x(), p2->y() })
-// 	{
-// 		// Equations: p1->x() - p2->x()  &  p1->y() - p2->y()
-
-// 		// Coincident points have the same coordinate ; x1 = x2 & y1 = y2 ; ie. x1 - x2 = 0 & y1 - y2 = 0
-// 		// This coinstraint could be defined as a pointpoint_distance with 0, but it seems more efficient to have
-// 		// Two first degree equation rather than one second degree equation
-// 	}
-// };
 
 class pointPoint_horizontality : public constraint<2> {
 public:

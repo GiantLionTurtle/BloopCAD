@@ -5,14 +5,19 @@
 #include <entities/tangibleEntities/sketchEntities/sketchEntity.hpp>
 #include <graphics_utils/textures/texture.hpp>
 
+#include <map>
+
 class constraintAnnotation : public sketchEntity {
 private:
-	texture* mTexture;
+	std::map<int, std::shared_ptr<texture>> kTextures;
+
+	int mType;
+	std::shared_ptr<texture> mTexture;
 	int mWidth, mHeight;
 
 	glm::vec2 mPos, mWorldOffset, mPixelOffset;
 public:
-	constraintAnnotation(glm::vec2 pos_, geom_3d::plane_abstr_ptr basePlane_, std::string const& filepath);
+	constraintAnnotation(glm::vec2 pos_, geom_3d::plane_abstr_ptr basePlane_, int constraintType);
 	~constraintAnnotation();
 
 	void init();

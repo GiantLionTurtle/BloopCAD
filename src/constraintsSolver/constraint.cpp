@@ -4,8 +4,8 @@
 std::shared_ptr<pointPoint_horizontality> pointPoint_horizontality::make(sketchPoint_ptr p1, sketchPoint_ptr p2)
 {
 	std::shared_ptr<pointPoint_horizontality> constr(new pointPoint_horizontality(p1, p2));
-	std::shared_ptr<constraintAnnotation> annot1(new constraintAnnotation(glm::vec2(0.0, 0.0), p1->basePlane(), "resources/textures/images/icons/sketch/constraints/horizontality.png"));
-	std::shared_ptr<constraintAnnotation> annot2(new constraintAnnotation(glm::vec2(0.0, 0.0), p1->basePlane(), "resources/textures/images/icons/sketch/constraints/horizontality.png"));
+	std::shared_ptr<constraintAnnotation> annot1(new constraintAnnotation(glm::vec2(0.0, 0.0), p1->basePlane(), constr->type()));
+	std::shared_ptr<constraintAnnotation> annot2(new constraintAnnotation(glm::vec2(0.0, 0.0), p1->basePlane(), constr->type()));
 	p1->add_constraintAnnotation(annot1);
 	p2->add_constraintAnnotation(annot2);
 	return constr;
@@ -13,13 +13,13 @@ std::shared_ptr<pointPoint_horizontality> pointPoint_horizontality::make(sketchP
 std::shared_ptr<pointPoint_horizontality> pointPoint_horizontality::make(sketchLine_ptr l)
 {
 	std::shared_ptr<pointPoint_horizontality> constr(new pointPoint_horizontality(l->A(), l->B()));
-	auto annot = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l->basePlane(), "resources/textures/images/icons/sketch/constraints/horizontality.png");
+	auto annot = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l->basePlane(), constr->type());
 	l->add_constraintAnnotation(annot);
 	return constr;
 }
 
 pointPoint_horizontality::pointPoint_horizontality(sketchPoint_ptr p1, sketchPoint_ptr p2):
-	constraint<2>({ p1->y() - p2->y() }, { p1->y(), p2->y() })
+	constraint<2>({ p1->y() - p2->y() }, { p1->y(), p2->y() }, HORIZONTALITY)
 {
 	// Equation: p1->y() - p2->y()
 
@@ -30,8 +30,8 @@ pointPoint_horizontality::pointPoint_horizontality(sketchPoint_ptr p1, sketchPoi
 std::shared_ptr<pointPoint_verticality> pointPoint_verticality::make(sketchPoint_ptr p1, sketchPoint_ptr p2)
 {
 	std::shared_ptr<pointPoint_verticality> constr(new pointPoint_verticality(p1, p2));
-	std::shared_ptr<constraintAnnotation> annot1(new constraintAnnotation(glm::vec2(0.0, 0.0), p1->basePlane(), "resources/textures/images/icons/sketch/constraints/verticality.png"));
-	std::shared_ptr<constraintAnnotation> annot2(new constraintAnnotation(glm::vec2(0.0, 0.0), p1->basePlane(), "resources/textures/images/icons/sketch/constraints/verticality.png"));
+	std::shared_ptr<constraintAnnotation> annot1(new constraintAnnotation(glm::vec2(0.0, 0.0), p1->basePlane(), constr->type()));
+	std::shared_ptr<constraintAnnotation> annot2(new constraintAnnotation(glm::vec2(0.0, 0.0), p1->basePlane(), constr->type()));
 	p1->add_constraintAnnotation(annot1);
 	p2->add_constraintAnnotation(annot2);
 	return constr;
@@ -39,13 +39,13 @@ std::shared_ptr<pointPoint_verticality> pointPoint_verticality::make(sketchPoint
 std::shared_ptr<pointPoint_verticality> pointPoint_verticality::make(sketchLine_ptr l)
 {
 	std::shared_ptr<pointPoint_verticality> constr(new pointPoint_verticality(l->A(), l->B()));
-	auto annot = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l->basePlane(), "resources/textures/images/icons/sketch/constraints/verticality.png");
+	auto annot = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l->basePlane(), constr->type());
 	l->add_constraintAnnotation(annot);
 	return constr;	
 }
 
 pointPoint_verticality::pointPoint_verticality(sketchPoint_ptr p1, sketchPoint_ptr p2):
-	constraint<2>({ p1->x() - p2->x() }, { p1->x(), p2->x() })
+	constraint<2>({ p1->x() - p2->x() }, { p1->x(), p2->x() }, VERTICALITY)
 {
 	// Equation: p1->x() - p2->x()
 
@@ -61,8 +61,9 @@ std::shared_ptr<pointPoint_distance> pointPoint_distance::make(sketchPoint_ptr p
 std::shared_ptr<pointPoint_distance> pointPoint_distance::make_coincident(sketchPoint_ptr p1, sketchPoint_ptr p2)
 {
 	std::shared_ptr<pointPoint_distance> constr(new pointPoint_distance(p1, p2, expConst::zero));
-	auto annot1 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), p1->basePlane(), "resources/textures/images/icons/sketch/constraints/coincidence.png");
-	auto annot2 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), p1->basePlane(), "resources/textures/images/icons/sketch/constraints/coincidence.png");
+	constr->mType = COINCIDENCE;
+	auto annot1 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), p1->basePlane(), constr->type());
+	auto annot2 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), p1->basePlane(), constr->type());
 	BLOOP_MARKER;
 	p1->add_constraintAnnotation(annot1);
 	p2->add_constraintAnnotation(annot2);
@@ -74,7 +75,7 @@ std::shared_ptr<pointPoint_distance> pointPoint_distance::make(sketchLine_ptr l,
 }
 
 pointPoint_distance::pointPoint_distance(sketchPoint_ptr p1, sketchPoint_ptr p2, expression_ptr d):
-	constraint<4>({ pow(p1->x() - p2->x(), 2.0) + pow(p1->y() - p2->y(), 2.0) - pow(d, 2.0) }, { p1->x(), p1->y(), p2->x(), p2->y() })
+	constraint<4>({ pow(p1->x() - p2->x(), 2.0) + pow(p1->y() - p2->y(), 2.0) - pow(d, 2.0) }, { p1->x(), p1->y(), p2->x(), p2->y() }, NONE)
 {
 	// Equation: pow(p1->x() - p2->x(), 2.0) + pow(p1->y() - p2->y(), 2.0) - pow(d, 2.0)
 
@@ -90,7 +91,7 @@ std::shared_ptr<pointPoint_horizontalDistance> pointPoint_horizontalDistance::ma
 }
 
 pointPoint_horizontalDistance::pointPoint_horizontalDistance(sketchPoint_ptr p1, sketchPoint_ptr p2, expression_ptr d):
-	constraint<2>({ abs(p1->x() - p2->x()) - d }, { p1->x(), p2->x() })
+	constraint<2>({ abs(p1->x() - p2->x()) - d }, { p1->x(), p2->x() }, NONE)
 {
 	// Equation: abs(p1->x() - p2->x()) - d
 
@@ -104,7 +105,7 @@ std::shared_ptr<pointPoint_verticalDistance> pointPoint_verticalDistance::make(s
 }
 
 pointPoint_verticalDistance::pointPoint_verticalDistance(sketchPoint_ptr p1, sketchPoint_ptr p2, expression_ptr d):
-	constraint<2>({ abs(p1->y() - p2->y()) - d }, { p1->y(), p2->y() })
+	constraint<2>({ abs(p1->y() - p2->y()) - d }, { p1->y(), p2->y() }, NONE)
 {
 	// Equation: abs(p1->y() - p2->y()) - d
 
@@ -127,7 +128,7 @@ std::shared_ptr<pointLine_distance> pointLine_distance::make(sketchCircle_ptr c,
 
 pointLine_distance::pointLine_distance(sketchPoint_ptr p, sketchLine_ptr l, expression_ptr d):
 	constraint<6>({ abs((l->B()->x()-l->A()->x())*(p->y() - l->A()->y()) - (l->B()->y()-l->A()->y())*(p->x() - l->A()->x())) / sqrt(l->length2()) - d },
-						{ p->x(), p->y(), l->A()->x(), l->A()->y(), l->B()->x(), l->B()->y()})
+						{ p->x(), p->y(), l->A()->x(), l->A()->y(), l->B()->x(), l->B()->y()}, NONE)
 {
 	// Equation: abs((l->B()->x() - l->A()->x())*(l->B()->y() - l->A()->y()) - (p->x() - l->A()->x())*(p->y() - l->A()->y())) / sqrt(pow(l->B()->x()-l->A()->x(), 2.0) + pow(l->B()->y()-l->A()->y(), 2.0)) - d
 
@@ -149,7 +150,8 @@ std::shared_ptr<pointCircle_distance> pointCircle_distance::make(sketchPoint_ptr
 }
 
 pointCircle_distance::pointCircle_distance(sketchPoint_ptr p, sketchCircle_ptr c, expression_ptr d):
-	constraint<5>({ pow(p->x() - c->center()->x(), 2.0) + pow(p->y() - c->center()->y(), 2.0) - pow(c->radius() + d, 2.0) }, { p->x(), p->y(), c->center()->x(), c->center()->y(), c->radius() })
+	constraint<5>({ pow(p->x() - c->center()->x(), 2.0) + pow(p->y() - c->center()->y(), 2.0) - pow(c->radius() + d, 2.0) }, 
+	{ p->x(), p->y(), c->center()->x(), c->center()->y(), c->radius() }, NONE)
 {
 
 }
@@ -165,7 +167,7 @@ std::shared_ptr<lineCircle_distance> lineCircle_distance::make(sketchLine_ptr l,
 
 lineCircle_distance::lineCircle_distance(sketchLine_ptr l, sketchCircle_ptr c, expression_ptr d):
 	constraint<7>({ abs((l->B()->x()-l->A()->x())*(c->center()->y() - l->A()->y()) - (l->B()->y()-l->A()->y())*(c->center()->x() - l->A()->x())) / sqrt(l->length2()) - (c->radius() + d) },
-						{ c->center()->x(), c->center()->y(), l->A()->x(), l->A()->y(), l->B()->x(), l->B()->y(), c->radius()})
+						{ c->center()->x(), c->center()->y(), l->A()->x(), l->A()->y(), l->B()->x(), l->B()->y(), c->radius()}, NONE)
 {
 
 }
@@ -177,8 +179,9 @@ std::shared_ptr<lineLine_angle> lineLine_angle::make(sketchLine_ptr l1, sketchLi
 std::shared_ptr<lineLine_angle> lineLine_angle::make_parallel(sketchLine_ptr l1, sketchLine_ptr l2)
 {
 	std::shared_ptr<lineLine_angle> constr(new lineLine_angle(l1, l2, expConst::zero));
-	auto annot1 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l1->basePlane(), "resources/textures/images/icons/sketch/constraints/parallelism.png");
-	auto annot2 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l1->basePlane(), "resources/textures/images/icons/sketch/constraints/parallelism.png");
+	constr->mType = PARALLELISM;
+	auto annot1 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l1->basePlane(), constr->type());
+	auto annot2 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l1->basePlane(), constr->type());
 	l1->add_constraintAnnotation(annot1);
 	l2->add_constraintAnnotation(annot2);
 	return constr;
@@ -186,8 +189,9 @@ std::shared_ptr<lineLine_angle> lineLine_angle::make_parallel(sketchLine_ptr l1,
 std::shared_ptr<lineLine_angle> lineLine_angle::make_perpendicular(sketchLine_ptr l1, sketchLine_ptr l2)
 {
 	std::shared_ptr<lineLine_angle> constr(new lineLine_angle(l1, l2, expConst::pi2));
-	auto annot1 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l1->basePlane(), "resources/textures/images/icons/sketch/constraints/perpendicularity.png");
-	auto annot2 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l1->basePlane(), "resources/textures/images/icons/sketch/constraints/perpendicularity.png");
+	constr->mType = PERPENDICULARITY;
+	auto annot1 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l1->basePlane(), constr->type());
+	auto annot2 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l1->basePlane(), constr->type());
 	l1->add_constraintAnnotation(annot1);
 	l2->add_constraintAnnotation(annot2);
 	return constr;
@@ -195,7 +199,7 @@ std::shared_ptr<lineLine_angle> lineLine_angle::make_perpendicular(sketchLine_pt
 
 lineLine_angle::lineLine_angle(sketchLine_ptr l1, sketchLine_ptr l2, expression_ptr a):
 	constraint<8>({ },
-		{ l1->A()->x(), l1->A()->y(), l1->B()->x(), l1->B()->y(), l2->A()->x(), l2->A()->y(), l2->B()->x(), l2->B()->y() })
+		{ l1->A()->x(), l1->A()->y(), l1->B()->x(), l1->B()->y(), l2->A()->x(), l2->A()->y(), l2->B()->x(), l2->B()->y() }, NONE)
 
 {
 	expression_ptr x1 = (l1->A()->x()-l1->B()->x());
@@ -217,7 +221,7 @@ std::shared_ptr<lineLine_equal> lineLine_equal::make(sketchLine_ptr l1, sketchLi
 
 lineLine_equal::lineLine_equal(sketchLine_ptr l1, sketchLine_ptr l2):
 	constraint<8>(	{ l1->length2() - l2->length2() },
-						{ l1->A()->x(), l1->A()->y(), l1->B()->x(), l1->B()->x(), l2->A()->x(), l2->A()->y(), l2->B()->x(), l2->B()->y() })
+						{ l1->A()->x(), l1->A()->y(), l1->B()->x(), l1->B()->x(), l2->A()->x(), l2->A()->y(), l2->B()->x(), l2->B()->y() }, NONE)
 {
 
 }
@@ -229,7 +233,7 @@ std::shared_ptr<lineCircle_equal> lineCircle_equal::make(sketchLine_ptr l, sketc
 
 lineCircle_equal::lineCircle_equal(sketchLine_ptr l, sketchCircle_ptr c):
 	constraint<5>(	{ l->length2() - pow(c->radius()*2.0, 2.0) },
-						{ l->A()->x(), l->A()->y(), l->B()->x(), l->B()->x(), c->radius() })
+						{ l->A()->x(), l->A()->y(), l->B()->x(), l->B()->x(), c->radius() }, NONE)
 {
 
 }
