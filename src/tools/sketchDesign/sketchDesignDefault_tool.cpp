@@ -15,6 +15,7 @@ sketchDesignDefault_tool::sketchDesignDefault_tool(sketchDesign* env):
 	tool<sketchDesign>(env),
 	mDraggedEnt(nullptr),
 	mHoveredEnt(nullptr),
+	mSelectionRect(nullptr),
 	mMoving(false)
 {
 
@@ -22,8 +23,20 @@ sketchDesignDefault_tool::sketchDesignDefault_tool(sketchDesign* env):
 
 void sketchDesignDefault_tool::init()
 {
+	if(!mSelectionRect) {
+		mSelectionRect = std::make_shared<selectionRectangle>(glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0), mEnv->target()->basePlane());
+	}
 	mDraggedEnt = nullptr;
 	mMoving = false;
+}
+
+bool sketchDesignDefault_tool::manage_key_press(GdkEventKey* event)
+{
+	if(event->keyval == GDK_KEY_Escape) {
+		unselect_all();
+		return false;
+	}
+	return true;
 }
 
 bool sketchDesignDefault_tool::manage_button_press(GdkEventButton* event)
@@ -35,26 +48,37 @@ bool sketchDesignDefault_tool::manage_button_press(GdkEventButton* event)
 				mEnv->target()->clear_selectedGeometries();
 			mEnv->target()->add_selectedGeometry(mDraggedEnt);
 		} else if(!mDraggedEnt) {
-			mEnv->target()->clear_selectedGeometries();
+			unselect_all();
+
+			camera_ptr cam = mEnv->state()->cam;
+			geom_3d::plane_abstr_ptr pl = mEnv->target()->basePlane();
+			glm::vec2 pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
+			mSelectionRect->set_points(pos, pos);
+			mEnv->target()->add_toolPreview(mSelectionRect);
+			mStartPos = glm::vec2(event->x, event->y);
 		}
 	}
 	return true;
 }
 bool sketchDesignDefault_tool::manage_button_release(GdkEventButton* event)
 {
+	if(event->button == 1)
+		mEnv->target()->clear_toolPreview();
+
 	mDraggedEnt = nullptr;
 	mMoving = false;
 	return true;
 }
 bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event) 
 {
-	if(mDraggedEnt) {
-		sketch_ptr sk = mEnv->target();
-		DEBUG_ASSERT(sk, "No valid sketch.");
+	sketch_ptr sk = mEnv->target();
+	DEBUG_ASSERT(sk, "No valid sketch.");
 
-		geom_3d::plane_abstr_ptr pl = sk->basePlane();
-		camera_ptr cam = mEnv->state()->cam;
-		glm::vec2 pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
+	geom_3d::plane_abstr_ptr pl = sk->basePlane();
+	camera_ptr cam = mEnv->state()->cam;
+	glm::vec2 pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
+
+	if(mDraggedEnt) {
 		if(mMoving) {
 			mEnv->target()->for_each_selected([&](sketchEntity_ptr ent) { 
 				ent->move(mPrevPos, pos); 
@@ -70,20 +94,42 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 				if(!update_attempt)
 					LOG_WARNING("Could not recover from previous error.");
 			}
+		} else {
+			mMoving = true;
+			mEnv->target()->for_each_selected([&](sketchEntity_ptr ent) { 
+				ent->set_dragged(true);
+			});
 		}
-		mMoving = true;
 		mPrevPos = pos;
 	} else {
-		sketchEntity_ptr candidate = mEnv->target()->geometry_at_point(mEnv->state()->cam, glm::vec2(event->x, event->y));
-		if(candidate != mHoveredEnt) {
-			if(mHoveredEnt) {
-				mHoveredEnt->set_hover(false);
+		if(event->state & GDK_BUTTON1_MASK) {
+			mSelectionRect->set_endPoint(pos);
+			if(event->x > mStartPos.x) {
+				mSelectionRect->set_mode(selectionRectangle::COVER);
+			} else {
+				mSelectionRect->set_mode(selectionRectangle::TOUCH);
 			}
-			if(candidate) {
-				candidate->set_hover(true);
+			sk->toggle_selection_from_area(mSelectionRect->start(), mSelectionRect->end(), mSelectionRect->mode() == selectionRectangle::COVER);
+		} else {
+			sketchEntity_ptr candidate = mEnv->target()->geometry_at_point(mEnv->state()->cam, glm::vec2(event->x, event->y));
+			if(candidate != mHoveredEnt) {
+				if(mHoveredEnt) {
+					mHoveredEnt->set_hover(false);
+				}
+				if(candidate) {
+					candidate->set_hover(true);
+				}
+				mHoveredEnt = candidate;
 			}
-			mHoveredEnt = candidate;
 		}
 	}
 	return true;
+}
+
+void sketchDesignDefault_tool::unselect_all()
+{
+	mEnv->target()->for_each_selected([&](sketchEntity_ptr ent) { 
+		ent->set_dragged(false);
+	});
+	mEnv->target()->clear_selectedGeometries();
 }

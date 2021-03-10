@@ -1,21 +1,28 @@
 
 #include <entities/tangibleEntities/sketchEntities/sketchEntity.hpp>
+#include <entities/tangibleEntities/sketchEntities/selectionRectangle.hpp>
 #include <workspaces/sketchDesign.hpp>
 
 class sketchDesignDefault_tool : public tool<sketchDesign> {
 private:   
+    std::shared_ptr<selectionRectangle> mSelectionRect;
     sketchEntity_ptr mDraggedEnt, mHoveredEnt;
     bool mMoving;
     glm::vec2 mPrevPos;
+    glm::vec2 mStartPos;
 public:
     sketchDesignDefault_tool(sketchDesign* env);
     virtual ~sketchDesignDefault_tool() {};
     
-    virtual void init();
+    void init();
 
-	virtual bool manage_button_press(GdkEventButton* event);
-	virtual bool manage_button_release(GdkEventButton* event);
-    virtual bool manage_mouse_move(GdkEventMotion* event);
+	bool manage_key_press(GdkEventKey* event);
 
-	virtual std::string name() { return "sketch design default"; }
+	bool manage_button_press(GdkEventButton* event);
+	bool manage_button_release(GdkEventButton* event);
+    bool manage_mouse_move(GdkEventMotion* event);
+
+	std::string name() { return "sketch design default"; }
+private:
+    void unselect_all();
 };

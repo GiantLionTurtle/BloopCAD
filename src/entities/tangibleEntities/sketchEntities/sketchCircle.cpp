@@ -5,6 +5,7 @@
 #include <graphics_utils/shadersPool.hpp>
 #include <utils/mathUtils.hpp>
 #include <utils/preferences.hpp>
+#include <geometry/geometry_2d/line_abstr.hpp>
 
 float sketchCircle::kSelDist2 = 0.0f;
 bool sketchCircle::kFisrstInst = true;
@@ -71,7 +72,8 @@ void sketchCircle::init()
 
 void sketchCircle::move(glm::vec2 from, glm::vec2 to)
 {
-	set_radius(glm::length(to - mCenter->pos()));
+	if(!mCenter->dragged())
+		set_radius(glm::length(to - mCenter->pos()));
 }
 
 bool sketchCircle::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor)
@@ -81,6 +83,24 @@ bool sketchCircle::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::v
 						map(onscreen_ndc.y / onscreen_ndc.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
 	if(glm::distance2(onscreen, cursor) < 25)
 		return true;
+	return false;
+}
+bool sketchCircle::in_selection_range(glm::vec2 a, glm::vec2 b, bool contained)
+{
+	if(contained) {
+		glm::vec2 centerpos = posCenter();
+		double r = valRadius();
+		return a.x >= centerpos.x + r && a.y <= centerpos.y - r && b.x <= centerpos.x - r && b.y >= centerpos.y + r;
+	} else {
+		glm::vec2 centerpos = posCenter();
+		double r = valRadius();
+		geom_2d::simple_line 	up(b, glm::vec2(a.x, b.y)),
+								down(glm::vec2(b.x, a.y), a),
+								// right(a, glm::vec2(a.x, b.y)),
+								left(glm::vec2(b.x, a.y), b);
+		return intersects(&up) || intersects(&down) /*|| intersects(&right)*/ || intersects(&left) || in_selection_range(a, b, true);		
+	}
+	
 	return false;
 }
 

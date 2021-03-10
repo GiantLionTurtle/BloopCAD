@@ -20,6 +20,9 @@ public:
 
 	virtual glm::vec2 closest_to_point(glm::vec2 const& pt);
 	virtual float dist_to_point(glm::vec2 const& pt);
+
+	bool intersects(line_abstr* l);
+	bool intersects(std::shared_ptr<line_abstr> l) { return intersects(l.get()); }
 };
 
 } // !geom_2d

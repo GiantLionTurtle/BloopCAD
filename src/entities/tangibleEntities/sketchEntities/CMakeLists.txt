@@ -4,6 +4,7 @@ set(sketchEntities_source_files
   sketchLine.cpp
   sketchCircle.cpp
   constraintAnnotation.cpp
+  selectionRectangle.cpp
   )
 
 add_library(sketchEntities ${sketchEntities_source_files})

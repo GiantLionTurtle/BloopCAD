@@ -77,7 +77,7 @@ void sketchPoint::print(int depth)
 
 void sketchPoint::move(glm::vec2 from, glm::vec2 to)
 {
-	set(to);
+	set(pos() + to-from);
 }
 
 bool sketchPoint::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor)
@@ -86,6 +86,12 @@ bool sketchPoint::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::ve
 	glm::vec2 onscreen(	map(onscreen_ndc.x / onscreen_ndc.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
 						map(onscreen_ndc.y / onscreen_ndc.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
 	if(glm::distance2(onscreen, cursor) < 50)
+		return true;
+	return false;
+}
+bool sketchPoint::in_selection_range(glm::vec2 a, glm::vec2 b, bool contained)
+{
+	if(a.x >= mX->eval() && b.x <= mX->eval() && a.y <= mY->eval() && b.y >= mY->eval())
 		return true;
 	return false;
 }

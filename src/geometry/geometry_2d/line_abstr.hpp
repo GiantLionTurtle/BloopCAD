@@ -23,11 +23,18 @@ public:
 
 	float length();
 	float length2();
+
+	bool intersects(line_abstr* l);
+	bool intersects(std::shared_ptr<line_abstr> l) { return intersects(l.get()); }
 protected:
 	virtual void post_set_update() {}
 
+	bool ccw(glm::vec2 A, glm::vec2 B, glm::vec2 C);
 	glm::vec2 as_vec();
 };
+
+
+// bool line_intersect(glm::vec2 A, glm::vec2 B, glm::vec2 C, glm::vec2 D);
 
 class simple_line : public line_abstr {
 private:

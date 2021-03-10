@@ -84,19 +84,20 @@ void sketch::add_geometry(sketchGeometry_ptr ent)
 	ent->set_parent(this);
 	mGeometries.push_back(ent);
 }
-void sketch::add_toolPreviewGeometry(sketchEntity_ptr ent)
+void sketch::add_toolPreview(entity_ptr ent)
 {
 	if(!ent) {
-		LOG_WARNING("Trying to add null geometry.");
+		LOG_WARNING("Trying to add null entity.");
 		return;
 	}
 	set_require_redraw();
 	ent->set_parent(this);
-	mToolPreviewGeometries.push_back(ent);
+	mToolPreview.push_back(ent);
 }
-void sketch::clear_toolPreviewGeometries()
+void sketch::clear_toolPreview()
 {
-	mToolPreviewGeometries.clear();
+	mToolPreview.clear();
+	set_require_redraw();
 }
 
 void sketch::add_selectedGeometry(sketchEntity_ptr ent)
@@ -126,18 +127,42 @@ void sketch::clear_selectedGeometries()
 
 void sketch::for_each(std::function<void (entity_ptr)> func)
 {
-	for(sketchEntity_ptr ent : mGeometries) {
-		func(ent);
+	for(sketchEntity_ptr geom : mGeometries) {
+		func(geom);
 	}
-	for(sketchEntity_ptr ent : mToolPreviewGeometries) {
+	for(entity_ptr ent : mToolPreview) {
 		func(ent);
 	}
 	func(mOrigin);
 }
 void sketch::for_each_selected(std::function<void (sketchEntity_ptr)> func)
 {
-	for(sketchEntity_ptr ent : mSelectedGeometries) {
-		func(ent);
+	for(sketchEntity_ptr geom : mSelectedGeometries) {
+		func(geom);
+	}
+}
+void sketch::toggle_selection_from_area(glm::vec2 a, glm::vec2 b, bool contained)
+{
+	glm::vec2 low_right(std::max(a.x, b.x), std::min(a.y, b.y)), high_left(std::min(a.x, b.x), std::max(a.y, b.y));
+
+	for(sketchEntity_ptr geom : mGeometries) {
+		bool in_sel = geom->in_selection_range(low_right, high_left, contained);
+		if(in_sel && !geom->selected()) {
+			add_selectedGeometry(geom);
+		} else if(!in_sel && geom->selected()) {
+			remove_selectedGeometry(geom);
+		}
+			
+		geom->for_each([&](sketchEntity_ptr subgeom) {
+			in_sel = subgeom->in_selection_range(low_right, high_left, contained);
+			if(in_sel && !subgeom->selected()) {
+				subgeom->select();
+				add_selectedGeometry(subgeom);
+			} else if(!in_sel && subgeom->selected()) {
+				subgeom->unselect();
+				remove_selectedGeometry(subgeom);
+			}
+		});
 	}
 }
 

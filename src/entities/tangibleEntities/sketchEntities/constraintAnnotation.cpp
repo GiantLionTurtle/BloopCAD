@@ -6,13 +6,13 @@
 #include <graphics_utils/shadersPool.hpp>
 #include <graphics_utils/GLCall.hpp>
 
-constraintAnnotation::constraintAnnotation(glm::vec2 pos_, geom_3d::plane_abstr_ptr basePlane_, int constraintType):
+constraintAnnotation::constraintAnnotation(geom_3d::plane_abstr_ptr basePlane_, int constraintType):
 	sketchEntity(basePlane_, -1),
 	mType(constraintType),
 	mTexture(nullptr),
 	mWidth(20),
 	mHeight(20),
-	mPos(pos_)
+	mPos(0.0f)
 {
 
 }

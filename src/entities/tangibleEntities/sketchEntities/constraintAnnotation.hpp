@@ -17,7 +17,7 @@ private:
 
 	glm::vec2 mPos, mWorldOffset, mPixelOffset;
 public:
-	constraintAnnotation(glm::vec2 pos_, geom_3d::plane_abstr_ptr basePlane_, int constraintType);
+	constraintAnnotation(geom_3d::plane_abstr_ptr basePlane_, int constraintType);
 	~constraintAnnotation();
 
 	void init();

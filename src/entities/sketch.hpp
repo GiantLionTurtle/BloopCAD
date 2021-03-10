@@ -23,7 +23,7 @@ private:
 	geom_3d::plane_abstr_ptr mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
 
 	std::vector<sketchGeometry_ptr> mGeometries;
-	std::vector<sketchEntity_ptr> mToolPreviewGeometries;
+	std::vector<entity_ptr> mToolPreview;
 	std::vector<sketchEntity_ptr> mSelectedGeometries;
 
 	folder_ptr mOrigin;
@@ -52,14 +52,15 @@ public:
 	sketchEntity_ptr geometry_at_point(camera_ptr cam, glm::vec2 cursor);
 
 	void add_geometry(sketchGeometry_ptr ent);
-	void add_toolPreviewGeometry(sketchEntity_ptr ent);
-	void clear_toolPreviewGeometries();
+	void add_toolPreview(entity_ptr ent);
+	void clear_toolPreview();
 	void add_selectedGeometry(sketchEntity_ptr ent);
 	void remove_selectedGeometry(sketchEntity_ptr ent);
 	void clear_selectedGeometries();
 
 	void for_each(std::function<void (entity_ptr)> func);
 	void for_each_selected(std::function<void (sketchEntity_ptr)> func);
+	void toggle_selection_from_area(glm::vec2 a, glm::vec2 b, bool contained);
 
 	/*
 		@function basePlane

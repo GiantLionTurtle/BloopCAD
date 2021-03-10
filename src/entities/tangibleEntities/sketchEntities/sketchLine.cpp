@@ -126,8 +126,10 @@ void sketchLine::for_each(std::function<void(sketchEntity_ptr geom)> func)
 void sketchLine::move(glm::vec2 from, glm::vec2 to)
 {
 	glm::vec2 d = to-from;
-	mA->set(mA->pos() + d);
-	mB->set(mB->pos() + d);
+	if(!mA->dragged())
+		mA->set(mA->pos() + d);
+	if(!mB->dragged())
+		mB->set(mB->pos() + d);
 	set_require_VBUpdate();
 }
 
@@ -138,6 +140,17 @@ bool sketchLine::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec
 						map(onscreen_ndc.y / onscreen_ndc.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
 	if(glm::distance2(onscreen, cursor) < kSelDist2)
 		return true;
+	return false;
+}
+bool sketchLine::in_selection_range(glm::vec2 a, glm::vec2 b, bool contained)
+{
+	if(contained) {
+		return mA->in_selection_range(a, b, true) && mB->in_selection_range(a, b, true);
+	} else {
+		geom_2d::simple_line diag_1(a, b), diag_2(glm::vec2(a.x, b.y), glm::vec2(b.x, a.y));
+		return mA->in_selection_range(a, b, true) || mB->in_selection_range(a, b, true) ||
+		intersects(&diag_1) || intersects(&diag_2);
+	}
 	return false;
 }
 

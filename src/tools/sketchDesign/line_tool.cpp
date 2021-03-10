@@ -22,7 +22,6 @@ void line_tool::init()
 {
 	DEBUG_ASSERT(mEnv->state(), "No valid state.");
 	if(!mLinePreview) {
-		// mEnv->state()->doc->make_glContext_current();
 		mLinePreview = sketchLine_ptr(new sketchLine(glm::vec2(0.0), glm::vec2(0.0), mEnv->target()->basePlane()));
 	}
 	mIsMultiline = true;
@@ -30,16 +29,16 @@ void line_tool::init()
 	mEndPos = nullptr;
 	mLinePreview->set_basePlane(mEnv->target()->basePlane());
 	mLinePreview->set_exists(false);
-	mEnv->target()->add_toolPreviewGeometry(mLinePreview);
+	mEnv->target()->add_toolPreview(mLinePreview);
 }
 void line_tool::finish()
 {
-	mEnv->target()->clear_toolPreviewGeometries();
+	mEnv->target()->clear_toolPreview();
 }
 
 bool line_tool::manage_key_press(GdkEventKey* event)
 {
-	if(started) {
+	if(started && event->keyval == GDK_KEY_Escape) {
 		started = false;
 		mLinePreview->set_exists(false);
 		mEndPos = nullptr;

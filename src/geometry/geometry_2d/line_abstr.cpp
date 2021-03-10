@@ -85,10 +85,25 @@ float line_abstr::length2()
 	return glm::distance2(posA(), posB());
 }
 
+bool line_abstr::intersects(line_abstr* l)
+{
+	return ccw(posA(), l->posA(), l->posB()) != ccw(posB(), l->posA(), l->posB()) && ccw(posA(), posB(), l->posA()) != ccw(posA(), posB(), l->posB());
+}
+
+
 glm::vec2 line_abstr::as_vec()
 {
 	return posA() - posB();
 }
+
+bool line_abstr::ccw(glm::vec2 A, glm::vec2 B, glm::vec2 C)
+{
+	return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x);
+}
+// bool line_intersect(glm::vec2 A, glm::vec2 B, glm::vec2 C, glm::vec2 D)
+// {
+// 	return ccw(A,C,D) != ccw(B,C,D) and ccw(A,B,C) != ccw(A,B,D);
+// }
 
 simple_line::simple_line(glm::vec2 a, glm::vec2 b):
 	mA(a),

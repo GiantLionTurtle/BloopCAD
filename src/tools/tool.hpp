@@ -39,7 +39,7 @@ public:
 
 		@param env : The workspace owning the tool
 	*/
-	tool_abstract(): mCursor(compositeCursor_ptr(new compositeCursor{Gdk::Cursor::create(Gdk::ARROW), nullptr, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f)})) {};
+	tool_abstract(): mCursor(compositeCursor_ptr(new compositeCursor{Gdk::Cursor::create(Gdk::ARROW), nullptr, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f)})) {}
 	/*
 		@function tool_abstract creates a tool_abstract object with a given cursor
 
@@ -62,13 +62,13 @@ public:
 
 		@param event : The key event handed by gtk
 	*/
-	virtual bool manage_key_press(GdkEventKey* event) { return true; };
+	virtual bool manage_key_press(GdkEventKey* event) { return true; }
 	/*
 		@function manage_key_release is an overridable routine called when a key is released
 
 		@param event : The key event handed by gtk
 	*/	
-	virtual bool manage_key_release(GdkEventKey* event) { return true; };
+	virtual bool manage_key_release(GdkEventKey* event) { return true; }
 	/*
 		@function manage_mouse_move is an overridable routine called when the pointer moves
 

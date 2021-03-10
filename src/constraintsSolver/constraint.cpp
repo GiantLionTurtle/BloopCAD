@@ -4,8 +4,8 @@
 std::shared_ptr<pointPoint_horizontality> pointPoint_horizontality::make(sketchPoint_ptr p1, sketchPoint_ptr p2)
 {
 	std::shared_ptr<pointPoint_horizontality> constr(new pointPoint_horizontality(p1, p2));
-	std::shared_ptr<constraintAnnotation> annot1(new constraintAnnotation(glm::vec2(0.0, 0.0), p1->basePlane(), constr->type()));
-	std::shared_ptr<constraintAnnotation> annot2(new constraintAnnotation(glm::vec2(0.0, 0.0), p1->basePlane(), constr->type()));
+	auto annot1 = std::make_shared<constraintAnnotation>(p1->basePlane(), constr->type());
+	auto annot2 = std::make_shared<constraintAnnotation>(p1->basePlane(), constr->type());
 	p1->add_constraintAnnotation(annot1);
 	p2->add_constraintAnnotation(annot2);
 	return constr;
@@ -13,7 +13,7 @@ std::shared_ptr<pointPoint_horizontality> pointPoint_horizontality::make(sketchP
 std::shared_ptr<pointPoint_horizontality> pointPoint_horizontality::make(sketchLine_ptr l)
 {
 	std::shared_ptr<pointPoint_horizontality> constr(new pointPoint_horizontality(l->A(), l->B()));
-	auto annot = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l->basePlane(), constr->type());
+	auto annot = std::make_shared<constraintAnnotation>(l->basePlane(), constr->type());
 	l->add_constraintAnnotation(annot);
 	return constr;
 }
@@ -30,8 +30,8 @@ pointPoint_horizontality::pointPoint_horizontality(sketchPoint_ptr p1, sketchPoi
 std::shared_ptr<pointPoint_verticality> pointPoint_verticality::make(sketchPoint_ptr p1, sketchPoint_ptr p2)
 {
 	std::shared_ptr<pointPoint_verticality> constr(new pointPoint_verticality(p1, p2));
-	std::shared_ptr<constraintAnnotation> annot1(new constraintAnnotation(glm::vec2(0.0, 0.0), p1->basePlane(), constr->type()));
-	std::shared_ptr<constraintAnnotation> annot2(new constraintAnnotation(glm::vec2(0.0, 0.0), p1->basePlane(), constr->type()));
+	auto annot1 = std::make_shared<constraintAnnotation>(p1->basePlane(), constr->type());
+	auto annot2 = std::make_shared<constraintAnnotation>(p1->basePlane(), constr->type());
 	p1->add_constraintAnnotation(annot1);
 	p2->add_constraintAnnotation(annot2);
 	return constr;
@@ -39,7 +39,7 @@ std::shared_ptr<pointPoint_verticality> pointPoint_verticality::make(sketchPoint
 std::shared_ptr<pointPoint_verticality> pointPoint_verticality::make(sketchLine_ptr l)
 {
 	std::shared_ptr<pointPoint_verticality> constr(new pointPoint_verticality(l->A(), l->B()));
-	auto annot = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l->basePlane(), constr->type());
+	auto annot = std::make_shared<constraintAnnotation>(l->basePlane(), constr->type());
 	l->add_constraintAnnotation(annot);
 	return constr;	
 }
@@ -62,9 +62,8 @@ std::shared_ptr<pointPoint_distance> pointPoint_distance::make_coincident(sketch
 {
 	std::shared_ptr<pointPoint_distance> constr(new pointPoint_distance(p1, p2, expConst::zero));
 	constr->mType = COINCIDENCE;
-	auto annot1 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), p1->basePlane(), constr->type());
-	auto annot2 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), p1->basePlane(), constr->type());
-	BLOOP_MARKER;
+	auto annot1 = std::make_shared<constraintAnnotation>(p1->basePlane(), constr->type());
+	auto annot2 = std::make_shared<constraintAnnotation>(p1->basePlane(), constr->type());
 	p1->add_constraintAnnotation(annot1);
 	p2->add_constraintAnnotation(annot2);
 	return constr;
@@ -180,8 +179,8 @@ std::shared_ptr<lineLine_angle> lineLine_angle::make_parallel(sketchLine_ptr l1,
 {
 	std::shared_ptr<lineLine_angle> constr(new lineLine_angle(l1, l2, expConst::zero));
 	constr->mType = PARALLELISM;
-	auto annot1 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l1->basePlane(), constr->type());
-	auto annot2 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l1->basePlane(), constr->type());
+	auto annot1 = std::make_shared<constraintAnnotation>(l1->basePlane(), constr->type());
+	auto annot2 = std::make_shared<constraintAnnotation>(l1->basePlane(), constr->type());
 	l1->add_constraintAnnotation(annot1);
 	l2->add_constraintAnnotation(annot2);
 	return constr;
@@ -190,8 +189,8 @@ std::shared_ptr<lineLine_angle> lineLine_angle::make_perpendicular(sketchLine_pt
 {
 	std::shared_ptr<lineLine_angle> constr(new lineLine_angle(l1, l2, expConst::pi2));
 	constr->mType = PERPENDICULARITY;
-	auto annot1 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l1->basePlane(), constr->type());
-	auto annot2 = std::make_shared<constraintAnnotation>(glm::vec2(0.0, 0.0), l1->basePlane(), constr->type());
+	auto annot1 = std::make_shared<constraintAnnotation>(l1->basePlane(), constr->type());
+	auto annot2 = std::make_shared<constraintAnnotation>(l1->basePlane(), constr->type());
 	l1->add_constraintAnnotation(annot1);
 	l2->add_constraintAnnotation(annot2);
 	return constr;

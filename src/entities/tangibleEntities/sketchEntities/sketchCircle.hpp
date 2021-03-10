@@ -31,6 +31,7 @@ public:
 	void move(glm::vec2 from, glm::vec2 to);
 
 	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);
+	bool in_selection_range(glm::vec2 a, glm::vec2 b, bool contained);
 
 	void set_constant();
 	void set_tmpConstant(bool const_);
