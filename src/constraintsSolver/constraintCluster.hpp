@@ -17,11 +17,19 @@ public:
 	std::vector<variable_ptr> mVariables;
 	int mVerboseLevel;
 	int const mMaxIt_LM = 1000, mMaxIt_DL = 1000;
+	int mId;
+
+	int mAlgorithm;
 public:	
-	constraintCluster(std::vector<std::shared_ptr<constraint_abstract>> constraints, std::vector<variable_ptr> vars, int verbose = 0);
+	constraintCluster(std::vector<std::shared_ptr<constraint_abstract>> constraints, std::vector<variable_ptr> vars, int solver_algo, int verbose = 0);
 	~constraintCluster();	
 	
 	bool satisfied();
+
+	int solver() { return mAlgorithm; }
+	void set_solver(int algo) { mAlgorithm = algo; }
+
+	int solve();
 	/*
 		@function solve_LM attempts to solve the system using the Levenberg-Marquardt algorithm
 
@@ -82,6 +90,9 @@ public:
 		@param container [output] : The array that will be filled with the variables' values
 	*/
 	void retrieve_variables(Eigen::VectorXd& container);
+
+	void set_id(int id_) { mId = id_; }
+	int id() const { return mId; }
 };
 
 #endif

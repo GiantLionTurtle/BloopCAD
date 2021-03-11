@@ -16,6 +16,7 @@ private:
 	int mCurrentInd;
 public:
 	serial_action(std::vector<std::shared_ptr<action>> actions);
+	serial_action();
 
 	virtual bool do_work(document* caller);
 	virtual bool undo_work(document* caller);

@@ -57,6 +57,7 @@ public:
 	void add_selectedGeometry(sketchEntity_ptr ent);
 	void remove_selectedGeometry(sketchEntity_ptr ent);
 	void clear_selectedGeometries();
+	size_t n_selectedGeometries() { return mSelectedGeometries.size(); }
 
 	void for_each(std::function<void (entity_ptr)> func);
 	void for_each_selected(std::function<void (sketchEntity_ptr)> func);

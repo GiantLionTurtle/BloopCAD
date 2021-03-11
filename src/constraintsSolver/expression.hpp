@@ -124,6 +124,8 @@ public:
 
 	bool is_deriv_zero() { return mAs_coef || mIs_coef; }
 
+	bool as_coef() { return mAs_coef > 0; }
+	int as_coef_int() { return mAs_coef; }
 	bool is_coef() { return mIs_coef; }
     void set_is_coef(bool coef) { mIs_coef = coef; }
 

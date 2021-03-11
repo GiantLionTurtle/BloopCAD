@@ -40,19 +40,9 @@ int constraintSystem::solve()
 	if(!mBrokenDown) {
 		breakDown_problem();
 	}
-	int output = solveOutput::SUCCESS;
+	int output = constraintCluster::SUCCESS;
 	for(constraintCluster* clust : mSubClusters) {
-		switch(mAlgorithm) {
-			case algorithm::DogLeg:
-				output = std::max(clust->solve_DL(), output);
-				break;
-			case algorithm::LevenbergMarquardt:
-				output = std::max(clust->solve_LM2(), output);
-				break;
-			default:
-				std::cout<<"Unknown solver "<<mAlgorithm<<"\n";
-				break;
-		}
+		output = std::max(output, clust->solve());
 	}
 	return output;
 }
@@ -65,7 +55,8 @@ void constraintSystem::breakDown_problem()
 	std::vector<int> constr_clust(mConstraints.size()), var_clust(mVariables.size());
 	int num_clusters = g.connected_clusters(constr_clust, var_clust);
 	for(int i = 0; i < num_clusters; ++i) {
-		mSubClusters.push_back(new constraintCluster({}, {}, 0));
+		mSubClusters.push_back(new constraintCluster({}, {}, mAlgorithm, 1));
+		mSubClusters.back()->set_id(i);
 	}
 
 	for (size_t i = 0; i < constr_clust.size(); ++i) {

@@ -7,6 +7,12 @@ serial_action::serial_action(std::vector<std::shared_ptr<action>> actions):
 {
 
 }
+serial_action::serial_action():
+	mActions({}),
+	mCurrentInd(0)
+{
+
+}
 
 
 bool serial_action::do_work(document* caller)

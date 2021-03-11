@@ -156,10 +156,8 @@ void sketch::toggle_selection_from_area(glm::vec2 a, glm::vec2 b, bool contained
 		geom->for_each([&](sketchEntity_ptr subgeom) {
 			in_sel = subgeom->in_selection_range(low_right, high_left, contained);
 			if(in_sel && !subgeom->selected()) {
-				subgeom->select();
 				add_selectedGeometry(subgeom);
 			} else if(!in_sel && subgeom->selected()) {
-				subgeom->unselect();
 				remove_selectedGeometry(subgeom);
 			}
 		});
@@ -175,7 +173,7 @@ bool sketch::add_constraint(std::shared_ptr<constraint_abstract> cons, sketchEnt
 		backup_system();
 		int output = mSystem.solve();
 		immovable_hint->set_tmpConstant(false);
-		if(output == constraintSystem::SUCCESS) {
+		if(output == constraintCluster::SUCCESS) {
 			update();
 			return true;
 		}
@@ -183,7 +181,7 @@ bool sketch::add_constraint(std::shared_ptr<constraint_abstract> cons, sketchEnt
 	}
 
 	backup_system();
-	if(mSystem.solve() == constraintSystem::solveOutput::SUCCESS) {
+	if(mSystem.solve() == constraintCluster::SUCCESS) {
 		update();
 		return true;
 	} 
@@ -194,13 +192,11 @@ bool sketch::add_constraint(std::shared_ptr<constraint_abstract> cons, sketchEnt
 
 bool sketch::update_constraints()
 {
-	backup_system();
-	if(mSystem.solve() == constraintSystem::SUCCESS) {
-		update();
-		return true;
-	}
-	revert_system_to_backup();
-	return false;
+	// backup_system();
+	int solve_out = mSystem.solve();
+	update();
+	return solve_out == constraintCluster::SUCCESS;
+	// revert_system_to_backup();
 }
 
 void sketch::backup_system()

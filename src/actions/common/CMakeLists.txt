@@ -4,6 +4,7 @@ set(common_actions_source_files
     switchWorkspace_action.cpp
     moveCamera_action.cpp
     enableEntity_action.cpp
+    disableEntity_action.cpp
     serial_action.cpp
   )
 

@@ -9,7 +9,6 @@
 
 class constraintSystem {
 public:
-	enum solveOutput { RUNNING, SUCCESS, FAILURE, INVALID };
 	enum algorithm { DogLeg, LevenbergMarquardt };
 private:
 	std::vector<std::shared_ptr<constraint_abstract>> mConstraints;
@@ -20,7 +19,7 @@ private:
 	bool mBrokenDown;
 	std::vector<constraintCluster*> mSubClusters;
 
-	algorithm mAlgorithm;
+	int mAlgorithm;
 public:
 	constraintSystem();
 	~constraintSystem();
@@ -31,8 +30,8 @@ public:
 	int solve();
 	void breakDown_problem();
 
-	algorithm solver() { return mAlgorithm; }
-	void set_solver(algorithm algo) { mAlgorithm = algo; }
+	int solver() { return mAlgorithm; }
+	void set_solver(int algo) { mAlgorithm = algo; }
 
 	void clear_subClusters();
 
