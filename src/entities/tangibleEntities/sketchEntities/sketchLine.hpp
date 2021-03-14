@@ -66,8 +66,6 @@ public:
 	void set_constant();
 	void set_tmpConstant(bool const_);
 
-	void notify_childUpdate();
-
 	glm::vec2 posA() { return mA->pos(); }
 	glm::vec2 posB() { return mB->pos(); }
 	sketchPoint_ptr A() { return mA; }
@@ -84,6 +82,8 @@ public:
 	void on_added_constraintAnnotation();
 
 	glm::vec2 annotation_pixelOffset(int ind);
+
+	void set_exists_vars(bool ex);
 protected:
 	/*
 		@function draw_impl draws the line on screen
@@ -92,8 +92,6 @@ protected:
 		@param frame : 	The current frame id
 	*/
 	void draw_impl(camera_ptr cam, int frame);
-
-	// float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
 };
 
 #endif 

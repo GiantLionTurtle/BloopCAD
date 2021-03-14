@@ -54,6 +54,19 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 	}
 }
 
+bool partDesign::manage_key_press(GdkEventKey* event)
+{
+	switch(event->keyval) {
+	case GDK_KEY_S:
+	case GDK_KEY_s:
+		startSketch();
+		break;
+	default:
+		return workspace::manage_key_press(event);
+	}
+	return true;
+}
+
 void partDesign::startSketch()
 {
 	set_tool("startSketch");

@@ -18,8 +18,8 @@
 */
 class plane : public tangibleEntity, public geom_3d::plane_abstr {
 private:
-	const glm::vec3 mColorA = glm::vec3(0.34f, 0.17f, 0.05f), 	// Both colors of a plane, depending on the side from which it is observed
-	mColorB = glm::vec3(0.15f, 0.0f, 0.25f); 					// Maybe it should be an option
+	const glm::vec3 mColorA = glm::vec3(1.0f, 0.35f, 0.90f), 	// Both colors of a plane, depending on the side from which it is observed
+					mColorB = glm::vec3(0.35f, 1.0f, 0.78f); 					// Maybe it should be an option
 
 	glm::vec3 mVertices[4];	// The four vertices of the rectangle that represents the plane
 	unsigned int mIndices[6];

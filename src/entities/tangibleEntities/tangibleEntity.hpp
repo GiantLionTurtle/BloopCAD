@@ -22,16 +22,16 @@ public:
 
 	virtual void init() = 0;
 
-	virtual void notify_childUpdate()
+	virtual void notify(int msg)
 	{
-		if(mParent)
-			mParent->notify_childUpdate();
+		if(msg == UPDATED && mParent)
+			mParent->notify(msg);
 		update_VB();
 	}
 
 	virtual void update_VB() = 0;
 
-	void set_require_VBUpdate() { mRequire_VBUpdate = true; set_require_redraw(); if(mParent) mParent->notify(); }
+	void set_require_VBUpdate() { mRequire_VBUpdate = true; set_require_redraw(); notify_parent(UPDATED); }
 	bool require_VBUpdate() const { return mRequire_VBUpdate; }
 protected:
 	virtual void update_impl() { update_VB(); }

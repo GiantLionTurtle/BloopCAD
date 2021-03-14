@@ -41,6 +41,10 @@ public:
 	virtual void set_basePlane(geom_3d::plane_abstr_ptr basePlane_) { mBasePlane = basePlane_; set_require_VBUpdate(); }
 
 	int type() { return mType; }
+
+	virtual void set_exists_vars(bool ex) {}
+protected:
+	virtual void exists_impl(bool ex) { notify_parent(ex ? RESURRECTED : DELETED); set_exists_vars(ex); }
 };
 
 #endif

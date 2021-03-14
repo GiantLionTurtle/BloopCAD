@@ -15,9 +15,11 @@ public:
 	enum constraint_types { NONE, COINCIDENCE, PERPENDICULARITY, PARALLELISM, HORIZONTALITY, VERTICALITY }; // high level representation (for little annotations and such)
 protected:
 	int mType;
+	bool mExists;
 public:
 	constraint_abstract(int type):
-		mType(type)
+		mType(type),
+		mExists(true)
 	{}
 	virtual double error() = 0;
 	virtual bool satisfied() = 0;
@@ -30,6 +32,9 @@ public:
 	virtual std::string name() = 0;
 
 	int type() { return mType; }
+
+	bool exists() { return mExists; }
+	void set_exists(bool ex) { mExists = ex; }
 };
 
 template<size_t nV>

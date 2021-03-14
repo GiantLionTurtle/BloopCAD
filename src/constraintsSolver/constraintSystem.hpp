@@ -37,6 +37,8 @@ public:
 
 	void varState(std::vector<double>& state);
 	void set_varState(std::vector<double> state);
+
+	void updatedSystem() { mBrokenDown = false; }
 private:
 	class constraintGraph {
 	public:

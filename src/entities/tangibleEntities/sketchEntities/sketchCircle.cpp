@@ -144,6 +144,12 @@ void sketchCircle::update_VB()
 	mVB->unbind();
 }
 
+void sketchCircle::set_exists_vars(bool ex)
+{
+	mRadius->set_exists(ex);
+	mCenter->set_exists_vars(ex);
+}
+
 void sketchCircle::draw_impl(camera_ptr cam, int frame)
 {
 	if(mRequire_VBUpdate)
@@ -180,21 +186,6 @@ void sketchCircle::post_set_behavior()
 	mRequire_VBUpdate = true;
 	set_require_redraw();
 }
-
-// float sketchCircle::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
-// {
-// 	glm::vec3 inter = mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor_pos));
-// 	glm::vec2 on_plane = mBasePlane->to_planePos(inter);
-// 	glm::vec4 closest_screen(mBasePlane->to_worldPos(closest_to_point(on_plane)), 1.0f);
-// 	closest_screen = cam->mvp() * closest_screen;
-// 	closest_screen /= closest_screen.w;
-// 	glm::vec2 on_screen_pix(map(closest_screen.x, -1.0f, 1.0f, 0.0f, cam->viewport().x), 
-// 							map(closest_screen.y, -1.0f, 1.0f, cam->viewport().y, 0.0f));
-// 	if(glm::length2(cursor_pos - on_screen_pix) < 50) {
-// 		return glm::length(cam->pos() - inter);
-// 	}
-// 	return -1.0f;
-// }
 
 void sketchCircle::init_buffers()
 {

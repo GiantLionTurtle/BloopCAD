@@ -210,7 +210,8 @@ double expression_coefficientLength::unit_to_internalFormat(int unit_)
 expression_variable::expression_variable(double val, bool is_coeficient):
 	mVal(val),
 	mAs_coef(true),
-	mIs_coef(is_coeficient)
+	mIs_coef(is_coeficient),
+	mExists(true)
 {
 	mOp = operationType::VARIABLE;
 }

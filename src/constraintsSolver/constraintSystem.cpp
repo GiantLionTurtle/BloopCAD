@@ -23,6 +23,7 @@ bool constraintSystem::satisfied()
 }
 void constraintSystem::add_constraint(std::shared_ptr<constraint_abstract> constr) 
 {
+	mBrokenDown = false;
 	mConstraints.push_back(constr);
 	for(size_t i = 0; i < constr->n_var(); ++i) {
 		variable_ptr var = constr->var(i);
@@ -49,10 +50,11 @@ int constraintSystem::solve()
 
 void constraintSystem::breakDown_problem()
 {
+	mBrokenDown = false;
 	clear_subClusters();
 	constraintGraph g(mConstraints, mVariables);
 
-	std::vector<int> constr_clust(mConstraints.size()), var_clust(mVariables.size());
+	std::vector<int> constr_clust(0), var_clust(0);
 	int num_clusters = g.connected_clusters(constr_clust, var_clust);
 	for(int i = 0; i < num_clusters; ++i) {
 		mSubClusters.push_back(new constraintCluster({}, {}, mAlgorithm, 1));
@@ -66,6 +68,7 @@ void constraintSystem::breakDown_problem()
 	for (size_t i = 0; i < var_clust.size(); ++i) {
 		mSubClusters[var_clust[i]]->mVariables.push_back(mVariables[i]);
 	}
+	mBrokenDown = true;
 }
 
 void constraintSystem::clear_subClusters()
@@ -97,17 +100,21 @@ void constraintSystem::set_varState(std::vector<double> state)
 
 
 constraintSystem::constraintGraph::constraintGraph(std::vector<std::shared_ptr<constraint_abstract>>& constrs, std::vector<variable_ptr>& vars):
-	mNumConstr(constrs.size()),
-	mNumVar(vars.size())
+	mNumConstr(0),
+	mNumVar(0)
 {
 	std::map<variable_ptr, int> v2i;
-	for(int i = 0; i < mNumConstr + mNumVar; ++i) {
-		mVert.push_back({-1, i});
-		if(i >= mNumConstr) {
-			v2i[vars[i-mNumConstr]] = i;
+	for(int i = 0; i < constrs.size() + vars.size(); ++i) {
+		if(i < constrs.size() && constrs[i]->exists()) {
+			mVert.push_back({-1, i});
+			mNumConstr++;
+		} else if(i >= constrs.size() && vars[i-constrs.size()]->exists()) {
+			v2i[vars[i-constrs.size()]] = i;
+			mVert.push_back({-1, i});
+			mNumVar++;
 		}
 	}
-	for(int i = 0; i < mNumConstr; ++i) {
+	for(int i = 0; i < constrs.size(); ++i) {
 		for(int j = 0; j < constrs[i]->n_var(); ++j) {
 			variable_ptr var = constrs[i]->var(j);
 			if(var->is_coef())

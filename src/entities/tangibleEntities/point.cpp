@@ -77,7 +77,7 @@ void point::update_VB()
 	mVB->unbind();
 	set_require_redraw();
 	if(mParent)
-            mParent->notify_childUpdate();
+		mParent->notify(UPDATED);
 }
 
 void point::draw_impl(camera_ptr cam, int frame)

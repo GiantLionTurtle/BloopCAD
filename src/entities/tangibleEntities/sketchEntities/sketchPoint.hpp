@@ -46,10 +46,10 @@ public:
 	void on_added_constraintAnnotation();
 
 	glm::vec2 annotation_pixelOffset(int ind);
+
+	void set_exists_vars(bool ex);
 protected:
 	void draw_impl(camera_ptr cam, int frame);
-
-	// float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
 
 	void post_set_behavior();
 };

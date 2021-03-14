@@ -47,6 +47,8 @@ public:
 
 	void init();
 
+	void notify(int msg);
+
 	void print(int depth = 0);
 
 	sketchEntity_ptr geometry_at_point(camera_ptr cam, glm::vec2 cursor);
@@ -58,6 +60,8 @@ public:
 	void remove_selectedGeometry(sketchEntity_ptr ent);
 	void clear_selectedGeometries();
 	size_t n_selectedGeometries() { return mSelectedGeometries.size(); }
+
+	bool can_delete(sketchEntity_ptr ent);
 
 	void for_each(std::function<void (entity_ptr)> func);
 	void for_each_selected(std::function<void (sketchEntity_ptr)> func);

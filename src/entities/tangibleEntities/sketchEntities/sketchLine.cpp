@@ -165,21 +165,6 @@ void sketchLine::set_tmpConstant(bool const_)
 	mB->set_tmpConstant(const_);
 }
 
-void sketchLine::notify_childUpdate()
-{
-	tangibleEntity::notify_childUpdate();
-	glm::vec2 dir = mA->pos() - mB->pos();
-	// if(glm::length2(dir) == 0.0f) {
-	// 	dirX->funk(true);
-	// 	dirY->funk(true);
-	// } else {
-	// 	dirX->funk(false);
-	// 	dirY->funk(false);
-	// 	dirX->set_funk(dir.x);
-	// 	dirY->set_funk(dir.y);
-	// }
-}
-
 sketchLine_ptr sketchLine::clone()
 {
 	return std::make_shared<sketchLine>(mA->pos(), mB->pos(), mBasePlane);
@@ -217,6 +202,12 @@ glm::vec2 sketchLine::annotation_pixelOffset(int ind)
 	return dir * 100.0f * (float)icon_dir * dir_offset + normal * 150.0f * (float)line_side;
 }
 
+void sketchLine::set_exists_vars(bool ex)
+{
+	mA->set_exists_vars(ex);
+	mB->set_exists_vars(ex);
+}
+
 void sketchLine::draw_impl(camera_ptr cam, int frame)
 {
 	if(mRequire_VBUpdate)
@@ -246,18 +237,3 @@ void sketchLine::draw_impl(camera_ptr cam, int frame)
 	mVA->unbind();
 	mShader->unbind();
 }
-
-// float sketchLine::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
-// {
-// 	glm::vec3 inter = mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor_pos));
-// 	glm::vec2 on_plane = mBasePlane->to_planePos(inter);
-// 	glm::vec4 closest_screen(mBasePlane->to_worldPos(closest_to_point(on_plane)), 1.0f);
-// 	closest_screen = cam->mvp() * closest_screen;
-// 	closest_screen /= closest_screen.w;
-// 	glm::vec2 on_screen_pix(map(closest_screen.x, -1.0f, 1.0f, 0.0f, cam->viewport().x), 
-// 							map(closest_screen.y, -1.0f, 1.0f, cam->viewport().y, 0.0f));
-// 	if(glm::length2(cursor_pos - on_screen_pix) < 50) {
-// 		return glm::length(cam->pos() - inter);
-// 	}
-// 	return -1.0f;
-// }

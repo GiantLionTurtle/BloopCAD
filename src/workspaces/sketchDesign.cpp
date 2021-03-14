@@ -147,6 +147,23 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 	}
 }
 
+bool sketchDesign::manage_key_press(GdkEventKey* event)
+{
+	switch(event->keyval) {
+	case GDK_KEY_L:
+	case GDK_KEY_l:
+		line();
+		break;
+	case GDK_KEY_C:
+	case GDK_KEY_c:
+		coincidence();
+		break;
+	default:
+		return workspace::manage_key_press(event);
+	}
+	return true;
+}
+
 void sketchDesign::line()
 {
 	set_tool("line");

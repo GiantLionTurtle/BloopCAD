@@ -48,13 +48,13 @@ public:
 	int selection_rank() { return 4; }
 
 	void update_VB();
+	
+	void set_exists_vars(bool ex);
 protected:
 	void draw_impl(camera_ptr cam, int frame);
 
 	void post_set_behavior();
 	
-	// float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
-
 	void init_buffers();
 };
 

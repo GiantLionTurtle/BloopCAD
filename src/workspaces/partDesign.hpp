@@ -32,6 +32,8 @@ public:
 	void set_target(part_ptr prt) { mTarget = prt; }
 	part_ptr target() { return mTarget; }
 
+	bool manage_key_press(GdkEventKey* event);
+
 	/*
 		@function startSketch invokes the startSketch tool
 	*/

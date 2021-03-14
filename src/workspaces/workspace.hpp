@@ -96,28 +96,28 @@ public:
 		@function manage_key_press passes the key presses to the current tool and may
 		switch to the default tool if esc is pressed
 	*/
-	bool manage_key_press(GdkEventKey* event);
+	virtual bool manage_key_press(GdkEventKey* event);
 	/*
 		@function manage_key_release passes the key releases to the current tool
 	*/
-	bool manage_key_release(GdkEventKey* event);
+	virtual bool manage_key_release(GdkEventKey* event);
 	/*
 		@function manage_mouse_move passes the motion events to the current tool
 	*/	
-	bool manage_mouse_move(GdkEventMotion* event);
+	virtual bool manage_mouse_move(GdkEventMotion* event);
 	/*
 		@function manage_mouse_scroll passes the scroll events to the current tool
 	*/
-	bool manage_mouse_scroll(GdkEventScroll* event);
+	virtual bool manage_mouse_scroll(GdkEventScroll* event);
 	/*
 		@function manage_button_press passes the button presses to the current tool
 		and activates the orbit tool if the middle mouse is pressed
 	*/		
-	bool manage_button_press(GdkEventButton* event);
+	virtual bool manage_button_press(GdkEventButton* event);
 	/*
 		@function manage_button_release passes the button releases to the current tool
 	*/
-	bool manage_button_release(GdkEventButton* event);
+	virtual bool manage_button_release(GdkEventButton* event);
 
 	/*
 		@function state 

@@ -42,6 +42,12 @@ void sketch::init()
 	// add(std::make_shared<sketchCircle>(circle_abstract(std::make_shared<sketchPoint>(glm::vec2(0.75f, 0.75f), mBasePlane), variable_ptr(new variable(0.5f))), mBasePlane));
 }
 
+void sketch::notify(int msg)
+{
+	if(msg == DELETED || msg == RESURRECTED)
+		mSystem.updatedSystem();
+}
+
 void sketch::print(int depth)
 {
 	for(int i = 0; i < depth; ++i) {
@@ -125,6 +131,14 @@ void sketch::clear_selectedGeometries()
 	mSelectedGeometries.clear();
 }
 
+bool sketch::can_delete(sketchEntity_ptr ent)
+{
+	if((ent->parent() == this && ent != mGeometries[0] && ent != mGeometries[1] && ent != mGeometries[2]) || ent->type() < 0) {
+		return true;
+	}
+	return false;
+}
+
 void sketch::for_each(std::function<void (entity_ptr)> func)
 {
 	for(sketchEntity_ptr geom : mGeometries) {
@@ -133,7 +147,7 @@ void sketch::for_each(std::function<void (entity_ptr)> func)
 	for(entity_ptr ent : mToolPreview) {
 		func(ent);
 	}
-	func(mOrigin);
+	// func(mOrigin);
 }
 void sketch::for_each_selected(std::function<void (sketchEntity_ptr)> func)
 {
@@ -181,7 +195,7 @@ bool sketch::add_constraint(std::shared_ptr<constraint_abstract> cons, sketchEnt
 	}
 
 	backup_system();
-	if(mSystem.solve() == constraintCluster::SUCCESS) {
+	if(update_constraints() == constraintCluster::SUCCESS) {
 		update();
 		return true;
 	} 
@@ -192,11 +206,9 @@ bool sketch::add_constraint(std::shared_ptr<constraint_abstract> cons, sketchEnt
 
 bool sketch::update_constraints()
 {
-	// backup_system();
 	int solve_out = mSystem.solve();
 	update();
 	return solve_out == constraintCluster::SUCCESS;
-	// revert_system_to_backup();
 }
 
 void sketch::backup_system()

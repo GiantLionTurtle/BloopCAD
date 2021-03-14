@@ -35,6 +35,8 @@ public:
 	void set_target(sketch_ptr sk) { mTarget = sk; }
 	sketch_ptr target() { return mTarget; }
 
+	bool manage_key_press(GdkEventKey* event);
+
 	/*
 		@function line invokes the line tool
 	*/

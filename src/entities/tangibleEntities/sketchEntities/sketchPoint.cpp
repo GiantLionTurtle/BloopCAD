@@ -129,7 +129,8 @@ void sketchPoint::update_VB()
 	mVB->unbind();
 	set_require_redraw();
 	if(mParent)
-            mParent->notify_childUpdate();
+		mParent->notify(UPDATED);
+
 	mRequire_VBUpdate = false;
 
 	for(int i = 0; i < mAnnotations.size(); ++i) {
@@ -149,6 +150,12 @@ glm::vec2 sketchPoint::annotation_pixelOffset(int ind)
 	float angle = (float)(ind % 6) / 6.0f * M_PI * 2.0 + M_PI_2;
 
 	return glm::vec2(std::cos(angle) * (float)(ind+1) * 150.0, std::sin(angle) * (float)(ind+1) * 150.0);
+}
+
+void sketchPoint::set_exists_vars(bool ex)
+{
+	mX->set_exists(ex);
+	mY->set_exists(ex);
 }
 
 void sketchPoint::draw_impl(camera_ptr cam, int frame)
@@ -181,18 +188,6 @@ void sketchPoint::draw_impl(camera_ptr cam, int frame)
 	mVA->unbind();
 	mShader->unbind();
 }
-
-// float sketchPoint::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
-// {
-// 	glm::vec4 screenPos = cam->mvp() * glm::vec4(mBasePlane->to_worldPos(pos()), 1.0f);
-// 	glm::vec2 screenPos_2d(	map(screenPos.x / screenPos.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
-// 							map(screenPos.y / screenPos.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
-	
-// 	if(glm::length(screenPos_2d - cursor_pos) < 5) {
-// 		return glm::length(cam->pos() - mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor_pos)));
-// 	}
-// 	return -1.0f;
-// }
 
 void sketchPoint::post_set_behavior()
 {

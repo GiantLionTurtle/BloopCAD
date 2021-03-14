@@ -57,6 +57,12 @@ entity_ptr entity::hovered_child(camera_ptr cam, glm::vec2 cursor_pos, std::func
 	return candidate_child;
 }
 
+void entity::notify_parent(int msg)
+{
+	if(mParent)
+		mParent->notify(msg);
+}
+
 void entity::set_selected(bool select) 
 { 	
 	if(exists()) {
@@ -140,7 +146,7 @@ bool entity::visible() const
 }
 
 void entity::set_exists(bool exists_) 
-{ 
+{
 	set_require_redraw();
 	if(exists_) {
 		mState |= BLOOP_ENTITY_EXISTS_FLAG;
@@ -154,6 +160,8 @@ void entity::set_exists(bool exists_)
 	// }
 	if(mHandle)
 		mHandle->set_exists(exists_);
+	for_each([exists_](entity_ptr ent) { ent->set_exists(exists_); });
+	exists_impl(exists_);
 }
 bool entity::exists() const
 {

@@ -22,7 +22,6 @@ class document;
 
 class entity;
 class entityHandle;
-
 using entity_ptr = std::shared_ptr<entity>;
 
 /*
@@ -39,6 +38,7 @@ using entity_ptr = std::shared_ptr<entity>;
 class entity {
 public: 
 	enum draw_type { ALL, TRANSLUCID, ACTIVE, INACTIVE };
+	enum notifications { UPDATED, DELETED, RESURRECTED };
 protected:
 	int mState;	// The state of the entity, described by the above flags
 	bool mInited;
@@ -74,7 +74,8 @@ public:
 
 	entity_ptr hovered_child(camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (entity_ptr)> filter_func = ([](entity_ptr ent) { return true; }));
 
-	virtual void notify(int msg = 0) {}
+	void notify_parent(int msg);
+	virtual void notify(int msg) {}
 
 	/*
 		@function set_selected sets the selected
@@ -191,8 +192,6 @@ public:
 	void set_require_redraw(bool self = true);
 	bool require_redraw() const { return mRequire_redraw; }
 
-	virtual void notify_childUpdate() {}
-
 	virtual void invoke_workspace(document* doc) {}
 protected:
 	/*
@@ -207,6 +206,7 @@ protected:
 
 	virtual void select_impl(bool sel) {}
 	virtual void hover_impl(bool hov) {}
+	virtual void exists_impl(bool ex) {}
 
 	bool should_draw_self(draw_type type, bool on_required);
 

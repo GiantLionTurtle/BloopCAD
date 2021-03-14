@@ -112,6 +112,7 @@ private:
 	double mVal;
 	int mAs_coef;
 	bool mIs_coef;
+	bool mExists;
 public:
 	expression_variable(double val, bool is_coefficient = false);
 
@@ -135,6 +136,9 @@ public:
 	void reset_to_var() { mAs_coef = 0; }
 
 	void set(double val);
+
+	bool exists() { return mExists; }
+	void set_exists(bool ex) { mExists = ex; }
 };
 
 class expression_plus : public unary_expression {

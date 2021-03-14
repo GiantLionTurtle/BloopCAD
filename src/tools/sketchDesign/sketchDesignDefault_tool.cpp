@@ -28,7 +28,6 @@ void sketchDesignDefault_tool::init()
 	if(!mSelectionRect) {
 		mSelectionRect = std::make_shared<selectionRectangle>(glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0), mEnv->target()->basePlane());
 	}
-	// mDraggedEnt = nullptr;
 	mMoving = false;
 }
 
@@ -37,14 +36,16 @@ bool sketchDesignDefault_tool::manage_key_press(GdkEventKey* event)
 	if(event->keyval == GDK_KEY_Escape) {
 		unselect_all();
 		return false;
+	} else if(event->keyval == GDK_KEY_Delete) {
+		auto mDeleteAllSelected = std::make_shared<serial_action>();
+		sketch_ptr sk = mEnv->target();
+		sk->for_each_selected([&](sketchEntity_ptr ent) {
+			if(sk->can_delete(ent))
+				mDeleteAllSelected->add_action(std::make_shared<disableEntity_action>(ent));
+		});
+		mEnv->state()->doc->push_action(mDeleteAllSelected);
+		unselect_all();
 	}
-	// } else if(event->keyval == GDK_KEY_Delete) {
-	// 	auto mDeleteAllSelected = std::make_shared<serial_action>();
-	// 	mEnv->target()->for_each_selected([&](sketchEntity_ptr ent) {
-	// 		mDeleteAllSelected->add_action(std::make_shared<disableEntity_action>(ent));
-	// 	});
-	// 	mEnv->state()->doc->push_action(mDeleteAllSelected);
-	// }
 	return true;
 }
 
