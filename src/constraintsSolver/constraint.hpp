@@ -31,6 +31,7 @@ public:
 
 	virtual std::string name() = 0;
 
+	void set_type(int tp) { mType = tp; }
 	int type() { return mType; }
 
 	bool exists() { return mExists; }

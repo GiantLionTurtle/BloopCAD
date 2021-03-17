@@ -4,7 +4,6 @@
 
 #include "sketchEntity.hpp"
 #include "constraintAnnotation.hpp"
-// #include <constraintsSolver/constraint.hpp>
 
 class sketchGeometry;
 using sketchGeometry_ptr = std::shared_ptr<sketchGeometry>;
@@ -36,6 +35,7 @@ public:
 			mAnnotations.push_back(annot);
 			if(selected()) {
 				annot->set_hidden(false);
+				set_require_redraw();
 			} else {
 				annot->set_hidden(true);
 			}
@@ -48,7 +48,7 @@ public:
 	{
 		for(std::shared_ptr<constraintAnnotation> annot : mAnnotations) {
 			annot->set_hidden(!sel);
-		}
+		}	
 	}
 };
 

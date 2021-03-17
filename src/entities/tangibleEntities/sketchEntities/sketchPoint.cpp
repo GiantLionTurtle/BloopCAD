@@ -73,6 +73,10 @@ void sketchPoint::print(int depth)
 		std::cout<<"\t";
 	}
 	std::cout<<name()<<"("<<mX->eval()<<",  "<<mY->eval()<<")\n";
+
+	for(int i = 0; i < mAnnotations.size(); ++i) {
+		mAnnotations[i]->print(depth+1);
+	}
 }
 
 void sketchPoint::move(glm::vec2 from, glm::vec2 to)

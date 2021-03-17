@@ -70,6 +70,19 @@ void sketchCircle::init()
 	}
 }
 
+void sketchCircle::print(int depth)
+{
+	for(int i = 0; i < depth; ++i) {
+		std::cout<<"\t";
+	}
+	std::cout<<name()<<"["<<mRadius->eval()<<"]\n";
+	
+	mCenter->print(depth+1);
+	for(int i = 0; i < mAnnotations.size(); ++i) {
+		mAnnotations[i]->print(depth+1);
+	}
+}
+
 void sketchCircle::move(glm::vec2 from, glm::vec2 to)
 {
 	if(!mCenter->dragged())

@@ -206,6 +206,7 @@ protected:
 
 	virtual void select_impl(bool sel) {}
 	virtual void hover_impl(bool hov) {}
+	virtual void hidden_impl(bool hid) {}
 	virtual void exists_impl(bool ex) {}
 
 	bool should_draw_self(draw_type type, bool on_required);

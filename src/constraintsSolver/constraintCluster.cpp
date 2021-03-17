@@ -413,7 +413,6 @@ int constraintCluster::solve_DL(double eps)
 		output = solveOutput::FAILURE;
 
 	if(output != solveOutput::SUCCESS) {
-		BLOOP_MARKER;
 		set_variables(X_init);
 	}
 

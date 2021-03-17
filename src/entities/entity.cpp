@@ -123,7 +123,8 @@ void entity::set_hidden(bool hidden)
 			mState |= BLOOP_ENTITY_HIDDEN_FLAG;
 		} else {
 			mState &= ~BLOOP_ENTITY_HIDDEN_FLAG;
-		}		
+		}
+		hidden_impl(hidden);	
 	}
 }
 void entity::hide()
