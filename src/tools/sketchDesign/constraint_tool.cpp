@@ -24,8 +24,13 @@ bool constraint_tool::manage_button_press(GdkEventButton* event)
 	int ent_state = could_add_entity(ent);
 	if(ent_state > add_states::COULDNT_ADD) {
 		add_entity(ent);
+		ent->select();
 		if(ent_state == add_states::WOULD_BE_COMPLETE) {
 			add_constraint();
+			if(mEntA)
+				mEntA->unselect();
+			if(mEntB)
+				mEntB->unselect();
            	mEntA = nullptr;
             mEntB = nullptr;
         }

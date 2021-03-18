@@ -13,6 +13,7 @@ set(sketchDesign_tools_source_files
 add_library(sketchDesign_tools ${sketchDesign_tools_source_files})
 
 target_link_libraries(sketchDesign_tools
+  tools
   actions
   constraintsSolver
   )

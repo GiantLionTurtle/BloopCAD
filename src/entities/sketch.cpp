@@ -19,7 +19,7 @@ sketch::sketch(geom_3d::plane_abstr_ptr base_plane):
 	set_name("sketch");
 	// create_origin();
 
-	// mSystem.set_solver(constraintSystem::LevenbergMarquardt);
+	mSystem.set_solver(constraintSystem::LevenbergMarquardt);
 }
 sketch::sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent):
 	mBasePlane(base_plane),
@@ -28,7 +28,7 @@ sketch::sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent):
 	set_name("sketch");
 	// create_origin();
 
-	// mSystem.set_solver(constraintSystem::LevenbergMarquardt);
+	mSystem.set_solver(constraintSystem::LevenbergMarquardt);
 }
 
 void sketch::init()

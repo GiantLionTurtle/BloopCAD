@@ -15,15 +15,7 @@
 startSketch_tool::startSketch_tool(partDesign* env):
 	simpleSelector_tool(env)
 {
-	// Attempt to load the cursor icon
-	try {
-		mCursor->windowCursor = Gdk::Cursor::create(Gdk::Display::get_default(), Gdk::Pixbuf::create_from_file("resources/textures/images/icons/partDesign/cursors/startSketch_cursor.png", 16, 24), 0, 0);
-	} catch(const Glib::FileError& ex) {
-		LOG_WARNING("Glib::FileError: " + ex.what());
-	} catch(const Gdk::PixbufError& ex) {
-		LOG_WARNING("Glib::PixbufError: " + ex.what());
-	}
-
+	load_icon("resources/textures/images/icons/partDesign/cursors/startSketch_cursor.png");
 	mFilter = [](entity_ptr ent) -> bool { return std::dynamic_pointer_cast<geom_3d::plane_abstr>(ent).operator bool(); };
 }
 

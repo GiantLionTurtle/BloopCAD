@@ -10,7 +10,7 @@
 horizontality_tool::horizontality_tool(sketchDesign* env):
 	constraint_tool(env)
 {
-
+	load_icon("resources/textures/images/icons/sketch/cursors/horizontality_cursor.png");
 }
 
 int horizontality_tool::could_add_entity(sketchEntity_ptr ent)

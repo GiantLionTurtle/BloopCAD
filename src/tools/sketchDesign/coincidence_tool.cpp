@@ -10,7 +10,7 @@
 coincidence_tool::coincidence_tool(sketchDesign* env):
 	constraint_tool(env)
 {
-
+	load_icon("resources/textures/images/icons/sketch/cursors/coincidence_cursor.png");
 }
 
 int coincidence_tool::could_add_entity(sketchEntity_ptr ent)

@@ -38,7 +38,7 @@ int constraintCluster::solve()
 				output = solve_DL();
 				break;
 			case constraintSystem::LevenbergMarquardt:
-				output = solve_LM2();
+				output = solve_LM_faithful();//solve_LM2();
 				break;
 			default:
 				std::cout<<"Unknown solver "<<mAlgorithm<<"\n";

@@ -10,7 +10,7 @@
 verticality_tool::verticality_tool(sketchDesign* env):
 	constraint_tool(env)
 {
-
+	load_icon("resources/textures/images/icons/sketch/cursors/verticality_cursor.png");
 }
 
 int verticality_tool::could_add_entity(sketchEntity_ptr ent)

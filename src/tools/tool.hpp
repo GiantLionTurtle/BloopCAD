@@ -105,6 +105,8 @@ public:
 	virtual bool should_hover(entity_ptr ent) { return true; }
 
 	virtual std::string name() { return "unkown tool"; }
+
+	void load_icon(std::string const& location);
 };
 
 template<typename wst>

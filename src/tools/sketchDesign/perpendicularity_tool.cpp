@@ -10,7 +10,7 @@
 perpendicularity_tool::perpendicularity_tool(sketchDesign* env):
 	constraint_tool(env)
 {
-
+	load_icon("resources/textures/images/icons/sketch/cursors/perpendicularity_cursor.png");
 }
 
 int perpendicularity_tool::could_add_entity(sketchEntity_ptr ent)
@@ -34,6 +34,5 @@ void perpendicularity_tool::add_constraint()
 		LOG_WARNING("Attempting to add incomplete constraint.");
 		return;
 	}
-	
 	mEnv->target()->add_constraint(lineLine_angle::make_perpendicular(std::static_pointer_cast<sketchLine>(mEntA), std::static_pointer_cast<sketchLine>(mEntB)));
 }
