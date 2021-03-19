@@ -118,15 +118,26 @@ void sketchLine::print(int depth)
 
 void sketchLine::for_each(std::function<void (entity_ptr)> func)
 {
+	if(!exists())
+		return;
 	func(mA);
 	func(mB);
 	sketchGeometry::for_each(func);
 }
 void sketchLine::for_each(std::function<void(sketchEntity_ptr geom)> func)
 {
+	if(!exists())
+		return;
 	func(mA);
 	func(mB);
 	sketchGeometry::for_each(func);
+}
+void sketchLine::for_each(std::function<void(sketchGeometry_ptr geom)> func)
+{
+	if(!exists())
+		return;
+	func(mA);
+	func(mB);
 }
 
 void sketchLine::move(glm::vec2 from, glm::vec2 to)
@@ -205,7 +216,7 @@ glm::vec2 sketchLine::annotation_pixelOffset(int ind)
 	int line_side = ind % 2 == 0 ? 1 : -1;
 	bool icon_dir = line_side == -1 ? ind % 4 ? -1 : 1 : ind % 3 ? -1 : 1;
 	float dir_offset = line_side == 1 ? ind : ind - 1;
-	return dir * 100.0f * (float)icon_dir * dir_offset + normal * 150.0f * (float)line_side;
+	return dir * 25.0f * (float)icon_dir * dir_offset + normal * 25.0f * (float)line_side;
 }
 
 void sketchLine::set_exists_vars(bool ex)

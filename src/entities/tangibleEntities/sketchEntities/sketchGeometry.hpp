@@ -19,13 +19,23 @@ public:
 	virtual void for_each(std::function<void(entity_ptr geom)> func)
 	{
 		for(std::shared_ptr<constraintAnnotation> annot : mAnnotations) {
-			func(annot);
+			if(annot->exists())
+				func(annot);
 		}
 	}
 	virtual void for_each(std::function<void(sketchEntity_ptr geom)> func)
 	{
 		for(std::shared_ptr<constraintAnnotation> annot : mAnnotations) {
-			func(annot);
+			if(annot->exists())
+				func(annot);
+		}
+	}
+	virtual void for_each(std::function<void(sketchGeometry_ptr geom)> func) = 0;
+	void for_each_annot(std::function<void(sketchEntity_ptr geom)> func)
+	{
+		for(std::shared_ptr<constraintAnnotation> annot : mAnnotations) {
+			if(annot->exists())
+				func(annot);
 		}
 	}
 
@@ -33,6 +43,7 @@ public:
 	{
 		if(annot) {
 			mAnnotations.push_back(annot);
+			annot->set_parent(this);
 			if(selected()) {
 				annot->set_hidden(false);
 				set_require_redraw();

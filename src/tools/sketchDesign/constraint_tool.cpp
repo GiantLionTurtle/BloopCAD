@@ -17,10 +17,19 @@ void constraint_tool::init()
 	mEntB = nullptr;
 	mCurrentHover = nullptr;
 }
+void constraint_tool::finish()
+{
+	if(mEntA)
+		mEntA->set_hover(false);
+	if(mEntB)
+		mEntB->set_hover(false);
+	if(mCurrentHover)
+		mCurrentHover->set_hover(false);
+}
 
 bool constraint_tool::manage_button_press(GdkEventButton* event)
 {	
-	sketchEntity_ptr ent = mEnv->target()->geometry_at_point(mEnv->state()->cam, glm::vec2(event->x, event->y));
+	sketchEntity_ptr ent = mEnv->target()->entity_at_point(mEnv->state()->cam, glm::vec2(event->x, event->y));
 	int ent_state = could_add_entity(ent);
 	if(ent_state > add_states::COULDNT_ADD) {
 		add_entity(ent);
@@ -39,7 +48,7 @@ bool constraint_tool::manage_button_press(GdkEventButton* event)
 }
 bool constraint_tool::manage_mouse_move(GdkEventMotion* event)
 {
-	sketchEntity_ptr ent = mEnv->target()->geometry_at_point(mEnv->state()->cam, glm::vec2(event->x, event->y));
+	sketchEntity_ptr ent = mEnv->target()->entity_at_point(mEnv->state()->cam, glm::vec2(event->x, event->y));
 
 	if(ent != mCurrentHover) {
 		if(mCurrentHover) {

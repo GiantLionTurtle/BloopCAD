@@ -57,6 +57,7 @@ public:
 
 	void for_each(std::function<void (entity_ptr)> func);
 	void for_each(std::function<void(sketchEntity_ptr ent)> func);
+	void for_each(std::function<void(sketchGeometry_ptr geom)> func);
 	
 	void move(glm::vec2 from, glm::vec2 to);
 

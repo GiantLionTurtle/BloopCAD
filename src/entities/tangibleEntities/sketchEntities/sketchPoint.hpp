@@ -34,6 +34,8 @@ public:
 	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);
 	bool in_selection_range(glm::vec2 a, glm::vec2 b, bool contained);
 
+	void for_each(std::function<void(sketchGeometry_ptr geom)> func) {}
+
 	void set(glm::vec2 p);
 	
 	void set_constant();

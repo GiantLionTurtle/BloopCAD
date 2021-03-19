@@ -11,7 +11,9 @@ class constraint_abstract;
 
 class constraintAnnotation : public sketchEntity {
 private:
-	std::map<int, std::shared_ptr<texture>> kTextures;
+	static bool kFisrstInst;
+	static glm::vec3 kColorHovered;
+	static std::map<int, std::shared_ptr<texture>> kTextures;
 
 	std::shared_ptr<texture> mTexture;
 	int mWidth, mHeight;
@@ -28,6 +30,8 @@ public:
 
 	void print(int depth = 0);
 
+	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);
+
 	glm::vec2 pos();
 	void set_pos(glm::vec2 const& pos_);
 	void set_pixelOffset(glm::vec2 const& offset);
@@ -36,11 +40,14 @@ public:
 
 	void set_twin(std::shared_ptr<constraintAnnotation> tw) { mTwin = tw; }
 	std::shared_ptr<constraintAnnotation> twin() const { return mTwin; }
+
+	int selection_rank() { return 1; }
 protected:
 	void draw_impl(camera_ptr cam, int frame);
 
 	void exists_impl(bool ex);
-	void hidden_impl(bool hid);
+	// void hidden_impl(bool hid);
+	void hover_impl(bool hov);
 };
 
 #endif

@@ -66,8 +66,8 @@ std::shared_ptr<pointPoint_distance> pointPoint_distance::make_coincident(sketch
 	constr->set_type(COINCIDENCE);
 	auto annot1 = std::make_shared<constraintAnnotation>(p1->basePlane(), constr);
 	auto annot2 = std::make_shared<constraintAnnotation>(p1->basePlane(), constr);
-	annot1->set_twin(annot2);
-	annot2->set_twin(annot1);
+	// annot1->set_twin(annot2);
+	// annot2->set_twin(annot1);
 	p1->add_constraintAnnotation(annot1);
 	p2->add_constraintAnnotation(annot2);
 	return constr;

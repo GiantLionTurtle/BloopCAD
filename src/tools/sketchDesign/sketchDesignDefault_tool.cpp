@@ -53,7 +53,7 @@ bool sketchDesignDefault_tool::manage_button_press(GdkEventButton* event)
 {
 	mMoving = false;
 	if(event->button == 1) {
-		auto clickedEnt = mEnv->target()->geometry_at_point(mEnv->state()->cam, glm::vec2(event->x, event->y));
+		auto clickedEnt = mEnv->target()->entity_at_point(mEnv->state()->cam, glm::vec2(event->x, event->y));
 		if(clickedEnt) {
 			mMoving = true;
 			if(!clickedEnt->selected()) {
@@ -113,7 +113,7 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 			sk->toggle_selection_from_area(mSelectionRect->start(), mSelectionRect->end(), mSelectionRect->mode() == selectionRectangle::COVER);
 		}
 	} else {
-		sketchEntity_ptr candidate = mEnv->target()->geometry_at_point(mEnv->state()->cam, glm::vec2(event->x, event->y));
+		sketchEntity_ptr candidate = mEnv->target()->entity_at_point(mEnv->state()->cam, glm::vec2(event->x, event->y));
 		if(candidate != mHoveredEnt) {
 			if(mHoveredEnt) {
 				mHoveredEnt->set_hover(false);

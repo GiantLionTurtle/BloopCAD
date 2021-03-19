@@ -40,6 +40,7 @@ public:
 
 	void for_each(std::function<void (entity_ptr)> func);
 	void for_each(std::function<void(sketchEntity_ptr ent)> func);
+	void for_each(std::function<void(sketchGeometry_ptr geom)> func);
 
 	glm::vec2 posCenter() { return mCenter->pos(); }
 	sketchPoint_ptr center() { return mCenter; }

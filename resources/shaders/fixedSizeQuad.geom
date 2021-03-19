@@ -19,7 +19,7 @@ void main()
 	float mv_x = gl_in[0].gl_Position.w * (u_Width / u_Viewport.x) / 2;
 	float mv_y = gl_in[0].gl_Position.w * (u_Height / u_Viewport.y) / 2;
 
-	vec2 offset2 = u_PixelOffset / u_Viewport * 2;
+	vec2 offset2 = gl_in[0].gl_Position.w * u_PixelOffset / u_Viewport * 2;
 	vec4 offset = vec4(offset2, 0, 0);
 
 	gs_out.UV_coord = vec2(1.0, 1.0);

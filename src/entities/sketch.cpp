@@ -19,7 +19,7 @@ sketch::sketch(geom_3d::plane_abstr_ptr base_plane):
 	set_name("sketch");
 	// create_origin();
 
-	mSystem.set_solver(constraintSystem::LevenbergMarquardt);
+	// mSystem.set_solver(constraintSystem::LevenbergMarquardt);
 }
 sketch::sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent):
 	mBasePlane(base_plane),
@@ -28,7 +28,7 @@ sketch::sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent):
 	set_name("sketch");
 	// create_origin();
 
-	mSystem.set_solver(constraintSystem::LevenbergMarquardt);
+	// mSystem.set_solver(constraintSystem::LevenbergMarquardt);
 }
 
 void sketch::init()
@@ -60,22 +60,35 @@ void sketch::print(int depth)
 	}
 }
 
-sketchEntity_ptr sketch::geometry_at_point(camera_ptr cam, glm::vec2 cursor)
+sketchEntity_ptr sketch::entity_at_point(camera_ptr cam, glm::vec2 cursor)
 {
+	// TODO: make this whole thingy less sketch
 	glm::vec2 planepos = mBasePlane->to_planePos(mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor)));
 	int maxpriority = -1;
 	sketchEntity_ptr candidate = nullptr;
-	for(sketchEntity_ptr geom : mGeometries) {
-		geom->for_each([&](sketchEntity_ptr subgeom) {
-			if(subgeom->selection_rank() > maxpriority && subgeom->in_selection_range(planepos, cam, cursor)) {
+	for(sketchGeometry_ptr geom : mGeometries) {
+		geom->for_each([&](sketchGeometry_ptr subgeom) {
+			if(subgeom->selection_rank() > maxpriority && subgeom->visible() && subgeom->in_selection_range(planepos, cam, cursor)) {
 				maxpriority = subgeom->selection_rank();
 				candidate = subgeom;
 			}
+			subgeom->for_each_annot([&](sketchEntity_ptr annot) {
+				if(annot->selection_rank() > maxpriority && annot->visible() && annot->in_selection_range(planepos, cam, cursor)) {
+					maxpriority = annot->selection_rank();
+					candidate = annot;
+				}
+			});
 		});
-		if(geom->selection_rank() > maxpriority && geom->in_selection_range(planepos, cam, cursor)) {
+		if(geom->selection_rank() > maxpriority && geom->visible() && geom->in_selection_range(planepos, cam, cursor)) {
 			maxpriority = geom->selection_rank();
 			candidate = geom;
 		}
+		geom->for_each_annot([&](sketchEntity_ptr annot) {
+			if(annot->selection_rank() > maxpriority && annot->visible() && annot->in_selection_range(planepos, cam, cursor)) {
+				maxpriority = annot->selection_rank();
+				candidate = annot;
+			}
+		});
 	}
 	return candidate;
 }

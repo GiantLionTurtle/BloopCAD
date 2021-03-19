@@ -26,7 +26,7 @@ public:
 	{
 		if(msg == UPDATED && mParent)
 			mParent->notify(msg);
-		update_VB();
+		set_require_VBUpdate();
 	}
 
 	virtual void update_VB() = 0;

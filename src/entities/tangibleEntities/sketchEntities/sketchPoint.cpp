@@ -153,7 +153,7 @@ glm::vec2 sketchPoint::annotation_pixelOffset(int ind)
 	int level = ind / 6;
 	float angle = (float)(ind % 6) / 6.0f * M_PI * 2.0 + M_PI_2;
 
-	return glm::vec2(std::cos(angle) * (float)(ind+1) * 150.0, std::sin(angle) * (float)(ind+1) * 150.0);
+	return glm::vec2(std::cos(angle) * (float)(ind+1) * 25.0, std::sin(angle) * (float)(ind+1) * 25.0);
 }
 
 void sketchPoint::set_exists_vars(bool ex)

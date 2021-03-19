@@ -46,20 +46,21 @@ int constraintCluster::solve()
 				break;
 		}
 		if(output == SUCCESS)
-			return output;
+			break;
 		
 		had_fixed_vars = false;
-		for(int i = 0; i < mVariables.size(); ++i) {
-			if(mVariables[i]->as_coef()) {
+		for(variable_ptr var : mVariables) {
+			if(var->as_coef()) {
 				had_fixed_vars = true;
 			}
-			mVariables[i]->set_as_var();
+			var->set_as_var();
 		}
 		diminutions++;
 	} while(had_fixed_vars);
 
 	for(int i = 0; i < diminutions; ++i) {
-		mVariables[i]->set_as_coef();
+		for(variable_ptr var : mVariables)
+			var->set_as_coef();
 	}
 	return output;
 }

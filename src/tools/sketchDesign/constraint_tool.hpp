@@ -14,6 +14,7 @@ public:
 	constraint_tool(sketchDesign* env);
 
 	virtual void init();
+	virtual void finish();
 
 	virtual bool manage_button_press(GdkEventButton* event);
 	virtual bool manage_mouse_move(GdkEventMotion* event);

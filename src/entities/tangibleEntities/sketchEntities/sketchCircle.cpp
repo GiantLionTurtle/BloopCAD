@@ -140,6 +140,10 @@ void sketchCircle::for_each(std::function<void (sketchEntity_ptr)> func)
 	func(mCenter);
 	sketchGeometry::for_each(func);
 }
+void sketchCircle::for_each(std::function<void(sketchGeometry_ptr geom)> func)
+{
+	func(mCenter);
+}
 
 void sketchCircle::set_radius(float newval)
 {

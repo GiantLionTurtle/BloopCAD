@@ -51,7 +51,7 @@ public:
 
 	void print(int depth = 0);
 
-	sketchEntity_ptr geometry_at_point(camera_ptr cam, glm::vec2 cursor);
+	sketchEntity_ptr entity_at_point(camera_ptr cam, glm::vec2 cursor);
 
 	void add_geometry(sketchGeometry_ptr ent);
 	void add_toolPreview(entity_ptr ent);
