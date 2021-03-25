@@ -214,10 +214,9 @@ lineLine_angle::lineLine_angle(sketchLine_ptr l1, sketchLine_ptr l2, expression_
 	expression_ptr x2 = (l2->A()->x()-l2->B()->x());
 	expression_ptr y2 = (l2->A()->y()-l2->B()->y());
 
-	mEqu = mod(acos(dot(x1, y1, x2, y2) / sqrt(l1->length2() * l2->length2())), M_PI) - a;
-
-	// From https://www.mathworks->center()om/matlabcentral/answers/180131-how-can-i-find-the-angle-between-two-vectors-including-directional-information
-
+	mEqu = mod(acos(dot(x1, y1, x2, y2) / (sqrt(x1*x1+y1*y1) * sqrt(x2*x2+y2*y2))), M_PI) - a;
+	// https://www.omnicalculator.com/math/angle-between-two-vectors
+	
 	// TODO: handle cases where a is not in range, and all
 }
 

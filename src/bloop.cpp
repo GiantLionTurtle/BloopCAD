@@ -156,56 +156,9 @@ void bloop::add_sideBar(Gtk::Widget* sideBar)
 	show_all();
 }
 
-bool bloop::manage_key_press(GdkEventKey* event)
-{
-	if(mCurrentWorkspace) {
-		return mCurrentWorkspace->manage_key_press(event); // Just pass the event deeper
-	}
-	return true;
-}
-bool bloop::manage_key_release(GdkEventKey* event)
-{
-	if(mCurrentWorkspace) {
-		return mCurrentWorkspace->manage_key_release(event); // Just pass the event deeper
-	}
-	return true;
-}
-bool bloop::manage_mouse_move(GdkEventMotion* event)
-{
-	if(mCurrentWorkspace) {
-		return mCurrentWorkspace->manage_mouse_move(event); // Just pass the event deeper
-	}
-	return true;
-}
-
 bool bloop::manage_mouse_scroll_internal(GdkEventScroll* event)
 {
 	scroll_deltas = glm::vec2(event->delta_x, event->delta_y); // Record the scroll event
-	return true;
-}
-
-bool bloop::manage_mouse_scroll(GdkEventScroll* event)
-{
-	if(mCurrentWorkspace) {
-		// Put the recorded scroll in this event
-		event->delta_x = scroll_deltas.x;
-		event->delta_y = scroll_deltas.y;
-		return mCurrentWorkspace->manage_mouse_scroll(event);
-	}
-	return true;
-}
-bool bloop::manage_button_press(GdkEventButton* event)
-{
-	if(mCurrentWorkspace) {
-		return mCurrentWorkspace->manage_button_press(event); // Just pass the event deeper
-	}
-	return true;
-}
-bool bloop::manage_button_release(GdkEventButton* event)
-{
-	if(mCurrentWorkspace) {
-		return mCurrentWorkspace->manage_button_release(event); // Just pass the event deeper
-	}
 	return true;
 }
 

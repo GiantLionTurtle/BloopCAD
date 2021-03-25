@@ -143,54 +143,13 @@ public:
 	void add_sideBar(Gtk::Widget* sideBar);
 	
 	/*
-		@function manage_key_press takes the current document's key press event
-		and redirects it to the current workspace
-
-		@param event : The key event handed by gtk
-	*/
-	bool manage_key_press(GdkEventKey* event);
-	/*
-		@function manage_key_release takes the current document's key release event
-		and redirects it to the current workspace
-
-		@param event : The key event handed by gtk
-	*/
-	bool manage_key_release(GdkEventKey* event);
-	/*
-		@function manage_mouse_move takes the current document's motion event
-		and redirects it to the current workspace
-
-		@param event : The motion event handed by gtk
-	*/	
-	bool manage_mouse_move(GdkEventMotion* event);
-	/*
-		@function manage_mouse_scroll takes the current document's scroll event
-		and redirects it to the current workspace
-
-		@param event : The scroll event handed by gtk
-	*/	
-	bool manage_mouse_scroll(GdkEventScroll* event);
-	/*
 		@function manage_mouse_scroll_internal keeps track of the scroll within the window
 		because the scroll event captured by the document doesn't have a delta y somewhy
 
 		@param event : The scroll event handed by gtk
 	*/
 	bool manage_mouse_scroll_internal(GdkEventScroll* event);
-	/*
-		@function manage_button_press takes the current document's button press event
-		and redirects it to the current workspace
-
-		@param event : The button event handed by gtk
-	*/
-	bool manage_button_press(GdkEventButton* event);
-	/*
-		@function manage_button_release takes the current document's button release event
-		and redirects it to the current workspace
-
-		@param event : The button event handed by gtk
-	*/	
-	bool manage_button_release(GdkEventButton* event);
+	glm::vec2 scrollDeltas() const { return scroll_deltas; }
 
 	/*
 		@function manage_tab_switch handles the tab switching, sets up the 

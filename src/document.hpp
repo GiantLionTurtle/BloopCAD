@@ -11,6 +11,7 @@
 #include <entities/part.hpp>
 #include <graphics_utils/camera.hpp>
 #include <entities/entityView.hpp>
+#include "eventsManager.hpp"
 
 #include <gtkmm.h>
 
@@ -48,6 +49,8 @@ using document_ptr = std::shared_ptr<document>;
 */
 class document : public Gtk::Box {
 private:
+	eventsManager* mEventsManager;
+
 	std::shared_ptr<part> mPart; // Curently, documents only work on a single part
 	std::vector<selection> mSelection; // This will be kept linear for as long as there is no need for large selections
 
@@ -74,7 +77,8 @@ public:
 
 		@param parent : The bloop window owning the widget
 	*/
-	document(bloop* parent);
+	document(bloop* parent, eventsManager* manager = nullptr);
+	~document();
 
 	/*
 		@function make_glContext makes the rendering context current, it is used if the openGL states 

@@ -30,12 +30,13 @@ bool constraintCluster::satisfied()
 int constraintCluster::solve()
 {
 	int output = FAILURE;
-	int diminutions = 0;
 	bool had_fixed_vars = false;
+	std::vector<int> diminutions(mVariables.size(), 0);
+	int n_diminutions = 0;
 	do {
 		switch(mAlgorithm) {
 			case constraintSystem::DogLeg:
-				output = solve_DL();
+				output = solve_DL(1e-14);
 				break;
 			case constraintSystem::LevenbergMarquardt:
 				output = solve_LM_faithful();//solve_LM2();
@@ -49,18 +50,24 @@ int constraintCluster::solve()
 			break;
 		
 		had_fixed_vars = false;
-		for(variable_ptr var : mVariables) {
-			if(var->as_coef()) {
+		for(int i = 0; i < mVariables.size(); ++i) {
+			auto var = mVariables[i];
+			if(var->as_coef_int() > 1) {
 				had_fixed_vars = true;
+				var->set_as_var();
+				diminutions[i]++;
 			}
-			var->set_as_var();
 		}
-		diminutions++;
+		n_diminutions++;
 	} while(had_fixed_vars);
 
-	for(int i = 0; i < diminutions; ++i) {
-		for(variable_ptr var : mVariables)
-			var->set_as_coef();
+	for(int i = 0; i < n_diminutions; ++i) {
+		for(int i = 0; i < mVariables.size(); ++i) {
+			if(diminutions[i]) {
+				diminutions[i]--;
+				mVariables[i]->set_as_coef();
+			}
+		}
 	}
 	return output;
 }
@@ -410,7 +417,7 @@ int constraintCluster::solve_DL(double eps)
 		}
 	}
 
-	if(e.squaredNorm() >= eps*eps)
+	if(e.squaredNorm() >= eps)
 		output = solveOutput::FAILURE;
 
 	if(output != solveOutput::SUCCESS) {
@@ -426,13 +433,11 @@ int constraintCluster::solve_DL(double eps)
 
 		switch(output) {
 		case solveOutput::SUCCESS:
-			std::cout<<"DL solver, succeeded in "<<k<<" iterations, finished with a squared error of "<<e.squaredNorm()
-			<<" and "<<num0<<" fixed vars ("<<mVariables.size()<<" vars in total) clusterID = "<<id()<<"\n";
+			std::cout<<"DL solver, success. n: "<<k<<"; e: "<<e.squaredNorm()<<"; fixed: "<<num0<<" of "<<mVariables.size()<<"; ID = "<<id()<<"\n";
 			break;
-		//case solveOutput::FAILURE:
+		case solveOutput::FAILURE:
 		default:
-			std::cout<<"DL solver, failed in "<<k<<" iterations, finished with a squared error of "<<e.squaredNorm()
-			<<" and "<<num0<<" fixed vars ("<<mVariables.size()<<" vars in total) clusterID = "<<id()<<"\n";
+			std::cout<<"DL solver, fail. n: "<<k<<"; e: "<<e.squaredNorm()<<"; fixed: "<<num0<<" of "<<mVariables.size()<<"; ID = "<<id()<<"\n";
 			break;
 		}
 	}

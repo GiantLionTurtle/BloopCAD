@@ -14,7 +14,8 @@
 #include <document.hpp>
 
 sketch::sketch(geom_3d::plane_abstr_ptr base_plane):
-	mBasePlane(base_plane)
+	mBasePlane(base_plane),
+	mSystem(1)
 {
 	set_name("sketch");
 	// create_origin();
@@ -22,8 +23,9 @@ sketch::sketch(geom_3d::plane_abstr_ptr base_plane):
 	// mSystem.set_solver(constraintSystem::LevenbergMarquardt);
 }
 sketch::sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent):
+	entity(parent), // Follow that entity
 	mBasePlane(base_plane),
-	entity(parent) // Follow that entity
+	mSystem(1)
 {
 	set_name("sketch");
 	// create_origin();

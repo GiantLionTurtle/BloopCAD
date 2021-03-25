@@ -28,6 +28,8 @@ public:
 
 	void init();
 
+	void move(glm::vec2 from, glm::vec2 to);
+
 	void print(int depth = 0);
 
 	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);

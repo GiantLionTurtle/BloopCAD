@@ -19,7 +19,7 @@
 
 // http://gtk.10911.n7.nabble.com/Trying-hard-with-a-custom-cellrenderer-td45721.html
 // https://stackoverflow.com/questions/42115586/how-to-add-a-hover-effect-to-a-gtktreeview-cell
-int main (int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	errorLogger::get_instance().init(); // Init the error logger singleton
 	preferences::get_instance().load_from_file("resources/configs/configs.xml"); // Init the preferences service singleton

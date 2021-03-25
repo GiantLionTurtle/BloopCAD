@@ -93,6 +93,12 @@ void constraintAnnotation::init()
 	}
 }
 
+void constraintAnnotation::move(glm::vec2 from, glm::vec2 to)
+{
+	mWorldOffset += (to-from);
+	set_require_VBUpdate();
+}
+
 void constraintAnnotation::print(int depth)
 {
 	for(int i = 0; i < depth; ++i) {

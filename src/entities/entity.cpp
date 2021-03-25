@@ -185,7 +185,8 @@ void entity::print(int depth)
 
 void entity::set_require_redraw(bool self /*= true*/)
 {
-	if(mParent) {
+	// TODO: test if this check actualy saves time, is the check worth the non-jump?
+	if(mParent && !mRequire_redraw && !mRequire_selfRedraw) {
 		mParent->set_require_redraw(false);
 	}
 	if(self) {

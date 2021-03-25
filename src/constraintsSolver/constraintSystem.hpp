@@ -20,8 +20,10 @@ private:
 	std::vector<constraintCluster*> mSubClusters;
 
 	int mAlgorithm;
+
+	int mVerboseLevel;
 public:
-	constraintSystem();
+	constraintSystem(int verboseLevel = 0);
 	~constraintSystem();
 
 	bool satisfied();

@@ -3,9 +3,10 @@
 
 #include <utils/errorLogger.hpp>
 
-constraintSystem::constraintSystem():
+constraintSystem::constraintSystem(int verboseLevel):
 	mBrokenDown(false),
-	mAlgorithm(algorithm::DogLeg)
+	mAlgorithm(algorithm::DogLeg),
+	mVerboseLevel(verboseLevel)
 {
 
 }
@@ -38,13 +39,20 @@ void constraintSystem::add_constraint(std::shared_ptr<constraint_abstract> const
 
 int constraintSystem::solve()
 {
+	if(mVerboseLevel) 
+		std::cout<<"Start solve attempt...\n";
 	if(!mBrokenDown) {
+		if(mVerboseLevel) 
+			std::cout<<"Breaking down problem...\n";
 		breakDown_problem();
 	}
 	int output = constraintCluster::SUCCESS;
 	for(constraintCluster* clust : mSubClusters) {
 		output = std::max(output, clust->solve());
 	}
+	if(mVerboseLevel) 
+		std::cout<<"Solve "<<(output == constraintCluster::SUCCESS ? "success" : "fail")<<".\n";
+
 	return output;
 }
 

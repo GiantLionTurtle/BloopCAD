@@ -5,8 +5,9 @@
 #include "bloop.hpp"
 #include "graphics_utils/GLCall.hpp"
 
-document::document(bloop* parent) :
+document::document(bloop* parent, eventsManager* manager):
 	mParentBloop(parent),
+	mEventsManager(manager),
 	mCurrentWorkspaceState(nullptr),
 	mBackgroundColor(0.0f, 0.0f, 0.0f),
 	mFrameId(1),
@@ -16,6 +17,10 @@ document::document(bloop* parent) :
 	mRequire_redraw(false),
 	mUseSelectionBuffer(true)
 {
+	if(!mEventsManager) {
+		mEventsManager = new stimuli_eventsManager(parent);
+	}
+
 	mViewport.set_required_version(3, 2);
 	connect_signals();	
 	// Create the workspace states, their cameras and all
@@ -35,6 +40,10 @@ document::document(bloop* parent) :
 	mBackgroundColor = preferences::get_instance().get_vec3("background");
 	preferences::get_instance().add_callback("background", [this](glm::vec3 color) { mBackgroundColor = color; });
 	mSideBar = new entityView(this);
+}
+document::~document()
+{
+	delete mEventsManager;
 }
 
 void document::make_glContext_current()
@@ -139,11 +148,11 @@ bool document::manage_key_press(GdkEventKey* event)
 		}
 	}
 	
-	return mParentBloop->manage_key_press(event);
+	return mEventsManager->manage_key_press(event);
 }
 bool document::manage_key_release(GdkEventKey* event)
 {
-	return mParentBloop->manage_key_release(event);
+	return mEventsManager->manage_key_release(event);
 }
 
 void document::connect_signals()
@@ -175,10 +184,10 @@ void document::connect_signals()
 	// Events happening on the viewport but handled by bloop, because it has direct access to the workspaces
 	mViewport.signal_key_press_event().connect(sigc::mem_fun(*this, &document::manage_key_press));
 	mViewport.signal_key_release_event().connect(sigc::mem_fun(*this, &document::manage_key_release));
-	mViewport.signal_scroll_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_scroll));
-	mViewport.signal_motion_notify_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_mouse_move));
-	mViewport.signal_button_press_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_button_press));
-	mViewport.signal_button_release_event().connect(sigc::mem_fun(*mParentBloop, &bloop::manage_button_release));
+	mViewport.signal_scroll_event().connect(sigc::mem_fun(*mEventsManager, &eventsManager::manage_mouse_scroll));
+	mViewport.signal_motion_notify_event().connect(sigc::mem_fun(*mEventsManager, &eventsManager::manage_mouse_move));
+	mViewport.signal_button_press_event().connect(sigc::mem_fun(*mEventsManager, &eventsManager::manage_button_press));
+	mViewport.signal_button_release_event().connect(sigc::mem_fun(*mEventsManager, &eventsManager::manage_button_release));
 
 	pack_end(mViewport);
 
