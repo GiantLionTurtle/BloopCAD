@@ -53,6 +53,8 @@ public:
 		@param event : The button event handed by gtk
 	*/	
 	virtual bool manage_button_release(GdkEventButton* event) = 0;
+
+	virtual bool manage_tick(const Glib::RefPtr<Gdk::FrameClock>& frame_clock) = 0;
 };
 
 class stimuli_eventsManager : public eventsManager {
@@ -67,6 +69,8 @@ public:
 	virtual bool manage_mouse_scroll(GdkEventScroll* event);
 	virtual bool manage_button_press(GdkEventButton* event);
 	virtual bool manage_button_release(GdkEventButton* event);
+
+	virtual bool manage_tick(const Glib::RefPtr<Gdk::FrameClock>& frame_clock);
 };
 
 #endif

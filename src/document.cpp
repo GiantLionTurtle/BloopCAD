@@ -108,6 +108,7 @@ void document::do_resize(int width, int height)
 }
 bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 {
+	mRequire_redraw = false;
 	// Background draw
 	GLCall(glViewport(0, 0, get_width(), get_height()));
 	GLCall(glClearColor(mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, 1.0));
@@ -119,40 +120,6 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 	}
 	mFrameId++;
 	return true;
-}
-gboolean document::frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock, gpointer data)
-{
-    document* self = (document*) data;
-
-	self->update_actionStack();
-	bool cam_updated = self->mCurrentWorkspaceState->cam->require_update();
-	if(cam_updated)	{
-		self->mCurrentWorkspaceState->cam->update();
-		self->mCurrentCamState = self->mCurrentWorkspaceState->cam->state();
-	}
-
-	if(cam_updated || self->target()->require_redraw()/* || self->mRequire_redraw*/) {
-		self->mRequire_redraw = false;
-		self->mViewport.queue_draw();
-	}
-
-    return G_SOURCE_CONTINUE;
-}
-bool document::manage_key_press(GdkEventKey* event)
-{
-	if(event->state & GDK_CONTROL_MASK) {
-		if(event->keyval == GDK_KEY_z) {
-			rewind_action_index();
-		} else if(event->keyval == GDK_KEY_y) {
-			advance_action_index();
-		}
-	}
-	
-	return mEventsManager->manage_key_press(event);
-}
-bool document::manage_key_release(GdkEventKey* event)
-{
-	return mEventsManager->manage_key_release(event);
 }
 
 void document::connect_signals()
@@ -179,15 +146,14 @@ void document::connect_signals()
 	mViewport.signal_unrealize().connect(sigc::mem_fun(*this, &document::do_unrealize), false);
 	mViewport.signal_resize().connect(sigc::mem_fun(*this, &document::do_resize));
 	mViewport.signal_render().connect(sigc::mem_fun(*this, &document::do_render));
-	gtk_widget_add_tick_callback((GtkWidget*) this->gobj(),	document::frame_callback, this, NULL); // Couldn't find a c++-y way to do it
 
-	// Events happening on the viewport but handled by bloop, because it has direct access to the workspaces
-	mViewport.signal_key_press_event().connect(sigc::mem_fun(*this, &document::manage_key_press));
-	mViewport.signal_key_release_event().connect(sigc::mem_fun(*this, &document::manage_key_release));
+	mViewport.signal_key_press_event().connect(sigc::mem_fun(*mEventsManager, &eventsManager::manage_key_press));
+	mViewport.signal_key_release_event().connect(sigc::mem_fun(*mEventsManager, &eventsManager::manage_key_release));
 	mViewport.signal_scroll_event().connect(sigc::mem_fun(*mEventsManager, &eventsManager::manage_mouse_scroll));
 	mViewport.signal_motion_notify_event().connect(sigc::mem_fun(*mEventsManager, &eventsManager::manage_mouse_move));
 	mViewport.signal_button_press_event().connect(sigc::mem_fun(*mEventsManager, &eventsManager::manage_button_press));
 	mViewport.signal_button_release_event().connect(sigc::mem_fun(*mEventsManager, &eventsManager::manage_button_release));
+	mViewport.add_tick_callback(sigc::mem_fun(*mEventsManager, &eventsManager::manage_tick));
 
 	pack_end(mViewport);
 
@@ -228,6 +194,16 @@ bool document::has_workspace(int name)
 {
 	if(name == bloop::workspace_types::SKETCH || name == bloop::workspace_types::PART)
 		return true;
+	return false;
+}
+
+bool document::update_camera()
+{
+	if(mCurrentWorkspaceState->cam->require_update()) {
+		mCurrentWorkspaceState->cam->update();
+		mCurrentCamState = mCurrentWorkspaceState->cam->state();
+		return true;
+	}
 	return false;
 }
 

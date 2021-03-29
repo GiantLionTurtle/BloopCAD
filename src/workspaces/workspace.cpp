@@ -29,6 +29,16 @@ workspace::workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> c
 
 bool workspace::manage_key_press(GdkEventKey* event)
 {
+	if(event->state & GDK_CONTROL_MASK && mState && mState->doc) {
+		if(event->keyval == GDK_KEY_z) {
+			mState->doc->rewind_action_index();
+			return true;
+		} else if(event->keyval == GDK_KEY_y) {
+			mState->doc->advance_action_index();
+			return true;
+		}
+	}
+
 	if(mState && mState->currentTool) {
 		if(mState->currentTool->manage_key_press(event) && event->keyval == GDK_KEY_Escape) {
 			mState->currentTool->finish(); // Terminate the tool before switching to the default tool

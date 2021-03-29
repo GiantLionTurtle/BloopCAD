@@ -100,13 +100,6 @@ public:
 		and their selection shadows in this function
 	*/
 	bool do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */);
-	/*
-		@function frame_callback calls the rendering loop on at a fixed interval
-	*/
-	static gboolean frame_callback(GtkWidget* widget, GdkFrameClock* frame_clock, gpointer data);
-	
-	bool manage_key_press(GdkEventKey* event);
-	bool manage_key_release(GdkEventKey* event);
 
 	/*
 		@function connect_signals connects the viewport events to bloop's callbacks
@@ -153,6 +146,10 @@ public:
 		@return : The part that is worked on in the document, as a part
 	*/
 	std::shared_ptr<part> target() { return mPart; }
+
+	Gtk::GLArea& viewport() { return mViewport; }
+
+	bool update_camera();
 
 	/*
 		@function push_action adds an action to the action stack and executes it
