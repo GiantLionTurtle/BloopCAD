@@ -117,6 +117,8 @@ public:
 		@return : The currently used document
 	*/
 	document_ptr currentDocument() { return mCurrentDocument; }
+	void add_document(document_ptr doc);
+	
 	/*
 		@function currentWorkspace
 

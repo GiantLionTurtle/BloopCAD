@@ -72,32 +72,19 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 		LOG_ERROR("Could not build home page.");
 	}
 	
-	if(mDocumentIndexer) {
-		// Warning: this is for testing purposes.
-		mDocuments.push_back(std::make_tuple(tabButton("Document"), Gtk::Overlay(), std::shared_ptr<document>(new document(this))));
-		if(mSideBar) {
-			// mSideBar->add(*std::get<2>(mDocuments.back())->sideBar());
-		} else {
-			LOG_ERROR("Could not build side bar.");
-		}
-		mDocumentIndexer->append_page(std::get<1>(mDocuments.back()), std::get<0>(mDocuments.back()));
-		//mDocumentIndexer->set_tab_reorderable(std::get<1>(mDocuments.back()));
-
-		std::get<1>(mDocuments.back()).add(*std::get<2>(mDocuments.back())); // Add the document (for Gtk it is a box with a GLArea) to the new overlay
-	} else {
+	if(!mDocumentIndexer) {
 		LOG_ERROR("Could not build document indexer.");
 	}
 
-	// Add the navigation bar as an overlay over the document
-	if(mNavigationBar) {
-		std::get<1>(mDocuments.back()).add_overlay(*mNavigationBar);
-	} else {
+	if(!mSideBar) {
+		LOG_ERROR("Could not build side bar.");
+	}
+
+	if(!mNavigationBar) {
 		LOG_ERROR("Could not build navigation bar.");
 	}
-	// Add the status bar as an overlay over the document
-	if(mStatusBar) {
-		std::get<1>(mDocuments.back()).add_overlay(*mStatusBar);
-	} else {
+	
+	if(!mStatusBar) {
 		LOG_ERROR("Could not build status bar.");
 	}
 	
@@ -115,6 +102,23 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 
 	connect_signals();
 	show_all();	// Make sure nothing is hidden for some reason
+}
+
+void bloop::add_document(document_ptr doc)
+{
+	if(!doc) {
+		LOG_WARNING("Trying to add null doc.");
+		return;
+	}
+	mDocuments.push_back(std::make_tuple(tabButton(doc->name()), Gtk::Overlay(), doc));
+	std::get<2>(mDocuments.back())->set_parent(this);
+
+	mDocumentIndexer->append_page(std::get<1>(mDocuments.back()), std::get<0>(mDocuments.back()));
+	std::get<1>(mDocuments.back()).add(*std::get<2>(mDocuments.back())); // Add the document (for Gtk it is a box with a GLArea) to the new overlay
+
+	std::get<1>(mDocuments.back()).add_overlay(*mNavigationBar);
+	std::get<1>(mDocuments.back()).add_overlay(*mStatusBar);
+	show_all();
 }
 
 workspace_ptr bloop::set_workspace(int name, std::shared_ptr<workspaceState> state)

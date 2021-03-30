@@ -5,8 +5,8 @@
 #include "bloop.hpp"
 #include "graphics_utils/GLCall.hpp"
 
-document::document(bloop* parent, eventsManager* manager):
-	mParentBloop(parent),
+document::document(eventsManager* manager):
+	mParentBloop(),
 	mEventsManager(manager),
 	mCurrentWorkspaceState(nullptr),
 	mBackgroundColor(0.0f, 0.0f, 0.0f),
@@ -15,10 +15,11 @@ document::document(bloop* parent, eventsManager* manager):
 	mActionInd(0),
 	mCurrentActionNum(0),
 	mRequire_redraw(false),
-	mUseSelectionBuffer(true)
+	mUseSelectionBuffer(true),
+	mName("Unamed doc")
 {
 	if(!mEventsManager) {
-		mEventsManager = new stimuli_eventsManager(parent);
+		mEventsManager = new stimuli_eventsManager();
 	}
 
 	mViewport.set_required_version(3, 2);
@@ -195,6 +196,16 @@ bool document::has_workspace(int name)
 	if(name == bloop::workspace_types::SKETCH || name == bloop::workspace_types::PART)
 		return true;
 	return false;
+}
+
+void document::set_parent(bloop* parentBloop)
+{
+	if(parentBloop) {
+		mParentBloop = parentBloop;
+		mEventsManager->set_bloop(parentBloop);
+	} else {
+		LOG_WARNING("Attempting to assign a null bloop as parent.");
+	}
 }
 
 bool document::update_camera()

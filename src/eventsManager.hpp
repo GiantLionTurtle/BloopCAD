@@ -10,7 +10,10 @@ class eventsManager {
 protected:
 	bloop* mBloopWindow;
 public:
-	eventsManager(bloop* window);
+	eventsManager();
+
+	void set_bloop(bloop* blp) { mBloopWindow = blp; }
+
 	/*
 		@function manage_key_press takes the current document's key press event
 		and redirects it to the current workspace
@@ -61,7 +64,7 @@ class stimuli_eventsManager : public eventsManager {
 private:
 
 public:
-	stimuli_eventsManager(bloop* window);
+	stimuli_eventsManager();
 
 	virtual bool manage_key_press(GdkEventKey* event);
 	virtual bool manage_key_release(GdkEventKey* event);
@@ -69,6 +72,15 @@ public:
 	virtual bool manage_mouse_scroll(GdkEventScroll* event);
 	virtual bool manage_button_press(GdkEventButton* event);
 	virtual bool manage_button_release(GdkEventButton* event);
+
+	virtual bool manage_tick(const Glib::RefPtr<Gdk::FrameClock>& frame_clock);
+};
+
+class test_eventsManager : public stimuli_eventsManager {
+private:
+
+public:
+	test_eventsManager();
 
 	virtual bool manage_tick(const Glib::RefPtr<Gdk::FrameClock>& frame_clock);
 };

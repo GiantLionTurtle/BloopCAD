@@ -4,14 +4,12 @@
 #include <bloop.hpp>
 #include <document.hpp>
 
-eventsManager::eventsManager(bloop* window):
-	mBloopWindow(window)
+eventsManager::eventsManager()
 {
 
 }
 
-stimuli_eventsManager::stimuli_eventsManager(bloop* window):
-	eventsManager(window)
+stimuli_eventsManager::stimuli_eventsManager()
 {
 
 }
@@ -57,4 +55,14 @@ bool stimuli_eventsManager::manage_tick(const Glib::RefPtr<Gdk::FrameClock>& fra
 		}
 	}
 	return true;
+}
+
+test_eventsManager::test_eventsManager()
+{
+
+}
+
+bool test_eventsManager::manage_tick(const Glib::RefPtr<Gdk::FrameClock>& frame_clock)
+{
+	return stimuli_eventsManager::manage_tick(frame_clock);
 }

@@ -47,6 +47,10 @@ int main(int argc, char *argv[])
 	bloop* window;
 	refBuilder->get_widget_derived("bloop", window);
 
+	document_ptr doc = std::make_shared<document>();
+	doc->set_name("test_doc");
+	window->add_document(doc);
+
 	if(window) {
 		return app->run(*window); // Run the app
 	}

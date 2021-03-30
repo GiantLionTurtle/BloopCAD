@@ -71,13 +71,13 @@ private:
 	bool mRequire_redraw;
 	bool mUseSelectionBuffer;
 	entityView* mSideBar;
+
+	std::string mName;
 public:
 	/*
 		@function document creates an empty and mostly unitialized document 
-
-		@param parent : The bloop window owning the widget
 	*/
-	document(bloop* parent, eventsManager* manager = nullptr);
+	document(eventsManager* manager = nullptr);
 	~document();
 
 	/*
@@ -139,6 +139,10 @@ public:
 	workspaceState_ptr state() { return mCurrentWorkspaceState; };
 
 	bloop* window() { return mParentBloop; }
+	void set_parent(bloop* parentBloop);
+
+	std::string name() { return mName; }
+	void set_name(std::string const& name_) { mName = name_; }
 
 	/*
 		@function target
