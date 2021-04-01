@@ -6,6 +6,8 @@
 
 #include <gtkmm.h>
 
+#include <chrono>
+
 class eventsManager {
 protected:
 	bloop* mBloopWindow;
@@ -78,11 +80,16 @@ public:
 
 class test_eventsManager : public stimuli_eventsManager {
 private:
-
+	int mTestStep, mTestStepDone;
+	std::chrono::steady_clock::time_point mLastAction;
 public:
 	test_eventsManager();
 
-	virtual bool manage_tick(const Glib::RefPtr<Gdk::FrameClock>& frame_clock);
+	bool manage_key_press(GdkEventKey* event);
+
+	bool manage_tick(const Glib::RefPtr<Gdk::FrameClock>& frame_clock);
+
+	void do_test();
 };
 
 #endif

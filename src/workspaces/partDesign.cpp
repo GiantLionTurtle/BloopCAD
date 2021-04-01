@@ -15,10 +15,9 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 	workspace("partDesign_upperBar", builder, parent) // Create base workspace with ui upper bar
 {
 	// Creat all the tools used in this workspace
-	mTools["startSketch"] 	= tool_abstract_ptr(new startSketch_tool(this));
-	mTools["default"]		= tool_abstract_ptr(new partDesignDefault_tool(this));
-	// mTools["extrusion"] 	= tool_abstract_ptr(new extrusion_tool(this));
-	mDefaultTool = mTools.at("default");
+	mPartDesignDefault_tool = std::make_shared<partDesignDefault_tool>(this);
+	mStartSketch_tool 		= std::make_shared<startSketch_tool>(this);
+	mDefaultTool = mPartDesignDefault_tool;
 
 	// Initialize all buttons as 2 nullptr
 	mButtons["startSketch"] = std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
@@ -47,11 +46,28 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 		std::get<0>(mButtons.at("extrusion"))->		set_image(*std::get<1>(mButtons.at("extrusion")));
 
 		// Set all the buttons' callback
-		std::get<0>(mButtons.at("startSketch"))->	signal_clicked().connect(sigc::mem_fun(*this, &partDesign::startSketch));
-		std::get<0>(mButtons.at("extrusion"))->		signal_clicked().connect(sigc::mem_fun(*this, &partDesign::extrusion));
+		std::get<0>(mButtons.at("startSketch"))->	signal_clicked().connect(sigc::mem_fun(*this, &partDesign::begin_startSketch));
+		std::get<0>(mButtons.at("extrusion"))->		signal_clicked().connect(sigc::mem_fun(*this, &partDesign::begin_extrusion));
 	} else {
 		LOG_ERROR("Could not build part design workspace.");
 	}
+}
+
+bool partDesign::set_tool(int name)
+{
+	tool_abstract_ptr to_set = nullptr;
+	switch(name) {
+	case TOOLIDS::TOOLID_PARTDESIGNDEFAULT:
+		to_set = mPartDesignDefault_tool;
+		break;
+	case TOOLIDS::TOOLID_STARTSKECTH:
+		to_set = mStartSketch_tool;
+		break;
+	default:
+		return workspace::set_tool(name);
+	}
+	workspace::set_tool(to_set);
+	return true;
 }
 
 bool partDesign::manage_key_press(GdkEventKey* event)
@@ -59,7 +75,7 @@ bool partDesign::manage_key_press(GdkEventKey* event)
 	switch(event->keyval) {
 	case GDK_KEY_S:
 	case GDK_KEY_s:
-		startSketch();
+		begin_startSketch();
 		break;
 	default:
 		return workspace::manage_key_press(event);
@@ -67,11 +83,11 @@ bool partDesign::manage_key_press(GdkEventKey* event)
 	return true;
 }
 
-void partDesign::startSketch()
+void partDesign::begin_startSketch()
 {
-	set_tool("startSketch");
+	set_tool(TOOLID_STARTSKECTH);
 }
-void partDesign::extrusion()
+void partDesign::begin_extrusion()
 {
 	LOG_WARNING("Extrusion not implemented yet");
 }

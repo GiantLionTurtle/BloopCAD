@@ -1,6 +1,8 @@
 
 #include "navigationBar.hpp"
 
+#include <tools/tools_forward.hpp>
+
 navigationBar::navigationBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder) :
 	Gtk::Box(cobject),
 	mCurrentWorkspace(nullptr)
@@ -43,24 +45,24 @@ void navigationBar::set_workspace(workspace_ptr aWorkspace)
 void navigationBar::notify_pan()
 {
 	if(mCurrentWorkspace) {
-		mCurrentWorkspace->set_tool("pan");
+		mCurrentWorkspace->set_tool(TOOLIDS::TOOLID_PAN);
 	}
 }
 void navigationBar::notify_orbit()
 {
 	if(mCurrentWorkspace) {
-		mCurrentWorkspace->set_tool("orbit");
+		mCurrentWorkspace->set_tool(TOOLIDS::TOOLID_ORBIT);
 	}
 }
 void navigationBar::notify_zoom()
 {
 	if(mCurrentWorkspace) {
-		mCurrentWorkspace->set_tool("zoom");
+		mCurrentWorkspace->set_tool(TOOLIDS::TOOLID_ZOOM);
 	}
 }
 void navigationBar::notify_selector()
 {
-	if(mCurrentWorkspace) {
-		mCurrentWorkspace->set_tool("simpleSelector");
-	}
+	// if(mCurrentWorkspace) {
+	// 	mCurrentWorkspace->set_tool("simpleSelector");
+	// }
 }

@@ -3,7 +3,6 @@
 #include <utils/errorLogger.hpp>
 #include <bloop.hpp>
 #include <tools/navigation/navigation.hpp>
-#include <tools/common/simpleSelector_tool.hpp>
 
 workspace::workspace(bloop* parent) :
 	mParentBloop(parent),
@@ -21,10 +20,9 @@ workspace::workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> c
 	builder->get_widget(upperBarID, mUpperBar);
 
 	// Create navigation/selection tools that are fairly common amongst workspaces
-	mTools["orbit"] 				= tool_abstract_ptr(new orbit_tool(this));
-	mTools["zoom"] 					= tool_abstract_ptr(new zoom_tool(this));
-	mTools["pan"] 					= tool_abstract_ptr(new pan_tool(this));
-	mTools["simpleSelector"] 		= tool_abstract_ptr(new simpleSelector_tool<workspace>(this));
+	mOrbit_tool	= std::make_shared<orbit_tool>(this);
+	mZoom_tool	= std::make_shared<zoom_tool>(this);
+	mPan_tool	= std::make_shared<pan_tool>(this);
 }
 
 bool workspace::manage_key_press(GdkEventKey* event)
@@ -57,8 +55,8 @@ bool workspace::manage_key_release(GdkEventKey* event)
 bool workspace::manage_mouse_move(GdkEventMotion* event)
 {
 	if(event->state & GDK_BUTTON2_MASK) { // Override the current tool and update the orbit
-		set_toolCursor(mTools.at("orbit"));
-		return mTools.at("orbit")->manage_mouse_move(event);
+		set_toolCursor(mOrbit_tool);
+		return mOrbit_tool->manage_mouse_move(event);
 	}
 
 	if(mState && mState->currentTool) {
@@ -68,7 +66,7 @@ bool workspace::manage_mouse_move(GdkEventMotion* event)
 }
 bool workspace::manage_mouse_scroll(GdkEventScroll* event)
 {
-	return mTools.at("zoom")->manage_scroll(event); // The only tool that can be used with scroll is zoom
+	return mZoom_tool->manage_scroll(event); // The only tool that can be used with scroll is zoom
 }
 
 bool workspace::manage_button_press(GdkEventButton* event)
@@ -81,7 +79,7 @@ bool workspace::manage_button_press(GdkEventButton* event)
 bool workspace::manage_button_release(GdkEventButton* event)
 {
 	if(event->state & GDK_BUTTON2_MASK) { // Clean up the orbit override
-		mTools.at("orbit")->finish();
+		mOrbit_tool->finish();
 		set_toolCursor(mState->currentTool);
 	}
 	if(mState && mState->currentTool) {
@@ -90,26 +88,26 @@ bool workspace::manage_button_release(GdkEventButton* event)
 	return true;
 }
 
-// bool workspace::invoke_from_key(unsigned int key, std::string& toolName)
-// {
-// 	if(mKey_invokes.find(key) != mKey_invokes.end()) {
-// 		toolName = mKey_invokes[key];
-// 		return true;
-// 	}
-// 	return false;
-// }
-
-bool workspace::set_tool(std::string const& name) 
-{	
-	// This function is a wrapper for the other set_tool that takes a shared pointer
-	if(mTools.find(name) != mTools.end()) {
-		set_tool(mTools.at(name)); 
-		return true;
-	} else {
-		LOG_WARNING("Trying to set \"" + name + "\" as current tool. There is no such tool.");
+bool workspace::set_tool(int name) 
+{
+	tool_abstract_ptr to_set = nullptr;
+	switch(name) {
+	case TOOLIDS::TOOLID_ORBIT:
+		to_set = mOrbit_tool;
+		break;
+	case TOOLIDS::TOOLID_ZOOM:
+		to_set = mZoom_tool;
+		break;
+	case TOOLIDS::TOOLID_PAN:
+		to_set = mPan_tool;
+		break;
+	default:
+		return false;
 	}
-	return false;
+	set_tool(to_set);
+	return true;
 }
+
 void workspace::set_tool(tool_abstract_ptr tool_)
 {
 	if(!tool_) {

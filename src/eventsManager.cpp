@@ -57,12 +57,44 @@ bool stimuli_eventsManager::manage_tick(const Glib::RefPtr<Gdk::FrameClock>& fra
 	return true;
 }
 
-test_eventsManager::test_eventsManager()
+test_eventsManager::test_eventsManager():
+	mTestStep(-1),
+	mTestStepDone(0),
+	mLastAction(std::chrono::steady_clock::now())
 {
 
 }
 
+bool test_eventsManager::manage_key_press(GdkEventKey* event)
+{
+	if(event->keyval == GDK_KEY_o) {
+		mTestStep = 1;
+	}
+	return true;
+}
+
 bool test_eventsManager::manage_tick(const Glib::RefPtr<Gdk::FrameClock>& frame_clock)
 {
+	using namespace std::chrono;
+	static int i = 0;
+
 	return stimuli_eventsManager::manage_tick(frame_clock);
+}
+
+void test_eventsManager::do_test()
+{
+	if(mTestStep >= mTestStepDone) {
+		document_ptr doc = mBloopWindow->currentDocument();
+		if(!doc)
+			LOG_ERROR("Invalid document");
+		// switch(mTestStep) {
+		// case 0:
+
+			
+		// }
+		// if(mTestStep > 0 && duration_cast<milliseconds>(steady_clock::now() - mLastAction).count() > 100) {
+		// 	mLastAction = steady_clock::now();
+		// 	std::cout<<"test! "<<i++<<"\n";
+		// }
+	}
 }

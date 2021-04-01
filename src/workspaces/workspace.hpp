@@ -7,6 +7,7 @@
 #include <tools/tool.hpp>
 #include <graphics_utils/frameBuffer.hpp>
 #include <entities/entity.hpp>
+#include <tools/tools_forward.hpp>
 
 #include <gtkmm.h>
 
@@ -36,8 +37,9 @@ using workspace_ptr = std::shared_ptr<workspace>;
 
 class workspace {
 protected:
-	// std::map<unsigned int, std::string> mKey_invokes;
-	// std::map<unsigned int, std::string> mMouse_invokes;
+	std::shared_ptr<orbit_tool> mOrbit_tool;
+	std::shared_ptr<zoom_tool> mZoom_tool;
+	std::shared_ptr<pan_tool> mPan_tool;
 
 	std::map<std::string, tool_abstract_ptr> mTools; // All the tools used by the workspace
 	tool_abstract_ptr mDefaultTool; // The tool used by default in the workspace (typically some sort of selector)
@@ -71,7 +73,7 @@ public:
 
 		@return : Wheter or not the tool exists
 	*/
-	bool set_tool(std::string const& name);
+	virtual bool set_tool(int name);
 	/*
 		@function set_tool sets the current tool to a given tool
 
@@ -85,6 +87,10 @@ public:
 		@param tool_ : The tool from which to extract the cursor info
 	*/
 	void set_toolCursor(tool_abstract_ptr tool_);
+
+	std::shared_ptr<orbit_tool> orbit() { return mOrbit_tool; }
+	std::shared_ptr<zoom_tool> zoom() { return mZoom_tool; }
+	std::shared_ptr<pan_tool> pan() { return mPan_tool; }
 	/*
 		@function defaultTool
 
