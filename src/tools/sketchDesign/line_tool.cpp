@@ -13,7 +13,7 @@ line_tool::line_tool(sketchDesign* env):
 	tool(env),
 	mEndPos(nullptr),
 	mLinePreview(nullptr),
-	mIsMultiline(true)
+	mLastAdded(nullptr)
 {
 	DEBUG_ASSERT(mEnv, "No valid workspace.");
 }
@@ -21,15 +21,9 @@ line_tool::line_tool(sketchDesign* env):
 void line_tool::init()
 {
 	DEBUG_ASSERT(mEnv->state(), "No valid state.");
-	if(!mLinePreview) {
-		mLinePreview = sketchLine_ptr(new sketchLine(glm::vec2(0.0), glm::vec2(0.0), mEnv->target()->basePlane()));
-	}
-	mIsMultiline = true;
-	started = false; // Bring flag down
+	mLastAdded = nullptr;
+	mStarted = false; // Bring flag down
 	mEndPos = nullptr;
-	mLinePreview->set_basePlane(mEnv->target()->basePlane());
-	mLinePreview->set_exists(false);
-	mEnv->target()->add_toolPreview(mLinePreview);
 }
 void line_tool::finish()
 {
@@ -38,8 +32,8 @@ void line_tool::finish()
 
 bool line_tool::manage_key_press(GdkEventKey* event)
 {
-	if(started && event->keyval == GDK_KEY_Escape) {
-		started = false;
+	if(mStarted && event->keyval == GDK_KEY_Escape) {
+		mStarted = false;
 		mLinePreview->set_exists(false);
 		mEndPos = nullptr;
 		return false;
@@ -49,7 +43,7 @@ bool line_tool::manage_key_press(GdkEventKey* event)
 
 bool line_tool::manage_mouse_move(GdkEventMotion* event)
 {
-	if(started) {
+	if(mStarted) {
 		sketch_ptr target = mEnv->target();
 		DEBUG_ASSERT(target, "No valid target.");
 
@@ -63,32 +57,35 @@ bool line_tool::manage_mouse_move(GdkEventMotion* event)
 }
 bool line_tool::manage_button_press(GdkEventButton* event)
 {
-	// Most of the code of this function will be abstracted eventually because projecting a point 
-	// on screen on a point on a plane is pretty basic	
-	sketch_ptr target = mEnv->target();	
-	DEBUG_ASSERT(target, "No valid target.");	
-
 	// Find where the ray intersectpos_on_plane
 	camera_ptr cam = mEnv->state()->cam; // For ease of writing
-	geom_3d::plane_abstr_ptr pl = target->basePlane();
+	geom_3d::plane_abstr_ptr pl = mEnv->target()->basePlane();
 	glm::vec2 line_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 
-	if(!started) {
-		mLinePreview->A()->set(line_pos);
-		mLinePreview->B()->set(line_pos);
-		mLinePreview->set_exists(true);
-		started = true;
-	} else {
-		// mEnv->state()->doc->make_glContext_current();
-		sketchLine_ptr doneLine = mLinePreview->clone();
-		target->add_geometry(doneLine);
-		mEnv->state()->doc->push_action(std::make_shared<enableEntity_action>(doneLine)); // Doc is passed to activate glContext
-		if(mEndPos) {
-			mEnv->target()->add_constraint(pointPoint_distance::make_coincident(doneLine->A(), mEndPos));
-		}
-		mEndPos = doneLine->B();
-		mLinePreview->A()->set(mEndPos->pos());
-		// started = false;
-	}
+	add_point(line_pos);
 	return true;
+}
+
+sketchPoint_ptr line_tool::add_point(glm::vec2 pt)
+{
+	if(!mStarted) {
+		mLinePreview = std::make_shared<sketchLine>(pt, pt, mEnv->target()->basePlane());
+		mEnv->target()->add_toolPreview(mLinePreview);
+		mStarted = true;
+		return mLinePreview->A();
+	} else {
+		mLinePreview->B()->set(pt);
+		mEnv->target()->add_geometry(mLinePreview);
+		mEnv->state()->doc->push_action(std::make_shared<enableEntity_action>(mLinePreview));
+		mEnv->target()->clear_toolPreview();
+
+		if(mEndPos) {
+			mEnv->target()->add_constraint(pointPoint_distance::make_coincident(mLinePreview->A(), mEndPos));
+		}
+		mEndPos = mLinePreview->B();
+		mLastAdded = mLinePreview;
+		mLinePreview = std::make_shared<sketchLine>(pt, pt, mEnv->target()->basePlane());
+		mEnv->target()->add_toolPreview(mLinePreview);
+		return mEndPos;
+	}
 }

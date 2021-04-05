@@ -9,7 +9,7 @@ public:
 	coincidence_tool(sketchDesign* env);
 
 	std::string name() { return "coincidence"; }
-protected:
+// protected:
 	int could_add_entity(sketchEntity_ptr ent);
 
 	void add_constraint();

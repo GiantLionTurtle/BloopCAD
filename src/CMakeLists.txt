@@ -31,6 +31,7 @@ add_executable(constraintsSolverTest
 	testConstraintsSolver_main.cpp
 	document.cpp
 	eventsManager.cpp
+	testFramework_eventsManager.cpp
 	bloop.cpp
 	)
 target_link_libraries(constraintsSolverTest

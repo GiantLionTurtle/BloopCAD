@@ -41,7 +41,7 @@ public:
 	virtual void act_on_entity(entity_ptr ent);
 
 	virtual std::string name() { return "start sketch"; }
-private:
+// private:
 	/*
 		@function start_sketch is the core of the tool, it creates a sketch with a plane and a camera state
 		it will try to make the pick and invert the w and v vectors of the base plane for the sketch plane 

@@ -38,11 +38,15 @@ glm::vec3 sketchLine::kColor = glm::vec3(0.0);
 glm::vec3 sketchLine::kColorHovered = glm::vec3(0.0);
 glm::vec3 sketchLine::kColorSelected = glm::vec3(0.0);
 
-sketchLine::sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
-	sketchGeometry(basePlane_,  types::LINE),
+sketchLine::sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, bool immovable/* = false*/):
+	sketchGeometry(nullptr,  types::LINE),
 	mA(ptA),
 	mB(ptB)
 {
+	if(!mA || !mB) {
+		LOG_ERROR("Null points.");
+	}
+	mBasePlane = mA->basePlane();
 	mA->set_parent(this);
 	mB->set_parent(this);
 	if(immovable) 

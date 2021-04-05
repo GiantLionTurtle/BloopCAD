@@ -6,6 +6,7 @@
 #include <utils/conversionsUtils.hpp>
 #include <constraintsSolver/constraint.hpp>
 #include <constraintsSolver/constraintSystem.hpp>
+#include <testFramework_eventsManager.hpp>
 
 #include "bloop.hpp"
 #include "workspaces/partDesign.hpp"

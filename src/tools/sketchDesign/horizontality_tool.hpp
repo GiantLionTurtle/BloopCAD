@@ -9,7 +9,7 @@ public:
 	horizontality_tool(sketchDesign* env);
 
 	std::string name() { return "horizontality"; }
-protected:
+// protected:
 	int could_add_entity(sketchEntity_ptr ent);
 
 	void add_constraint();

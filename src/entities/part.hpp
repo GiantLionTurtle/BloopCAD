@@ -63,6 +63,10 @@ public:
 	bool has_volume() const { return false; }
 
 	folder_ptr origin() const { return mOrigin; }
+
+	std::shared_ptr<plane> XY() { return mXY; }
+	std::shared_ptr<plane> YZ() { return mYZ; }
+	std::shared_ptr<plane> ZX() { return mZX; }
 protected:
 	/*
 		@function draw_impl draws the part on screen, it calls draw on all it's components

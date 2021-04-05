@@ -17,9 +17,8 @@
 class line_tool : public tool<sketchDesign> {
 private:
 	sketchPoint_ptr mEndPos; // end pos of the last line added
-	sketchLine_ptr mLinePreview;
-	bool started; // Whether or not the drawing of the line has started
-	bool mIsMultiline;
+	sketchLine_ptr mLinePreview, mLastAdded;
+	bool mStarted; // Whether or not the drawing of the line has started
 public:
 	/*
 		@function line_tool creates a line_tool object
@@ -50,6 +49,10 @@ public:
 	virtual bool manage_button_press(GdkEventButton* event);
 
 	virtual std::string name() { return "line"; }
+
+	sketchPoint_ptr add_point(glm::vec2 pt);
+
+	sketchLine_ptr lastAdded() { return mLastAdded; }
 };
 
 #endif

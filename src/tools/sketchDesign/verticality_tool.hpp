@@ -9,7 +9,7 @@ public:
 	verticality_tool(sketchDesign* env);
 
 	std::string name() { return "verticality_tool"; }
-protected:
+// protected:
 	int could_add_entity(sketchEntity_ptr ent);
 
 	void add_constraint();

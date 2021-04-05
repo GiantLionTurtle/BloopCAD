@@ -78,18 +78,4 @@ public:
 	virtual bool manage_tick(const Glib::RefPtr<Gdk::FrameClock>& frame_clock);
 };
 
-class test_eventsManager : public stimuli_eventsManager {
-private:
-	int mTestStep, mTestStepDone;
-	std::chrono::steady_clock::time_point mLastAction;
-public:
-	test_eventsManager();
-
-	bool manage_key_press(GdkEventKey* event);
-
-	bool manage_tick(const Glib::RefPtr<Gdk::FrameClock>& frame_clock);
-
-	void do_test();
-};
-
 #endif

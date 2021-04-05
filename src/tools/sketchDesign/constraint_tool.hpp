@@ -18,7 +18,7 @@ public:
 
 	virtual bool manage_button_press(GdkEventButton* event);
 	virtual bool manage_mouse_move(GdkEventMotion* event);
-protected:
+// protected:
 	virtual int could_add_entity(sketchEntity_ptr ent) = 0;
 
 	virtual void add_entity(sketchEntity_ptr ent);

@@ -45,7 +45,7 @@ private:
 	sketchPoint_ptr mA, mB;
 	expression_ptr mLength2;
 public:
-	sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
+	sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, bool immovable = false);
 	sketchLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
 	virtual ~sketchLine() {}
 
