@@ -207,17 +207,14 @@ std::shared_ptr<lineLine_angle> lineLine_angle::make_perpendicular(sketchLine_pt
 lineLine_angle::lineLine_angle(sketchLine_ptr l1, sketchLine_ptr l2, expression_ptr a):
 	constraint<8>({ },
 		{ l1->A()->x(), l1->A()->y(), l1->B()->x(), l1->B()->y(), l2->A()->x(), l2->A()->y(), l2->B()->x(), l2->B()->y() }, NONE)
-
 {
 	expression_ptr x1 = (l1->A()->x()-l1->B()->x());
 	expression_ptr y1 = (l1->A()->y()-l1->B()->y());
 	expression_ptr x2 = (l2->A()->x()-l2->B()->x());
 	expression_ptr y2 = (l2->A()->y()-l2->B()->y());
 
-	mEqu = mod(acos(dot(x1, y1, x2, y2) / (sqrt(x1*x1+y1*y1) * sqrt(x2*x2+y2*y2))), M_PI) - a;
+	mEqu = mod(acos(dot(x1, y1, x2, y2) / (sqrt(x1*x1+y1*y1) * sqrt(x2*x2+y2*y2))), 2.0*M_PI) - mod(a, 2.0*M_PI);
 	// https://www.omnicalculator.com/math/angle-between-two-vectors
-	
-	// TODO: handle cases where a is not in range, and all
 }
 
 std::shared_ptr<lineLine_equal> lineLine_equal::make(sketchLine_ptr l1, sketchLine_ptr l2)

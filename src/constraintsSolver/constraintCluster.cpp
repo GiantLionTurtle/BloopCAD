@@ -13,11 +13,24 @@ constraintCluster::constraintCluster(std::vector<std::shared_ptr<constraint_abst
 	mAlgorithm(solver_algo)
 {
 
+
+
 }
 constraintCluster::~constraintCluster()
 {
 
 }
+
+void constraintCluster::init()
+{
+	for(std::shared_ptr<constraint_abstract> constr : mConstraints) {
+		for(int i = 0; i < constr->n_var(); ++i) {
+			mConstrToVars[constr].push_back(constr->var(i));
+			mVarsToConstr[constr->var(i)].push_back(constr);
+		}
+	}
+}
+
 bool constraintCluster::satisfied()
 {
 	for(std::shared_ptr<constraint_abstract> constr : mConstraints) {
@@ -31,8 +44,45 @@ int constraintCluster::solve()
 {
 	int output = FAILURE;
 	bool had_fixed_vars = false;
-	std::vector<int> diminutions(mVariables.size(), 0);
+	std::vector<int> diminutions(mVariables.size(), 0);//, augmentations(mVariables.size(), 0);
+	// bool burnt_augmentations = false;
 	int n_diminutions = 0;
+
+
+	// std::cout<<"asnda\n";
+	// for(int i = 0; i < mVariables.size(); ++i) {
+	// 	if(mVariables[i]->as_coef_int() > 1) {
+	// 		std::cout<<"Fixed: "<<mVariables[i]->id()<<"["<<mVariables[i]->as_coef_int()<<"]\n";
+	// 	}
+	// }
+
+	// for(int i = 0; i < mVariables.size(); ++i) {
+	// 	auto var = mVariables[i];
+	// 	std::cout<<"var: "<<var->id()<<"\n";
+	// 	auto constrs = mVarsToConstr[var];
+	// 	bool satisfied = true;
+	// 	for(auto constr : constrs) {
+	// 		std::cout<<"\twith: "<<constr->name();
+	// 		if(!constr->satisfied()) {
+	// 			std::cout<<" (x)\n";
+	// 			satisfied = false;
+	// 			break;
+	// 		}
+	// 		std::cout<<" (ok)\n";
+	// 	}
+	// 	if(satisfied) {
+	// 		std::cout<<"added "<<var->id()<<"\n";
+	// 		var->set_as_coef();
+	// 		augmentations[i]++;
+	// 	}
+	// }
+	// for(int i = 0; i < mVariables.size(); ++i) {
+	// 	if(mVariables[i]->as_coef_int() > 1) {
+	// 		std::cout<<"Fixed: "<<mVariables[i]->id()<<"["<<mVariables[i]->as_coef_int()<<"]\n";
+	// 	}
+	// }
+	// std::cout<<"asdnkd\n";
+
 	do {
 		switch(mAlgorithm) {
 			case constraintSystem::DogLeg:
@@ -46,10 +96,22 @@ int constraintCluster::solve()
 				return FAILURE;
 				break;
 		}
-		if(output == SUCCESS)
-			break;
 		
 		had_fixed_vars = false;
+		// if(!burnt_augmentations) {
+		// 	burnt_augmentations = true;
+		// 	for(int i = 0; i < augmentations.size(); ++i) {
+		// 		if(augmentations[i] > 0) {
+		// 			burnt_augmentations = false;
+		// 			mVariables[i]->set_as_var();
+		// 		}
+		// 	}
+		// 	if(output != SUCCESS)
+		// 		continue;
+		// } 
+		if(output == SUCCESS)
+			break;
+		//if(burnt_augmentations) {
 		for(int i = 0; i < mVariables.size(); ++i) {
 			auto var = mVariables[i];
 			if(var->as_coef_int() > 1) {
@@ -59,6 +121,7 @@ int constraintCluster::solve()
 			}
 		}
 		n_diminutions++;
+		// }
 	} while(had_fixed_vars);
 
 	for(int i = 0; i < n_diminutions; ++i) {
@@ -354,7 +417,6 @@ int constraintCluster::solve_DL(double eps)
 					e(n_cons), e_new(n_cons), g(n_vars); 	// Error over variables, candidate variables and error scaled with jacobian  
 	Eigen::MatrixXd J(n_cons, n_vars); 	// Jacobian matrix and approximation of Hessian matrix
 
-
 	double r = 1.0;
 	double eps1 = eps;
 	double eps2 = eps;
@@ -427,8 +489,10 @@ int constraintCluster::solve_DL(double eps)
 	if(mVerboseLevel) {
 		int num0 = 0;
 		for(int i = 0; i < mVariables.size(); ++i) {
-			if(mVariables[i]->as_coef_int() > 1)
+			if(mVariables[i]->as_coef_int() > 1) {
 				num0 ++;
+				std::cout<<"Fixed: "<<mVariables[i]->id()<<"\n";
+			}
 		}
 
 		switch(output) {

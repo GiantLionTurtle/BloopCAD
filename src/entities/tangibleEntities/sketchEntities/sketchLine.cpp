@@ -258,3 +258,11 @@ void sketchLine::draw_impl(camera_ptr cam, int frame)
 	mVA->unbind();
 	mShader->unbind();
 }
+
+void sketchLine::hover_impl(bool hov)
+{
+	if(hov) {
+		mA->print_ids();
+		mB->print_ids();
+	}
+}

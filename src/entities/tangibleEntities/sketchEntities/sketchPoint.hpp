@@ -50,6 +50,8 @@ public:
 	glm::vec2 annotation_pixelOffset(int ind);
 
 	void set_exists_vars(bool ex);
+
+	void print_ids() { std::cout<<"Point: "<<mX->id()<<",  "<<mY->id()<<"\n"; }
 protected:
 	void draw_impl(camera_ptr cam, int frame);
 

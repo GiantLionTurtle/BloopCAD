@@ -10,7 +10,10 @@ expression_ptr expConst::e(new expression_const(M_E));
 expression_ptr expConst::pi(new expression_const(M_PI));
 expression_ptr expConst::pi2(new expression_const(M_PI_2));
 
-expression::expression()
+int expression::n_exp = 0;
+
+expression::expression():
+	mID(n_exp++)
 {
 
 }
@@ -385,7 +388,7 @@ double expression_acos::eval()
 }
 expression_ptr expression_acos::derivative()
 {
-	return -expConst::one / sqrt(expConst::one - pow(mOperand, 2.0f)) * mOperand->derivative();
+	return -(expConst::one / sqrt(expConst::one - pow(mOperand, 2.0f))) * mOperand->derivative();
 }
 
 std::string expression_acos::to_string()
@@ -607,7 +610,7 @@ double expression_div::eval()
 }
 expression_ptr expression_div::derivative()
 {
-	return (mLeft->derivative() * mRight - mLeft * mRight->derivative()) / pow(mRight, 2);
+	return (mLeft->derivative() * mRight - mLeft * mRight->derivative()) / pow(mRight, 2.0);
 }
 
 std::string expression_div::to_string()
@@ -629,7 +632,7 @@ double expression_pow::eval()
 }
 expression_ptr expression_pow::derivative()
 {
-	return mRight * pow(mLeft, mRight->eval() - 1.0f) * mLeft->derivative();
+	return mRight * pow(mLeft, mRight->eval() - 1.0) * mLeft->derivative();
 }
 
 std::string expression_pow::to_string()
@@ -707,7 +710,7 @@ expression_ptr pow(expression_ptr base, double power)
 }
 expression_ptr sqrt(expression_ptr expr)
 {
-	return pow(expr, 0.5f);
+	return pow(expr, 0.5);
 }
 
 expression_ptr sin(expression_ptr expr)

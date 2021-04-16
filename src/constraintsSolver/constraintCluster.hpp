@@ -15,8 +15,11 @@ public:
 public:
 	std::vector<std::shared_ptr<constraint_abstract>> mConstraints;
 	std::vector<variable_ptr> mVariables;
+	std::map<std::shared_ptr<constraint_abstract>, std::vector<variable_ptr>> mConstrToVars;
+	std::map<variable_ptr, std::vector<std::shared_ptr<constraint_abstract>>> mVarsToConstr;
+
 	int mVerboseLevel;
-	int const mMaxIt_LM = 1000, mMaxIt_DL = 1000;
+	int const mMaxIt_LM = 100, mMaxIt_DL = 100;
 	int mId;
 
 	int mAlgorithm;
@@ -24,6 +27,8 @@ public:
 	constraintCluster(std::vector<std::shared_ptr<constraint_abstract>> constraints, std::vector<variable_ptr> vars, int solver_algo, int verbose = 0);
 	~constraintCluster();	
 	
+	void init();
+
 	bool satisfied();
 
 	int solver() { return mAlgorithm; }

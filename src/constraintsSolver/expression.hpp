@@ -17,6 +17,8 @@ public:
 	enum operationType { UNKNOWN, VARIABLE, CONST, ADD, SUBSTR, MULT, DIV, PLUS, MINUS, POW, EXP, LOG, SIN, COS, TAN, ASIN, ACOS, ATAN2, CSC, SEC, COT, ABS, MOD };
 protected:
 	operationType mOp;
+	int mID;
+	static int n_exp;
 public:
 	expression();
 	virtual ~expression();
@@ -26,6 +28,7 @@ public:
 	expression_ptr d();
 
 	virtual std::string to_string() = 0;
+	int id() { return mID; }
 private:
 	bool unary(operationType op);
 };

@@ -10,7 +10,7 @@
 class test_eventsManager : public stimuli_eventsManager {
 private:
 	int mTestStep, mTestStepDone;
-	sketchPoint_ptr mFirst_pt, mLast_pt;
+	sketchPoint_ptr mPoints[5];
 	sketchLine_ptr mLines[4];
 	std::chrono::steady_clock::time_point mLastAction;
 public:

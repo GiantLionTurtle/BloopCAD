@@ -193,6 +193,7 @@ void sketchPoint::draw_impl(camera_ptr cam, int frame)
 	mShader->unbind();
 }
 
+
 void sketchPoint::post_set_behavior()
 {
 	set_require_redraw();

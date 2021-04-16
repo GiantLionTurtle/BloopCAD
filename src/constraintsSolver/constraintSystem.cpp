@@ -76,6 +76,11 @@ void constraintSystem::breakDown_problem()
 	for (size_t i = 0; i < var_clust.size(); ++i) {
 		mSubClusters[var_clust[i]]->mVariables.push_back(mVariables[i]);
 	}
+
+	for(size_t i = 0; i < mSubClusters.size(); ++i) {
+		mSubClusters[i]->init();
+	}
+
 	mBrokenDown = true;
 }
 

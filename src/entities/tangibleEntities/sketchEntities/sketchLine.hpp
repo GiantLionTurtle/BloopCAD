@@ -93,6 +93,8 @@ protected:
 		@param frame : 	The current frame id
 	*/
 	void draw_impl(camera_ptr cam, int frame);
+
+	void hover_impl(bool hov);
 };
 
 #endif 
