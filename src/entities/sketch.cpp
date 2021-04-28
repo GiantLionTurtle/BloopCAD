@@ -41,7 +41,7 @@ void sketch::init()
 	add_geometry(std::make_shared<sketchLine>(glm::vec2( 1.0f, 0.0f), glm::vec2(-1.0f, 0.0f), basePlane(), true));
 	add_geometry(std::make_shared<sketchPoint>(glm::vec2(0.0f, 0.0f), mBasePlane, true));
 
-	// add(std::make_shared<sketchCircle>(circle_abstract(std::make_shared<sketchPoint>(glm::vec2(0.75f, 0.75f), mBasePlane), variable_ptr(new variable(0.5f))), mBasePlane));
+	// add(std::make_shared<sketchCircle>(circle_abstract(std::make_shared<sketchPoint>(glm::vec2(0.75f, 0.75f), mBasePlane), var_ptr(new variable(0.5f))), mBasePlane));
 }
 
 void sketch::notify(int msg)
@@ -196,6 +196,8 @@ void sketch::toggle_selection_from_area(glm::vec2 a, glm::vec2 b, bool contained
 bool sketch::add_constraint(std::shared_ptr<constraint_abstract> cons, sketchEntity_ptr immovable_hint) 
 {
 	mSystem.add_constraint(cons);
+
+	mHandle->update_name(mName + "(" + std::to_string(mSystem.num_constraints()) + ",  " + std::to_string(mSystem.num_variables()) + ")");
 
 	if(immovable_hint) {
 		immovable_hint->set_tmpConstant(true);

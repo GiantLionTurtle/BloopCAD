@@ -95,6 +95,8 @@ protected:
 	void draw_impl(camera_ptr cam, int frame);
 
 	void hover_impl(bool hov);
+
+	void set_dragged_impl(bool drag);
 };
 
 #endif 

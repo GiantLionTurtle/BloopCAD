@@ -26,8 +26,8 @@ void constraintSystem::add_constraint(std::shared_ptr<constraint_abstract> const
 {
 	mBrokenDown = false;
 	mConstraints.push_back(constr);
-	for(size_t i = 0; i < constr->n_var(); ++i) {
-		variable_ptr var = constr->var(i);
+	for(size_t i = 0; i < constr->n_vars(); ++i) {
+		var_ptr var = constr->var(i);
 		if(var->is_coef())
 			continue;
 		mConstrToVars[constr].push_back(var);			
@@ -112,11 +112,11 @@ void constraintSystem::set_varState(std::vector<double> state)
 }
 
 
-constraintSystem::constraintGraph::constraintGraph(std::vector<std::shared_ptr<constraint_abstract>>& constrs, std::vector<variable_ptr>& vars):
+constraintSystem::constraintGraph::constraintGraph(std::vector<std::shared_ptr<constraint_abstract>>& constrs, std::vector<var_ptr>& vars):
 	mNumConstr(0),
 	mNumVar(0)
 {
-	std::map<variable_ptr, int> v2i;
+	std::map<var_ptr, int> v2i;
 	for(int i = 0; i < constrs.size() + vars.size(); ++i) {
 		if(i < constrs.size() && constrs[i]->exists()) {
 			mVert.push_back({-1, i});
@@ -128,8 +128,8 @@ constraintSystem::constraintGraph::constraintGraph(std::vector<std::shared_ptr<c
 		}
 	}
 	for(int i = 0; i < constrs.size(); ++i) {
-		for(int j = 0; j < constrs[i]->n_var(); ++j) {
-			variable_ptr var = constrs[i]->var(j);
+		for(int j = 0; j < constrs[i]->n_vars(); ++j) {
+			var_ptr var = constrs[i]->var(j);
 			if(var->is_coef())
 				continue;
 			int vind = v2i[var];

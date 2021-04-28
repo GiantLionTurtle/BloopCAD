@@ -21,7 +21,7 @@ std::shared_ptr<pointPoint_horizontality> pointPoint_horizontality::make(sketchL
 }
 
 pointPoint_horizontality::pointPoint_horizontality(sketchPoint_ptr p1, sketchPoint_ptr p2):
-	constraint<2>({ p1->y() - p2->y() }, { p1->y(), p2->y() }, HORIZONTALITY)
+	constraint<2>({ p1->y(), p2->y() }, { p1->y() - p2->y() }, HORIZONTALITY)
 {
 	// Equation: p1->y() - p2->y()
 
@@ -47,7 +47,7 @@ std::shared_ptr<pointPoint_verticality> pointPoint_verticality::make(sketchLine_
 }
 
 pointPoint_verticality::pointPoint_verticality(sketchPoint_ptr p1, sketchPoint_ptr p2):
-	constraint<2>({ p1->x() - p2->x() }, { p1->x(), p2->x() }, VERTICALITY)
+	constraint<2>({ p1->x(), p2->x() }, { p1->x() - p2->x() }, VERTICALITY)
 {
 	// Equation: p1->x() - p2->x()
 
@@ -60,10 +60,25 @@ std::shared_ptr<pointPoint_distance> pointPoint_distance::make(sketchPoint_ptr p
 	std::shared_ptr<pointPoint_distance> constr(new pointPoint_distance(p1, p2, d));
 	return constr;
 }
-std::shared_ptr<pointPoint_distance> pointPoint_distance::make_coincident(sketchPoint_ptr p1, sketchPoint_ptr p2)
+
+std::shared_ptr<pointPoint_distance> pointPoint_distance::make(sketchLine_ptr l, expression_ptr d)
 {
-	std::shared_ptr<pointPoint_distance> constr(new pointPoint_distance(p1, p2, expConst::zero));
-	constr->set_type(COINCIDENCE);
+	return std::shared_ptr<pointPoint_distance>(new pointPoint_distance(l->A(), l->B(), d));
+}
+
+pointPoint_distance::pointPoint_distance(sketchPoint_ptr p1, sketchPoint_ptr p2, expression_ptr d):
+	constraint<4>({ p1->x(), p1->y(), p2->x(), p2->y() }, { pow(p1->x() - p2->x(), 2.0) + pow(p1->y() - p2->y(), 2.0) - pow(d, 2.0) }, NONE)
+{
+	// Equation: pow(p1->x() - p2->x(), 2.0) + pow(p1->y() - p2->y(), 2.0) - pow(d, 2.0)
+
+	// The square distance between two points is pow(p1->x() - p2->x(), 2.0) + pow(p1->y() - p2->y(), 2.0)
+	// It must be equal to the square of d
+	// TODO: check if squaring d truly is more efficient than taking the square root of the actual distance
+}
+
+std::shared_ptr<pointPoint_coincidence> pointPoint_coincidence::make(sketchPoint_ptr p1, sketchPoint_ptr p2)
+{
+	std::shared_ptr<pointPoint_coincidence> constr(new pointPoint_coincidence(p1, p2));	
 	auto annot1 = std::make_shared<constraintAnnotation>(p1->basePlane(), constr);
 	auto annot2 = std::make_shared<constraintAnnotation>(p1->basePlane(), constr);
 	// annot1->set_twin(annot2);
@@ -71,20 +86,13 @@ std::shared_ptr<pointPoint_distance> pointPoint_distance::make_coincident(sketch
 	p1->add_constraintAnnotation(annot1);
 	p2->add_constraintAnnotation(annot2);
 	return constr;
-}
-std::shared_ptr<pointPoint_distance> pointPoint_distance::make(sketchLine_ptr l, expression_ptr d)
-{
-	return std::shared_ptr<pointPoint_distance>(new pointPoint_distance(l->A(), l->B(), d));
+	return std::shared_ptr<pointPoint_coincidence>(new pointPoint_coincidence(p1, p2));
 }
 
-pointPoint_distance::pointPoint_distance(sketchPoint_ptr p1, sketchPoint_ptr p2, expression_ptr d):
-	constraint<4>({ pow(p1->x() - p2->x(), 2.0) + pow(p1->y() - p2->y(), 2.0) - pow(d, 2.0) }, { p1->x(), p1->y(), p2->x(), p2->y() }, NONE)
+pointPoint_coincidence::pointPoint_coincidence(sketchPoint_ptr p1, sketchPoint_ptr p2):
+	constraint<4, 2>({ p1->x(), p1->y(), p2->x(), p2->y() }, { p1->x() - p2->x(), p1->y() - p2->y()}, COINCIDENCE)
 {
-	// Equation: pow(p1->x() - p2->x(), 2.0) + pow(p1->y() - p2->y(), 2.0) - pow(d, 2.0)
 
-	// The square distance between two points is pow(p1->x() - p2->x(), 2.0) + pow(p1->y() - p2->y(), 2.0)
-	// It must be equal to the square of d
-	// TODO: check if squaring d truly is more efficient than taking the square root of the actual distance
 }
 
 
@@ -94,7 +102,7 @@ std::shared_ptr<pointPoint_horizontalDistance> pointPoint_horizontalDistance::ma
 }
 
 pointPoint_horizontalDistance::pointPoint_horizontalDistance(sketchPoint_ptr p1, sketchPoint_ptr p2, expression_ptr d):
-	constraint<2>({ abs(p1->x() - p2->x()) - d }, { p1->x(), p2->x() }, NONE)
+	constraint<2>({ p1->x(), p2->x() }, { abs(p1->x() - p2->x()) - d }, NONE)
 {
 	// Equation: abs(p1->x() - p2->x()) - d
 
@@ -108,7 +116,7 @@ std::shared_ptr<pointPoint_verticalDistance> pointPoint_verticalDistance::make(s
 }
 
 pointPoint_verticalDistance::pointPoint_verticalDistance(sketchPoint_ptr p1, sketchPoint_ptr p2, expression_ptr d):
-	constraint<2>({ abs(p1->y() - p2->y()) - d }, { p1->y(), p2->y() }, NONE)
+	constraint<2>({ p1->y(), p2->y() }, { abs(p1->y() - p2->y()) - d }, NONE)
 {
 	// Equation: abs(p1->y() - p2->y()) - d
 
@@ -130,8 +138,8 @@ std::shared_ptr<pointLine_distance> pointLine_distance::make(sketchCircle_ptr c,
 }
 
 pointLine_distance::pointLine_distance(sketchPoint_ptr p, sketchLine_ptr l, expression_ptr d):
-	constraint<6>({ abs((l->B()->x()-l->A()->x())*(p->y() - l->A()->y()) - (l->B()->y()-l->A()->y())*(p->x() - l->A()->x())) / sqrt(l->length2()) - d },
-						{ p->x(), p->y(), l->A()->x(), l->A()->y(), l->B()->x(), l->B()->y()}, NONE)
+	constraint<6>({ p->x(), p->y(), l->A()->x(), l->A()->y(), l->B()->x(), l->B()->y()},
+		{ abs((l->B()->x()-l->A()->x())*(p->y() - l->A()->y()) - (l->B()->y()-l->A()->y())*(p->x() - l->A()->x())) / sqrt(l->length2()) - d }, NONE)
 {
 	// Equation: abs((l->B()->x() - l->A()->x())*(l->B()->y() - l->A()->y()) - (p->x() - l->A()->x())*(p->y() - l->A()->y())) / sqrt(pow(l->B()->x()-l->A()->x(), 2.0) + pow(l->B()->y()-l->A()->y(), 2.0)) - d
 
@@ -153,8 +161,8 @@ std::shared_ptr<pointCircle_distance> pointCircle_distance::make(sketchPoint_ptr
 }
 
 pointCircle_distance::pointCircle_distance(sketchPoint_ptr p, sketchCircle_ptr c, expression_ptr d):
-	constraint<5>({ pow(p->x() - c->center()->x(), 2.0) + pow(p->y() - c->center()->y(), 2.0) - pow(c->radius() + d, 2.0) }, 
-	{ p->x(), p->y(), c->center()->x(), c->center()->y(), c->radius() }, NONE)
+	constraint<5>({ p->x(), p->y(), c->center()->x(), c->center()->y(), c->radius() }, 
+	{ pow(p->x() - c->center()->x(), 2.0) + pow(p->y() - c->center()->y(), 2.0) - pow(c->radius() + d, 2.0) }, NONE)
 {
 
 }
@@ -169,8 +177,8 @@ std::shared_ptr<lineCircle_distance> lineCircle_distance::make(sketchLine_ptr l,
 }
 
 lineCircle_distance::lineCircle_distance(sketchLine_ptr l, sketchCircle_ptr c, expression_ptr d):
-	constraint<7>({ abs((l->B()->x()-l->A()->x())*(c->center()->y() - l->A()->y()) - (l->B()->y()-l->A()->y())*(c->center()->x() - l->A()->x())) / sqrt(l->length2()) - (c->radius() + d) },
-						{ c->center()->x(), c->center()->y(), l->A()->x(), l->A()->y(), l->B()->x(), l->B()->y(), c->radius()}, NONE)
+	constraint<7>({ c->center()->x(), c->center()->y(), l->A()->x(), l->A()->y(), l->B()->x(), l->B()->y(), c->radius()},
+	{ abs((l->B()->x()-l->A()->x())*(c->center()->y() - l->A()->y()) - (l->B()->y()-l->A()->y())*(c->center()->x() - l->A()->x())) / sqrt(l->length2()) - (c->radius() + d) }, NONE)
 {
 
 }
@@ -205,15 +213,15 @@ std::shared_ptr<lineLine_angle> lineLine_angle::make_perpendicular(sketchLine_pt
 }
 
 lineLine_angle::lineLine_angle(sketchLine_ptr l1, sketchLine_ptr l2, expression_ptr a):
-	constraint<8>({ },
-		{ l1->A()->x(), l1->A()->y(), l1->B()->x(), l1->B()->y(), l2->A()->x(), l2->A()->y(), l2->B()->x(), l2->B()->y() }, NONE)
+	constraint<8>({ l1->A()->x(), l1->A()->y(), l1->B()->x(), l1->B()->y(), l2->A()->x(), l2->A()->y(), l2->B()->x(), l2->B()->y() },
+	std::array<expression_ptr, 1>(), NONE)
 {
 	expression_ptr x1 = (l1->A()->x()-l1->B()->x());
 	expression_ptr y1 = (l1->A()->y()-l1->B()->y());
 	expression_ptr x2 = (l2->A()->x()-l2->B()->x());
 	expression_ptr y2 = (l2->A()->y()-l2->B()->y());
 
-	mEqu = mod(acos(dot(x1, y1, x2, y2) / (sqrt(x1*x1+y1*y1) * sqrt(x2*x2+y2*y2))), 2.0*M_PI) - mod(a, 2.0*M_PI);
+	mEqus[0] = mod(acos(dot(x1, y1, x2, y2) / (sqrt(x1*x1+y1*y1) * sqrt(x2*x2+y2*y2))), 2.0*M_PI) - mod(a, 2.0*M_PI);
 	// https://www.omnicalculator.com/math/angle-between-two-vectors
 }
 
@@ -223,8 +231,8 @@ std::shared_ptr<lineLine_equal> lineLine_equal::make(sketchLine_ptr l1, sketchLi
 }
 
 lineLine_equal::lineLine_equal(sketchLine_ptr l1, sketchLine_ptr l2):
-	constraint<8>(	{ l1->length2() - l2->length2() },
-						{ l1->A()->x(), l1->A()->y(), l1->B()->x(), l1->B()->x(), l2->A()->x(), l2->A()->y(), l2->B()->x(), l2->B()->y() }, NONE)
+	constraint<8>({ l1->A()->x(), l1->A()->y(), l1->B()->x(), l1->B()->x(), l2->A()->x(), l2->A()->y(), l2->B()->x(), l2->B()->y() },
+	{ l1->length2() - l2->length2() }, NONE)
 {
 
 }
@@ -235,8 +243,8 @@ std::shared_ptr<lineCircle_equal> lineCircle_equal::make(sketchLine_ptr l, sketc
 }
 
 lineCircle_equal::lineCircle_equal(sketchLine_ptr l, sketchCircle_ptr c):
-	constraint<5>(	{ l->length2() - pow(c->radius()*2.0, 2.0) },
-						{ l->A()->x(), l->A()->y(), l->B()->x(), l->B()->x(), c->radius() }, NONE)
+	constraint<5>({ l->A()->x(), l->A()->y(), l->B()->x(), l->B()->x(), c->radius() },
+	{ l->length2() - pow(c->radius()*2.0, 2.0) }, NONE)
 {
 
 }

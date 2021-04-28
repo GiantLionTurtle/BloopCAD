@@ -8,16 +8,17 @@
 #include <functional>
 
 class expression;
-class expression_variable;
+class expression_var;
 using expression_ptr = std::shared_ptr<expression>;
-using variable_ptr = std::shared_ptr<expression_variable>;
+using var_ptr = std::shared_ptr<expression_var>;
 
 class expression {
 public:
-	enum operationType { UNKNOWN, VARIABLE, CONST, ADD, SUBSTR, MULT, DIV, PLUS, MINUS, POW, EXP, LOG, SIN, COS, TAN, ASIN, ACOS, ATAN2, CSC, SEC, COT, ABS, MOD };
+	enum operationType { UNKNOWN, VARIABLE, CONST, ADD, SUBSTR, MULT, DIV, PLUS, 
+	MINUS, POW, EXP, LOG, SIN, COS, TAN, ASIN, ACOS, ATAN2, CSC, SEC, COT, ABS, MOD };
 protected:
 	operationType mOp;
-	int mID;
+	int mID, mTag;
 	static int n_exp;
 public:
 	expression();
@@ -28,7 +29,18 @@ public:
 	expression_ptr d();
 
 	virtual std::string to_string() = 0;
-	int id() { return mID; }
+	virtual int id() { return mID; }
+
+	int op() { return mOp; }
+
+	void set_tag(int t) { mTag = t; }
+	int tag() { return mTag; }
+
+	virtual bool can_substitute() { return false; }
+	virtual void get_substitution_params(var_ptr& a, var_ptr& b) {}
+	var_ptr get_single_var();
+	virtual void print_all_vars() {}
+	virtual var_ptr get_single_var_impl(int& state) { return nullptr; }
 private:
 	bool unary(operationType op);
 };
@@ -39,6 +51,9 @@ protected:
 public:
 	unary_expression();
 	unary_expression(expression_ptr operand);
+
+	virtual var_ptr get_single_var_impl(int& state);
+	virtual void print_all_vars();
 };
 
 class binary_expression : public expression {
@@ -47,6 +62,9 @@ protected:
 public:
 	binary_expression();
 	binary_expression(expression_ptr left, expression_ptr right);
+
+	virtual var_ptr get_single_var_impl(int& state);
+	virtual void print_all_vars();
 };
 
 class expression_const : public expression {
@@ -110,38 +128,51 @@ protected:
 	virtual double unit_to_internalFormat(int unit_);
 };
 
-class expression_variable : public expression {
+class expression_var : public expression {
 private:
 	double mVal;
 	int mAs_coef;
 	bool mIs_coef;
 	bool mExists;
+
+	// TODO: do this for expressions in general??
+	bool mIs_substituted, mIs_dragged;
+	var_ptr mSubstituant;
 public:
-	expression_variable(double val, bool is_coefficient = false);
+	expression_var(double val, bool is_coefficient = false);
 
 	virtual double eval();
 	virtual expression_ptr derivative();
 
 	virtual std::string to_string();
 
-	static variable_ptr make(double val, bool is_coeficient = false);
+	static var_ptr make(double val, bool is_coeficient = false);
 
-	bool is_deriv_zero() { return mAs_coef || mIs_coef; }
+	int id();
 
-	bool as_coef() { return mAs_coef > 0; }
-	int as_coef_int() { return mAs_coef; }
-	bool is_coef() { return mIs_coef; }
-    void set_is_coef(bool coef) { mIs_coef = coef; }
+	bool is_deriv_zero();
 
-	void set_as_coef() { mAs_coef++; }
-	void set_as_var() { mAs_coef--; }
-	void reset_to_coef() { mAs_coef = 1; }
-	void reset_to_var() { mAs_coef = 0; }
+	bool as_coef();
+	int as_coef_int();
+	bool is_coef();
+    void set_is_coef(bool coef);
+
+	void set_as_coef();
+	void set_as_var();
+	void reset_to_coef();
+	void reset_to_var();
 
 	void set(double val);
 
-	bool exists() { return mExists; }
-	void set_exists(bool ex) { mExists = ex; }
+	bool exists();
+	void set_exists(bool ex);
+
+	bool is_substituted();
+	void clear_substitution();
+	void substitute(var_ptr sub);
+
+	bool dragged() { return mIs_dragged; }
+	void set_dragged(bool dr) { mIs_dragged = dr; }
 };
 
 class expression_plus : public unary_expression {
@@ -257,7 +288,8 @@ public:
 
 	virtual std::string to_string();
 };
-// This one is tricky, it won't have a derivative so to speak, it is a unary expression, but has two component (one is fixed)
+// This one is tricky, it won't have a derivative so to speak, 
+// it is a unary expression, but has two component (one is fixed)
 class expression_mod : public unary_expression {
 private:
 	double mMod;
@@ -288,6 +320,9 @@ public:
 	virtual expression_ptr derivative();
 
 	virtual std::string to_string();
+
+	virtual bool can_substitute() { return mLeft->op() == VARIABLE && mRight->op() == VARIABLE; }
+	virtual void get_substitution_params(var_ptr& a, var_ptr& b);
 };
 
 class expression_mult : public binary_expression {
@@ -353,7 +388,7 @@ expression_ptr mod(expression_ptr expr, double modulo);
 expression_ptr dot(expression_ptr x1, expression_ptr y1, expression_ptr x2, expression_ptr y2);
 
 std::ostream& operator <<(std::ostream& os, expression_ptr expr);
-std::ostream& operator <<(std::ostream& os, variable_ptr var);
+std::ostream& operator <<(std::ostream& os, var_ptr var);
 
 class expConst {
 public:

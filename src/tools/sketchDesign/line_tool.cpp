@@ -80,7 +80,7 @@ sketchPoint_ptr line_tool::add_point(glm::vec2 pt)
 		mEnv->target()->clear_toolPreview();
 
 		if(mEndPos) {
-			mEnv->target()->add_constraint(pointPoint_distance::make_coincident(mLinePreview->A(), mEndPos));
+			mEnv->target()->add_constraint(pointPoint_coincidence::make(mLinePreview->A(), mEndPos));
 		}
 		mEndPos = mLinePreview->B();
 		mLastAdded = mLinePreview;

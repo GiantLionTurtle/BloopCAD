@@ -15,10 +15,10 @@ private:
 	static bool kFisrstInst;
 	static glm::vec3 kColor, kColorHovered, kColorSelected; // Point color
 
-	variable_ptr mX, mY;
+	var_ptr mX, mY;
 public:
 	sketchPoint(glm::vec2 pos_2d, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
-	sketchPoint(variable_ptr x_, variable_ptr y_, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
+	sketchPoint(var_ptr x_, var_ptr y_, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
 	virtual ~sketchPoint() {}
 
 	void print(int depth = 0);
@@ -26,8 +26,8 @@ public:
 	void init();
 
 	glm::vec2 pos() const { return glm::vec2(mX->eval(), mY->eval()); }
-	variable_ptr x() { return mX; }
-	variable_ptr y() { return mY; }
+	var_ptr x() { return mX; }
+	var_ptr y() { return mY; }
 
 	void move(glm::vec2 from, glm::vec2 to);
 
@@ -56,6 +56,8 @@ protected:
 	void draw_impl(camera_ptr cam, int frame);
 
 	void post_set_behavior();
+
+	void set_dragged_impl(bool drag);
 };
 
 #endif 

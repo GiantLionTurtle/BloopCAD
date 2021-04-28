@@ -9,17 +9,17 @@
 point::point(glm::vec3 const& basePoint)
 {
 	// glm::vec3 pos = basePoint.pos();
-	mX = expression_variable::make(basePoint.x);
-	mY = expression_variable::make(basePoint.y);
-	mZ = expression_variable::make(basePoint.z);
+	mX = expression_var::make(basePoint.x);
+	mY = expression_var::make(basePoint.y);
+	mZ = expression_var::make(basePoint.z);
 	// init();
 }
 // point::point(geom_3d::point_abstr_ptr basePoint)
 // {
 // 	glm::vec3 pos = basePoint->pos();
-// 	mX = expression_variable::make(pos.x);
-// 	mY = expression_variable::make(pos.y);
-// 	mZ = expression_variable::make(pos.z);
+// 	mX = expression_var::make(pos.x);
+// 	mY = expression_var::make(pos.y);
+// 	mZ = expression_var::make(pos.z);
 	// // init();
 // }
 

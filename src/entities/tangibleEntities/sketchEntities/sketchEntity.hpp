@@ -29,7 +29,7 @@ public:
 
 	virtual void move(glm::vec2 from, glm::vec2 to) {}
 	bool dragged() const { return mDragged; }
-	void set_dragged(bool drag) { mDragged = drag; set_tmpConstant(drag); }
+	void set_dragged(bool drag) { mDragged = drag; set_dragged_impl(drag); } //set_tmpConstant(drag); }
 
 	virtual bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor) { return false; }
 	virtual bool in_selection_range(glm::vec2 a, glm::vec2 b, bool contained) { return false; }	
@@ -45,6 +45,8 @@ public:
 	virtual void set_exists_vars(bool ex) {}
 protected:
 	virtual void exists_impl(bool ex) { notify_parent(ex ? RESURRECTED : DELETED); set_exists_vars(ex); }
+
+	virtual void set_dragged_impl(bool drag) {}
 };
 
 #endif

@@ -5,15 +5,14 @@
 
 #include <iostream>
 
-constraintCluster::constraintCluster(std::vector<std::shared_ptr<constraint_abstract>> constraints, std::vector<variable_ptr> vars, int solver_algo, int verbose):
+constraintCluster::constraintCluster(std::vector<std::shared_ptr<constraint_abstract>> constraints, std::vector<var_ptr> vars, int solver_algo, int verbose):
 	mConstraints(constraints),
 	mVariables(vars),
 	mVerboseLevel(verbose),
 	mId(0),
-	mAlgorithm(solver_algo)
+	mAlgorithm(solver_algo),
+	mNumEqus(0)
 {
-
-
 
 }
 constraintCluster::~constraintCluster()
@@ -23,11 +22,16 @@ constraintCluster::~constraintCluster()
 
 void constraintCluster::init()
 {
+	// mNumEqus = 0;
 	for(std::shared_ptr<constraint_abstract> constr : mConstraints) {
-		for(int i = 0; i < constr->n_var(); ++i) {
-			mConstrToVars[constr].push_back(constr->var(i));
-			mVarsToConstr[constr->var(i)].push_back(constr);
-		}
+		mNumEqus += constr->n_equs();
+		// for(int i = 0; i < constr->n_equs(); ++i) {
+		// 	mEquations.push_back(constr->equ(i));
+		// }
+		// for(int i = 0; i < constr->n_vars(); ++i) {
+		// 	mConstrToVars[constr].push_back(constr->var(i));
+		// 	mVarsToConstr[constr->var(i)].push_back(constr);
+		// }
 	}
 }
 
@@ -42,46 +46,43 @@ bool constraintCluster::satisfied()
 
 int constraintCluster::solve()
 {
+	clear_tags();
+	clear_substitutions();
+	substitutions();
+
+	// std::vector<var_ptr> solved_alone(0);
+	int single_tag = 1;
+	for(auto constr : mConstraints) {
+		std::cout<<"Trying to solve alone "<<constr->name()<<" ("<<constr->n_equs()<<")\n";
+		for(int i = 0; i < constr->n_equs(); ++i) {
+			auto eq = constr->equ(i);
+			
+			// std::cout<<"All vars \n\n";
+			// eq->print_all_vars();
+			// std::cout<<"\n";
+			auto var = eq->get_single_var();
+			if(var) {
+				eq->set_tag(single_tag);
+				int out = solve_DL(1e-14, single_tag);
+				if(out != SUCCESS) {
+					std::cout<<"Failed early at single tag = "<<single_tag<<"\n";
+					out = FAILURE;
+					return out;
+				}
+				// solved_alone.push_back(var);
+				// var->set_as_coef();
+				single_tag++;
+			}
+		}
+	}
+
+	std::cout<<"Solved "<<single_tag-1<<" equations alone\n";
+
 	int output = FAILURE;
 	bool had_fixed_vars = false;
 	std::vector<int> diminutions(mVariables.size(), 0);//, augmentations(mVariables.size(), 0);
 	// bool burnt_augmentations = false;
 	int n_diminutions = 0;
-
-
-	// std::cout<<"asnda\n";
-	// for(int i = 0; i < mVariables.size(); ++i) {
-	// 	if(mVariables[i]->as_coef_int() > 1) {
-	// 		std::cout<<"Fixed: "<<mVariables[i]->id()<<"["<<mVariables[i]->as_coef_int()<<"]\n";
-	// 	}
-	// }
-
-	// for(int i = 0; i < mVariables.size(); ++i) {
-	// 	auto var = mVariables[i];
-	// 	std::cout<<"var: "<<var->id()<<"\n";
-	// 	auto constrs = mVarsToConstr[var];
-	// 	bool satisfied = true;
-	// 	for(auto constr : constrs) {
-	// 		std::cout<<"\twith: "<<constr->name();
-	// 		if(!constr->satisfied()) {
-	// 			std::cout<<" (x)\n";
-	// 			satisfied = false;
-	// 			break;
-	// 		}
-	// 		std::cout<<" (ok)\n";
-	// 	}
-	// 	if(satisfied) {
-	// 		std::cout<<"added "<<var->id()<<"\n";
-	// 		var->set_as_coef();
-	// 		augmentations[i]++;
-	// 	}
-	// }
-	// for(int i = 0; i < mVariables.size(); ++i) {
-	// 	if(mVariables[i]->as_coef_int() > 1) {
-	// 		std::cout<<"Fixed: "<<mVariables[i]->id()<<"["<<mVariables[i]->as_coef_int()<<"]\n";
-	// 	}
-	// }
-	// std::cout<<"asdnkd\n";
 
 	do {
 		switch(mAlgorithm) {
@@ -98,20 +99,8 @@ int constraintCluster::solve()
 		}
 		
 		had_fixed_vars = false;
-		// if(!burnt_augmentations) {
-		// 	burnt_augmentations = true;
-		// 	for(int i = 0; i < augmentations.size(); ++i) {
-		// 		if(augmentations[i] > 0) {
-		// 			burnt_augmentations = false;
-		// 			mVariables[i]->set_as_var();
-		// 		}
-		// 	}
-		// 	if(output != SUCCESS)
-		// 		continue;
-		// } 
 		if(output == SUCCESS)
 			break;
-		//if(burnt_augmentations) {
 		for(int i = 0; i < mVariables.size(); ++i) {
 			auto var = mVariables[i];
 			if(var->as_coef_int() > 1) {
@@ -121,7 +110,6 @@ int constraintCluster::solve()
 			}
 		}
 		n_diminutions++;
-		// }
 	} while(had_fixed_vars);
 
 	for(int i = 0; i < n_diminutions; ++i) {
@@ -132,7 +120,115 @@ int constraintCluster::solve()
 			}
 		}
 	}
+	// for(auto var : solved_alone) {
+	// 	var->set_as_var();
+	// }
 	return output;
+}
+
+void constraintCluster::substitutions()
+{
+	for(auto constr : mConstraints) {
+		for(int i = 0; i < constr->n_equs(); ++i) {
+			auto equ = constr->equ(i);
+			var_ptr a, b;
+			if(equ->can_substitute()) {
+				equ->get_substitution_params(a, b);
+				
+				// TODO check for a being dragged
+				if(a->dragged()) {
+					b->substitute(a);
+				} else {
+					a->substitute(b);
+				}
+				std::cout<<"Substitute!\n";
+			}
+		}
+	}
+}
+
+void constraintCluster::compute_errors(Eigen::VectorXd& errors, int tag)
+{
+	errors.resize(num_taggedEqus(tag));
+	compute_errors_no_resize(errors, tag);
+}
+void constraintCluster::compute_errors_no_resize(Eigen::VectorXd& errors, int tag)
+{
+	size_t e = 0;
+	for(int i = 0; i < mConstraints.size(); ++i) {
+		for(int j = 0; j < mConstraints[i]->n_equs(); j++) {
+			if(mConstraints[i]->equ(j)->tag() == tag)
+				errors(e++) = mConstraints[i]->error(j);
+		}
+	}
+}
+void constraintCluster::compute_jacobi(Eigen::MatrixXd& jacobi, int tag)
+{
+
+	jacobi.resize(num_taggedEqus(tag), mVariables.size());
+	compute_jacobi_no_resize(jacobi, tag);
+}
+void constraintCluster::compute_jacobi_no_resize(Eigen::MatrixXd& jacobi, int tag)
+{
+	int e = 0;
+	for(int i = 0; i < mConstraints.size(); ++i) {
+		for(int j = 0; j < mConstraints[i]->n_equs(); ++j) {
+			if(mConstraints[i]->equ(j)->tag() == tag) {
+				for(int k = 0; k < mVariables.size(); ++k) {
+					jacobi(e, k) = mConstraints[i]->derivative(mVariables[k], j);
+				}
+				e++;
+			}
+		}
+	}
+}
+int constraintCluster::num_taggedEqus(int tag)
+{
+	int num_equs_tagged = 0;
+	for(int i = 0; i < mConstraints.size(); ++i) {
+		for(int j = 0; j < mConstraints[i]->n_equs(); ++j) {
+			if(mConstraints[i]->equ(j)->tag() == tag)
+				num_equs_tagged++;
+		}
+	}
+	return num_equs_tagged;
+}
+
+void constraintCluster::incr_variables(Eigen::VectorXd const& delta) 
+{
+	for(int i = 0; i < mVariables.size(); ++i) {
+		mVariables[i]->set(mVariables[i]->eval() + delta(i));
+	}
+}
+
+void constraintCluster::set_variables(Eigen::VectorXd const& values)
+{
+	for(int i = 0; i < mVariables.size(); ++i) {
+		mVariables[i]->set(values(i));
+	}
+}
+
+void constraintCluster::retrieve_variables(Eigen::VectorXd& container) 
+{
+	container.resize(mVariables.size());
+	for(int i = 0; i < mVariables.size(); ++i) {
+		container(i) = mVariables[i]->eval();
+	}	
+}
+
+void constraintCluster::clear_tags()
+{
+	for(int i = 0; i < mConstraints.size(); ++i) {
+		for(int j = 0; j < mConstraints[i]->n_equs(); ++j) {
+			mConstraints[i]->equ(j)->set_tag(0);
+		}
+	}
+}
+void constraintCluster::clear_substitutions()
+{
+	for(auto var : mVariables) {
+		var->clear_substitution();
+	}
 }
 
 int constraintCluster::solve_LM() 
@@ -149,14 +245,17 @@ int constraintCluster::solve_LM()
 	return output;
 }
 
-int constraintCluster::solve_LM_faithful(double eps1)
+int constraintCluster::solve_LM_faithful(double eps1, int tag)
 {
 	int n_vars = mVariables.size();		// Number of variables in the system
-	int n_cons = mConstraints.size();	// Number of equations in the system
+	int n_equs = num_taggedEqus(tag);	// Number of equations in the system
+	std::cout<<"Num tagged: "<<n_equs<<"\n";
+	if(n_equs == 0)
+		return SUCCESS;
 	Eigen::VectorXd P(n_vars), dP(n_vars), P_new(n_vars), 	// Variables values, attempt change in variables and candidate variables values
-					e(n_cons), e_new(n_cons), g(n_vars), 	// Error over variables, candidate variables and error scaled with jacobian  
+					e(n_equs), e_new(n_equs), g(n_vars), 	// Error over variables, candidate variables and error scaled with jacobian  
 					A_diag(n_vars);							// Diagonal of approximation of Hessian matrix
-	Eigen::MatrixXd J(n_cons, n_vars), A(n_vars, n_vars); 	// Jacobian matrix and approximation of Hessian matrix
+	Eigen::MatrixXd J(n_equs, n_vars), A(n_vars, n_vars); 	// Jacobian matrix and approximation of Hessian matrix
 
 	double eps2 = 1e-24; 		// Is part of a change threshold that determines if the solver is stuck
 	double tau = 1e-3;			// Serves as a basis for the meta parameter mu
@@ -166,8 +265,8 @@ int constraintCluster::solve_LM_faithful(double eps1)
 	
 	// Compute and retrieve the initial state of the system
 	retrieve_variables(P);
-	compute_jacobi(J);
-	compute_errors(e);
+	compute_jacobi_no_resize(J, tag);
+	compute_errors_no_resize(e, tag);
 	e = -e;
 	e_norm = e.squaredNorm();
 	A = J.transpose() * J;
@@ -216,7 +315,7 @@ int constraintCluster::solve_LM_faithful(double eps1)
 				// Assign new values to the candidate values and compute error
 				P_new = P + dP;
 				set_variables(P_new);
-				compute_errors(e_new);
+				compute_errors_no_resize(e_new, tag);
 				e_new = -e_new;
 				e_new_norm = e_new.squaredNorm();
 
@@ -224,7 +323,7 @@ int constraintCluster::solve_LM_faithful(double eps1)
 				if(rho > 0.0) {
 					// Compute & retrieve new state
 					P = P_new;
-					compute_jacobi(J);
+					compute_jacobi_no_resize(J, tag);
 					A = J.transpose() * J;
 					A_diag = A.diagonal();
 					e = e_new;
@@ -268,10 +367,10 @@ int constraintCluster::solve_LM_faithful(double eps1)
 
 int constraintCluster::solve_LM_naive(double eps1)
 {
-	int n_vars = mVariables.size(); 		// Number of variables in the system
-	int n_cons = mConstraints.size();		// Number of equations in the system
-	Eigen::VectorXd dP(n_vars), e(n_cons);	// Change in variables at an iteration and error in the equations at an iteration
-	Eigen::MatrixXd A(n_vars, n_vars), J(n_cons, n_vars); // Aprox of Hessian matrix and jacombian matric
+	int n_vars = mVariables.size(); // Number of variables in the system
+	int n_equs = mNumEqus;			// Number of equations in the system
+	Eigen::VectorXd dP(n_vars), e(n_equs);	// Change in variables at an iteration and error in the equations at an iteration
+	Eigen::MatrixXd A(n_vars, n_vars), J(n_equs, n_vars); // Aprox of Hessian matrix and jacombian matric
 	
 	compute_errors(e); // Finf the error
 	double e_norm = e.squaredNorm();
@@ -331,12 +430,12 @@ int constraintCluster::solve_LM_naive(double eps1)
 
 int constraintCluster::solve_LM2(double eps)
 {
-	int n_vars = mVariables.size();		// Number of variables in the system
-	int n_cons = mConstraints.size();	// Number of equations in the system
+	int n_vars = mVariables.size();	// Number of variables in the system
+	int n_equs = mNumEqus;			// Number of equations in the system
 	Eigen::VectorXd X(n_vars), h_lm(n_vars), X_new(n_vars), 	// Variables values, attempt change in variables and candidate variables values
-					e(n_cons), e_new(n_cons), g(n_vars), 	// Error over variables, candidate variables and error scaled with jacobian  
+					e(n_equs), e_new(n_equs), g(n_vars), 	// Error over variables, candidate variables and error scaled with jacobian  
 					A_diag(n_vars);							// Diagonal of approximation of Hessian matrix
-	Eigen::MatrixXd J(n_cons, n_vars), A(n_vars, n_vars); 	// Jacobian matrix and approximation of Hessian matrix
+	Eigen::MatrixXd J(n_equs, n_vars), A(n_vars, n_vars); 	// Jacobian matrix and approximation of Hessian matrix
 
 	double eps1 = eps;
 	double eps2 = eps;
@@ -408,14 +507,17 @@ int constraintCluster::solve_LM2(double eps)
 	return output;
 }
 
-int constraintCluster::solve_DL(double eps)
+int constraintCluster::solve_DL(double eps, int tag)
 {
 	int n_vars = mVariables.size();		// Number of variables in the system
-	int n_cons = mConstraints.size();	// Number of equations in the system
+	int n_equs = num_taggedEqus(tag);	// Number of equations in the system
+	std::cout<<"Num tagged: "<<n_equs<<"\n";
+	if(n_equs == 0)
+		return SUCCESS;
 	Eigen::VectorXd X(n_vars), X_new(n_vars), X_init(n_vars),
 					h_sd(n_vars), h_gn(n_vars), h_dl(n_vars), 	// Variables values, attempt change in variables and candidate variables values
-					e(n_cons), e_new(n_cons), g(n_vars); 	// Error over variables, candidate variables and error scaled with jacobian  
-	Eigen::MatrixXd J(n_cons, n_vars); 	// Jacobian matrix and approximation of Hessian matrix
+					e(n_equs), e_new(n_equs), g(n_vars); 	// Error over variables, candidate variables and error scaled with jacobian  
+	Eigen::MatrixXd J(n_equs, n_vars); 	// Jacobian matrix and approximation of Hessian matrix
 
 	double r = 1.0;
 	double eps1 = eps;
@@ -425,8 +527,8 @@ int constraintCluster::solve_DL(double eps)
 	// Compute and retrieve the initial state of the system
 	retrieve_variables(X);
 	X_init = X;
-	compute_jacobi(J);
-	compute_errors(e);
+	compute_jacobi_no_resize(J, tag);
+	compute_errors_no_resize(e, tag);
 
 	g = J.transpose() * e;
 	
@@ -462,13 +564,13 @@ int constraintCluster::solve_DL(double eps)
 
 		X_new = X + h_dl;
 		set_variables(X_new);
-		compute_errors(e_new);
+		compute_errors_no_resize(e_new, tag);
 
 		double rho = (e.squaredNorm() / 2.0 - e_new.squaredNorm() / 2.0) / ((e.squaredNorm() / 2.0) - ((e + J * h_dl).squaredNorm() / 2.0));
 		if(rho > 0) {
 			X = X_new;
 			e = e_new;
-			compute_jacobi(J);
+			compute_jacobi_no_resize(J, tag);
 			output = (e.lpNorm<Eigen::Infinity>() <= eps3 || g.lpNorm<Eigen::Infinity>() <= eps1) ? solveOutput::SUCCESS : solveOutput::RUNNING;
 		}
 		if(rho > 0.75) {
@@ -489,9 +591,9 @@ int constraintCluster::solve_DL(double eps)
 	if(mVerboseLevel) {
 		int num0 = 0;
 		for(int i = 0; i < mVariables.size(); ++i) {
-			if(mVariables[i]->as_coef_int() > 1) {
+			if(mVariables[i]->as_coef_int() > 1 || mVariables[i]->dragged()) {
 				num0 ++;
-				std::cout<<"Fixed: "<<mVariables[i]->id()<<"\n";
+				// std::cout<<"Fixed: "<<mVariables[i]->id()<<"\n";
 			}
 		}
 
@@ -506,44 +608,4 @@ int constraintCluster::solve_DL(double eps)
 		}
 	}
 	return output;
-}
-
-void constraintCluster::compute_errors(Eigen::VectorXd& errors)
-{
-	errors.resize(mConstraints.size());
-	for(int i = 0; i < mConstraints.size(); ++i) {
-		errors(i) = mConstraints[i]->error();
-	}
-}
-
-void constraintCluster::compute_jacobi(Eigen::MatrixXd& jacobi)
-{
-	jacobi.resize(mConstraints.size(), mVariables.size());
-	for(int i = 0; i < mConstraints.size(); ++i) {
-		for(int j = 0; j < mVariables.size(); ++j) {
-			jacobi(i, j) = mConstraints[i]->derivative(mVariables[j]);
-		}
-	}
-}
-
-void constraintCluster::incr_variables(Eigen::VectorXd const& delta) 
-{
-	for(int i = 0; i < mVariables.size(); ++i) {
-		mVariables[i]->set(mVariables[i]->eval() + delta(i));
-	}
-}
-
-void constraintCluster::set_variables(Eigen::VectorXd const& values)
-{
-	for(int i = 0; i < mVariables.size(); ++i) {
-		mVariables[i]->set(values(i));
-	}
-}
-
-void constraintCluster::retrieve_variables(Eigen::VectorXd& container) 
-{
-	container.resize(mVariables.size());
-	for(int i = 0; i < mVariables.size(); ++i) {
-		container(i) = mVariables[i]->eval();
-	}	
 }

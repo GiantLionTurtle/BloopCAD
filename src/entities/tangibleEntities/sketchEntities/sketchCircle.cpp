@@ -16,7 +16,7 @@ glm::vec3 sketchCircle::kColorSelected = glm::vec3(0.0);
 sketchCircle::sketchCircle(glm::vec2 center_, float radius_, geom_3d::plane_abstr_ptr basePlane_):
 	sketchGeometry(basePlane_, types::CIRCLE),
 	mCenter(sketchPoint_ptr(new sketchPoint(center_, basePlane_))),
-	mRadius(expression_variable::make(radius_))
+	mRadius(expression_var::make(radius_))
 {
 	mCenter->set_parent(this);
 	// init();

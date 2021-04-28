@@ -14,20 +14,24 @@ class constraint_abstract {
 public:
 	enum constraint_types { NONE, COINCIDENCE, PERPENDICULARITY, PARALLELISM, HORIZONTALITY, VERTICALITY }; // high level representation (for little annotations and such)
 protected:
-	int mType;
+	int mType;//, mTag;
 	bool mExists;
 public:
 	constraint_abstract(int type):
+		// mTag(0),
 		mType(type),
 		mExists(true)
 	{}
-	virtual double error() = 0;
+	virtual double error(size_t eq) = 0;
 	virtual bool satisfied() = 0;
-	virtual double derivative(variable_ptr withRespectTo) = 0;
-	double d(variable_ptr withRespectTo) { return derivative(withRespectTo); }
+	virtual double derivative(var_ptr withRespectTo_var, size_t from_eq) = 0;
+	double d(var_ptr withRespectTo, size_t from_eq = 0) { return derivative(withRespectTo, from_eq); }
 
-	virtual variable_ptr var(size_t ind) = 0;
-	virtual size_t n_var() = 0;
+	virtual expression_ptr equ(size_t ind) = 0;
+	virtual size_t n_equs() = 0;
+
+	virtual var_ptr var(size_t ind) = 0;
+	virtual size_t n_vars() = 0;
 
 	virtual std::string name() = 0;
 
@@ -36,42 +40,60 @@ public:
 
 	bool exists() { return mExists; }
 	void set_exists(bool ex) { mExists = ex; }
+
+	// int tag() { return mTag; }
+	// void set_tag(int t) { mTag = t; }
 };
 
-template<size_t nV>
+// TODO specialization for nE = 1 to avoid loop??
+template<size_t nV, size_t nE = 1>
 class constraint : public constraint_abstract {
 protected:
-	expression_ptr mEqu;
-	std::array<variable_ptr, nV> mVars;
+	std::array<expression_ptr, nE> mEqus;
+	std::array<var_ptr, nV> mVars;
 public:
-	constraint(expression_ptr equ, std::array<variable_ptr, nV> vars, int type):
+	constraint(std::array<var_ptr, nV> vars, expression_ptr equ, int type):
 		constraint_abstract(type),
-		mEqu(equ),
-		mVars(vars)
+		mVars(vars),
+		mEqus({equ})
+	{
+
+	}
+	constraint(std::array<var_ptr, nV> vars, std::array<expression_ptr, nE> equs, int type):
+		constraint_abstract(type),
+		mVars(vars),
+		mEqus(equs)
 	{
 
 	}
 
-	double error() 
+	double error(size_t eq) 
 	{
-		return mEqu->eval();
+		return mEqus[eq]->eval();
 	}
 	bool satisfied() 
 	{
-		return std::abs(mEqu->eval()) < 1e-12;
+		for(size_t i = 0; i < mEqus.size(); ++i) {
+			if(std::abs(mEqus[i]->eval()) > 1e-12)
+				return false;
+		}
+		return true;
 	}
-	double derivative(variable_ptr withRespectTo)
+	double derivative(var_ptr withRespectTo, size_t from_eq)
 	{
 		// TODO: would going through the constraint's variables to check if the target
 		// is in the constraint save time? ; output zero if the variable is unknown to this constraint
 		withRespectTo->set_as_var();
-		double der = mEqu->d()->eval();
+		double der = mEqus[from_eq]->d()->eval();
 		withRespectTo->set_as_coef();
 		return der;
 	}
 
-	variable_ptr var(size_t ind) { return mVars.at(ind); }
-	size_t n_var() { return mVars.size(); }
+	expression_ptr equ(size_t ind) { return mEqus.at(ind); }
+	constexpr size_t n_equs() { return mEqus.size(); }
+
+	var_ptr var(size_t ind) { return mVars.at(ind); }
+	constexpr size_t n_vars() { return mVars.size(); }
 };
 
 class pointPoint_horizontality : public constraint<2> {
@@ -95,13 +117,23 @@ private:
 class pointPoint_distance : public constraint<4> {
 public:
 	static std::shared_ptr<pointPoint_distance> make(sketchPoint_ptr p1, sketchPoint_ptr p2, expression_ptr d);
-	static std::shared_ptr<pointPoint_distance> make_coincident(sketchPoint_ptr p1, sketchPoint_ptr p2);
+	// static std::shared_ptr<pointPoint_distance> make_coincident(sketchPoint_ptr p1, sketchPoint_ptr p2);
 	static std::shared_ptr<pointPoint_distance> make(sketchLine_ptr l, expression_ptr d);
 
 	std::string name() { return "pointPoint_distance"; }
 private:
 	pointPoint_distance(sketchPoint_ptr p1, sketchPoint_ptr p2, expression_ptr d);
 };
+
+class pointPoint_coincidence : public constraint<4, 2> {
+public:
+	static std::shared_ptr<pointPoint_coincidence> make(sketchPoint_ptr p1, sketchPoint_ptr p2);
+
+	std::string name() { return "pointPoint_coincidence"; }
+private:
+	pointPoint_coincidence(sketchPoint_ptr p1, sketchPoint_ptr p2);
+};
+
 
 class pointPoint_horizontalDistance : public constraint<2> {
 public:

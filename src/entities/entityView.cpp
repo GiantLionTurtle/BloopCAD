@@ -194,6 +194,11 @@ void entityHandle::add_child(entityHandle* child)
 	mChildren.push_back(child);
 }
 
+void entityHandle::update_name(std::string name)
+{
+	mContent.set_label(name);	
+}
+
 entityView::entityView(document* doc):
 	mCurrentWorkspaceState(nullptr),
 	mRootHandle(),

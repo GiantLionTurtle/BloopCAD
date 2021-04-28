@@ -14,17 +14,18 @@ public:
     enum solveOutput { RUNNING, SUCCESS, FAILURE, INVALID };
 public:
 	std::vector<std::shared_ptr<constraint_abstract>> mConstraints;
-	std::vector<variable_ptr> mVariables;
-	std::map<std::shared_ptr<constraint_abstract>, std::vector<variable_ptr>> mConstrToVars;
-	std::map<variable_ptr, std::vector<std::shared_ptr<constraint_abstract>>> mVarsToConstr;
+	std::vector<var_ptr> mVariables;
+	// std::map<std::shared_ptr<constraint_abstract>, std::vector<var_ptr>> mConstrToVars;
+	// std::map<var_ptr, std::vector<std::shared_ptr<constraint_abstract>>> mVarsToConstr;
 
+	size_t mNumEqus;
 	int mVerboseLevel;
 	int const mMaxIt_LM = 100, mMaxIt_DL = 100;
 	int mId;
 
 	int mAlgorithm;
 public:	
-	constraintCluster(std::vector<std::shared_ptr<constraint_abstract>> constraints, std::vector<variable_ptr> vars, int solver_algo, int verbose = 0);
+	constraintCluster(std::vector<std::shared_ptr<constraint_abstract>> constraints, std::vector<var_ptr> vars, int solver_algo, int verbose = 0);
 	~constraintCluster();	
 	
 	void init();
@@ -47,7 +48,7 @@ public:
 		@function solve_LM_faithful is a faithful implementation of the Levenberg-Marquardt algorithm
 		it is slower than the naive counter part, but can go to much higher precision
 	*/
-	int solve_LM_faithful(double eps1 = 1e-24);
+	int solve_LM_faithful(double eps1 = 1e-24, int tag = 0);
 
 	/*
 		@function solve_LM_naive is a naive implementation of the Levenberg-Marquardt algorithm
@@ -58,14 +59,16 @@ public:
 
 	int solve_LM2(double eps = 1e-24);
 
-	int solve_DL(double eps = 1e-12);
+	int solve_DL(double eps = 1e-12, int tag = 0);
+
+	void substitutions();
 
 	/*
 		@function compute_errors compute the error for each equation in the system
 
 		@param errors [output] : An array of errors of size n_constraints
 	*/
-	void compute_errors(Eigen::VectorXd& errors);
+	void compute_errors(Eigen::VectorXd& errors, int tag = 0);
 
 	/*
 		@function compute_jacobi computes the jacobi of the system
@@ -73,7 +76,7 @@ public:
 		@param jacobi [output] : The matrix of size (n_constraints x n_variables) containing
 		every partial derivative of every equation with respect to every variable
 	*/
-	void compute_jacobi(Eigen::MatrixXd& jacobi);
+	void compute_jacobi(Eigen::MatrixXd& jacobi, int tag = 0);
 
 	/*
 		@function incr_variables increments the variables values by a delta
@@ -96,8 +99,15 @@ public:
 	*/
 	void retrieve_variables(Eigen::VectorXd& container);
 
+	void clear_tags();
+	void clear_substitutions();
+
 	void set_id(int id_) { mId = id_; }
 	int id() const { return mId; }
+private:
+	void compute_errors_no_resize(Eigen::VectorXd& errors, int tag = 0);
+	void compute_jacobi_no_resize(Eigen::MatrixXd& jacobi, int tag = 0);
+	int num_taggedEqus(int tag);
 };
 
 #endif

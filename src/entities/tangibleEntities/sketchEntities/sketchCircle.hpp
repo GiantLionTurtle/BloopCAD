@@ -21,7 +21,7 @@ private:
 	unsigned int mIndices[2*CIRCLE_RES];
 
 	sketchPoint_ptr mCenter;
-	variable_ptr mRadius;
+	var_ptr mRadius;
 public:
 	sketchCircle(glm::vec2 center_, float radius_, geom_3d::plane_abstr_ptr basePlane_);
 	virtual ~sketchCircle();
@@ -45,7 +45,7 @@ public:
 	glm::vec2 posCenter() { return mCenter->pos(); }
 	sketchPoint_ptr center() { return mCenter; }
 	float valRadius() { return mRadius->eval(); }
-	variable_ptr radius() { return mRadius; }
+	var_ptr radius() { return mRadius; }
 	void set_radius(float newval);
 
 	int selection_rank() { return 4; }

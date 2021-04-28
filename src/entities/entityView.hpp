@@ -52,6 +52,8 @@ public:
 	void set_exists(bool exists);
 
 	void add_child(entityHandle* child);
+
+	void update_name(std::string name);
 };
 
 class entityView : public Gtk::Box {

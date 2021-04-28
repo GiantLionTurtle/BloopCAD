@@ -147,9 +147,9 @@ void sketchLine::for_each(std::function<void(sketchGeometry_ptr geom)> func)
 void sketchLine::move(glm::vec2 from, glm::vec2 to)
 {
 	glm::vec2 d = to-from;
-	if(!mA->dragged())
+//	if(!mA->dragged())
 		mA->set(mA->pos() + d);
-	if(!mB->dragged())
+//	if(!mB->dragged())
 		mB->set(mB->pos() + d);
 	set_require_VBUpdate();
 }
@@ -261,8 +261,14 @@ void sketchLine::draw_impl(camera_ptr cam, int frame)
 
 void sketchLine::hover_impl(bool hov)
 {
-	if(hov) {
-		mA->print_ids();
-		mB->print_ids();
-	}
+	// if(hov) {
+	// 	mA->print_ids();
+	// 	mB->print_ids();
+	// }
+}
+
+void sketchLine::set_dragged_impl(bool drag)
+{
+	mA->set_dragged(drag);
+	mB->set_dragged(drag);
 }

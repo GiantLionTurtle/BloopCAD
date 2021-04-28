@@ -12,7 +12,7 @@ class point : public tangibleEntity, public geom_3d::point_abstr {
 private:
 	const glm::vec3 mColor = glm::vec3(0.0f, 0.89f, 0.725f); // Point color
 
-	variable_ptr mX, mY, mZ;
+	var_ptr mX, mY, mZ;
 public:
 	point(glm::vec3 const& basePoint);
 	// point(geom_3d::point_abstr_ptr basePoint);

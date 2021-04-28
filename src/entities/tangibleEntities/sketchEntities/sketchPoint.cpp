@@ -15,14 +15,14 @@ glm::vec3 sketchPoint::kColorSelected = glm::vec3(0.0);
 
 sketchPoint::sketchPoint(glm::vec2 pos_2d, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
 	sketchGeometry(basePlane_, types::POINT),
-	mX(expression_variable::make(pos_2d.x)),
-	mY(expression_variable::make(pos_2d.y))
+	mX(expression_var::make(pos_2d.x)),
+	mY(expression_var::make(pos_2d.y))
 {
 	if(immovable)
 		set_constant();
 	// init();
 }
-sketchPoint::sketchPoint(variable_ptr x_, variable_ptr y_, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
+sketchPoint::sketchPoint(var_ptr x_, var_ptr y_, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
 	sketchGeometry(basePlane_, types::POINT),
 	mX(x_),
 	mY(y_)
@@ -198,4 +198,10 @@ void sketchPoint::post_set_behavior()
 {
 	set_require_redraw();
 	mRequire_VBUpdate = true;
+}
+
+void sketchPoint::set_dragged_impl(bool drag)
+{
+	mX->set_dragged(drag);
+	mY->set_dragged(drag);
 }

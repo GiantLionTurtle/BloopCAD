@@ -2,6 +2,7 @@
 #include "expression.hpp"
 
 #include <cmath>
+#include <iostream>
 
 expression_ptr expConst::zero(new expression_const(0.0f));
 expression_ptr expConst::one(new expression_const(1.0f));
@@ -13,7 +14,8 @@ expression_ptr expConst::pi2(new expression_const(M_PI_2));
 int expression::n_exp = 0;
 
 expression::expression():
-	mID(n_exp++)
+	mID(n_exp++),
+	mTag(0)
 {
 
 }
@@ -25,6 +27,15 @@ expression::~expression()
 expression_ptr expression::d()
 {
 	return derivative();
+}
+var_ptr expression::get_single_var()
+{
+	int state = 0;
+	var_ptr var = get_single_var_impl(state);
+	if(state) {
+		return nullptr;
+	}
+	return var;
 }
 
 bool expression::unary(operationType op)
@@ -42,6 +53,22 @@ unary_expression::unary_expression(expression_ptr operand):
 {
 
 }
+var_ptr unary_expression::get_single_var_impl(int& state)
+{
+	if(state)
+		return nullptr;
+	if(mOperand->op() == VARIABLE)
+		return std::static_pointer_cast<expression_var>(mOperand);
+	return mOperand->get_single_var_impl(state);
+}
+void unary_expression::print_all_vars()
+{
+	if(mOperand->op() == VARIABLE) {
+		std::cout<<"["<<mID<<"] "<<mOperand->id()<<"\n";
+	} else {
+		mOperand->print_all_vars();
+	}
+}
 
 binary_expression::binary_expression():
 	mLeft(nullptr),
@@ -55,11 +82,51 @@ binary_expression::binary_expression(expression_ptr left, expression_ptr right):
 {
 
 }
+var_ptr binary_expression::get_single_var_impl(int& state)
+{
+	if(state)
+		return nullptr;
+	var_ptr l(nullptr), r(nullptr);
+	if(mLeft->op() == VARIABLE) {
+		l = std::static_pointer_cast<expression_var>(mLeft);
+	} else {
+		l = mLeft->get_single_var_impl(state);
+	}
+	if(mRight->op() == VARIABLE) {
+		r = std::static_pointer_cast<expression_var>(mRight);
+	} else {
+		r = mRight->get_single_var_impl(state);
+	}
+	
+	if(l != nullptr && r == nullptr) {
+		return l;
+	} else if(l == nullptr && r != nullptr) {
+		return r;
+	} else if(l != nullptr && r != nullptr) {
+		if(l->id() == r->id())
+			return l; // either
+		state = 1;
+	}
+	return nullptr;
+}
+void binary_expression::print_all_vars() 
+{
+	if(mLeft->op() == VARIABLE) {
+		std::cout<<"["<<mID<<"] "<<mLeft->id()<<"\n"; 
+	} else {
+		mLeft->print_all_vars();
+	}
+	if(mRight->op() == VARIABLE) {
+		std::cout<<"["<<mID<<"] "<<mRight->id()<<"\n"; 
+	} else {
+		mRight->print_all_vars();
+	}
+}
 
 /* -------------- Const -------------- */
 expression_const::expression_const(double val)
 {
-	mVal = val;//= variable_ptr(new variable("", val));
+	mVal = val;//= var_ptr(new variable("", val));
 	mOp = operationType::CONST;
 }
 
@@ -210,39 +277,143 @@ double expression_coefficientLength::unit_to_internalFormat(int unit_)
 /* -------------- End coefficient length -------------- */
 
 /* -------------- Variable -------------- */
-expression_variable::expression_variable(double val, bool is_coeficient):
+expression_var::expression_var(double val, bool is_coeficient):
 	mVal(val),
 	mAs_coef(true),
 	mIs_coef(is_coeficient),
-	mExists(true)
+	mExists(true),
+	mIs_substituted(false),
+	mIs_dragged(false),
+	mSubstituant(nullptr)
 {
 	mOp = operationType::VARIABLE;
 }
 
-double expression_variable::eval()
+double expression_var::eval()
 {
-	return mVal;
+	return mIs_substituted ? mSubstituant->eval() : mVal;
 }
-expression_ptr expression_variable::derivative()
+expression_ptr expression_var::derivative()
 {
+	// TODO should it be in this order??
+	if(mIs_substituted)
+		return mSubstituant->derivative();
 	if(is_deriv_zero())
 		return expConst::zero;
 	return expConst::one;
 }
 
-std::string expression_variable::to_string()
+std::string expression_var::to_string()
 {
 	return "[" + std::to_string(mVal) + "]";
 }
-variable_ptr expression_variable::make(double val, bool is_coeficient)
+var_ptr expression_var::make(double val, bool is_coeficient)
 {
-	return variable_ptr(new expression_variable(val, is_coeficient));
+	return var_ptr(new expression_var(val, is_coeficient));
 }
-void expression_variable::set(double val)
+int expression_var::id()
 {
-	if(!is_coef())
-		mVal = val;
+	return mIs_substituted ? mSubstituant->id() : mID;
 }
+bool expression_var::is_deriv_zero()
+{
+	return mIs_substituted ? mSubstituant->is_deriv_zero() : (mAs_coef || mIs_coef || mIs_dragged);
+}
+bool expression_var::as_coef()
+{
+	return mIs_substituted ? mSubstituant->as_coef() : (mAs_coef > 0);
+}
+int expression_var::as_coef_int()
+{
+	return mIs_substituted ? mSubstituant->as_coef_int() : (mAs_coef);
+}
+bool expression_var::is_coef()
+{
+	return mIs_substituted ? mSubstituant->is_coef() : (mIs_coef);
+}
+void expression_var::set_is_coef(bool coef)
+{
+	if(mIs_substituted) {
+		mSubstituant->set_is_coef(coef);
+	} else {
+		mIs_coef = coef;
+	}
+}
+void expression_var::set_as_coef()
+{
+	if(mIs_substituted) {
+		mSubstituant->set_as_coef();
+	} else {
+		mAs_coef++;
+	}
+}
+void expression_var::set_as_var()
+{
+	if(mIs_substituted) {
+		mSubstituant->set_as_var();
+	} else {
+		mAs_coef--;
+	}
+}
+void expression_var::reset_to_coef()
+{
+	if(mIs_substituted) {
+		mSubstituant->reset_to_coef();
+	} else {
+		mAs_coef = 1;
+	}
+}
+void expression_var::reset_to_var()
+{
+	if(mIs_substituted) {
+		mSubstituant->reset_to_var();
+	} else {
+		mAs_coef = 0;
+	}
+}
+
+void expression_var::set(double val)
+{
+	if(mIs_substituted) {
+		mSubstituant->set(val);
+	} else {
+		if(!is_coef())
+			mVal = val;
+	}
+}
+
+bool expression_var::exists()
+{
+	return mIs_substituted ? mSubstituant->exists() : (mExists);
+}
+void expression_var::set_exists(bool ex)
+{
+	if(mIs_substituted) {
+		mSubstituant->set_exists(ex);
+	} else {
+		mExists = ex;
+	}
+}
+
+bool expression_var::is_substituted()
+{
+	return mIs_substituted;
+}
+void expression_var::clear_substitution()
+{
+	if(mSubstituant) {
+		mVal = mSubstituant->mVal;
+		mAs_coef = mSubstituant->mAs_coef;
+	}
+	mIs_substituted = false;
+}
+void expression_var::substitute(var_ptr sub)
+{
+	sub->clear_substitution();
+	mSubstituant = sub;
+	mIs_substituted = true;
+}
+
 /* -------------- End variable -------------- */
 
 
@@ -563,6 +734,12 @@ double expression_substr::eval()
 expression_ptr expression_substr::derivative()
 {
 	return mLeft->derivative() - mRight->derivative();
+}
+
+void expression_substr::get_substitution_params(var_ptr& a, var_ptr& b)
+{
+	a = std::static_pointer_cast<expression_var>(mLeft);
+	b = std::static_pointer_cast<expression_var>(mRight);
 }
 
 std::string expression_substr::to_string()
