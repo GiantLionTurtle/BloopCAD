@@ -50,47 +50,41 @@ int constraintCluster::solve()
 	clear_substitutions();
 	substitutions();
 
-	// std::vector<var_ptr> solved_alone(0);
 	int single_tag = 1;
 	for(auto constr : mConstraints) {
-		std::cout<<"Trying to solve alone "<<constr->name()<<" ("<<constr->n_equs()<<")\n";
+		if(mVerboseLevel)
+			std::cout<<"Trying to solve alone "<<constr->name()<<" ("<<constr->n_equs()<<")\n";
 		for(int i = 0; i < constr->n_equs(); ++i) {
 			auto eq = constr->equ(i);
-			
-			// std::cout<<"All vars \n\n";
-			// eq->print_all_vars();
-			// std::cout<<"\n";
 			auto var = eq->get_single_var();
 			if(var) {
 				eq->set_tag(single_tag);
 				int out = solve_DL(1e-14, single_tag);
 				if(out != SUCCESS) {
-					std::cout<<"Failed early at single tag = "<<single_tag<<"\n";
+					if(mVerboseLevel)
+						std::cout<<"Failed early at single tag = "<<single_tag<<"\n";
 					out = FAILURE;
 					return out;
 				}
-				// solved_alone.push_back(var);
-				// var->set_as_coef();
 				single_tag++;
 			}
 		}
 	}
-
-	std::cout<<"Solved "<<single_tag-1<<" equations alone\n";
+	if(mVerboseLevel)
+		std::cout<<"Solved "<<single_tag-1<<" equations alone\n";
 
 	int output = FAILURE;
 	bool had_fixed_vars = false;
-	std::vector<int> diminutions(mVariables.size(), 0);//, augmentations(mVariables.size(), 0);
-	// bool burnt_augmentations = false;
+	std::vector<int> diminutions(mVariables.size(), 0);
 	int n_diminutions = 0;
 
 	do {
 		switch(mAlgorithm) {
 			case constraintSystem::DogLeg:
-				output = solve_DL(1e-14);
+				output = solve_DL(1e-14, 0, true);
 				break;
 			case constraintSystem::LevenbergMarquardt:
-				output = solve_LM_faithful();//solve_LM2();
+				output = solve_LM(1e-24, 0, true);
 				break;
 			default:
 				std::cout<<"Unknown solver "<<mAlgorithm<<"\n";
@@ -162,20 +156,20 @@ void constraintCluster::compute_errors_no_resize(Eigen::VectorXd& errors, int ta
 		}
 	}
 }
-void constraintCluster::compute_jacobi(Eigen::MatrixXd& jacobi, int tag)
+void constraintCluster::compute_jacobi(Eigen::MatrixXd& jacobi, int tag, bool drivingVars_only)
 {
-
-	jacobi.resize(num_taggedEqus(tag), mVariables.size());
-	compute_jacobi_no_resize(jacobi, tag);
+	jacobi.resize(num_taggedEqus(tag), drivingVars_only ? num_drivingVars() : mVariables.size());
+	compute_jacobi_no_resize(jacobi, tag, drivingVars_only);
 }
-void constraintCluster::compute_jacobi_no_resize(Eigen::MatrixXd& jacobi, int tag)
+void constraintCluster::compute_jacobi_no_resize(Eigen::MatrixXd& jacobi, int tag, bool drivingVars_only)
 {
-	int e = 0;
+	int e = 0, v = 0;
 	for(int i = 0; i < mConstraints.size(); ++i) {
 		for(int j = 0; j < mConstraints[i]->n_equs(); ++j) {
 			if(mConstraints[i]->equ(j)->tag() == tag) {
 				for(int k = 0; k < mVariables.size(); ++k) {
-					jacobi(e, k) = mConstraints[i]->derivative(mVariables[k], j);
+					if(!drivingVars_only || !mVariables[k]->is_substituted())
+						jacobi(e, v++) = mConstraints[i]->derivative(mVariables[k], j);
 				}
 				e++;
 			}
@@ -193,26 +187,40 @@ int constraintCluster::num_taggedEqus(int tag)
 	}
 	return num_equs_tagged;
 }
+int constraintCluster::num_drivingVars()
+{
+	int num_vars_driving = 0;
+	
+	for(auto var : mVariables) {
+		if(!var->is_substituted())
+			num_vars_driving++;
+	}
+	return num_vars_driving;
+}
 
-void constraintCluster::incr_variables(Eigen::VectorXd const& delta) 
+void constraintCluster::incr_variables(Eigen::VectorXd const& delta, bool drivingVars_only) 
 {
 	for(int i = 0; i < mVariables.size(); ++i) {
-		mVariables[i]->set(mVariables[i]->eval() + delta(i));
+		if(!drivingVars_only || !mVariables[i]->is_substituted())
+			mVariables[i]->set(mVariables[i]->eval() + delta(i));
 	}
 }
 
-void constraintCluster::set_variables(Eigen::VectorXd const& values)
+void constraintCluster::set_variables(Eigen::VectorXd const& values, bool drivingVars_only)
 {
+	int v = 0;
 	for(int i = 0; i < mVariables.size(); ++i) {
-		mVariables[i]->set(values(i));
+		if(!drivingVars_only || !mVariables[i]->is_substituted())
+			mVariables[i]->set(values(v++));
 	}
 }
 
-void constraintCluster::retrieve_variables(Eigen::VectorXd& container) 
+void constraintCluster::retrieve_variables(Eigen::VectorXd& container, bool drivingVars_only) 
 {
-	container.resize(mVariables.size());
+	int v = 0;
 	for(int i = 0; i < mVariables.size(); ++i) {
-		container(i) = mVariables[i]->eval();
+		if(!drivingVars_only || !mVariables[i]->is_substituted())
+			container(v++) = mVariables[i]->eval();
 	}	
 }
 
@@ -231,25 +239,13 @@ void constraintCluster::clear_substitutions()
 	}
 }
 
-int constraintCluster::solve_LM() 
-{
-	// Save the initial values of the variables in case solve fails
-	Eigen::VectorXd init_vars(mVariables.size());
-	retrieve_variables(init_vars);
-	int output = solve_LM_naive();
-	if(output != solveOutput::SUCCESS) // Reset variables on naive solve fail
-		set_variables(init_vars);
-	output = solve_LM_faithful();
-	// if(output != solveOutput::SUCCESS) // Reset variables on faithful solve fail
-		// set_variables(init_vars);
-	return output;
-}
 
-int constraintCluster::solve_LM_faithful(double eps1, int tag)
+int constraintCluster::solve_LM(double eps1, int tag, bool drivingVars_only)
 {
-	int n_vars = mVariables.size();		// Number of variables in the system
+	int n_vars = drivingVars_only ? num_drivingVars() : mVariables.size();		// Number of variables in the system
 	int n_equs = num_taggedEqus(tag);	// Number of equations in the system
-	std::cout<<"Num tagged: "<<n_equs<<"\n";
+	if(mVerboseLevel)
+		std::cout<<"Num tagged: "<<n_equs<<"\n";
 	if(n_equs == 0)
 		return SUCCESS;
 	Eigen::VectorXd P(n_vars), dP(n_vars), P_new(n_vars), 	// Variables values, attempt change in variables and candidate variables values
@@ -265,7 +261,7 @@ int constraintCluster::solve_LM_faithful(double eps1, int tag)
 	
 	// Compute and retrieve the initial state of the system
 	retrieve_variables(P);
-	compute_jacobi_no_resize(J, tag);
+	compute_jacobi_no_resize(J, tag, drivingVars_only);
 	compute_errors_no_resize(e, tag);
 	e = -e;
 	e_norm = e.squaredNorm();
@@ -314,7 +310,7 @@ int constraintCluster::solve_LM_faithful(double eps1, int tag)
 
 				// Assign new values to the candidate values and compute error
 				P_new = P + dP;
-				set_variables(P_new);
+				set_variables(P_new, drivingVars_only);
 				compute_errors_no_resize(e_new, tag);
 				e_new = -e_new;
 				e_new_norm = e_new.squaredNorm();
@@ -323,7 +319,7 @@ int constraintCluster::solve_LM_faithful(double eps1, int tag)
 				if(rho > 0.0) {
 					// Compute & retrieve new state
 					P = P_new;
-					compute_jacobi_no_resize(J, tag);
+					compute_jacobi_no_resize(J, tag, drivingVars_only);
 					A = J.transpose() * J;
 					A_diag = A.diagonal();
 					e = e_new;
@@ -350,7 +346,7 @@ int constraintCluster::solve_LM_faithful(double eps1, int tag)
 		}
 	}
 
-	set_variables(P); // TODO: is this assignment really necessary?
+	set_variables(P, drivingVars_only); // TODO: is this assignment really necessary?
 	if(mVerboseLevel) {
 		switch(output) {
 		case solveOutput::SUCCESS:
@@ -365,151 +361,9 @@ int constraintCluster::solve_LM_faithful(double eps1, int tag)
 	return output;
 }
 
-int constraintCluster::solve_LM_naive(double eps1)
+int constraintCluster::solve_DL(double eps, int tag, bool drivingVars_only)
 {
-	int n_vars = mVariables.size(); // Number of variables in the system
-	int n_equs = mNumEqus;			// Number of equations in the system
-	Eigen::VectorXd dP(n_vars), e(n_equs);	// Change in variables at an iteration and error in the equations at an iteration
-	Eigen::MatrixXd A(n_vars, n_vars), J(n_equs, n_vars); // Aprox of Hessian matrix and jacombian matric
-	
-	compute_errors(e); // Finf the error
-	double e_norm = e.squaredNorm();
-	double prev_e_norm = e_norm; // prev_e_norm is used to know it the iteration improved or worsened the solve
-	
-	// initial hessian approx and jacobian
-	compute_jacobi(J);
-	A = J.transpose() * J;
-	double lambda = 1e-3 * A.diagonal().lpNorm<Eigen::Infinity>(); // Scale the lambda parameter with the initial state	
-
-	int output = solveOutput::RUNNING;
-	int k;
-	for(k = 0; k< mMaxIt_LM && !output; ++k) {
-		if(e_norm != e_norm) { // Check for NaN
-			break;
-		}
-		if(e_norm <= eps1) { // Check for success
-			output = solveOutput::SUCCESS;
-			break;
-		}
-
-		// change in variables = (A + lambda * I).inv * g
-		for(int j = 0; j < n_vars; ++j) { // this loop augments A's diagonal
-			A(j, j) += lambda;
-		}
-		dP = -A.inverse() * (J.transpose() * e);
-		
-		incr_variables(dP); // New and improved/worsened variables!
-
-		compute_errors(e); // Just how much did the parameter helped?
-		e_norm = e.squaredNorm();
-		if(e_norm < prev_e_norm) { // They did help! => reduce lambda
-			lambda *= 0.5;
-		} else { // They did not.. => Augment lambda
-			lambda *= 2;
-		}
-		prev_e_norm = e_norm; // Remember this iteration's error
-
-		// Compute the new jacobi and the hessian approx
-		compute_jacobi(J);
-		A = J.transpose() * J;
-	}
-
-	if(mVerboseLevel) {
-		switch(output) {
-		case solveOutput::SUCCESS:
-			std::cout<<"LM solver naive, succeeded in "<<k<<" iterations, finished with a squared error of "<<e_norm<<"\n";
-			break;
-		// case solveOutput::FAILURE:
-		default:
-			std::cout<<"LM solver naive, failed in "<<k<<" iterations, finished with a squared error of "<<e_norm<<"\n";
-			break;
-		}
-	}
-	return output;
-}
-
-int constraintCluster::solve_LM2(double eps)
-{
-	int n_vars = mVariables.size();	// Number of variables in the system
-	int n_equs = mNumEqus;			// Number of equations in the system
-	Eigen::VectorXd X(n_vars), h_lm(n_vars), X_new(n_vars), 	// Variables values, attempt change in variables and candidate variables values
-					e(n_equs), e_new(n_equs), g(n_vars), 	// Error over variables, candidate variables and error scaled with jacobian  
-					A_diag(n_vars);							// Diagonal of approximation of Hessian matrix
-	Eigen::MatrixXd J(n_equs, n_vars), A(n_vars, n_vars); 	// Jacobian matrix and approximation of Hessian matrix
-
-	double eps1 = eps;
-	double eps2 = eps;
-	double tau = 1e-3;			// Serves as a basis for the meta parameter mu
-	double mu, nu = 2.0; 		// Meta parameters defining the aggressivity of the steps
-
-	// Compute and retrieve the initial state of the system
-	retrieve_variables(X);
-	compute_jacobi(J);
-	compute_errors(e);
-
-	g = J.transpose() * e;
-	A = J.transpose() * J;
-
-	int output = g.lpNorm<Eigen::Infinity>() <= eps1 ? solveOutput::SUCCESS : solveOutput::RUNNING;
-	mu = tau * A.diagonal().maxCoeff();
-
-	int k;
-	for(k = 0; k < mMaxIt_LM && !output; ++k) {
-		A_diag = A.diagonal();
-		for(int i = 0; i < n_vars; ++i) {
-			A(i, i) += mu;
-		}
-		h_lm = A.fullPivLu().solve(-g);
-
-		if(h_lm.norm() <= eps2 * (X.norm() + eps2)) {
-			output = solveOutput::SUCCESS;
-			break;
-		}
-
-		X_new = X + h_lm;
-		set_variables(X_new);
-		compute_errors(e_new);
-
-		double rho = (e.squaredNorm() / 2.0 - e_new.squaredNorm() / 2.0) / ((e.squaredNorm() / 2.0) - ((e + J * h_lm).squaredNorm() / 2.0));
-
-		if(rho > 0) {
-			X = X_new;
-			e = e_new;
-			compute_jacobi(J);
-			g = J.transpose() * e;
-			A = J.transpose() * J;
-			output = g.lpNorm<Eigen::Infinity>() <= eps1 ? solveOutput::SUCCESS : solveOutput::RUNNING;
-
-			double tmp = 2 * rho - 1;
-			mu *= std::max(1.0 / 3.0, 1.0 - tmp*tmp*tmp);
-			nu  = 2;
-		} else {
-			mu *= nu;
-			nu *= 2;
-
-			for(int i = 0; i < n_vars; ++i) {
-				A(i, i) = A_diag(i);
-			}
-		}
-	}
-
-	if(mVerboseLevel) {
-		switch(output) {
-		case solveOutput::SUCCESS:
-			std::cout<<"LM2 solver, succeeded in "<<k<<" iterations, finished with a squared error of "<<e.squaredNorm()<<"\n";
-			break;
-		//case solveOutput::FAILURE:
-		default:
-			std::cout<<"LM2 solver, failed in "<<k<<" iterations, finished with a squared error of "<<e.squaredNorm()<<"\n";
-			break;
-		}
-	}
-	return output;
-}
-
-int constraintCluster::solve_DL(double eps, int tag)
-{
-	int n_vars = mVariables.size();		// Number of variables in the system
+	int n_vars = drivingVars_only ? num_drivingVars() : mVariables.size();		// Number of variables in the system
 	int n_equs = num_taggedEqus(tag);	// Number of equations in the system
 	std::cout<<"Num tagged: "<<n_equs<<"\n";
 	if(n_equs == 0)
@@ -525,9 +379,9 @@ int constraintCluster::solve_DL(double eps, int tag)
 	double eps3 = eps;
 	
 	// Compute and retrieve the initial state of the system
-	retrieve_variables(X);
+	retrieve_variables(X, drivingVars_only);
 	X_init = X;
-	compute_jacobi_no_resize(J, tag);
+	compute_jacobi_no_resize(J, tag, drivingVars_only);
 	compute_errors_no_resize(e, tag);
 
 	g = J.transpose() * e;
@@ -563,14 +417,15 @@ int constraintCluster::solve_DL(double eps, int tag)
 		}
 
 		X_new = X + h_dl;
-		set_variables(X_new);
+		set_variables(X_new, drivingVars_only);
 		compute_errors_no_resize(e_new, tag);
 
 		double rho = (e.squaredNorm() / 2.0 - e_new.squaredNorm() / 2.0) / ((e.squaredNorm() / 2.0) - ((e + J * h_dl).squaredNorm() / 2.0));
 		if(rho > 0) {
 			X = X_new;
 			e = e_new;
-			compute_jacobi_no_resize(J, tag);
+			compute_jacobi_no_resize(J, tag, drivingVars_only);
+			g = J.transpose() * e;
 			output = (e.lpNorm<Eigen::Infinity>() <= eps3 || g.lpNorm<Eigen::Infinity>() <= eps1) ? solveOutput::SUCCESS : solveOutput::RUNNING;
 		}
 		if(rho > 0.75) {
@@ -581,29 +436,18 @@ int constraintCluster::solve_DL(double eps, int tag)
 		}
 	}
 
-	if(e.squaredNorm() >= eps)
-		output = solveOutput::FAILURE;
-
 	if(output != solveOutput::SUCCESS) {
-		set_variables(X_init);
+		set_variables(X_init, drivingVars_only);
 	}
 
 	if(mVerboseLevel) {
-		int num0 = 0;
-		for(int i = 0; i < mVariables.size(); ++i) {
-			if(mVariables[i]->as_coef_int() > 1 || mVariables[i]->dragged()) {
-				num0 ++;
-				// std::cout<<"Fixed: "<<mVariables[i]->id()<<"\n";
-			}
-		}
-
 		switch(output) {
 		case solveOutput::SUCCESS:
-			std::cout<<"DL solver, success. n: "<<k<<"; e: "<<e.squaredNorm()<<"; fixed: "<<num0<<" of "<<mVariables.size()<<"; ID = "<<id()<<"\n";
+			std::cout<<"DL solver, success. n: "<<k<<"; e: "<<e.squaredNorm()<<"; ID = "<<id()<<"\n";
 			break;
 		case solveOutput::FAILURE:
 		default:
-			std::cout<<"DL solver, fail. n: "<<k<<"; e: "<<e.squaredNorm()<<"; fixed: "<<num0<<" of "<<mVariables.size()<<"; ID = "<<id()<<"\n";
+			std::cout<<"DL solver, fail. n: "<<k<<"; e: "<<e.squaredNorm()<<"; ID = "<<id()<<"\n";
 			break;
 		}
 	}

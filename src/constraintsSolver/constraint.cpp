@@ -222,8 +222,11 @@ lineLine_angle::lineLine_angle(sketchLine_ptr l1, sketchLine_ptr l2, expression_
 	expression_ptr y2 = (l2->A()->y()-l2->B()->y());
 
 	mEqus[0] = mod(acos(dot(x1, y1, x2, y2) / (sqrt(x1*x1+y1*y1) * sqrt(x2*x2+y2*y2))), 2.0*M_PI) - mod(a, 2.0*M_PI);
+	// mEqus[0] = mod(acos(dot(x1, y1, x2, y2) / (sqrt(pow(x1, 2.0)+pow(y1, 2.0)) * sqrt(pow(x2, 2.0)+pow(y2, 2.0)))), 2.0*M_PI) - mod(a, 2.0*M_PI);
+
 	// https://www.omnicalculator.com/math/angle-between-two-vectors
 }
+
 
 std::shared_ptr<lineLine_equal> lineLine_equal::make(sketchLine_ptr l1, sketchLine_ptr l2)
 {

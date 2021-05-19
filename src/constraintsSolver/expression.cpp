@@ -409,7 +409,7 @@ void expression_var::clear_substitution()
 }
 void expression_var::substitute(var_ptr sub)
 {
-	sub->clear_substitution();
+	// sub->clear_substitution();
 	mSubstituant = sub;
 	mIs_substituted = true;
 }
