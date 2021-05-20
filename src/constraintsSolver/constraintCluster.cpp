@@ -46,25 +46,27 @@ bool constraintCluster::satisfied()
 
 int constraintCluster::solve()
 {
+	int output = FAILURE;
+
 	clear_tags();
 	clear_substitutions();
 	substitutions();
 
 	int single_tag = 1;
 	for(auto constr : mConstraints) {
-		if(mVerboseLevel)
+		if(mVerboseLevel > 1)
 			std::cout<<"Trying to solve alone "<<constr->name()<<" ("<<constr->n_equs()<<")\n";
 		for(int i = 0; i < constr->n_equs(); ++i) {
 			auto eq = constr->equ(i);
 			auto var = eq->get_single_var();
 			if(var) {
 				eq->set_tag(single_tag);
-				int out = solve_DL(1e-14, single_tag);
-				if(out != SUCCESS) {
-					if(mVerboseLevel)
+				output = solve_numeric(mAlgorithm, single_tag, true);
+				if(output != SUCCESS) {
+					if(mVerboseLevel > 1)
 						std::cout<<"Failed early at single tag = "<<single_tag<<"\n";
-					out = FAILURE;
-					return out;
+					output = FAILURE;
+					return output;
 				}
 				single_tag++;
 			}
@@ -73,28 +75,17 @@ int constraintCluster::solve()
 	if(mVerboseLevel)
 		std::cout<<"Solved "<<single_tag-1<<" equations alone\n";
 
-	int output = FAILURE;
 	bool had_fixed_vars = false;
 	std::vector<int> diminutions(mVariables.size(), 0);
 	int n_diminutions = 0;
 
 	do {
-		switch(mAlgorithm) {
-			case constraintSystem::DogLeg:
-				output = solve_DL(1e-14, 0, true);
-				break;
-			case constraintSystem::LevenbergMarquardt:
-				output = solve_LM(1e-24, 0, true);
-				break;
-			default:
-				std::cout<<"Unknown solver "<<mAlgorithm<<"\n";
-				return FAILURE;
-				break;
-		}
+		output = solve_numeric(mAlgorithm, 0, true);
 		
-		had_fixed_vars = false;
 		if(output == SUCCESS)
 			break;
+			
+		had_fixed_vars = false;
 		for(int i = 0; i < mVariables.size(); ++i) {
 			auto var = mVariables[i];
 			if(var->as_coef_int() > 1) {
@@ -114,10 +105,23 @@ int constraintCluster::solve()
 			}
 		}
 	}
-	// for(auto var : solved_alone) {
-	// 	var->set_as_var();
-	// }
 	return output;
+}
+
+int constraintCluster::solve_numeric(int algo, int tag, bool drivingVars_only)
+{
+	switch(mAlgorithm) {
+		case constraintSystem::DogLeg:
+			return solve_DL(1e-14, tag, drivingVars_only);
+			break;
+		case constraintSystem::LevenbergMarquardt:
+			return solve_LM(1e-24, tag, drivingVars_only);
+			break;
+		default:
+			std::cout<<"Unknown solver "<<mAlgorithm<<"\n";
+			return FAILURE;
+			break;
+	}
 }
 
 void constraintCluster::substitutions()
@@ -128,14 +132,12 @@ void constraintCluster::substitutions()
 			var_ptr a, b;
 			if(equ->can_substitute()) {
 				equ->get_substitution_params(a, b);
-				
-				// TODO check for a being dragged
+
 				if(a->dragged()) {
 					b->substitute(a);
 				} else {
 					a->substitute(b);
 				}
-				std::cout<<"Substitute!\n";
 			}
 		}
 	}
@@ -168,8 +170,10 @@ void constraintCluster::compute_jacobi_no_resize(Eigen::MatrixXd& jacobi, int ta
 		for(int j = 0; j < mConstraints[i]->n_equs(); ++j) {
 			if(mConstraints[i]->equ(j)->tag() == tag) {
 				for(int k = 0; k < mVariables.size(); ++k) {
-					if(!drivingVars_only || !mVariables[k]->is_substituted())
+					if(!drivingVars_only || !mVariables[k]->is_substituted()) {
 						jacobi(e, v++) = mConstraints[i]->derivative(mVariables[k], j);
+						v %= jacobi.cols();
+					}
 				}
 				e++;
 			}
@@ -190,7 +194,6 @@ int constraintCluster::num_taggedEqus(int tag)
 int constraintCluster::num_drivingVars()
 {
 	int num_vars_driving = 0;
-	
 	for(auto var : mVariables) {
 		if(!var->is_substituted())
 			num_vars_driving++;
@@ -239,12 +242,11 @@ void constraintCluster::clear_substitutions()
 	}
 }
 
-
 int constraintCluster::solve_LM(double eps1, int tag, bool drivingVars_only)
 {
 	int n_vars = drivingVars_only ? num_drivingVars() : mVariables.size();		// Number of variables in the system
 	int n_equs = num_taggedEqus(tag);	// Number of equations in the system
-	if(mVerboseLevel)
+	if(mVerboseLevel > 1)
 		std::cout<<"Num tagged: "<<n_equs<<"\n";
 	if(n_equs == 0)
 		return SUCCESS;
@@ -365,7 +367,8 @@ int constraintCluster::solve_DL(double eps, int tag, bool drivingVars_only)
 {
 	int n_vars = drivingVars_only ? num_drivingVars() : mVariables.size();		// Number of variables in the system
 	int n_equs = num_taggedEqus(tag);	// Number of equations in the system
-	std::cout<<"Num tagged: "<<n_equs<<"\n";
+	if(mVerboseLevel > 1)
+		std::cout<<"Num tagged: "<<n_equs<<"\n";
 	if(n_equs == 0)
 		return SUCCESS;
 	Eigen::VectorXd X(n_vars), X_new(n_vars), X_init(n_vars),

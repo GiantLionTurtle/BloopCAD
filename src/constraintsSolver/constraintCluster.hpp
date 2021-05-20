@@ -37,6 +37,8 @@ public:
 
 	int solve();
 
+	int solve_numeric(int algo, int tag, bool drivingVars_only = false);
+
 	/*
 		@function solve_LM is a faithful implementation of the Levenberg-Marquardt algorithm
 		it is slower than the naive counter part, but can go to much higher precision
