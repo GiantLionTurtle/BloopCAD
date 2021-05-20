@@ -9,7 +9,8 @@
 #include <glm/gtx/quaternion.hpp>
 
 circle_tool::circle_tool(sketchDesign* env):
-	tool(env)
+	tool(env),
+	mCirclePreview(nullptr)
 {
 	DEBUG_ASSERT(mEnv, "No valid workspace.");
 }
@@ -17,16 +18,32 @@ circle_tool::circle_tool(sketchDesign* env):
 void circle_tool::init()
 {
 	DEBUG_ASSERT(mEnv->state(), "No valid state.");
-	started = false; // Bring flag down
+	mStarted = false; // Bring flag down
+	mCirclePreview = nullptr;
+}
+void circle_tool::finish()
+{
+	DEBUG_ASSERT(mEnv->state(), "No valid state.");
+	mEnv->target()->clear_toolPreview();
+}
+
+bool circle_tool::manage_key_press(GdkEventKey* event)
+{
+	if(mStarted && event->keyval == GDK_KEY_Escape) {
+		mStarted = false;
+		mCirclePreview->set_exists(false);
+		return false;
+	}
+	return true;
 }
 
 bool circle_tool::manage_mouse_move(GdkEventMotion* event)
 {
-	if(started) {
+	if(mStarted) {
 		camera_ptr cam = mEnv->state()->cam; // For ease of writing
-		glm::vec2 circle_pos = mCircle->basePlane()->to_planePos(
-            mCircle->basePlane()->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
-        mCircle->set_radius(glm::length(circle_pos - mCircle->posCenter()));
+		glm::vec2 circle_pos = mCirclePreview->basePlane()->to_planePos(
+            mCirclePreview->basePlane()->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
+        mCirclePreview->set_radius(glm::length(circle_pos - mCirclePreview->posCenter()));
 	}
 	return true;
 }
@@ -44,15 +61,16 @@ bool circle_tool::manage_button_press(GdkEventButton* event)
     geom_3d::plane_abstr_ptr pl = target->basePlane();
     glm::vec2 circle_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 
-	if(!started) {
+	if(!mStarted) {
 		// mEnv->state()->doc->make_glContext_current();
-		mCircle = sketchCircle_ptr(new sketchCircle(circle_pos, 0.0f, target->basePlane()));
-		target->add_geometry(mCircle);
-		mEnv->state()->doc->push_action(std::make_shared<enableEntity_action>(mCircle)); // Doc is passed to activate glContext
-        started = true;
+		mCirclePreview = sketchCircle_ptr(new sketchCircle(circle_pos, 0.0f, target->basePlane()));
+		mEnv->target()->add_toolPreview(mCirclePreview);
+        mStarted = true;
 	} else {
-        mCircle->set_radius(glm::length(circle_pos - mCircle->posCenter()));
-        started = false;
+		target->add_geometry(mCirclePreview);
+		mEnv->state()->doc->push_action(std::make_shared<enableEntity_action>(mCirclePreview)); // Doc is passed to activate glContext
+        mCirclePreview->set_radius(glm::length(circle_pos - mCirclePreview->posCenter()));
+        mStarted = false;
 	}
 	return true;
 }

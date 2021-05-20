@@ -12,20 +12,23 @@
 
 class circle_tool : public tool<sketchDesign> {
 private:
-	std::shared_ptr<sketchCircle> mCircle;
-	bool started; // Whether or not the drawing of the circle has started
+	std::shared_ptr<sketchCircle> mCirclePreview;
+	bool mStarted; // Whether or not the drawing of the circle has started
 public:
 	circle_tool(sketchDesign* env);
 
 	/*
 		@function init makes sure the started flag is down
 	*/
-	virtual void init();
+	void init();
+	void finish();
 
-	virtual bool manage_mouse_move(GdkEventMotion* event);
-	virtual bool manage_button_press(GdkEventButton* event);
+	bool manage_key_press(GdkEventKey* event);
 
-	virtual std::string name() { return "circle"; }
+	bool manage_mouse_move(GdkEventMotion* event);
+	bool manage_button_press(GdkEventButton* event);
+
+	std::string name() { return "circle"; }
 };
 
 #endif
