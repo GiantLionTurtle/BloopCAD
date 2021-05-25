@@ -6,6 +6,7 @@ set(common_actions_source_files
     enableEntity_action.cpp
     disableEntity_action.cpp
     serial_action.cpp
+    parallel_action.cpp
   )
 
 add_library(common_actions ${common_actions_source_files})

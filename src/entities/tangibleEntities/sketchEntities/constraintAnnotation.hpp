@@ -3,11 +3,14 @@
 #define CONSTRAINTANNOTATION_HPP_
 
 #include <entities/tangibleEntities/sketchEntities/sketchEntity.hpp>
+#include "entityPosSnapshot_abstract.hpp"
 #include <graphics_utils/textures/texture.hpp>
 
 #include <map>
 
 class constraint_abstract;
+class constraintAnnotation;
+using constraintAnnotation_ptr = std::shared_ptr<constraintAnnotation>;
 
 class constraintAnnotation : public sketchEntity {
 private:
@@ -21,7 +24,7 @@ private:
 	glm::vec2 mPos, mWorldOffset, mPixelOffset;
 
 	std::shared_ptr<constraint_abstract> mConstraint;
-	std::shared_ptr<constraintAnnotation> mTwin;
+	constraintAnnotation_ptr mTwin;
 public:
 	constraintAnnotation(geom_3d::plane_abstr_ptr basePlane_, std::shared_ptr<constraint_abstract> constr);
 	~constraintAnnotation();
@@ -40,8 +43,8 @@ public:
 
 	void update_VB();
 
-	void set_twin(std::shared_ptr<constraintAnnotation> tw) { mTwin = tw; }
-	std::shared_ptr<constraintAnnotation> twin() const { return mTwin; }
+	void set_twin(constraintAnnotation_ptr tw) { mTwin = tw; }
+	constraintAnnotation_ptr twin() const { return mTwin; }
 
 	int selection_rank() { return 1; }
 protected:

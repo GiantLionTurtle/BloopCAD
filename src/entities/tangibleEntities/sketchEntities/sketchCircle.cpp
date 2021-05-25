@@ -151,6 +151,11 @@ void sketchCircle::set_radius(float newval)
 	set_require_VBUpdate();
 }
 
+entityPosSnapshot_ptr sketchCircle::posSnapshot()
+{
+	return std::make_shared<circleSnapshot>(shared_from_this());
+}
+
 void sketchCircle::update_VB()
 {
 	if(!mInited)
@@ -226,4 +231,28 @@ void sketchCircle::init_buffers()
 		mIndices[2*i+1] = i+1;
 	}
 	mIndices[2*CIRCLE_RES-1] = 0;
+}
+
+
+circleSnapshot::circleSnapshot(sketchCircle_ptr pt): 
+	mCircle(pt) 
+{
+	x = mCircle->center()->x()->eval();
+	y = mCircle->center()->y()->eval();
+	r = mCircle->radius()->eval();
+}
+circleSnapshot::circleSnapshot(sketchCircle_ptr source, sketchCircle_ptr target): 
+	mCircle(target) 
+{
+	x = source->center()->x()->eval();
+	y = source->center()->y()->eval();
+	r = source->radius()->eval();
+}
+
+void circleSnapshot::apply()
+{
+	mCircle->center()->x()->set(x);
+	mCircle->center()->y()->set(y);
+	mCircle->radius()->set(r);
+	mCircle->set_require_VBUpdate();
 }

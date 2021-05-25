@@ -7,9 +7,11 @@ class sketchDesignDefault_tool : public tool<sketchDesign> {
 private:   
     std::shared_ptr<selectionRectangle> mSelectionRect;
     sketchEntity_ptr /*mDraggedEnt, */mHoveredEnt;
-    bool mMoving;
+    bool mAllowedToMove, mMoving;
     glm::vec2 mPrevPos;
     glm::vec2 mStartPos;
+
+    std::vector<entityPosSnapshot_ptr> mStartMoveSnapshot;
 public:
     sketchDesignDefault_tool(sketchDesign* env);
     virtual ~sketchDesignDefault_tool() {};

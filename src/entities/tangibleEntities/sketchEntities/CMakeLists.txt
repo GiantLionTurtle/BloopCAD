@@ -1,5 +1,6 @@
 
 set(sketchEntities_source_files
+  sketchGeometry.cpp
   sketchPoint.cpp
   sketchLine.cpp
   sketchCircle.cpp

@@ -3,13 +3,14 @@
 #define SKETCHPOINT_HPP_
 
 #include "sketchGeometry.hpp"
+#include "entityPosSnapshot_abstract.hpp"
 #include <geometry/geometry_2d/point_abstr.hpp>
 #include <constraintsSolver/expression.hpp>
 
 class sketchPoint;
 using sketchPoint_ptr = std::shared_ptr<sketchPoint>;
 
-class sketchPoint : public sketchGeometry, public geom_2d::point_abstr {
+class sketchPoint : public sketchGeometry, public geom_2d::point_abstr, public std::enable_shared_from_this<sketchPoint> {
 private:
 	static float kSelDist2;
 	static bool kFisrstInst;
@@ -37,7 +38,9 @@ public:
 	void for_each(std::function<void(sketchGeometry_ptr geom)> func) {}
 
 	void set(glm::vec2 p);
-	
+
+	virtual entityPosSnapshot_ptr posSnapshot();
+
 	void set_constant();
 	void set_tmpConstant(bool const_);
 
@@ -59,5 +62,18 @@ protected:
 
 	void set_dragged_impl(bool drag);
 };
+
+class pointSnapshot : public entityPosSnapshot_abstract {
+private:
+	sketchPoint_ptr mPoint;
+	double x, y;
+public:
+	pointSnapshot(sketchPoint_ptr pt);
+	pointSnapshot(sketchPoint_ptr source, sketchPoint_ptr target);
+
+	sketchEntity_ptr ent() { return mPoint; }
+	void apply();
+};
+
 
 #endif 

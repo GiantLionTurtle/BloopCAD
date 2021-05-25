@@ -106,6 +106,10 @@ void sketchPoint::set(glm::vec2 p)
 	mY->set(p.y);
 	set_require_VBUpdate();
 }
+entityPosSnapshot_ptr sketchPoint::posSnapshot()
+{
+	return std::make_shared<pointSnapshot>(shared_from_this());
+}
 
 void sketchPoint::set_constant()
 {
@@ -204,4 +208,25 @@ void sketchPoint::set_dragged_impl(bool drag)
 {
 	mX->set_dragged(drag);
 	mY->set_dragged(drag);
+}
+
+
+pointSnapshot::pointSnapshot(sketchPoint_ptr pt): 
+	mPoint(pt)
+{
+	x = mPoint->x()->eval();
+	y = mPoint->y()->eval();
+}
+pointSnapshot::pointSnapshot(sketchPoint_ptr source, sketchPoint_ptr target): 
+	mPoint(target)
+{
+	x = source->x()->eval();
+	y = source->y()->eval();
+}
+
+void pointSnapshot::apply()
+{
+	mPoint->x()->set(x);
+	mPoint->y()->set(y);
+	mPoint->set_require_VBUpdate();
 }

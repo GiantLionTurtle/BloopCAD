@@ -105,6 +105,16 @@ void sketch::add_geometry(sketchGeometry_ptr ent)
 	ent->set_parent(this);
 	mGeometries.push_back(ent);
 }
+std::vector<entityPosSnapshot_ptr> sketch::selectedGeometriesStates()
+{
+	std::vector<entityPosSnapshot_ptr> states(0);
+	for(int i = 0; i < mSelectedEntities.size(); ++i) {
+		auto snp = mSelectedEntities[i]->posSnapshot();
+		if(snp)
+			states.push_back(snp);
+	}
+	return states;
+}
 void sketch::add_toolPreview(entity_ptr ent)
 {
 	if(!ent) {
@@ -129,21 +139,21 @@ void sketch::add_selectedGeometry(sketchEntity_ptr ent)
 	}
 	ent->select();
 	set_require_redraw();
-	mSelectedGeometries.push_back(ent);
+	mSelectedEntities.push_back(ent);
 }
 void sketch::remove_selectedGeometry(sketchEntity_ptr ent)
 {
-	for(int i = 0; i < mSelectedGeometries.size(); ++i) {
-		if(ent == mSelectedGeometries[i]) {
+	for(int i = 0; i < mSelectedEntities.size(); ++i) {
+		if(ent == mSelectedEntities[i]) {
 			ent->unselect();
-			mSelectedGeometries.erase(std::find(mSelectedGeometries.begin(), mSelectedGeometries.end(), ent));
+			mSelectedEntities.erase(std::find(mSelectedEntities.begin(), mSelectedEntities.end(), ent));
 		}
 	}
 }
 void sketch::clear_selectedGeometries()
 {
 	for_each_selected([](sketchEntity_ptr ent) { ent->unselect(); });
-	mSelectedGeometries.clear();
+	mSelectedEntities.clear();
 }
 
 bool sketch::can_delete(sketchEntity_ptr ent)
@@ -166,7 +176,7 @@ void sketch::for_each(std::function<void (entity_ptr)> func)
 }
 void sketch::for_each_selected(std::function<void (sketchEntity_ptr)> func)
 {
-	for(sketchEntity_ptr geom : mSelectedGeometries) {
+	for(sketchEntity_ptr geom : mSelectedEntities) {
 		func(geom);
 	}
 }

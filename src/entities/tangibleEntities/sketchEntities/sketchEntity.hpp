@@ -10,6 +10,9 @@
 class sketchEntity;
 using sketchEntity_ptr = std::shared_ptr<sketchEntity>;
 
+class entityPosSnapshot_abstract;
+using entityPosSnapshot_ptr = std::shared_ptr<entityPosSnapshot_abstract>;
+
 class sketchEntity : public tangibleEntity {
 public:
 	enum types { POINT, LINE, CIRCLE };
@@ -43,6 +46,8 @@ public:
 	int type() { return mType; }
 
 	virtual void set_exists_vars(bool ex) {}
+
+	virtual entityPosSnapshot_ptr posSnapshot() { return nullptr; }
 protected:
 	virtual void exists_impl(bool ex) { notify_parent(ex ? RESURRECTED : DELETED); set_exists_vars(ex); }
 

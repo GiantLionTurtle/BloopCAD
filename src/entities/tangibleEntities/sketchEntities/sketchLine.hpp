@@ -9,29 +9,7 @@
 class sketchLine;
 using sketchLine_ptr = std::shared_ptr<sketchLine>;
 
-class expression_substr_funky : public binary_expression {
-private:
-	bool mFunk;
-	double mFunkval;
-public:
-	expression_substr_funky(expression_ptr left, expression_ptr right, double funkval);
-
-	virtual double eval();
-	virtual expression_ptr derivative();
-
-	virtual std::string to_string();
-
-	void funk(bool do_)
-	{
-		mFunk = do_;
-	}
-	void set_funk(double funkval)
-	{
-		mFunkval = funkval;
-	}
-};
-
-class sketchLine : public sketchGeometry, public geom_2d::line_abstr {
+class sketchLine : public sketchGeometry, public geom_2d::line_abstr, public std::enable_shared_from_this<sketchLine> {
 private:
 	// std::shared_ptr<expression_substr_funky> dirX, dirY;
 	// expressionVector2_ptr dir;
@@ -60,6 +38,8 @@ public:
 	void for_each(std::function<void(sketchGeometry_ptr geom)> func);
 	
 	void move(glm::vec2 from, glm::vec2 to);
+
+	virtual entityPosSnapshot_ptr posSnapshot();
 
 	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);
 	bool in_selection_range(glm::vec2 a, glm::vec2 b, bool contained);
@@ -98,5 +78,40 @@ protected:
 
 	void set_dragged_impl(bool drag);
 };
+
+class linePosSnapshot : public entityPosSnapshot_abstract {
+private:
+	sketchLine_ptr mLine;
+	double x1, y1, x2, y2;
+public:
+	linePosSnapshot(sketchLine_ptr l);
+	linePosSnapshot(sketchLine_ptr source, sketchLine_ptr target);
+
+	sketchEntity_ptr ent() { return mLine; }
+	void apply();
+};
+
+class expression_substr_funky : public binary_expression {
+private:
+	bool mFunk;
+	double mFunkval;
+public:
+	expression_substr_funky(expression_ptr left, expression_ptr right, double funkval);
+
+	virtual double eval();
+	virtual expression_ptr derivative();
+
+	virtual std::string to_string();
+
+	void funk(bool do_)
+	{
+		mFunk = do_;
+	}
+	void set_funk(double funkval)
+	{
+		mFunkval = funkval;
+	}
+};
+
 
 #endif 

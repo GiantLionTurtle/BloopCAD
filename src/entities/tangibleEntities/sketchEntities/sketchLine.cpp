@@ -154,6 +154,11 @@ void sketchLine::move(glm::vec2 from, glm::vec2 to)
 	set_require_VBUpdate();
 }
 
+entityPosSnapshot_ptr sketchLine::posSnapshot()
+{
+	return std::make_shared<linePosSnapshot>(shared_from_this());
+}
+
 bool sketchLine::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor)
 {
 	glm::vec4 onscreen_ndc = cam->mvp()	* glm::vec4(mBasePlane->to_worldPos(closest_to_point(planepos)), 1.0f);
@@ -271,4 +276,31 @@ void sketchLine::set_dragged_impl(bool drag)
 {
 	mA->set_dragged(drag);
 	mB->set_dragged(drag);
+}
+
+
+linePosSnapshot::linePosSnapshot(sketchLine_ptr l): 
+	mLine(l) 
+{
+	x1 = mLine->A()->x()->eval();
+	y1 = mLine->A()->y()->eval();
+	x2 = mLine->B()->x()->eval();
+	y2 = mLine->B()->y()->eval();
+}
+linePosSnapshot::linePosSnapshot(sketchLine_ptr source, sketchLine_ptr target): 
+	mLine(target) 
+{
+	x1 = source->A()->x()->eval();
+	y1 = source->A()->y()->eval();
+	x2 = source->B()->x()->eval();
+	y2 = source->B()->y()->eval();
+}
+
+void linePosSnapshot::apply() 
+{ 
+	mLine->A()->x()->set(x1);
+	mLine->A()->y()->set(y1);
+	mLine->B()->x()->set(x2);
+	mLine->B()->y()->set(y2);
+	mLine->set_require_VBUpdate();
 }

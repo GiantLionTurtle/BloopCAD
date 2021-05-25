@@ -24,7 +24,7 @@ private:
 
 	std::vector<sketchGeometry_ptr> mGeometries;
 	std::vector<entity_ptr> mToolPreview;
-	std::vector<sketchEntity_ptr> mSelectedGeometries;
+	std::vector<sketchEntity_ptr> mSelectedEntities;
 
 	folder_ptr mOrigin;
 
@@ -54,12 +54,13 @@ public:
 	sketchEntity_ptr entity_at_point(camera_ptr cam, glm::vec2 cursor);
 
 	void add_geometry(sketchGeometry_ptr ent);
+	std::vector<entityPosSnapshot_ptr> selectedGeometriesStates();
 	void add_toolPreview(entity_ptr ent);
 	void clear_toolPreview();
 	void add_selectedGeometry(sketchEntity_ptr ent);
 	void remove_selectedGeometry(sketchEntity_ptr ent);
 	void clear_selectedGeometries();
-	size_t n_selectedGeometries() { return mSelectedGeometries.size(); }
+	size_t n_selectedGeometries() { return mSelectedEntities.size(); }
 
 	bool can_delete(sketchEntity_ptr ent);
 

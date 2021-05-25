@@ -34,6 +34,6 @@ bool point_tool::manage_button_press(GdkEventButton* event)
 	// mEnv->state()->doc->make_glContext_current();
 	mCurrentPoint = sketchPoint_ptr(new sketchPoint(point_pos, pl));
 	target->add_geometry(mCurrentPoint);
-	mEnv->state()->doc->push_action(std::make_shared<enableEntity_action>(mCurrentPoint)); // Doc is passed to activate glContext
+	mEnv->state()->doc->push_action(std::make_shared<enableEntity_action>(mCurrentPoint));
 	return true;
 }

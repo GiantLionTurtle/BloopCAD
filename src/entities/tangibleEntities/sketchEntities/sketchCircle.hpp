@@ -11,7 +11,7 @@
 class sketchCircle;
 using sketchCircle_ptr = std::shared_ptr<sketchCircle>;
 
-class sketchCircle : public sketchGeometry, public geom_2d::circle_abstr {
+class sketchCircle : public sketchGeometry, public geom_2d::circle_abstr, public std::enable_shared_from_this<sketchCircle> {
 private:
 	static float kSelDist2;
 	static bool kFisrstInst;
@@ -31,6 +31,8 @@ public:
 	void print(int depth = 0);
 
 	void move(glm::vec2 from, glm::vec2 to);
+
+	virtual entityPosSnapshot_ptr posSnapshot();
 
 	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);
 	bool in_selection_range(glm::vec2 a, glm::vec2 b, bool contained);
@@ -59,6 +61,18 @@ protected:
 	void post_set_behavior();
 	
 	void init_buffers();
+};
+
+class circleSnapshot : public entityPosSnapshot_abstract {
+private:
+	sketchCircle_ptr mCircle;
+	double x, y, r;
+public:
+	circleSnapshot(sketchCircle_ptr pt);
+	circleSnapshot(sketchCircle_ptr source, sketchCircle_ptr target);
+
+	sketchEntity_ptr ent() { return mCircle; }
+	void apply();
 };
 
 #endif
