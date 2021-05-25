@@ -1,6 +1,11 @@
 
 .bloop {
+    font-family: 'OpenDyslexic';
     /* background: rgb(155, 0, 142); */
+}
+
+tooltip { /* lack of '.' or '#' references GTK's tooltip class */
+    font-family: 'OpenDyslexic';
 }
 
 .hovered {

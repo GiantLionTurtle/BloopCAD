@@ -144,7 +144,7 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 
 	} else {
 		LOG_ERROR("Could not build sketch workspace.");
-	}
+	}	
 }
 
 bool sketchDesign::set_tool(int name)

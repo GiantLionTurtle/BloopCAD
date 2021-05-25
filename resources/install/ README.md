@@ -1,0 +1,1 @@
+This folder is to keep every and all scripts that will or might be used during an installation, the main program is not installable yet so it is obviously pretty incomplete.

@@ -7,6 +7,7 @@
 #include "workspaces/partDesign.hpp"
 
 #include <gtkmm.h>
+#include <fontconfig/fontconfig.h>
 
 #include <glm/glm.hpp>
 #include <glm/ext/quaternion_common.hpp>
