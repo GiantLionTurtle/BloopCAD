@@ -23,22 +23,9 @@ moveCamera_action::moveCamera_action(camera_ptr cam, cameraState target, long du
 std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	geom_3d::plane_abstr_ptr toFace, float dist_to_plane, 
 																				cameraState const& camSt, camera_ptr cam)
 {
-	float dot_right_v 	= glm::dot(camSt.right, toFace->v()); // How similar is the camRight to the v vector?
-	float dot_up_v 		= glm::dot(camSt.up, toFace->v()); // How similar is the camUp to the v vector?
-	float dot_right_w 	= glm::dot(camSt.right, toFace->w());
-	float dot_up_w 		= glm::dot(camSt.up, toFace->w());
-
 	glm::vec3 right_plane, up_plane; // The v & w vectors that will be used for the sketch's plane
-	glm::vec3 v_plane, w_plane;
+	camera::get_alignedPlaneVectors(camSt, toFace, right_plane, up_plane, true);
 
-	// Decide which of the camera vectors will be assigned to which of the plane's vectors
-	if(std::abs(dot_right_w) > std::abs(dot_right_v) && (std::abs(dot_right_w) > std::abs(dot_up_w) || std::abs(dot_right_v) < std::abs(dot_up_v))) {
-		right_plane =  toFace->w() * (dot_right_w < 0.0f ? -1.0f : 1.0f); // Invert it or not
-		up_plane =  toFace->v() * (dot_up_v < 0.0f ? -1.0f : 1.0f); // Invert it or not
-	} else {
-		right_plane =  toFace->v() * (dot_right_v < 0.0f ? -1.0f : 1.0f); // Invert it or not
-		up_plane =  toFace->w() * (dot_up_w < 0.0f ? -1.0f : 1.0f); // Invert it or not
-	}
 	cameraState targetCamState = {  toFace->origin() + glm::normalize(glm::cross(right_plane, up_plane)) * dist_to_plane, right_plane, up_plane };
 	return std::shared_ptr<action>(new moveCamera_action(cam, 
 	targetCamState, 

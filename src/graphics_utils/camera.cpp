@@ -127,10 +127,44 @@ glm::vec3 camera::cast_ray(glm::vec2 screenPos, bool input_NDC/* = false*/)
 									-screen_dist);
 	} else {
 		pos_on_screen = glm::vec3(	map((float)screenPos.x, 0.0f, viewport().x, -half_screenWidth, half_screenWidth),
-									map((float)screenPos.y, viewport().y, 0.0f, -1.0f, 1.0f), 
+									map((float)screenPos.y, viewport().y, 0.0f, 1.0f, -1.0f), 
 									-screen_dist);
 	}
 	return model_inv() * glm::vec4(glm::normalize(pos_on_screen), 0.0f);
+}
+glm::vec2 camera::screen_angle(glm::vec2 screenPos, bool input_NDC)
+{
+	float screen_dist = 1.0f / std::tan(FOV() / 2.0f);
+	float half_screenWidth = aspectRatio();
+	glm::vec2 pos_on_screen;
+	if(input_NDC) {
+		pos_on_screen = glm::vec2(	map((float)screenPos.x, -1.0f, 1.0f, -half_screenWidth, half_screenWidth),
+									screenPos.y);
+	} else {
+		pos_on_screen = glm::vec2(	map((float)screenPos.x, 0.0f, viewport().x, -half_screenWidth, half_screenWidth),
+									map((float)screenPos.y, viewport().y, 0.0f, -1.0f, 1.0f));
+	}
+	return glm::vec2(std::atan2(pos_on_screen.x, screen_dist), std::atan2(pos_on_screen.y, screen_dist));
+}
+void camera::get_alignedPlaneVectors(std::shared_ptr<geom_3d::plane_abstr> pl, glm::vec3& right, glm::vec3& up, bool allow_inversion)
+{
+	get_alignedPlaneVectors(state(), pl, right, up, allow_inversion);
+}
+void camera::get_alignedPlaneVectors(cameraState cst, std::shared_ptr<geom_3d::plane_abstr> pl, glm::vec3& right, glm::vec3& up, bool allow_inversion)
+{
+	float dot_right_v 	= glm::dot(cst.right, pl->v()); // How similar is the camRight to the v vector?
+	float dot_up_v 		= glm::dot(cst.up, pl->v()); // How similar is the camUp to the v vector?
+	float dot_right_w 	= glm::dot(cst.right, pl->w());
+	float dot_up_w 		= glm::dot(cst.up, pl->w());
+
+	// Decide which of the camera vectors will be assigned to which of the plane's vectors
+	if(std::abs(dot_right_w) > std::abs(dot_right_v) && (std::abs(dot_right_w) > std::abs(dot_up_w) || std::abs(dot_right_v) < std::abs(dot_up_v))) {
+		right 	= pl->w() * (dot_right_w < 0.0f && allow_inversion 	? -1.0f : 1.0f); // Invert it or not
+		up 		= pl->v() * (dot_up_v < 0.0f && allow_inversion 	? -1.0f : 1.0f); // Invert it or not
+	} else {
+		right 	= pl->v() * (dot_right_v < 0.0f && allow_inversion 	? -1.0f : 1.0f); // Invert it or not
+		up 		= pl->w() * (dot_up_w < 0.0f && allow_inversion 	? -1.0f : 1.0f); // Invert it or not
+	}
 }
 
 glm::mat4 camera::model(transform transf) const

@@ -3,7 +3,6 @@
 #define SIMPLESELECTOR_TOOL_HPP_
 
 #include <tools/tool.hpp>
-#include <entities/forward_entities.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 

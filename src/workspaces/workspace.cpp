@@ -22,7 +22,6 @@ workspace::workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> c
 	// Create navigation/selection tools that are fairly common amongst workspaces
 	mOrbit_tool	= std::make_shared<orbit_tool>(this);
 	mZoom_tool	= std::make_shared<zoom_tool>(this);
-	mPan_tool	= std::make_shared<pan_tool>(this);
 }
 
 bool workspace::manage_key_press(GdkEventKey* event)
@@ -97,9 +96,6 @@ bool workspace::set_tool(int name)
 		break;
 	case TOOLIDS::TOOLID_ZOOM:
 		to_set = mZoom_tool;
-		break;
-	case TOOLIDS::TOOLID_PAN:
-		to_set = mPan_tool;
 		break;
 	default:
 		return false;

@@ -1,12 +1,15 @@
 
-#ifndef PAN_TOOL_HPP_
-#define PAN_TOOL_HPP_
+#ifndef PAN2D_TOOL_HPP_
+#define PAN2D_TOOL_HPP_
 
+#include <workspaces/sketchDesign.hpp>
 #include <tools/tool.hpp>
 
-class pan_tool : public tool<workspace> {
+class pan2d_tool : public tool<sketchDesign> {
 private:
-	glm::vec2 prevPos; // Helper record of the position of the mouse on the previous update
+	glm::vec3 mTranStart; // Helper record of the position of the mouse on the previous update
+	glm::vec2 mDragStart;
+	glm::vec3 mPl_right, mPl_up;
 	bool is_moving; // If the mouse is currently moving
 public:
 	/*
@@ -14,7 +17,7 @@ public:
 
 		@param env : The workspace owning the tool
 	*/
-	pan_tool(workspace* env);
+	pan2d_tool(sketchDesign* env);
 
 
 	virtual bool manage_button_press(GdkEventButton* event);
@@ -26,7 +29,9 @@ public:
 	*/
 	virtual bool manage_mouse_move(GdkEventMotion* event);
 
-	virtual std::string name() { return "pan"; }
+	virtual std::string name() { return "pan2d"; }
+
+	glm::vec2 dist_to_cam(glm::vec2 mousepos);
 };
 
 #endif

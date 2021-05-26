@@ -39,7 +39,6 @@ class workspace {
 protected:
 	std::shared_ptr<orbit_tool> mOrbit_tool;
 	std::shared_ptr<zoom_tool> mZoom_tool;
-	std::shared_ptr<pan_tool> mPan_tool;
 
 	std::map<std::string, tool_abstract_ptr> mTools; // All the tools used by the workspace
 	tool_abstract_ptr mDefaultTool; // The tool used by default in the workspace (typically some sort of selector)
@@ -90,7 +89,6 @@ public:
 
 	std::shared_ptr<orbit_tool> orbit() { return mOrbit_tool; }
 	std::shared_ptr<zoom_tool> zoom() { return mZoom_tool; }
-	std::shared_ptr<pan_tool> pan() { return mPan_tool; }
 	/*
 		@function defaultTool
 

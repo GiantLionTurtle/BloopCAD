@@ -3,6 +3,9 @@
 #define CAMERA_HPP_
 
 #include <utils/animatable.hpp>
+#include <utils/errorLogger.hpp>
+
+#include <geometry/geometry_3d/plane_abstr.hpp>
 
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -174,7 +177,12 @@ public:
 	*/
 	transform transformation() { return mTransformation; }
 	void set_transformation(transform transf) { mTransformation = transf; mRequire_update = true; }
-	void set_translation(glm::vec3 tr) { mTransformation.translation = tr; mRequire_update = true; }
+	void set_translation(glm::vec3 tr, bool suspicious = true) {
+		if(suspicious) {
+			LOG_WARNING("dsknjfwjnrf");
+		}
+		mTransformation.translation = tr; mRequire_update = true;
+		}
 	void set_scale(glm::vec3 sc) { mTransformation.scale = sc; mRequire_update = true; }
 	void set_rotation(glm::quat rot) { mTransformation.rotation = rot; mRequire_update = true; }
 
@@ -205,6 +213,9 @@ public:
 	static void orientation_to_rotation(glm::vec3 const& orientation, glm::quat& quaternion);
 
 	glm::vec3 cast_ray(glm::vec2 screenPos, bool input_NDC = false);
+	glm::vec2 screen_angle(glm::vec2 screenPos, bool input_NDC = false);
+	void get_alignedPlaneVectors(std::shared_ptr<geom_3d::plane_abstr> pl, glm::vec3& right, glm::vec3& up, bool allow_inversion);
+	static void get_alignedPlaneVectors(cameraState cst, std::shared_ptr<geom_3d::plane_abstr> pl, glm::vec3& right, glm::vec3& up, bool allow_inversion);
 private:
 	glm::mat4 model(transform transf) const;
 	glm::mat4 model_inv(transform transf) const;

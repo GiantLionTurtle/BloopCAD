@@ -4,6 +4,7 @@
 #include <bloop.hpp>
 #include <tools/partDesign/partDesignDefault_tool.hpp>
 #include <tools/partDesign/startSketch_tool.hpp>
+#include <tools/navigation/navigation.hpp>
 
 #include <memory>
 
@@ -17,6 +18,7 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 	// Creat all the tools used in this workspace
 	mPartDesignDefault_tool = std::make_shared<partDesignDefault_tool>(this);
 	mStartSketch_tool 		= std::make_shared<startSketch_tool>(this);
+	mPan_tool				= std::make_shared<pan_tool>(this);
 	mDefaultTool = mPartDesignDefault_tool;
 
 	// Initialize all buttons as 2 nullptr
@@ -62,6 +64,9 @@ bool partDesign::set_tool(int name)
 		break;
 	case TOOLIDS::TOOLID_STARTSKECTH:
 		to_set = mStartSketch_tool;
+		break;
+	case TOOLIDS::TOOLID_PAN:
+		to_set = mPan_tool;
 		break;
 	default:
 		return workspace::set_tool(name);

@@ -1,6 +1,6 @@
 
-#ifndef PLANE_ABSTRACT3_HPP_
-#define PLANE_ABSTRACT3_HPP_
+#ifndef PLANE_ABSTR3_HPP_
+#define PLANE_ABSTR3_HPP_
 
 #include "geometry_3d_abstr.hpp"
 #include "point_abstr.hpp"

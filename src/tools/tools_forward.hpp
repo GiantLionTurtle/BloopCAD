@@ -6,6 +6,7 @@
 class orbit_tool;
 class zoom_tool;
 class pan_tool;
+class pan2d_tool;
 
 /********** Part design **********/
 class partDesignDefault_tool;

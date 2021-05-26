@@ -15,6 +15,7 @@
 #include <tools/sketchDesign/verticality_tool.hpp>
 #include <tools/sketchDesign/horizontality_tool.hpp>
 #include <tools/sketchDesign/sketchDesignDefault_tool.hpp>
+#include <tools/sketchDesign/pan2d_tool.hpp>
 #include <utils/xmlParser.hpp>
 #include <entities/svgEntity.hpp>
 #include <bloop.hpp>
@@ -29,6 +30,7 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 	workspace("sketchDesign_upperBar", builder, parent) // Create base workspace with upper bar
 {	
 	// Create all the tools used in this workspace
+	mPan_tool 					= std::make_shared<pan2d_tool>(this);
 	mSketchDesignDefault_tool 	= std::make_shared<sketchDesignDefault_tool>(this);
 	mPoint_tool 				= std::make_shared<point_tool>(this);
 	mLine_tool 					= std::make_shared<line_tool>(this);
@@ -174,6 +176,9 @@ bool sketchDesign::set_tool(int name)
 		break;
 	case TOOLIDS::TOOLID_PERPENDICULARITY:
 		to_set = mPerpendiculatiry_tool;
+		break;
+	case TOOLIDS::TOOLID_PAN:
+		to_set = mPan_tool;
 		break;
 	default:
 		return workspace::set_tool(name);
