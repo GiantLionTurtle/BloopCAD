@@ -30,6 +30,7 @@ void sketchDesignDefault_tool::init()
 		mSelectionRect = std::make_shared<selectionRectangle>(glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0), mEnv->target()->basePlane());
 	}
 	mAllowedToMove = false;
+	mMoving = false;
 }
 
 bool sketchDesignDefault_tool::manage_key_press(GdkEventKey* event)

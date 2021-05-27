@@ -127,7 +127,7 @@ glm::vec3 camera::cast_ray(glm::vec2 screenPos, bool input_NDC/* = false*/)
 									-screen_dist);
 	} else {
 		pos_on_screen = glm::vec3(	map((float)screenPos.x, 0.0f, viewport().x, -half_screenWidth, half_screenWidth),
-									map((float)screenPos.y, viewport().y, 0.0f, 1.0f, -1.0f), 
+									map((float)screenPos.y, viewport().y, 0.0f, -1.0f, 1.0f), 
 									-screen_dist);
 	}
 	return model_inv() * glm::vec4(glm::normalize(pos_on_screen), 0.0f);
