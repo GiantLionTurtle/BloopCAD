@@ -7,7 +7,8 @@
 
 pan2d_tool::pan2d_tool(sketchDesign* env): 
 	tool(env, compositeCursor_ptr(new compositeCursor
-		{Gdk::Cursor::create(Gdk::IRON_CROSS), nullptr, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f)})) // Iron cross is the closest to the icon
+		{Gdk::Cursor::create(Gdk::IRON_CROSS), nullptr, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f)})), // Iron cross is the closest to the icon
+		mProxyCam(nullptr)
 {
 	// Attempt to load cursor icon
 	try {
@@ -19,12 +20,20 @@ pan2d_tool::pan2d_tool(sketchDesign* env):
 	}
 }
 
+void pan2d_tool::init()
+{
+	if(!mProxyCam)
+		mProxyCam = std::make_shared<camera>();
+}
+
 bool pan2d_tool::manage_button_press(GdkEventButton* event)
 {
 	if(!event->state & GDK_BUTTON1_MASK)
 		return true;
     camera_ptr cam = mEnv->state()->cam;
-	mDragStart = dist_to_cam(glm::vec2(event->x, event->y));
+	mProxyCam->copy(cam);
+	mProxyCam->update();
+	mDragStart = mEnv->target()->basePlane()->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false));
 	mTranStart = cam->transformation().translation;
 	is_moving = true;
 	return true;
@@ -41,8 +50,8 @@ bool pan2d_tool::manage_mouse_move(GdkEventMotion* event)
 	if(mEnv->state() && event->state & GDK_BUTTON1_MASK) {
 		if(is_moving) {
 			camera_ptr cam = mEnv->state()->cam;
-			glm::vec2 mov_2d = dist_to_cam(glm::vec2(event->x, event->y)) - mDragStart;
-			glm::vec3 mov = mPl_right * mov_2d.x + mPl_up * mov_2d.y;
+			glm::vec3 pointedPos = mEnv->target()->basePlane()->line_intersection(mProxyCam->pos(), mProxyCam->cast_ray(glm::vec2(event->x, event->y), false));
+			glm::vec3 mov = pointedPos - mDragStart;
 			cam->set_translation(mTranStart + mov, false); // Move the model (no need to get fancy, it moves according to the "real position of the camera")
 		} else {
 			is_moving = true; // Now moving, first point recorded
@@ -51,21 +60,4 @@ bool pan2d_tool::manage_mouse_move(GdkEventMotion* event)
 		is_moving = false; // Model no longer moving
 	}
 	return true;
-}
-
-glm::vec2 pan2d_tool::dist_to_cam(glm::vec2 mousepos)
-{
-	camera_ptr cam = mEnv->state()->cam;
-	auto pl = mEnv->target()->basePlane();
-	cam->get_alignedPlaneVectors(pl, mPl_right, mPl_up, false);
-	float ang_cam_x = glm::orientedAngle(glm::normalize(cam->right()), glm::normalize(mPl_right), glm::normalize(mPl_up));
-	float ang_cam_y = glm::orientedAngle(glm::normalize(cam->up()), glm::normalize(mPl_up), glm::normalize(mPl_right));
-	float dist_cam_pl = pl->dist_to_point(cam->pos());
-	glm::vec2 mouse_angle = cam->screen_angle(mousepos);
-	float compound_angle_x = ang_cam_x + mouse_angle.x;
-	float compound_angle_y = ang_cam_y + mouse_angle.y;
-	float mov_x = std::tan(compound_angle_x) * dist_cam_pl;
-	float mov_y = std::tan(compound_angle_y) * dist_cam_pl;
-
-	return glm::vec2(mov_x, mov_y);
 }

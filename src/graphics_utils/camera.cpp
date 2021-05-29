@@ -43,6 +43,23 @@ camera::camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float 
 {
 
 }
+camera::camera():
+	mInternalPos(glm::vec3(0.0)),
+	mInternalTarget(glm::vec3(0.0)),
+	mOrientation(glm::vec3(0.0f, 0.0f, 0.0f)),
+	mZoom(1.0f),
+	mFOV(0.0f),
+	mNearPlane(0.1),
+	mFarPlane(100),
+	mViewport(glm::vec2(0.0)),
+	mInternalFront(0.0f, 0.0f, -1.0f),
+	mTransformation{glm::vec3(0.0f, 0.0f, 0.0f)/*No translation*/, 
+		glm::vec3(1.0f, 1.0f, 1.0f)/*Scale of 100%*/, 
+		glm::quat(1.0f, 0.0f, 0.0f, 0.0f)/*No rotation with unit quaternion*/},
+	mRequire_update(false)
+{
+
+}
 
 glm::vec3 camera::predictedPos(transform trans) const
 {
@@ -56,7 +73,7 @@ void camera::set_orientation(glm::vec3 orient)
 	mRequire_update = true; 
 }
 
-void camera::set(camera_ptr other)
+void camera::copy(camera_ptr other)
 {
 	mInternalPos = other->mInternalPos;
 	mInternalTarget = other->mInternalTarget;

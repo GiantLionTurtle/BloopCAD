@@ -30,7 +30,7 @@ bool switchWorkspace_action::do_work(document* caller)
 	switch_workspace(caller, mTargetWorkspaceName);
 	caller->state()->startCamState = startState;
 	if(mSet_camera)
-		caller->state()->cam->set(tmpCam);
+		caller->state()->cam->copy(tmpCam);
 	return true;
 }
 bool switchWorkspace_action::undo_work(document* caller)

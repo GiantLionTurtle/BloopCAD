@@ -67,6 +67,7 @@ public:
 		@param viewport_ : 			The dimensions the drawing area
 	*/
 	camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float FOV_, glm::vec2 viewport_);
+	camera();
 
 	/*
 		@function model
@@ -195,7 +196,7 @@ public:
 	/*
 		@function set sets the camera to have the same everything as another camera
 	*/
-	void set(camera_ptr other);
+	void copy(camera_ptr other);
 
 	bool require_update() const { return mRequire_update; }
 	void update(bool silent = false);
