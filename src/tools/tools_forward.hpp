@@ -5,6 +5,7 @@
 /********* Navigation **********/
 class orbit_tool;
 class zoom_tool;
+class zoom2d_tool;
 class pan_tool;
 class pan2d_tool;
 

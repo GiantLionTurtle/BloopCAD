@@ -176,14 +176,13 @@ public:
 
 		@return : The transformation of the model
 	*/
+	glm::vec3 translation() { return mTransformation.translation; }
+	glm::vec3 scale() { return mTransformation.scale; }
+	float fscale() { return mTransformation.scale.x; }
+	glm::quat rotation() { return mTransformation.rotation; }
 	transform transformation() { return mTransformation; }
 	void set_transformation(transform transf) { mTransformation = transf; mRequire_update = true; }
-	void set_translation(glm::vec3 tr, bool suspicious = true) {
-		if(suspicious) {
-			LOG_WARNING("dsknjfwjnrf");
-		}
-		mTransformation.translation = tr; mRequire_update = true;
-		}
+	void set_translation(glm::vec3 tr) { mTransformation.translation = tr; mRequire_update = true; }
 	void set_scale(glm::vec3 sc) { mTransformation.scale = sc; mRequire_update = true; }
 	void set_rotation(glm::quat rot) { mTransformation.rotation = rot; mRequire_update = true; }
 

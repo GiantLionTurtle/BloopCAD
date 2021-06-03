@@ -1,5 +1,6 @@
 set(sketchDesign_tools_source_files
     pan2d_tool.cpp
+    zoom2d_tool.cpp
     sketchDesignDefault_tool.cpp
     point_tool.cpp
     line_tool.cpp

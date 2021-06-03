@@ -15,6 +15,7 @@
 class sketchDesign : public workspace {
 protected:
 	std::shared_ptr<pan2d_tool> 				mPan_tool;
+	std::shared_ptr<zoom2d_tool> 				mZoom_tool;
 	std::shared_ptr<sketchDesignDefault_tool> 	mSketchDesignDefault_tool;
 	std::shared_ptr<point_tool> 				mPoint_tool;
 	std::shared_ptr<line_tool> 					mLine_tool;
@@ -49,6 +50,7 @@ public:
 	virtual bool set_tool(int name);
 
 	bool manage_key_press(GdkEventKey* event);
+	bool manage_mouse_scroll(GdkEventScroll* event);
 
 	std::shared_ptr<pan2d_tool> pan() { return mPan_tool; }
 	std::shared_ptr<sketchDesignDefault_tool> sketchDesignDefault() { return mSketchDesignDefault_tool; }

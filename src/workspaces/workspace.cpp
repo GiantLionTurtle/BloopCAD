@@ -21,7 +21,6 @@ workspace::workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> c
 
 	// Create navigation/selection tools that are fairly common amongst workspaces
 	mOrbit_tool	= std::make_shared<orbit_tool>(this);
-	mZoom_tool	= std::make_shared<zoom_tool>(this);
 }
 
 bool workspace::manage_key_press(GdkEventKey* event)
@@ -63,10 +62,6 @@ bool workspace::manage_mouse_move(GdkEventMotion* event)
 	}
 	return true;
 }
-bool workspace::manage_mouse_scroll(GdkEventScroll* event)
-{
-	return mZoom_tool->manage_scroll(event); // The only tool that can be used with scroll is zoom
-}
 
 bool workspace::manage_button_press(GdkEventButton* event)
 {
@@ -93,9 +88,6 @@ bool workspace::set_tool(int name)
 	switch(name) {
 	case TOOLIDS::TOOLID_ORBIT:
 		to_set = mOrbit_tool;
-		break;
-	case TOOLIDS::TOOLID_ZOOM:
-		to_set = mZoom_tool;
 		break;
 	default:
 		return false;

@@ -16,6 +16,7 @@
 #include <tools/sketchDesign/horizontality_tool.hpp>
 #include <tools/sketchDesign/sketchDesignDefault_tool.hpp>
 #include <tools/sketchDesign/pan2d_tool.hpp>
+#include <tools/sketchDesign/zoom2d_tool.hpp>
 #include <utils/xmlParser.hpp>
 #include <entities/svgEntity.hpp>
 #include <bloop.hpp>
@@ -31,6 +32,7 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 {	
 	// Create all the tools used in this workspace
 	mPan_tool 					= std::make_shared<pan2d_tool>(this);
+	mZoom_tool					= std::make_shared<zoom2d_tool>(this);
 	mSketchDesignDefault_tool 	= std::make_shared<sketchDesignDefault_tool>(this);
 	mPoint_tool 				= std::make_shared<point_tool>(this);
 	mLine_tool 					= std::make_shared<line_tool>(this);
@@ -180,6 +182,9 @@ bool sketchDesign::set_tool(int name)
 	case TOOLIDS::TOOLID_PAN:
 		to_set = mPan_tool;
 		break;
+	case TOOLIDS::TOOLID_ZOOM:
+		to_set = mZoom_tool;
+		break;
 	default:
 		return workspace::set_tool(name);
 	}
@@ -203,7 +208,10 @@ bool sketchDesign::manage_key_press(GdkEventKey* event)
 	}
 	return true;
 }
-
+bool sketchDesign::manage_mouse_scroll(GdkEventScroll* event)
+{
+	return mZoom_tool->manage_scroll(event);
+}
 void sketchDesign::begin_line()
 {
 	set_tool(TOOLIDS::TOOLID_LINE);

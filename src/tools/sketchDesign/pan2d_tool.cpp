@@ -5,10 +5,10 @@
 #include <workspaces/sketchDesign.hpp>
 #include <document.hpp>
 
-pan2d_tool::pan2d_tool(sketchDesign* env): 
+pan2d_tool::pan2d_tool(sketchDesign* env):
 	tool(env, compositeCursor_ptr(new compositeCursor
 		{Gdk::Cursor::create(Gdk::IRON_CROSS), nullptr, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f)})), // Iron cross is the closest to the icon
-		mProxyCam(nullptr)
+	mProxyCam(nullptr)
 {
 	// Attempt to load cursor icon
 	try {
@@ -52,7 +52,7 @@ bool pan2d_tool::manage_mouse_move(GdkEventMotion* event)
 			camera_ptr cam = mEnv->state()->cam;
 			glm::vec3 pointedPos = mEnv->target()->basePlane()->line_intersection(mProxyCam->pos(), mProxyCam->cast_ray(glm::vec2(event->x, event->y), false));
 			glm::vec3 mov = pointedPos - mDragStart;
-			cam->set_translation(mTranStart + mov, false); // Move the model (no need to get fancy, it moves according to the "real position of the camera")
+			cam->set_translation(mTranStart + mov); // Move the model (no need to get fancy, it moves according to the "real position of the camera")
 		} else {
 			is_moving = true; // Now moving, first point recorded
 		}

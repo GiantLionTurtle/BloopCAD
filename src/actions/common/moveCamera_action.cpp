@@ -98,11 +98,11 @@ void moveCamera_action::compute_animatables(cameraState const& state)
 	
 	glm::quat rotation;
 	camera::orientation_to_rotation(mFinalOrientation, rotation); // Set the quaternion to the computed orientation
-	mRotation.set(mCamera->transformation().rotation);
+	mRotation.set(mCamera->rotation());
 	mRotation.set(rotation, mDuration);
 
 	transform transf { glm::vec3(0.0f), glm::vec3(1.0f), rotation };
-	mTranslation.set(glm::vec3(mCamera->transformation().translation));
+	mTranslation.set(glm::vec3(mCamera->translation()));
 	mTranslation.set(-(state.pos-mCamera->predictedPos(transf)), mDuration);
 	mScale.set(glm::vec3(1.0f));
 }

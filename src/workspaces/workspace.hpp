@@ -38,7 +38,6 @@ using workspace_ptr = std::shared_ptr<workspace>;
 class workspace {
 protected:
 	std::shared_ptr<orbit_tool> mOrbit_tool;
-	std::shared_ptr<zoom_tool> mZoom_tool;
 
 	std::map<std::string, tool_abstract_ptr> mTools; // All the tools used by the workspace
 	tool_abstract_ptr mDefaultTool; // The tool used by default in the workspace (typically some sort of selector)
@@ -88,7 +87,6 @@ public:
 	void set_toolCursor(tool_abstract_ptr tool_);
 
 	std::shared_ptr<orbit_tool> orbit() { return mOrbit_tool; }
-	std::shared_ptr<zoom_tool> zoom() { return mZoom_tool; }
 	/*
 		@function defaultTool
 
@@ -112,7 +110,7 @@ public:
 	/*
 		@function manage_mouse_scroll passes the scroll events to the current tool
 	*/
-	virtual bool manage_mouse_scroll(GdkEventScroll* event);
+	virtual bool manage_mouse_scroll(GdkEventScroll* event) { return true; }
 	/*
 		@function manage_button_press passes the button presses to the current tool
 		and activates the orbit tool if the middle mouse is pressed
