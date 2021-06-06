@@ -105,15 +105,25 @@ void sketch::add_geometry(sketchGeometry_ptr ent)
 	ent->set_parent(this);
 	mGeometries.push_back(ent);
 }
-std::vector<entityPosSnapshot_ptr> sketch::selectedGeometriesStates()
+std::vector<entityPosSnapshot_ptr> sketch::geometriesSnapshots()
 {
-	std::vector<entityPosSnapshot_ptr> states(0);
+	std::vector<entityPosSnapshot_ptr> snapshots(0);
+	for(int i = 0; i < mGeometries.size(); ++i) {
+		auto snp = mGeometries[i]->posSnapshot();
+		if(snp)
+			snapshots.push_back(snp);
+	}
+	return snapshots;
+}
+std::vector<entityPosSnapshot_ptr> sketch::selectedGeometriesSnapshots()
+{
+	std::vector<entityPosSnapshot_ptr> snapshots(0);
 	for(int i = 0; i < mSelectedEntities.size(); ++i) {
 		auto snp = mSelectedEntities[i]->posSnapshot();
 		if(snp)
-			states.push_back(snp);
+			snapshots.push_back(snp);
 	}
-	return states;
+	return snapshots;
 }
 void sketch::add_toolPreview(entity_ptr ent)
 {
@@ -203,38 +213,47 @@ void sketch::toggle_selection_from_area(glm::vec2 a, glm::vec2 b, bool contained
 	}
 }
 
-bool sketch::add_constraint(std::shared_ptr<constraint_abstract> cons, sketchEntity_ptr immovable_hint) 
+bool sketch::add_constraint(std::shared_ptr<constraint_abstract> constr, sketchEntity_ptr immovable_hint) 
 {
-	mSystem.add_constraint(cons);
-
+	mSystem.add_constraint(constr);
 	mHandle->update_name(mName + "(" + std::to_string(mSystem.num_constraints()) + ",  " + std::to_string(mSystem.num_variables()) + ")");
 
 	if(immovable_hint) {
 		immovable_hint->set_tmpConstant(true);
-		backup_system();
-		int output = mSystem.solve();
+		bool out = update_constraints(true, false);
 		immovable_hint->set_tmpConstant(false);
-		if(output == constraintCluster::SUCCESS) {
-			update();
+		if(out) 
 			return true;
-		}
-		revert_system_to_backup();
 	}
 
-	backup_system();
-	if(update_constraints() == constraintCluster::SUCCESS) {
-		update();
+	if(update_constraints(true, false))
 		return true;
-	} 
-	revert_system_to_backup();
 	LOG_WARNING("*cries*");
 	return false;
 }
 
-bool sketch::update_constraints()
+bool sketch::toggle_constraint(std::shared_ptr<constraint_abstract> constr, bool enable)
 {
+	mSystem.toggle_constraint(constr, enable);
+	mHandle->update_name(mName + "(" + std::to_string(mSystem.num_constraints()) + ",  " + std::to_string(mSystem.num_variables()) + ")");
+
+	if(update_constraints(true, false))
+		return true;
+
+	LOG_WARNING(std::string("Could not ") + std::string(enable == true ? "enable" : "disable") + std::string("constraint T_T"));
+	return false;
+}
+
+bool sketch::update_constraints(bool safeUpdate, bool update_on_solveFail)
+{
+	if(safeUpdate)
+		backup_system();
 	int solve_out = mSystem.solve();
-	update();
+	if(update_on_solveFail || solve_out == constraintCluster::SUCCESS) {
+		update();
+	} else if(safeUpdate && solve_out != constraintCluster::SUCCESS) {
+		revert_system_to_backup();
+	}
 	return solve_out == constraintCluster::SUCCESS;
 }
 

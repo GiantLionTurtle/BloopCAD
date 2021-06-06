@@ -4,6 +4,7 @@
 #include <geometry/geometry_2d/point_abstr.hpp>
 #include <geometry/geometry_2d/line_abstr.hpp>
 #include <constraintsSolver/constraint.hpp>
+#include <actions/sketchDesign/toggleConstraint_action.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 
@@ -29,7 +30,7 @@ int coincidence_tool::could_add_entity(sketchEntity_ptr ent)
 	}
 }
 
-void coincidence_tool::add_constraint()
+void coincidence_tool::add_constraint_impl(std::shared_ptr<constraint_abstract>& constr, sketchEntity_ptr& priority_ent)
 {
 	if(!mEntA || !mEntB) {
 		LOG_WARNING("Attempting to add incomplete constraint.");
@@ -47,10 +48,13 @@ void coincidence_tool::add_constraint()
 	}
 
 	if(curve->type() == sketchEntity::LINE) {
-		mEnv->target()->add_constraint(pointLine_distance::make(pt, std::static_pointer_cast<sketchLine>(curve), expConst::zero), curve);
+		constr = pointLine_distance::make(pt, std::static_pointer_cast<sketchLine>(curve), expConst::zero);
+		priority_ent = curve;
 	} else if(curve->type() == sketchEntity::CIRCLE) {
-		mEnv->target()->add_constraint(pointCircle_distance::make(pt, std::static_pointer_cast<sketchCircle>(curve)), curve);
+		constr = pointCircle_distance::make(pt, std::static_pointer_cast<sketchCircle>(curve));
+		priority_ent = curve;
 	} else {
-		mEnv->target()->add_constraint(pointPoint_coincidence::make(pt, std::static_pointer_cast<sketchPoint>(curve)), mEntB);
+		constr = pointPoint_coincidence::make(pt, std::static_pointer_cast<sketchPoint>(curve));
+		priority_ent = mEntB;
 	}
 }

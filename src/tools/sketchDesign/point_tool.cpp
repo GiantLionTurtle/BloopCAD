@@ -3,7 +3,7 @@
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <entities/sketch.hpp>
-#include <actions/common/enableEntity_action.hpp>
+#include <actions/common/toggleBaseObject_action.hpp>
 #include <utils/mathUtils.hpp>
 
 #include <glm/gtx/quaternion.hpp>
@@ -34,6 +34,6 @@ bool point_tool::manage_button_press(GdkEventButton* event)
 	// mEnv->state()->doc->make_glContext_current();
 	mCurrentPoint = sketchPoint_ptr(new sketchPoint(point_pos, pl));
 	target->add_geometry(mCurrentPoint);
-	mEnv->state()->doc->push_action(std::make_shared<enableEntity_action>(mCurrentPoint));
+	mEnv->state()->doc->push_action(std::make_shared<toggleBaseObject_action>(mCurrentPoint, true));
 	return true;
 }

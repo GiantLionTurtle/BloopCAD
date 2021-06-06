@@ -121,7 +121,7 @@ void test_eventsManager::do_test()
 			if(mTestStep%2 == 1) {
 				mPoints[2]->move(glm::vec2(0.0f, 0.0f), glm::vec2(-0.05f, -0.05f));
 			} else {
-				mBloopWindow->sketchWorkspace()->target()->update_constraints();
+				mBloopWindow->sketchWorkspace()->target()->update_constraints(false, true);
 			}
 			break;
 		}

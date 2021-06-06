@@ -4,7 +4,7 @@
 #include <document.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
 #include <entities/sketch.hpp>
-#include <actions/common/enableEntity_action.hpp>
+#include <actions/common/toggleBaseObject_action.hpp>
 #include <utils/mathUtils.hpp>
 
 #include <glm/gtx/quaternion.hpp>
@@ -76,7 +76,7 @@ sketchPoint_ptr line_tool::add_point(glm::vec2 pt)
 	} else {
 		mLinePreview->B()->set(pt);
 		mEnv->target()->add_geometry(mLinePreview);
-		mEnv->state()->doc->push_action(std::make_shared<enableEntity_action>(mLinePreview));
+		mEnv->state()->doc->push_action(std::make_shared<toggleBaseObject_action>(mLinePreview, true));
 		mEnv->target()->clear_toolPreview();
 
 		if(mEndPos) {

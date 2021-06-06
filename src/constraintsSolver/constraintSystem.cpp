@@ -6,7 +6,8 @@
 constraintSystem::constraintSystem(int verboseLevel):
 	mBrokenDown(false),
 	mAlgorithm(algorithm::DogLeg),
-	mVerboseLevel(verboseLevel)
+	mVerboseLevel(verboseLevel),
+	mNum_activeConstraints(0)
 {
 
 }
@@ -24,6 +25,7 @@ bool constraintSystem::satisfied()
 }
 void constraintSystem::add_constraint(std::shared_ptr<constraint_abstract> constr) 
 {
+	mNum_activeConstraints++;
 	mBrokenDown = false;
 	mConstraints.push_back(constr);
 	for(size_t i = 0; i < constr->n_vars(); ++i) {
@@ -35,6 +37,15 @@ void constraintSystem::add_constraint(std::shared_ptr<constraint_abstract> const
 			mVariables.push_back(var);
 		mVarsToConstr[var].push_back(constr);
 	}
+}
+void constraintSystem::toggle_constraint(std::shared_ptr<constraint_abstract> constr, bool enable)
+{
+	if(std::find(mConstraints.begin(), mConstraints.end(), constr) == mConstraints.end())
+		return;
+
+	mNum_activeConstraints += enable ? 1 : -1;
+	constr->set_exists(enable);
+	mBrokenDown = false;
 }
 
 int constraintSystem::solve()
@@ -70,11 +81,17 @@ void constraintSystem::breakDown_problem()
 	}
 
 	for (size_t i = 0; i < constr_clust.size(); ++i) {
-		mSubClusters[constr_clust[i]]->mConstraints.push_back(mConstraints[i]);
+		int ind = constr_clust[i];
+		if(ind >= mSubClusters.size())
+			continue;
+		mSubClusters[ind]->mConstraints.push_back(mConstraints[i]);
 	}
 
 	for (size_t i = 0; i < var_clust.size(); ++i) {
-		mSubClusters[var_clust[i]]->mVariables.push_back(mVariables[i]);
+		int ind = var_clust[i];
+		if(ind >= mSubClusters.size())
+			continue;
+		mSubClusters[ind]->mVariables.push_back(mVariables[i]);
 	}
 
 	for(size_t i = 0; i < mSubClusters.size(); ++i) {
@@ -87,6 +104,8 @@ void constraintSystem::breakDown_problem()
 void constraintSystem::clear_subClusters()
 {
 	for(int i = 0; i < mSubClusters.size(); ++i) {
+		mSubClusters[i]->clear_substitutions();
+		mSubClusters[i]->clear_tags();
 		delete mSubClusters[i];
 		mSubClusters[i] = nullptr;
 	}
@@ -111,7 +130,6 @@ void constraintSystem::set_varState(std::vector<double> state)
 	}
 }
 
-
 constraintSystem::constraintGraph::constraintGraph(std::vector<std::shared_ptr<constraint_abstract>>& constrs, std::vector<var_ptr>& vars):
 	mNumConstr(0),
 	mNumVar(0)
@@ -128,9 +146,11 @@ constraintSystem::constraintGraph::constraintGraph(std::vector<std::shared_ptr<c
 		}
 	}
 	for(int i = 0; i < constrs.size(); ++i) {
+		if(!constrs[i]->exists())
+			continue;
 		for(int j = 0; j < constrs[i]->n_vars(); ++j) {
 			var_ptr var = constrs[i]->var(j);
-			if(var->is_coef())
+			if(var->is_coef() || !var->exists())
 				continue;
 			int vind = v2i[var];
 			mVertToVert[i].push_back(vind);

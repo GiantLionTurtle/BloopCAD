@@ -1,6 +1,11 @@
 
 #include "constraint_tool.hpp"
 
+#include <actions/sketchDesign/toggleConstraint_action.hpp>
+#include <actions/sketchDesign/assignPosSnapshots_action.hpp>
+#include <actions/common/parallel_action.hpp>
+#include <document.hpp>
+
 constraint_tool::constraint_tool(sketchDesign* env):
 	tool<sketchDesign>(env),
 	mEntA(nullptr),
@@ -69,6 +74,20 @@ void constraint_tool::add_entity(sketchEntity_ptr ent)
 	} else {
 		mEntB = ent;
 	}
+}
+void constraint_tool::add_constraint()
+{
+	std::shared_ptr<constraint_abstract> constr = nullptr;
+	sketchEntity_ptr priority_ent = nullptr;
+	std::vector<entityPosSnapshot_ptr> geom_snapshots(0);
+
+	add_constraint_impl(constr, priority_ent);
+
+	RECORD_SNAPSHOT_DELTAS_IN(mEnv->target(), mEnv->target()->add_constraint(constr, priority_ent), geom_snapshots);
+	mEnv->state()->doc->push_action(std::shared_ptr<parallel_action>(new parallel_action({
+		std::make_shared<assignPosSnapshots_action>(geom_snapshots),
+		std::make_shared<toggleConstraint_action>(mEnv->target(), constr, true)
+	})));
 }
 
 bool constraint_tool::is_point(sketchEntity_ptr ent)

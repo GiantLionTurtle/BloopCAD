@@ -7,20 +7,19 @@
 #include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchCircle.hpp>
 #include <utils/errorLogger.hpp>
+#include <baseObject.hpp>
 
 #include <array>
 
-class constraint_abstract {
+class constraint_abstract : public defaultBaseObject {
 public:
 	enum constraint_types { NONE, COINCIDENCE, PERPENDICULARITY, PARALLELISM, HORIZONTALITY, VERTICALITY }; // high level representation (for little annotations and such)
 protected:
 	int mType;//, mTag;
-	bool mExists;
 public:
 	constraint_abstract(int type):
 		// mTag(0),
-		mType(type),
-		mExists(true)
+		mType(type)
 	{}
 	virtual double error(size_t eq) = 0;
 	virtual bool satisfied() = 0;
@@ -37,9 +36,6 @@ public:
 
 	void set_type(int tp) { mType = tp; }
 	int type() { return mType; }
-
-	bool exists() { return mExists; }
-	void set_exists(bool ex) { mExists = ex; }
 
 	// int tag() { return mTag; }
 	// void set_tag(int t) { mTag = t; }

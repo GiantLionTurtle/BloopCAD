@@ -229,8 +229,10 @@ void document::push_action(std::shared_ptr<action> to_push)
 		mActionStack.push_back(to_push);
 	}
 
-	if(to_push->do_work(this))
+	if(to_push->do_work(this)) {
+		std::cout<<"Done action\n";
 		mCurrentActionNum++;
+	}
 	// Housekeeping incrementations
 	mActionInd++;
 	mActionStackSize++;

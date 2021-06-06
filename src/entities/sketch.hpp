@@ -11,6 +11,42 @@
 #include <memory>
 #include <vector>
 
+#define RECORD_SNAPSHOT_DELTAS(sk, call, delta_in, delta_out) { \
+	delta_in.clear(); \
+	delta_out.clear(); \
+	std::vector<entityPosSnapshot_ptr> init, final; \
+	init = sk->geometriesSnapshots(); \
+	call; \
+	final = sk->geometriesSnapshots(); \
+	for(int i = 0; i < init.size() && i < final.size(); ++i) { \
+		delta_in.push_back(init[i]); \
+		delta_out.push_back(final[i]);\
+	} \
+}
+
+#define RECORD_SNAPSHOT_DELTAS_IN(sk, call, delta_in) { \
+	delta_in.clear(); \
+	std::vector<entityPosSnapshot_ptr> init, final; \
+	init = sk->geometriesSnapshots(); \
+	call; \
+	final = sk->geometriesSnapshots(); \
+	for(int i = 0; i < init.size() && i < final.size(); ++i) { \
+		delta_in.push_back(init[i]); \
+	} \
+}
+
+#define RECORD_SNAPSHOT_DELTAS_OUT(sk, call, delta_out) { \
+	delta_out.clear(); \
+	std::vector<entityPosSnapshot_ptr> init, final; \
+	init = sk->geometriesSnapshots(); \
+	call; \
+	final = sk->geometriesSnapshots(); \
+	for(int i = 0; i < init.size() && i < final.size(); ++i) { \
+		delta_out.push_back(final[i]);\
+	} \
+}
+
+
 class sketch;
 using sketch_ptr = std::shared_ptr<sketch>;
 
@@ -54,7 +90,8 @@ public:
 	sketchEntity_ptr entity_at_point(camera_ptr cam, glm::vec2 cursor);
 
 	void add_geometry(sketchGeometry_ptr ent);
-	std::vector<entityPosSnapshot_ptr> selectedGeometriesStates();
+	std::vector<entityPosSnapshot_ptr> geometriesSnapshots();
+	std::vector<entityPosSnapshot_ptr> selectedGeometriesSnapshots();
 	void add_toolPreview(entity_ptr ent);
 	void clear_toolPreview();
 	void add_selectedGeometry(sketchEntity_ptr ent);
@@ -77,8 +114,9 @@ public:
 
 	folder_ptr origin() const { return mOrigin; }
 
-	bool add_constraint(std::shared_ptr<constraint_abstract> cons, sketchEntity_ptr immovable_hint = nullptr);
-	bool update_constraints();
+	bool add_constraint(std::shared_ptr<constraint_abstract> constr, sketchEntity_ptr immovable_hint = nullptr);
+	bool toggle_constraint(std::shared_ptr<constraint_abstract> constr, bool enable);
+	bool update_constraints(bool safeUpdate, bool update_on_solveFail);
 
 	void backup_system();
 	void revert_system_to_backup();

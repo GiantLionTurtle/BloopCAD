@@ -224,14 +224,14 @@ void constraintCluster::retrieve_variables(Eigen::VectorXd& container, bool driv
 	for(int i = 0; i < mVariables.size(); ++i) {
 		if(!drivingVars_only || !mVariables[i]->is_substituted())
 			container(v++) = mVariables[i]->eval();
-	}	
+	}
 }
 
 void constraintCluster::clear_tags()
 {
-	for(int i = 0; i < mConstraints.size(); ++i) {
-		for(int j = 0; j < mConstraints[i]->n_equs(); ++j) {
-			mConstraints[i]->equ(j)->set_tag(0);
+	for(auto constr : mConstraints) {
+		for(int j = 0; j < constr->n_equs(); ++j) {
+			constr->equ(j)->set_tag(0);
 		}
 	}
 }

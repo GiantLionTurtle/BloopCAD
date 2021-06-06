@@ -15,6 +15,18 @@ assignPosSnapshots_action::assignPosSnapshots_action(std::vector<entityPosSnapsh
 {
 
 }
+assignPosSnapshots_action::assignPosSnapshots_action(entityPosSnapshot_ptr target):
+	mSourceSnapshots({target}),
+	mTargetSnapshots({target})
+{
+
+}
+assignPosSnapshots_action::assignPosSnapshots_action(std::vector<entityPosSnapshot_ptr> target):
+	mSourceSnapshots(target),
+	mTargetSnapshots(target)
+{
+
+}
 
 bool assignPosSnapshots_action::do_work(document* caller)
 {

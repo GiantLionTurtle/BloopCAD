@@ -4,6 +4,7 @@
 #include <geometry/geometry_2d/point_abstr.hpp>
 #include <geometry/geometry_2d/line_abstr.hpp>
 #include <constraintsSolver/constraint.hpp>
+#include <actions/sketchDesign/toggleConstraint_action.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 
@@ -27,12 +28,12 @@ int perpendicularity_tool::could_add_entity(sketchEntity_ptr ent)
 	}
 	return add_states::COULDNT_ADD;
 }
-
-void perpendicularity_tool::add_constraint()
+void perpendicularity_tool::add_constraint_impl(std::shared_ptr<constraint_abstract>& constr, sketchEntity_ptr& priority_ent)
 {
 	if(!mEntA || !mEntB) {
 		LOG_WARNING("Attempting to add incomplete constraint.");
 		return;
 	}
-	mEnv->target()->add_constraint(lineLine_angle::make_perpendicular(std::static_pointer_cast<sketchLine>(mEntA), std::static_pointer_cast<sketchLine>(mEntB)));
+	constr = lineLine_angle::make_perpendicular(std::static_pointer_cast<sketchLine>(mEntA), std::static_pointer_cast<sketchLine>(mEntB));
+	priority_ent = nullptr;
 }

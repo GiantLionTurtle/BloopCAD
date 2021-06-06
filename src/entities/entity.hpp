@@ -8,6 +8,7 @@
 #include <graphics_utils/indexBuffer.hpp>
 #include <graphics_utils/shader.hpp>
 #include <graphics_utils/camera.hpp>
+#include <baseObject.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -35,7 +36,7 @@ using entity_ptr = std::shared_ptr<entity>;
 /*
 	@class entity describes a basic entity that appears on screen
 */
-class entity {
+class entity : public baseObject {
 public: 
 	enum draw_type { ALL, TRANSLUCID, ACTIVE, INACTIVE };
 	enum notifications { UPDATED, DELETED, RESURRECTED };

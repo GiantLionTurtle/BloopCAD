@@ -30,7 +30,7 @@ int horizontality_tool::could_add_entity(sketchEntity_ptr ent)
 	return add_states::COULDNT_ADD;
 }
 
-void horizontality_tool::add_constraint()
+void horizontality_tool::add_constraint_impl(std::shared_ptr<constraint_abstract>& constr, sketchEntity_ptr& priority_ent)
 {
 	if(!mEntA && !mEntB) {
 		LOG_WARNING("Attempting to add incomplete constraint.");
@@ -38,8 +38,9 @@ void horizontality_tool::add_constraint()
 	}
 
 	if(!mEntB) {
-		mEnv->target()->add_constraint(pointPoint_horizontality::make(std::static_pointer_cast<sketchLine>(mEntA)));
+		constr = pointPoint_horizontality::make(std::static_pointer_cast<sketchLine>(mEntA));
 	} else {
-		mEnv->target()->add_constraint(pointPoint_horizontality::make(std::static_pointer_cast<sketchPoint>(mEntA), std::static_pointer_cast<sketchPoint>(mEntB)));
+		constr = pointPoint_horizontality::make(std::static_pointer_cast<sketchPoint>(mEntA), std::static_pointer_cast<sketchPoint>(mEntB));
+		priority_ent = mEntA;
 	}
 }

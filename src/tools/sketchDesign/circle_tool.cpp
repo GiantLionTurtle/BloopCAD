@@ -3,7 +3,7 @@
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <entities/sketch.hpp>
-#include <actions/common/enableEntity_action.hpp>
+#include <actions/common/toggleBaseObject_action.hpp>
 #include <utils/mathUtils.hpp>
 
 #include <glm/gtx/quaternion.hpp>
@@ -68,7 +68,7 @@ bool circle_tool::manage_button_press(GdkEventButton* event)
         mStarted = true;
 	} else {
 		target->add_geometry(mCirclePreview);
-		mEnv->state()->doc->push_action(std::make_shared<enableEntity_action>(mCirclePreview)); // Doc is passed to activate glContext
+		mEnv->state()->doc->push_action(std::make_shared<toggleBaseObject_action>(mCirclePreview, true)); // Doc is passed to activate glContext
         mCirclePreview->set_radius(glm::length(circle_pos - mCirclePreview->posCenter()));
         mStarted = false;
 	}

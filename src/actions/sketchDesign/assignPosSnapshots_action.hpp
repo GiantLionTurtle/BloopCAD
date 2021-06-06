@@ -11,6 +11,9 @@ private:
 public:
 	assignPosSnapshots_action(entityPosSnapshot_ptr source, entityPosSnapshot_ptr target);
 	assignPosSnapshots_action(std::vector<entityPosSnapshot_ptr> source, std::vector<entityPosSnapshot_ptr> target);
+	assignPosSnapshots_action(entityPosSnapshot_ptr target);
+	assignPosSnapshots_action(std::vector<entityPosSnapshot_ptr> target);
+
 
 	virtual bool do_work(document* caller);
 	virtual bool undo_work(document* caller);

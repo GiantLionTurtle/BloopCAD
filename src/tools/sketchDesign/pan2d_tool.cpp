@@ -34,7 +34,7 @@ bool pan2d_tool::manage_button_press(GdkEventButton* event)
 	mProxyCam->copy(cam);
 	mProxyCam->update();
 	mDragStart = mEnv->target()->basePlane()->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false));
-	mTranStart = cam->transformation().translation;
+	mTranStart = cam->translation();
 	is_moving = true;
 	return true;
 }

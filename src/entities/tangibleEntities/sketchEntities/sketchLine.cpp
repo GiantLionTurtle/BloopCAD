@@ -302,5 +302,7 @@ void linePosSnapshot::apply()
 	mLine->A()->y()->set(y1);
 	mLine->B()->x()->set(x2);
 	mLine->B()->y()->set(y2);
+	mLine->A()->set_require_VBUpdate();
+	mLine->B()->set_require_VBUpdate();
 	mLine->set_require_VBUpdate();
 }

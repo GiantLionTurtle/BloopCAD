@@ -10,8 +10,8 @@ class document;
 */
 class action {
 public:
-	action() {};
-	virtual ~action() {};
+	action() {}
+	virtual ~action() {}
 
 	/*
 		@function do_work performs the action, it can be summoned as many times as needed

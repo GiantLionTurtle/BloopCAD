@@ -8,7 +8,7 @@
 #include <document.hpp>
 #include <actions/common/moveCamera_action.hpp>
 #include <actions/common/switchWorkspace_action.hpp>
-#include <actions/common/disableEntity_action.hpp>
+#include <actions/common/toggleBaseObject_action.hpp>
 #include <actions/common/serial_action.hpp>
 #include <actions/sketchDesign/assignPosSnapshots_action.hpp>
 
@@ -43,7 +43,7 @@ bool sketchDesignDefault_tool::manage_key_press(GdkEventKey* event)
 		sketch_ptr sk = mEnv->target();
 		sk->for_each_selected([&](sketchEntity_ptr ent) {
 			if(sk->can_delete(ent))
-				mDeleteAllSelected->add_action(std::make_shared<disableEntity_action>(ent));
+				mDeleteAllSelected->add_action(std::make_shared<toggleBaseObject_action>(ent, false));
 		});
 		mEnv->state()->doc->push_action(mDeleteAllSelected);
 		unselect_all();
@@ -85,7 +85,7 @@ bool sketchDesignDefault_tool::manage_button_release(GdkEventButton* event)
 	
 	if(mMoving) {
 		int i = 0;
-		std::vector<entityPosSnapshot_ptr> final_mov = mEnv->target()->selectedGeometriesStates();
+		std::vector<entityPosSnapshot_ptr> final_mov = mEnv->target()->selectedGeometriesSnapshots();
 		mEnv->state()->doc->push_action(std::make_shared<assignPosSnapshots_action>(mStartMoveSnapshot, final_mov));
 	}
 
@@ -108,10 +108,10 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 			if(!mMoving) {
 				mMoving = true;
 				mEnv->target()->for_each_selected([&](sketchEntity_ptr ent) { ent->set_dragged(true); });
-				mStartMoveSnapshot = mEnv->target()->selectedGeometriesStates();
+				mStartMoveSnapshot = mEnv->target()->selectedGeometriesSnapshots();
 			}
 			mEnv->target()->for_each_selected([&](sketchEntity_ptr ent) { ent->move(mPrevPos, pos);	});
-			bool update_attempt = sk->update_constraints();
+			bool update_attempt = sk->update_constraints(true, false);
 		} else {
 			mSelectionRect->set_endPoint(pos);
 			if(event->x > mStartPos.x) {

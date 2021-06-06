@@ -22,7 +22,9 @@ public:
 	virtual int could_add_entity(sketchEntity_ptr ent) = 0;
 
 	virtual void add_entity(sketchEntity_ptr ent);
-	virtual void add_constraint() = 0;
+	void add_constraint();
+	virtual void add_constraint_impl(std::shared_ptr<constraint_abstract>& constr, 
+	sketchEntity_ptr& priority_ent) = 0;
 
 	// TODO: Inline these thingies?
 	static bool is_point(sketchEntity_ptr ent);

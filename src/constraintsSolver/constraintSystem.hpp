@@ -20,6 +20,7 @@ private:
 	std::vector<constraintCluster*> mSubClusters;
 
 	int mAlgorithm;
+	int mNum_activeConstraints;
 
 	int mVerboseLevel;
 public:
@@ -28,6 +29,7 @@ public:
 
 	bool satisfied();
 	void add_constraint(std::shared_ptr<constraint_abstract> constr);
+	void toggle_constraint(std::shared_ptr<constraint_abstract> constr, bool enable);
 
 	int solve();
 	void breakDown_problem();
@@ -42,7 +44,7 @@ public:
 
 	void updatedSystem() { mBrokenDown = false; }
 
-	int num_constraints() { return mConstraints.size(); }
+	int num_constraints() { return mNum_activeConstraints; }
 	int num_variables() { return mVariables.size(); }
 private:
 	class constraintGraph {

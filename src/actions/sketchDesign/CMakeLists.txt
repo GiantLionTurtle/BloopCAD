@@ -1,7 +1,8 @@
 set(sketchDesign_actions_source_files
   enterSketchDesign_action.cpp
   quitSketchDesign_action.cpp
-  assignPosSnapshots_action.cpp)
+  assignPosSnapshots_action.cpp
+  toggleConstraint_action.cpp)
 
 add_library(sketchDesign_actions ${sketchDesign_actions_source_files})
 

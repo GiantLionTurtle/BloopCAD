@@ -33,7 +33,7 @@ bool parallel_action::do_work(document* caller)
 bool parallel_action::undo_work(document* caller)
 {
 	int num_pendingActions = 0;
-	for(int i = 0; i < mActions.size() && i < mActions_done.size(); ++i) {
+	for(int i = mActions.size(); i >= 0; --i) {
 		if(mActions_done[i]) {
 			num_pendingActions++;
 			if(mActions[i]->undo_work(caller)) {
