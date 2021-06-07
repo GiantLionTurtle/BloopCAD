@@ -14,7 +14,7 @@ orbit_tool::orbit_tool(workspace* env):
 {
 	// Load the cursor icon
 	try {
-		mCursor->windowCursor = Gdk::Cursor::create(Gdk::Display::get_default(), Gdk::Pixbuf::create_from_file("resources/textures/images/icons/navigation/orbit.png", 50, 50), 0, 0);
+		mCursor->windowCursor = Gdk::Cursor::create(Gdk::Display::get_default(), Gdk::Pixbuf::create_from_file("resources/textures/images/icons/navigation/orbit.png", 34, 34), 17, 17);
 	} catch(const Glib::FileError& ex) {
 		LOG_WARNING("Glib::FileError: " + ex.what());
 	} catch(const Gdk::PixbufError& ex) {

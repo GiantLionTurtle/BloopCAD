@@ -12,7 +12,7 @@ pan2d_tool::pan2d_tool(sketchDesign* env):
 {
 	// Attempt to load cursor icon
 	try {
-		mCursor->windowCursor = Gdk::Cursor::create(Gdk::Display::get_default(), Gdk::Pixbuf::create_from_file("resources/textures/images/icons/navigation/pan.png", 30, 30), 0, 0);
+		mCursor->windowCursor = Gdk::Cursor::create(Gdk::Display::get_default(), Gdk::Pixbuf::create_from_file("resources/textures/images/icons/navigation/pan.png", 24, 24), 12, 12);
 	} catch(const Glib::FileError& ex) {
 		LOG_WARNING("Glib::FileError: " + ex.what());
 	} catch(const Gdk::PixbufError& ex) {

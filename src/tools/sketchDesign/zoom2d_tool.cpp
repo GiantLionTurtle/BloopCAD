@@ -11,7 +11,7 @@ zoom2d_tool::zoom2d_tool(sketchDesign* env):
 {
 	// Attempt to load the cursor icon
 	try {
-		mCursor->windowCursor = Gdk::Cursor::create(Gdk::Display::get_default(), Gdk::Pixbuf::create_from_file("resources/textures/images/icons/navigation/zoom.png", 30, 30), 0, 0);
+		mCursor->windowCursor = Gdk::Cursor::create(Gdk::Display::get_default(), Gdk::Pixbuf::create_from_file("resources/textures/images/icons/navigation/zoom.png", 30, 30), 10, 10);
 	} catch(const Glib::FileError& ex) {
 		LOG_WARNING("Glib::FileError: " + ex.what());
 	} catch(const Gdk::PixbufError& ex) {
