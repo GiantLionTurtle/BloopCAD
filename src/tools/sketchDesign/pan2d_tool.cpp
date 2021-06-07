@@ -52,7 +52,7 @@ bool pan2d_tool::manage_mouse_move(GdkEventMotion* event)
 			camera_ptr cam = mEnv->state()->cam;
 			glm::vec3 pointedPos = mEnv->target()->basePlane()->line_intersection(mProxyCam->pos(), mProxyCam->cast_ray(glm::vec2(event->x, event->y), false));
 			glm::vec3 mov = pointedPos - mDragStart;
-			cam->set_translation(mTranStart + mov); // Move the model (no need to get fancy, it moves according to the "real position of the camera")
+			cam->set_translation(mTranStart + mov * mProxyCam->fscale()); // Move the model (no need to get fancy, it moves according to the "real position of the camera")
 		} else {
 			is_moving = true; // Now moving, first point recorded
 		}
