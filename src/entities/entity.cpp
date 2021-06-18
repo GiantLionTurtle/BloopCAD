@@ -6,6 +6,7 @@
 
 entity::entity(): 
 	mState(BLOOP_ENTITY_EXISTS_FLAG),
+	mStdNotifs(0),
 	mParent(nullptr),
 	mHandle(nullptr),
 	mRequire_redraw(false),
@@ -16,6 +17,7 @@ entity::entity():
 }
 entity::entity(entity* parent): 
 	mState(BLOOP_ENTITY_EXISTS_FLAG),
+	mStdNotifs(0),
 	mParent(parent),
 	mHandle(nullptr),
 	mRequire_redraw(false),
@@ -47,6 +49,8 @@ void entity::update()
 {
 	for_each([](entity_ptr ent) { ent->update(); });
 	update_impl();
+	if(notif_on_update())
+		notify_parent(UPDATED);
 }
 
 entity_ptr entity::hovered_child(camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (entity_ptr)> filter_func)
@@ -63,18 +67,20 @@ void entity::notify_parent(int msg)
 		mParent->notify(msg);
 }
 
-void entity::set_selected(bool select) 
+void entity::set_selected(bool select_) 
 { 	
-	if(exists()) {
+	if(exists() && selected() != select_) {
 		set_require_redraw();
-		if(select) {
+		if(select_) {
 			mState |= BLOOP_ENTITY_SELECTED_FLAG;
 		} else {
 			mState &= ~BLOOP_ENTITY_SELECTED_FLAG;
 		}
-		select_impl(select);
+		if(notif_on_selected())
+			notify_parent(select_ ? SELECTED : UNSELECTED);
+		select_impl(select_);
 		if(mHandle)
-			mHandle->set_selected(select);
+			mHandle->set_selected(select_);
 	}
 }
 void entity::select() 
@@ -96,13 +102,15 @@ bool entity::selected() const
 
 void entity::set_hover(bool hover) 
 { 	
-	if(exists()) {
+	if(exists() && hovered() != hover) {
 		set_require_redraw();
 		if(hover) {
 			mState |= BLOOP_ENTITY_HOVERED_FLAG;
 		} else {
 			mState &= ~BLOOP_ENTITY_HOVERED_FLAG;
 		}
+		if(notif_on_hover())
+			notify_parent(hover ? HOVERED : UNHOVERED);
 		hover_impl(hover);
 		if(mHandle)
 			mHandle->set_hovered(hover);
@@ -115,16 +123,18 @@ bool entity::hovered() const
 	return false; 
 }
 
-void entity::set_hidden(bool hidden)
+void entity::set_hidden(bool hide)
 {
-	if(exists()) {
+	if(exists() && hidden() != hide) {
 		set_require_redraw();
-		if(hidden) {
+		if(hide) {
 			mState |= BLOOP_ENTITY_HIDDEN_FLAG;
 		} else {
 			mState &= ~BLOOP_ENTITY_HIDDEN_FLAG;
 		}
-		hidden_impl(hidden);	
+		if(notif_on_hidden())
+			notify_parent(hide ? HIDEN : UNHIDEN);
+		hidden_impl(hide);
 	}
 }
 void entity::hide()
@@ -148,21 +158,20 @@ bool entity::visible() const
 
 void entity::set_exists(bool exists_) 
 {
-	set_require_redraw();
-	if(exists_) {
-		mState |= BLOOP_ENTITY_EXISTS_FLAG;
-	} else {
-		mState &= ~BLOOP_ENTITY_EXISTS_FLAG;
+	if(exists() != exists_) {
+		set_require_redraw();
+		if(exists_) {
+			mState |= BLOOP_ENTITY_EXISTS_FLAG;
+		} else {
+			mState &= ~BLOOP_ENTITY_EXISTS_FLAG;
+		}
+		for_each([exists_](entity_ptr ent) { ent->set_exists(exists_); });
+		exists_impl(exists_);
+		if(notif_on_exists())
+			notify_parent(exists_ ? RESURRECTED : DELETED);
+		if(mHandle)
+			mHandle->set_exists(exists_);
 	}
-	// if(!exists()) {
-	// 	set_hover(false);
-	// 	set_selected(false);
-	// 	set_hidden(false);
-	// }
-	if(mHandle)
-		mHandle->set_exists(exists_);
-	for_each([exists_](entity_ptr ent) { ent->set_exists(exists_); });
-	exists_impl(exists_);
 }
 bool entity::exists() const
 {
@@ -173,6 +182,72 @@ bool entity::active() const
 {
 	return hovered() || selected();
 }
+
+bool entity::notif_on_selected()
+{
+	return mStdNotifs & BLOOP_ENTITY_SELECTED_NOTIF;
+}
+void entity::set_notif_on_selected(bool do_)
+{
+	if(do_) {
+		mStdNotifs |= BLOOP_ENTITY_SELECTED_NOTIF;
+	} else {
+		mStdNotifs &= ~BLOOP_ENTITY_SELECTED_NOTIF;
+	}
+}
+
+bool entity::notif_on_hover()
+{
+	return mStdNotifs & BLOOP_ENTITY_HOVERED_NOTIF;
+}
+void entity::set_notif_on_hover(bool do_)
+{
+	if(do_) {
+		mStdNotifs |= BLOOP_ENTITY_HOVERED_NOTIF;
+	} else {
+		mStdNotifs &= ~BLOOP_ENTITY_HOVERED_NOTIF;
+	}
+}
+
+bool entity::notif_on_hidden()
+{
+	return mStdNotifs & BLOOP_ENTITY_HIDDEN_NOTIF;
+}
+void entity::set_notif_on_hidden(bool do_)
+{
+	if(do_) {
+		mStdNotifs |= BLOOP_ENTITY_HIDDEN_NOTIF;
+	} else {
+		mStdNotifs &= ~BLOOP_ENTITY_HIDDEN_NOTIF;
+	}
+}
+
+bool entity::notif_on_exists()
+{
+	return mStdNotifs & BLOOP_ENTITY_EXISTS_NOTIF;
+}
+void entity::set_notif_on_exists(bool do_)
+{
+	if(do_) {
+		mStdNotifs |= BLOOP_ENTITY_EXISTS_NOTIF;
+	} else {
+		mStdNotifs &= ~BLOOP_ENTITY_EXISTS_NOTIF;
+	}
+}
+
+bool entity::notif_on_update()
+{
+	return mStdNotifs & BLOOP_ENTITY_UPDATED_NOTIF;
+}
+void entity::set_notif_on_update(bool do_)
+{
+	if(do_) {
+		mStdNotifs |= BLOOP_ENTITY_UPDATED_NOTIF;
+	} else {
+		mStdNotifs &= ~BLOOP_ENTITY_UPDATED_NOTIF;
+	}
+}
+
 
 void entity::print(int depth)
 {

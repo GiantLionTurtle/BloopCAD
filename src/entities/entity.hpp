@@ -33,15 +33,22 @@ using entity_ptr = std::shared_ptr<entity>;
 #define BLOOP_ENTITY_HIDDEN_FLAG 	4
 #define BLOOP_ENTITY_EXISTS_FLAG 	8
 
+#define BLOOP_ENTITY_SELECTED_NOTIF 1
+#define BLOOP_ENTITY_HOVERED_NOTIF	2
+#define BLOOP_ENTITY_HIDDEN_NOTIF	4
+#define BLOOP_ENTITY_EXISTS_NOTIF	8
+#define BLOOP_ENTITY_UPDATED_NOTIF	16
+
 /*
 	@class entity describes a basic entity that appears on screen
 */
 class entity : public baseObject {
 public: 
 	enum draw_type { ALL, TRANSLUCID, ACTIVE, INACTIVE };
-	enum notifications { UPDATED, DELETED, RESURRECTED };
+	enum notifications { SELECTED, UNSELECTED, HOVERED, UNHOVERED, HIDEN, UNHIDEN, DELETED, RESURRECTED, UPDATED};
 protected:
 	int mState;	// The state of the entity, described by the above flags
+	int mStdNotifs; // Standard notifications sent by a child to it's parent
 	bool mInited;
 	bool mRequire_redraw, mRequire_selfRedraw;
 
@@ -83,7 +90,7 @@ public:
 
 		@param select : The value of the flag
 	*/	
-	void set_selected(bool select);
+	void set_selected(bool select_);
 	/*
 		@function select is a shorthand to set the selected flag to true
 	*/
@@ -117,7 +124,7 @@ public:
 
 		@param hidden : THe value of the flag
 	*/
-	void set_hidden(bool hidden);
+	void set_hidden(bool hide);
 	/*
 		@function hide is a shorthand to set the hidden flag to true
 	*/
@@ -166,6 +173,23 @@ public:
 		@return : The entity's state
 	*/
 	int state() const { return mState; }
+
+	bool notif_on_selected();
+	void set_notif_on_selected(bool do_);
+
+	bool notif_on_hover();
+	void set_notif_on_hover(bool do_);
+	
+	bool notif_on_hidden();
+	void set_notif_on_hidden(bool do_);
+	
+	bool notif_on_exists();
+	void set_notif_on_exists(bool do_);
+
+	bool notif_on_update();
+	void set_notif_on_update(bool do_);
+
+	bool notifications() const { return mStdNotifs; }
 
 	virtual bool translucid() { return false; }
 
