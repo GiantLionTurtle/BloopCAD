@@ -67,7 +67,7 @@ void entity::notify_parent(int msg)
 		mParent->notify(msg);
 }
 
-void entity::set_selected(bool select_) 
+void entity::set_selected(bool select_, bool silent) 
 { 	
 	if(exists() && selected() != select_) {
 		set_require_redraw();
@@ -76,22 +76,22 @@ void entity::set_selected(bool select_)
 		} else {
 			mState &= ~BLOOP_ENTITY_SELECTED_FLAG;
 		}
-		if(notif_on_selected())
+		if(!silent && notif_on_selected())
 			notify_parent(select_ ? SELECTED : UNSELECTED);
 		select_impl(select_);
 		if(mHandle)
 			mHandle->set_selected(select_);
 	}
 }
-void entity::select() 
+void entity::select(bool silent) 
 { 
 	if(exists()) // TODO: Are all these if(exists()) {} overkill?
-		set_selected(true);
+		set_selected(true, silent);
 }
-void entity::unselect() 
+void entity::unselect(bool silent) 
 { 
 	if(exists())
-		set_selected(false); 
+		set_selected(false, silent); 
 }
 bool entity::selected() const
 { 	
@@ -100,7 +100,7 @@ bool entity::selected() const
 	return false;
 }
 
-void entity::set_hover(bool hover) 
+void entity::set_hover(bool hover, bool silent) 
 { 	
 	if(exists() && hovered() != hover) {
 		set_require_redraw();
@@ -109,7 +109,7 @@ void entity::set_hover(bool hover)
 		} else {
 			mState &= ~BLOOP_ENTITY_HOVERED_FLAG;
 		}
-		if(notif_on_hover())
+		if(!silent && notif_on_hover())
 			notify_parent(hover ? HOVERED : UNHOVERED);
 		hover_impl(hover);
 		if(mHandle)
@@ -123,7 +123,7 @@ bool entity::hovered() const
 	return false; 
 }
 
-void entity::set_hidden(bool hide)
+void entity::set_hidden(bool hide, bool silent)
 {
 	if(exists() && hidden() != hide) {
 		set_require_redraw();
@@ -132,18 +132,18 @@ void entity::set_hidden(bool hide)
 		} else {
 			mState &= ~BLOOP_ENTITY_HIDDEN_FLAG;
 		}
-		if(notif_on_hidden())
+		if(!silent && notif_on_hidden())
 			notify_parent(hide ? HIDEN : UNHIDEN);
 		hidden_impl(hide);
 	}
 }
-void entity::hide()
+void entity::hide(bool silent)
 {
-	set_hidden(true);
+	set_hidden(true, silent);
 }
-void entity::show()
+void entity::show(bool silent)
 {
-	set_hidden(false);
+	set_hidden(false, silent);
 }
 bool entity::hidden() const
 {
@@ -156,7 +156,7 @@ bool entity::visible() const
 	return !hidden();
 }
 
-void entity::set_exists(bool exists_) 
+void entity::set_exists(bool exists_, bool silent) 
 {
 	if(exists() != exists_) {
 		set_require_redraw();
@@ -167,7 +167,7 @@ void entity::set_exists(bool exists_)
 		}
 		for_each([exists_](entity_ptr ent) { ent->set_exists(exists_); });
 		exists_impl(exists_);
-		if(notif_on_exists())
+		if(!silent && notif_on_exists())
 			notify_parent(exists_ ? RESURRECTED : DELETED);
 		if(mHandle)
 			mHandle->set_exists(exists_);

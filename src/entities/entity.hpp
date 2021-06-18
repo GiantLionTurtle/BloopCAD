@@ -90,15 +90,15 @@ public:
 
 		@param select : The value of the flag
 	*/	
-	void set_selected(bool select_);
+	void set_selected(bool select_, bool silent = false);
 	/*
 		@function select is a shorthand to set the selected flag to true
 	*/
-	void select();
+	void select(bool silent = false);
 	/*
 		@function unselect is a shorthand to set the selected flag to false
 	*/
-	void unselect();
+	void unselect(bool silent = false);
 	/*
 		@function selected
 
@@ -111,7 +111,7 @@ public:
 
 		@param hover : The value of the flag
 	*/
-	void set_hover(bool hover);
+	void set_hover(bool hover, bool silent = false);
 	/*
 		@function hovered
 
@@ -124,15 +124,15 @@ public:
 
 		@param hidden : THe value of the flag
 	*/
-	void set_hidden(bool hide);
+	void set_hidden(bool hide, bool silent = false);
 	/*
 		@function hide is a shorthand to set the hidden flag to true
 	*/
-	void hide();
+	void hide(bool silent = false);
 	/*
 		@function show is a shorthand to set the hidden flag to false
 	*/
-	void show();
+	void show(bool silent = false);
 	/*
 		@function hidden
 
@@ -151,7 +151,8 @@ public:
 
 		@param exists_ : The value of the flag
 	*/
-	void set_exists(bool exists_);
+	void set_exists(bool exists_, bool silent);
+	void set_exists(bool exists_) { set_exists(exists_, false); }
 	/*
 		@function exists
 
