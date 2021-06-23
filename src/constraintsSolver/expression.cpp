@@ -14,8 +14,7 @@ expression_ptr expConst::pi2(new expression_const(M_PI_2));
 int expression::n_exp = 0;
 
 expression::expression():
-	mID(n_exp++),
-	mTag(0)
+	mID(n_exp++)
 {
 
 }
@@ -382,13 +381,13 @@ void expression_var::set(double val)
 	}
 }
 
-bool expression_var::exists()
+bool expression_var::exists() const
 {
 	return mIs_substituted ? mSubstituant->exists() : (mExists);
 }
 void expression_var::set_exists(bool ex)
 {
-	if(mIs_substituted) {
+	if(mIs_substituted) { // is it necessary, I don't remember
 		mSubstituant->set_exists(ex);
 	} else {
 		mExists = ex;
@@ -818,6 +817,29 @@ std::string expression_pow::to_string()
 }
 /* -------------- End pow -------------- */
 
+/* -------------- Equation -------------- */
+expression_equation::expression_equation(expression_ptr left, expression_ptr right):
+	expression_substr(left, right),
+	mTag(0)
+{
+
+}
+
+expression_ptr expression_equation::derivative(var_ptr with_respect_to)
+{
+	with_respect_to->set_as_var();
+	auto deriv = expression_substr::derivative();
+	with_respect_to->set_as_coef();
+	return deriv;
+}
+
+std::string expression_equation::to_string()
+{
+	return  mLeft->to_string() + " = " + mRight->to_string();
+}
+/* -------------- End equation -------------- */
+
+
 expression_ptr operator+(expression_ptr left, expression_ptr right)
 {
 	return expression_ptr(new expression_add(left, right));
@@ -875,6 +897,14 @@ expression_ptr operator+(expression_ptr expr)
 expression_ptr operator-(expression_ptr expr)
 {
 	return expression_ptr(new expression_minus(expr));
+}
+equ_ptr equation(expression_ptr left, expression_ptr right)
+{
+	return std::make_shared<expression_equation>(left, right);
+}
+equ_ptr operator^=(expression_ptr left, expression_ptr right)
+{
+	return equation(left, right);
 }
 
 expression_ptr pow(expression_ptr base, expression_ptr power)

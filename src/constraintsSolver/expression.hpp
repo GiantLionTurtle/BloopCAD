@@ -6,11 +6,14 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <baseObject.hpp>
 
 class expression;
 class expression_var;
-using expression_ptr = std::shared_ptr<expression>;
+class expression_equation;
+using expression_ptr = std::shared_ptr<expression>; // TODO: change to exp_ptr
 using var_ptr = std::shared_ptr<expression_var>;
+using equ_ptr = std::shared_ptr<expression_equation>;
 
 class expression {
 public:
@@ -18,7 +21,7 @@ public:
 	MINUS, POW, EXP, LOG, SIN, COS, TAN, ASIN, ACOS, ATAN2, CSC, SEC, COT, ABS, MOD };
 protected:
 	operationType mOp;
-	int mID, mTag;
+	int mID;
 	static int n_exp;
 public:
 	expression();
@@ -32,9 +35,6 @@ public:
 	virtual int id() { return mID; }
 
 	int op() { return mOp; }
-
-	void set_tag(int t) { mTag = t; }
-	int tag() { return mTag; }
 
 	virtual bool can_substitute() { return false; }
 	virtual void get_substitution_params(var_ptr& a, var_ptr& b) {}
@@ -128,13 +128,12 @@ protected:
 	virtual double unit_to_internalFormat(int unit_);
 };
 
-class expression_var : public expression {
+class expression_var : public expression, public baseObject {
 private:
 	double mVal;
 	int mAs_coef;
 	bool mIs_coef;
 	bool mExists;
-
 	// TODO: do this for expressions in general??
 	bool mIs_substituted, mIs_dragged;
 	var_ptr mSubstituant;
@@ -164,7 +163,7 @@ public:
 
 	void set(double val);
 
-	bool exists();
+	bool exists() const;
 	void set_exists(bool ex);
 
 	bool is_substituted();
@@ -355,6 +354,20 @@ public:
 	virtual std::string to_string();
 };
 
+class expression_equation : public expression_substr, public defaultBaseObject {
+private:
+	int mTag;
+public:
+	expression_equation(expression_ptr left, expression_ptr right);
+
+	virtual expression_ptr derivative(var_ptr with_respect_to);
+
+	void set_tag(int t) { mTag = t; }
+	int tag() { return mTag; }
+
+	virtual std::string to_string();
+};
+
 expression_ptr operator+(expression_ptr left, expression_ptr right);
 expression_ptr operator-(expression_ptr left, expression_ptr right);
 expression_ptr operator*(expression_ptr left, expression_ptr right);
@@ -369,6 +382,8 @@ expression_ptr operator*(expression_ptr left, double right);
 expression_ptr operator/(expression_ptr left, double right);
 expression_ptr operator+(expression_ptr expr);
 expression_ptr operator-(expression_ptr expr);
+equ_ptr equation(expression_ptr left, expression_ptr right);
+equ_ptr operator^=(expression_ptr left, expression_ptr right);
 
 expression_ptr pow(expression_ptr base, expression_ptr power);
 expression_ptr pow(expression_ptr base, double power);

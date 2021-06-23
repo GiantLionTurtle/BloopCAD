@@ -2,14 +2,12 @@
 #ifndef CONSTRAINTSYSTEM_HPP_
 #define CONSTRAINTSYSTEM_HPP_
 
-#include "constraintCluster.hpp"
+#include "equationsCluster.hpp"
 #include "constraint.hpp"
 
 #include <map>
 
 class constraintSystem {
-public:
-	enum algorithm { DogLeg, LevenbergMarquardt };
 private:
 	std::vector<std::shared_ptr<constraint_abstract>> mConstraints;
 	std::vector<var_ptr> mVariables;
@@ -17,7 +15,7 @@ private:
 	std::map<var_ptr, std::vector<std::shared_ptr<constraint_abstract>>> mVarsToConstr;
 
 	bool mBrokenDown;
-	std::vector<constraintCluster*> mSubClusters;
+	std::vector<equationsCluster*> mSubClusters;
 
 	int mAlgorithm;
 	int mNum_activeConstraints;

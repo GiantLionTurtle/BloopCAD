@@ -1,32 +1,28 @@
 
-#ifndef CONSTRAINTCLUSTER_HPP_
-#define CONSTRAINTCLUSTER_HPP_
+#ifndef EQUATIONSCLUSTER_HPP_
+#define EQUATIONSCLUSTER_HPP_
 
 #include "expression.hpp"
-#include "constraint.hpp"
 
 #include <vector>
 
 #include <Eigen/Eigen>
 
-class constraintCluster {
+class equationsCluster {
 public:
-    enum solveOutput { RUNNING, SUCCESS, FAILURE, INVALID };
-public:
-	std::vector<std::shared_ptr<constraint_abstract>> mConstraints;
-	std::vector<var_ptr> mVariables;
+	std::vector<equ_ptr> mEqus;
+	std::vector<var_ptr> mVars;
 	// std::map<std::shared_ptr<constraint_abstract>, std::vector<var_ptr>> mConstrToVars;
 	// std::map<var_ptr, std::vector<std::shared_ptr<constraint_abstract>>> mVarsToConstr;
 
-	size_t mNumEqus;
 	int mVerboseLevel;
 	int const mMaxIt_LM = 1000, mMaxIt_DL = 1000;
 	int mId;
 
 	int mAlgorithm;
 public:	
-	constraintCluster(std::vector<std::shared_ptr<constraint_abstract>> constraints, std::vector<var_ptr> vars, int solver_algo, int verbose = 0);
-	~constraintCluster();	
+	equationsCluster(std::vector<equ_ptr> equs, std::vector<var_ptr> vars, int solver_algo, int verbose = 0);
+	~equationsCluster();	
 	
 	void init();
 

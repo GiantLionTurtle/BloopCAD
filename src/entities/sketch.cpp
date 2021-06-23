@@ -1,6 +1,7 @@
 
 #include "sketch.hpp"
 
+#include <constraintsSolver/solverState.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchCircle.hpp>
@@ -249,12 +250,12 @@ bool sketch::update_constraints(bool safeUpdate, bool update_on_solveFail)
 	if(safeUpdate)
 		backup_system();
 	int solve_out = mSystem.solve();
-	if(update_on_solveFail || solve_out == constraintCluster::SUCCESS) {
+	if(update_on_solveFail || solve_out == solverState::SUCCESS) {
 		update();
-	} else if(safeUpdate && solve_out != constraintCluster::SUCCESS) {
+	} else if(safeUpdate && solve_out != solverState::SUCCESS) {
 		revert_system_to_backup();
 	}
-	return solve_out == constraintCluster::SUCCESS;
+	return solve_out == solverState::SUCCESS;
 }
 
 void sketch::backup_system()

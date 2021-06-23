@@ -1,11 +1,12 @@
 
 #include "constraintSystem.hpp"
+#include "solverState.hpp"
 
 #include <utils/errorLogger.hpp>
 
 constraintSystem::constraintSystem(int verboseLevel):
 	mBrokenDown(false),
-	mAlgorithm(algorithm::DogLeg),
+	mAlgorithm(solverState::DogLeg),
 	mVerboseLevel(verboseLevel),
 	mNum_activeConstraints(0)
 {
@@ -57,12 +58,12 @@ int constraintSystem::solve()
 			std::cout<<"Breaking down problem...\n";
 		breakDown_problem();
 	}
-	int output = constraintCluster::SUCCESS;
-	for(constraintCluster* clust : mSubClusters) {
+	int output = solverState::SUCCESS;
+	for(auto clust : mSubClusters) {
 		output = std::max(output, clust->solve());
 	}
 	if(mVerboseLevel) 
-		std::cout<<"Solve "<<(output == constraintCluster::SUCCESS ? "success" : "fail")<<".\n";
+		std::cout<<"Solve "<<(output == solverState::SUCCESS ? "success" : "fail")<<".\n";
 
 	return output;
 }
@@ -76,7 +77,7 @@ void constraintSystem::breakDown_problem()
 	std::vector<int> constr_clust(0), var_clust(0);
 	int num_clusters = g.connected_clusters(constr_clust, var_clust);
 	for(int i = 0; i < num_clusters; ++i) {
-		mSubClusters.push_back(new constraintCluster({}, {}, mAlgorithm, 1));
+		mSubClusters.push_back(new equationsCluster({}, {}, mAlgorithm, 1));
 		mSubClusters.back()->set_id(i);
 	}
 
@@ -84,14 +85,16 @@ void constraintSystem::breakDown_problem()
 		int ind = constr_clust[i];
 		if(ind >= mSubClusters.size())
 			continue;
-		mSubClusters[ind]->mConstraints.push_back(mConstraints[i]);
+		for(size_t j = 0; j < mConstraints[i]->n_equs(); ++j) {
+			mSubClusters[ind]->mEqus.push_back(mConstraints[i]->equ(j));
+		}
 	}
 
 	for (size_t i = 0; i < var_clust.size(); ++i) {
 		int ind = var_clust[i];
 		if(ind >= mSubClusters.size())
 			continue;
-		mSubClusters[ind]->mVariables.push_back(mVariables[i]);
+		mSubClusters[ind]->mVars.push_back(mVariables[i]);
 	}
 
 	for(size_t i = 0; i < mSubClusters.size(); ++i) {
