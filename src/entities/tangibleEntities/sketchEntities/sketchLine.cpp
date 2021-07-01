@@ -115,9 +115,9 @@ void sketchLine::print(int depth)
 	std::cout<<name()<<"\n";
 	mA->print(depth+1);
 	mB->print(depth+1);
-	for(int i = 0; i < mAnnotations.size(); ++i) {
-		mAnnotations[i]->print(depth+1);
-	}
+	// for(int i = 0; i < mAnnotations.size(); ++i) {
+	// 	mAnnotations[i]->print(depth+1);
+	// }
 }
 
 void sketchLine::for_each(std::function<void (entity_ptr)> func)
@@ -144,7 +144,7 @@ void sketchLine::for_each(std::function<void(sketchGeometry_ptr geom)> func)
 	func(mB);
 }
 
-void sketchLine::move(glm::vec2 from, glm::vec2 to)
+void sketchLine::move(glm::vec2 from, glm::vec2 to, glm::vec2 pixelMove)
 {
 	glm::vec2 d = to-from;
 //	if(!mA->dragged())
@@ -206,15 +206,9 @@ void sketchLine::update_VB()
 	mVB->set(&tmp[0], sizeof(glm::vec3) * 2);
 	mVB->unbind();
 
-	for(int i = 0; i < mAnnotations.size(); ++i) {
-		mAnnotations[i]->set_pos((mA->pos() + mB->pos()) / 2.0f);
-		mAnnotations[i]->set_pixelOffset(annotation_pixelOffset(i));
+	for(auto annot : mFloatingAnnots) {
+		annot->set_pos(posMiddle());
 	}
-}
-
-void sketchLine::on_added_constraintAnnotation()
-{
-	mAnnotations.back()->set_pos((mA->pos() + mB->pos()) / 2.0f);
 }
 
 glm::vec2 sketchLine::annotation_pixelOffset(int ind)
@@ -227,6 +221,11 @@ glm::vec2 sketchLine::annotation_pixelOffset(int ind)
 	float dir_offset = line_side == 1 ? ind : ind - 1;
 	return dir * 25.0f * (float)icon_dir * dir_offset + normal * 25.0f * (float)line_side;
 }
+void sketchLine::position_floatingAnnotation(std::shared_ptr<spriteAnnotation> annot)
+{
+	annot->set_pos(posMiddle());
+	annot->set_pixelOffset(annotation_pixelOffset(mFloatingAnnots.size()));
+}
 
 void sketchLine::set_exists_vars(bool ex)
 {
@@ -236,8 +235,6 @@ void sketchLine::set_exists_vars(bool ex)
 
 void sketchLine::draw_impl(camera_ptr cam, int frame)
 {
-	if(mRequire_VBUpdate)
-		update_VB();
 	mShader->bind();
 	glm::vec4 color = glm::vec4(kColor, 1.0f);
 	if(selected()) {

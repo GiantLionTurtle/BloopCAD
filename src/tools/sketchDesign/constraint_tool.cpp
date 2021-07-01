@@ -77,7 +77,7 @@ void constraint_tool::add_entity(sketchEntity_ptr ent)
 }
 void constraint_tool::add_constraint()
 {
-	std::shared_ptr<constraint_abstract> constr = nullptr;
+	std::shared_ptr<constraint_entity> constr = nullptr;
 	sketchEntity_ptr priority_ent = nullptr;
 	std::vector<entityPosSnapshot_ptr> geom_snapshots(0);
 

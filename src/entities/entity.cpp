@@ -47,7 +47,10 @@ void entity::draw(camera_ptr cam, int frame, draw_type type /*= draw_type::ALL*/
 
 void entity::update()
 {
-	for_each([](entity_ptr ent) { ent->update(); });
+	for_each([](entity_ptr ent)
+	{
+		ent->update();
+	});
 	update_impl();
 	if(notif_on_update())
 		notify_parent(UPDATED);

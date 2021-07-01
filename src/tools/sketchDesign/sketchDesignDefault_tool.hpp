@@ -8,7 +8,7 @@ private:
     std::shared_ptr<selectionRectangle> mSelectionRect;
     sketchEntity_ptr /*mDraggedEnt, */mHoveredEnt;
     bool mAllowedToMove, mMoving;
-    glm::vec2 mPrevPos;
+    glm::vec2 mPrevPos, mPrevMousePos;
     glm::vec2 mStartPos;
 
     std::vector<entityPosSnapshot_ptr> mStartMoveSnapshot;

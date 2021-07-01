@@ -12,7 +12,7 @@ public:
 // protected:
 	int could_add_entity(sketchEntity_ptr ent);
 
-	void add_constraint_impl(std::shared_ptr<constraint_abstract>& constr, sketchEntity_ptr& priority_ent);
+	void add_constraint_impl(std::shared_ptr<constraint_entity>& constr, sketchEntity_ptr& priority_ent);
 };
 
 #endif

@@ -25,43 +25,43 @@ void printLine(sketchLine_ptr l, std::string pre = "")
 				<<setw(w)<<l->B()->x()->eval()<<",  "<<setw(w)<<l->B()->y()->eval()<<")\n";
 }
 
-// int main(int argc, char *argv[])
-// {
-// 	errorLogger::get_instance().init(); // Init the error logger singleton
-// 	preferences::get_instance().load_from_file("resources/configs/configs.xml"); // Init the preferences service singleton
+int main(int argc, char *argv[])
+{
+	errorLogger::get_instance().init(); // Init the error logger singleton
+	preferences::get_instance().load_from_file("resources/configs/configs.xml"); // Init the preferences service singleton
 
-// 	auto app = Gtk::Application::create(argc, argv, ""); // Create an application 
-// 	auto refBuilder = Gtk::Builder::create(); // Gtk builder
-// 	try {
-// 		refBuilder->add_from_file("resources/GUI/design_documents.glade");
-// 	} catch(const Glib::FileError& ex) {
-// 		LOG_ERROR("Glib file error: " + ex.what());
-// 		return 1;
-// 	} catch(const Glib::MarkupError& ex) {
-// 		LOG_ERROR("Glib markup error: " + ex.what());
-// 		return 1;
-// 	} catch(const Gtk::BuilderError& ex) {
-// 		LOG_ERROR("Gtk builder error: " + ex.what());
-// 		return 1;
-// 	}
+	auto app = Gtk::Application::create(argc, argv, ""); // Create an application 
+	auto refBuilder = Gtk::Builder::create(); // Gtk builder
+	try {
+		refBuilder->add_from_file("resources/GUI/design_documents.glade");
+	} catch(const Glib::FileError& ex) {
+		LOG_ERROR("Glib file error: " + ex.what());
+		return 1;
+	} catch(const Glib::MarkupError& ex) {
+		LOG_ERROR("Glib markup error: " + ex.what());
+		return 1;
+	} catch(const Gtk::BuilderError& ex) {
+		LOG_ERROR("Gtk builder error: " + ex.what());
+		return 1;
+	}
 
-// 	bloop* window;
-// 	refBuilder->get_widget_derived("bloop", window);
+	bloop* window;
+	refBuilder->get_widget_derived("bloop", window);
 
-// 	document_ptr doc = std::make_shared<document>(new test_eventsManager);
-// 	doc->set_name("test_doc");
-// 	window->add_document(doc);
+	document_ptr doc = std::make_shared<document>(new test_eventsManager);
+	doc->set_name("test_doc");
+	window->add_document(doc);
 
-// 	if(window) {
-// 		return app->run(*window); // Run the app
-// 	}
+	if(window) {
+		return app->run(*window); // Run the app
+	}
 
-// 	LOG_ERROR("Could not build window, returning early.");
+	LOG_ERROR("Could not build window, returning early.");
 
 
 
-// 	return 0;
-// }
+	return 0;
+}
 
 
 /*
@@ -94,24 +94,24 @@ void printLine(sketchLine_ptr l, std::string pre = "")
 
 */
 
-int main()
-{
-	glm::vec2 A(0.0f, -1.0f), B(0.5f, -1.0f), C(1.0f, 0.0f);
-	geom_3d::plane_abstr_ptr pl = std::make_shared<geom_3d::plane_abstr>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+// int main()
+// {
+// 	glm::vec2 A(0.0f, -1.0f), B(0.5f, -1.0f), C(1.0f, 0.0f);
+// 	geom_3d::plane_abstr_ptr pl = std::make_shared<geom_3d::plane_abstr>(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-	sketchLine_ptr l1 = std::make_shared<sketchLine>(A, B, pl);
-	sketchLine_ptr l2 = std::make_shared<sketchLine>(B, C, pl);
+// 	sketchLine_ptr l1 = std::make_shared<sketchLine>(A, B, pl);
+// 	sketchLine_ptr l2 = std::make_shared<sketchLine>(B, C, pl);
 
-	constraintSystem system;
+// 	constraintSystem system;
 	
-	system.add_constraint(pointPoint_coincidence::make(l1->B(), l2->A()));
+// 	// system.add_constraint(pointPoint_coincidence::make(l1->B(), l2->A()));
 
-	system.add_constraint(pointPoint_horizontality::make(l1));
-	system.add_constraint(lineLine_angle::make_perpendicular(l2, l1));
-	// system.add_constraint(lineLine_angle_reduced::make_perpendicular(l2, l1));
+// 	// system.add_constraint(pointPoint_horizontality::make(l1));
+// 	// system.add_constraint(lineLine_angle::make_perpendicular(l2, l1));
+// 	// system.add_constraint(lineLine_angle_reduced::make_perpendicular(l2, l1));
 
-	system.solve();
+// 	system.solve();
 
-	printLine(l1, "l1 ");
-	printLine(l2, "l2 ");
-}
+// 	printLine(l1, "l1 ");
+// 	printLine(l2, "l2 ");
+// }

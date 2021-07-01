@@ -78,12 +78,9 @@ void sketchCircle::print(int depth)
 	std::cout<<name()<<"["<<mRadius->eval()<<"]\n";
 	
 	mCenter->print(depth+1);
-	for(int i = 0; i < mAnnotations.size(); ++i) {
-		mAnnotations[i]->print(depth+1);
-	}
 }
 
-void sketchCircle::move(glm::vec2 from, glm::vec2 to)
+void sketchCircle::move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move)
 {
 	if(!mCenter->dragged())
 		set_radius(glm::length(to - mCenter->pos()));
@@ -174,9 +171,6 @@ void sketchCircle::set_exists_vars(bool ex)
 
 void sketchCircle::draw_impl(camera_ptr cam, int frame)
 {
-	if(mRequire_VBUpdate)
-		update_VB();
-
 	mShader->bind();
 	glm::vec4 color = glm::vec4(kColor, 1.0f);
 	if(selected()) {

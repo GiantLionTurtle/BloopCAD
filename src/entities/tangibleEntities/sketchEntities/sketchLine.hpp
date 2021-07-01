@@ -37,7 +37,7 @@ public:
 	void for_each(std::function<void(sketchEntity_ptr ent)> func);
 	void for_each(std::function<void(sketchGeometry_ptr geom)> func);
 	
-	void move(glm::vec2 from, glm::vec2 to);
+	void move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move);
 
 	virtual entityPosSnapshot_ptr posSnapshot();
 
@@ -49,6 +49,7 @@ public:
 
 	glm::vec2 posA() { return mA->pos(); }
 	glm::vec2 posB() { return mB->pos(); }
+	glm::vec2 posMiddle() { return (mA->pos() + mB->pos()) / 2.0f;}
 	sketchPoint_ptr A() { return mA; }
 	sketchPoint_ptr B() { return mB; }
 
@@ -60,10 +61,9 @@ public:
 
 	void update_VB();
 
-	void on_added_constraintAnnotation();
-
 	glm::vec2 annotation_pixelOffset(int ind);
-
+	void position_floatingAnnotation(std::shared_ptr<spriteAnnotation> annot);
+	
 	void set_exists_vars(bool ex);
 protected:
 	/*

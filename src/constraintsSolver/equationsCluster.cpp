@@ -130,8 +130,10 @@ void equationsCluster::compute_errors(Eigen::VectorXd& errors, int tag)
 }
 void equationsCluster::compute_errors_no_resize(Eigen::VectorXd& errors, int tag)
 {
-	for(int i = 0; i < mEqus.size(); ++i) {
-		errors(i) = mEqus[i]->eval();
+	int e = 0;
+	for(auto equ : mEqus) {
+		if(equ->tag() == tag)
+			errors(e++) = equ->eval();
 	}
 }
 void equationsCluster::compute_jacobi(Eigen::MatrixXd& jacobi, int tag, bool drivingVars_only)
@@ -141,14 +143,17 @@ void equationsCluster::compute_jacobi(Eigen::MatrixXd& jacobi, int tag, bool dri
 }
 void equationsCluster::compute_jacobi_no_resize(Eigen::MatrixXd& jacobi, int tag, bool drivingVars_only)
 {
-	for(int i = 0; i < mEqus.size(); ++i) {
-		if(mEqus[i]->tag() != tag) 
+	int e = 0, v = 0;
+	for(auto equ : mEqus) {
+		if(equ->tag() != tag) 
 			continue;
-		for(int j = 0; j < mVars.size(); ++j) {
-			if(!drivingVars_only || !mVars[j]->is_substituted()) {
-				jacobi(i, j) = mEqus[i]->derivative(mVars[j])->eval();
+		for(auto var : mVars) {
+			if(!drivingVars_only || !var->is_substituted()) {
+				jacobi(e, v++) = equ->derivative(var)->eval();
 			}
 		}
+		e++;
+		v = 0;
 	}
 }
 int equationsCluster::num_taggedEqus(int tag)

@@ -177,11 +177,14 @@ bool sketch::can_delete(sketchEntity_ptr ent)
 
 void sketch::for_each(std::function<void (entity_ptr)> func)
 {
-	for(sketchEntity_ptr geom : mGeometries) {
+	for(sketchGeometry_ptr geom : mGeometries) {
 		func(geom);
 	}
 	for(entity_ptr ent : mToolPreview) {
 		func(ent);
+	}
+	for(auto constr : mConstraints) {
+		func(constr);
 	}
 	// func(mOrigin);
 }
@@ -214,9 +217,13 @@ void sketch::toggle_selection_from_area(glm::vec2 a, glm::vec2 b, bool contained
 	}
 }
 
-bool sketch::add_constraint(std::shared_ptr<constraint_abstract> constr, sketchEntity_ptr immovable_hint) 
+bool sketch::add_constraint(std::shared_ptr<constraint_entity> constr, sketchEntity_ptr immovable_hint) 
 {
+	if(!constr)
+		return false;
+	mConstraints.push_back(constr);
 	mSystem.add_constraint(constr);
+	constr->set_parent(this);
 	mHandle->update_name(mName + "(" + std::to_string(mSystem.num_constraints()) + ",  " + std::to_string(mSystem.num_variables()) + ")");
 
 	if(immovable_hint) {
@@ -233,8 +240,9 @@ bool sketch::add_constraint(std::shared_ptr<constraint_abstract> constr, sketchE
 	return false;
 }
 
-bool sketch::toggle_constraint(std::shared_ptr<constraint_abstract> constr, bool enable)
+bool sketch::toggle_constraint(std::shared_ptr<constraint_entity> constr, bool enable)
 {
+	constr->set_exists(enable);
 	mSystem.toggle_constraint(constr, enable);
 	mHandle->update_name(mName + "(" + std::to_string(mSystem.num_constraints()) + ",  " + std::to_string(mSystem.num_variables()) + ")");
 

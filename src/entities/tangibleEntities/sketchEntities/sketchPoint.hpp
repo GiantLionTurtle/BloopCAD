@@ -30,7 +30,7 @@ public:
 	var_ptr x() { return mX; }
 	var_ptr y() { return mY; }
 
-	void move(glm::vec2 from, glm::vec2 to);
+	void move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move);
 
 	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);
 	bool in_selection_range(glm::vec2 a, glm::vec2 b, bool contained);
@@ -48,9 +48,8 @@ public:
 
 	void update_VB();
 
-	void on_added_constraintAnnotation();
-
 	glm::vec2 annotation_pixelOffset(int ind);
+	void position_floatingAnnotation(std::shared_ptr<spriteAnnotation> annot);
 
 	void set_exists_vars(bool ex);
 

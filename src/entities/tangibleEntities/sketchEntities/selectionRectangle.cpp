@@ -79,11 +79,7 @@ void selectionRectangle::set_points(glm::vec2 start_, glm::vec2 end_)
 
 void selectionRectangle::draw_impl(camera_ptr cam, int frame)
 {
-	if(mRequire_VBUpdate)
-		update_VB();
-
 	mShader->bind();
-
 	glm::vec3 color;
 	if(mMode == COVER) {
 		color = mColorA;
@@ -96,7 +92,6 @@ void selectionRectangle::draw_impl(camera_ptr cam, int frame)
 		mShader->setUniformMat4f("u_MVP", cam->mvp());
 		mShader->set_used(frame);
 	}
-	
 	mVA->bind();
 	mIB->bind();
 

@@ -7,6 +7,7 @@
 #include <entities/folder.hpp>
 #include <constraintsSolver/constraintSystem.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchGeometry.hpp>
+#include <entities/tangibleEntities/sketchEntities/sketchConstraint.hpp>
 
 #include <memory>
 #include <vector>
@@ -61,6 +62,7 @@ private:
 	std::vector<sketchGeometry_ptr> mGeometries;
 	std::vector<entity_ptr> mToolPreview;
 	std::vector<sketchEntity_ptr> mSelectedEntities;
+	std::vector<std::shared_ptr<constraint_entity>> mConstraints;
 
 	folder_ptr mOrigin;
 
@@ -114,8 +116,8 @@ public:
 
 	folder_ptr origin() const { return mOrigin; }
 
-	bool add_constraint(std::shared_ptr<constraint_abstract> constr, sketchEntity_ptr immovable_hint = nullptr);
-	bool toggle_constraint(std::shared_ptr<constraint_abstract> constr, bool enable);
+	bool add_constraint(std::shared_ptr<constraint_entity> constr, sketchEntity_ptr immovable_hint = nullptr);
+	bool toggle_constraint(std::shared_ptr<constraint_entity> constr, bool enable);
 	bool update_constraints(bool safeUpdate, bool update_on_solveFail);
 
 	void backup_system();

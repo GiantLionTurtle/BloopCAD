@@ -73,20 +73,18 @@ void sketchPoint::print(int depth)
 		std::cout<<"\t";
 	}
 	std::cout<<name()<<"("<<mX->eval()<<",  "<<mY->eval()<<")\n";
-
-	for(int i = 0; i < mAnnotations.size(); ++i) {
-		mAnnotations[i]->print(depth+1);
-	}
 }
 
-void sketchPoint::move(glm::vec2 from, glm::vec2 to)
+void sketchPoint::move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move)
 {
 	set(pos() + to-from);
 }
 
 bool sketchPoint::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor)
 {
-	glm::vec4 onscreen_ndc = cam->mvp()	* glm::vec4(mBasePlane->to_worldPos(closest_to_point(planepos)), 1.0f);
+	glm::vec2 closest_vec2 = closest_to_point(planepos);
+	glm::vec4 pos_vec4 = glm::vec4(mBasePlane->to_worldPos(closest_vec2), 1.0f);
+	glm::vec4 onscreen_ndc = cam->mvp()	* pos_vec4;
 	glm::vec2 onscreen(	map(onscreen_ndc.x / onscreen_ndc.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
 						map(onscreen_ndc.y / onscreen_ndc.w, -1.0f, 1.0f, cam->viewport().y, 0.0f));
 	if(glm::distance2(onscreen, cursor) < 50)
@@ -135,31 +133,24 @@ void sketchPoint::update_VB()
 	glm::vec3 pos_tmp = mBasePlane->to_worldPos(pos());
 	mVB->set(&pos_tmp[0], sizeof(glm::vec3));
 	mVB->unbind();
-	set_require_redraw();
-	if(mParent)
-		mParent->notify(UPDATED);
-
 	mRequire_VBUpdate = false;
 
-	for(int i = 0; i < mAnnotations.size(); ++i) {
-		mAnnotations[i]->set_pos(pos());
+	for(auto annot : mFloatingAnnots) {
+		annot->set_pos(pos());
 	}
-}
-
-void sketchPoint::on_added_constraintAnnotation()
-{
-	mAnnotations.back()->set_pos(pos());
-	mAnnotations.back()->set_pixelOffset(annotation_pixelOffset(mAnnotations.size()-1));
 }
 
 glm::vec2 sketchPoint::annotation_pixelOffset(int ind)
 {
 	int level = ind / 6;
 	float angle = (float)(ind % 6) / 6.0f * M_PI * 2.0 + M_PI_2;
-
-	return glm::vec2(std::cos(angle) * (float)(ind+1) * 25.0, std::sin(angle) * (float)(ind+1) * 25.0);
+	return glm::vec2(std::cos(angle) * (float)(ind+1) * 25.0f, std::sin(angle) * (float)(ind+1) * 25.0f);
 }
-
+void sketchPoint::position_floatingAnnotation(std::shared_ptr<spriteAnnotation> annot)
+{
+	annot->set_pos(pos());
+	annot->set_pixelOffset(annotation_pixelOffset(mFloatingAnnots.size()));
+}
 void sketchPoint::set_exists_vars(bool ex)
 {
 	mX->set_exists(ex);
@@ -168,9 +159,6 @@ void sketchPoint::set_exists_vars(bool ex)
 
 void sketchPoint::draw_impl(camera_ptr cam, int frame)
 {
-	if(mRequire_VBUpdate) // very sketch
-		update_VB();
-		
 	mShader->bind();
 	glm::vec4 color = glm::vec4(kColor, 1.0f);
 	if(selected()) {

@@ -9,10 +9,10 @@
 
 class constraintSystem {
 private:
-	std::vector<std::shared_ptr<constraint_abstract>> mConstraints;
+	std::vector<std::shared_ptr<constraint_abstr>> mConstraints;
 	std::vector<var_ptr> mVariables;
-	std::map<std::shared_ptr<constraint_abstract>, std::vector<var_ptr>> mConstrToVars;
-	std::map<var_ptr, std::vector<std::shared_ptr<constraint_abstract>>> mVarsToConstr;
+	std::map<std::shared_ptr<constraint_abstr>, std::vector<var_ptr>> mConstrToVars;
+	std::map<var_ptr, std::vector<std::shared_ptr<constraint_abstr>>> mVarsToConstr;
 
 	bool mBrokenDown;
 	std::vector<equationsCluster*> mSubClusters;
@@ -26,8 +26,8 @@ public:
 	~constraintSystem();
 
 	bool satisfied();
-	void add_constraint(std::shared_ptr<constraint_abstract> constr);
-	void toggle_constraint(std::shared_ptr<constraint_abstract> constr, bool enable);
+	void add_constraint(std::shared_ptr<constraint_abstr> constr);
+	void toggle_constraint(std::shared_ptr<constraint_abstr> constr, bool enable);
 
 	int solve();
 	void breakDown_problem();
@@ -56,7 +56,7 @@ private:
 		std::map<int, std::vector<int>> mVertToVert;
 		int mNumConstr, mNumVar;
 	public:
-		constraintGraph(std::vector<std::shared_ptr<constraint_abstract>>& constrs, std::vector<var_ptr>& vars);
+		constraintGraph(std::vector<std::shared_ptr<constraint_abstr>>& constrs, std::vector<var_ptr>& vars);
 
 		int connected_clusters(std::vector<int>& constr_clust, std::vector<int>& var_clust);
 	private:	

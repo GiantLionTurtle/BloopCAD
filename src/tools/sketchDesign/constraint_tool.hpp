@@ -23,7 +23,7 @@ public:
 
 	virtual void add_entity(sketchEntity_ptr ent);
 	void add_constraint();
-	virtual void add_constraint_impl(std::shared_ptr<constraint_abstract>& constr, 
+	virtual void add_constraint_impl(std::shared_ptr<constraint_entity>& constr, 
 	sketchEntity_ptr& priority_ent) = 0;
 
 	// TODO: Inline these thingies?

@@ -18,13 +18,13 @@ constraintSystem::~constraintSystem()
 }
 bool constraintSystem::satisfied()
 {
-	for(std::shared_ptr<constraint_abstract> constr : mConstraints) {
+	for(auto constr : mConstraints) {
 		if(!constr->satisfied())
 			return false;
 	}
 	return true;
 }
-void constraintSystem::add_constraint(std::shared_ptr<constraint_abstract> constr) 
+void constraintSystem::add_constraint(std::shared_ptr<constraint_abstr> constr) 
 {
 	mNum_activeConstraints++;
 	mBrokenDown = false;
@@ -39,7 +39,7 @@ void constraintSystem::add_constraint(std::shared_ptr<constraint_abstract> const
 		mVarsToConstr[var].push_back(constr);
 	}
 }
-void constraintSystem::toggle_constraint(std::shared_ptr<constraint_abstract> constr, bool enable)
+void constraintSystem::toggle_constraint(std::shared_ptr<constraint_abstr> constr, bool enable)
 {
 	if(std::find(mConstraints.begin(), mConstraints.end(), constr) == mConstraints.end())
 		return;
@@ -58,6 +58,9 @@ int constraintSystem::solve()
 			std::cout<<"Breaking down problem...\n";
 		breakDown_problem();
 	}
+
+	if(mVerboseLevel)
+		std::cout<<"Solving clusters...";
 	int output = solverState::SUCCESS;
 	for(auto clust : mSubClusters) {
 		output = std::max(output, clust->solve());
@@ -133,7 +136,7 @@ void constraintSystem::set_varState(std::vector<double> state)
 	}
 }
 
-constraintSystem::constraintGraph::constraintGraph(std::vector<std::shared_ptr<constraint_abstract>>& constrs, std::vector<var_ptr>& vars):
+constraintSystem::constraintGraph::constraintGraph(std::vector<std::shared_ptr<constraint_abstr>>& constrs, std::vector<var_ptr>& vars):
 	mNumConstr(0),
 	mNumVar(0)
 {

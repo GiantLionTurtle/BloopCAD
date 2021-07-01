@@ -22,6 +22,18 @@ public:
 
 	virtual void init() = 0;
 
+	void draw(camera_ptr cam, int frame, draw_type type = draw_type::ALL, bool on_required = false)
+	{
+		// This is not exactly duplicate logic from what is in entity.cpp
+		if(!mInited) {
+			init();
+			mInited = true;
+		}
+		if(mRequire_VBUpdate)
+			update_VB();
+		entity::draw(cam, frame, type, on_required);
+	}
+
 	virtual void notify(int msg)
 	{
 		if(msg == UPDATED && mParent)
@@ -34,7 +46,7 @@ public:
 	void set_require_VBUpdate() { mRequire_VBUpdate = true; set_require_redraw(); notify_parent(UPDATED); }
 	bool require_VBUpdate() const { return mRequire_VBUpdate; }
 protected:
-	virtual void update_impl() { update_VB(); }
+	virtual void update_impl() { set_require_VBUpdate(); }
 };
 
 #endif

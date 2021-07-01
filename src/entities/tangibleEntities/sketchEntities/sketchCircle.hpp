@@ -30,7 +30,7 @@ public:
 
 	void print(int depth = 0);
 
-	void move(glm::vec2 from, glm::vec2 to);
+	void move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move);
 
 	virtual entityPosSnapshot_ptr posSnapshot();
 

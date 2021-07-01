@@ -42,7 +42,7 @@ using entity_ptr = std::shared_ptr<entity>;
 /*
 	@class entity describes a basic entity that appears on screen
 */
-class entity : public baseObject {
+class entity : virtual public baseObject {
 public: 
 	enum draw_type { ALL, TRANSLUCID, ACTIVE, INACTIVE };
 	enum notifications { SELECTED, UNSELECTED, HOVERED, UNHOVERED, HIDEN, UNHIDEN, DELETED, RESURRECTED, UPDATED};
@@ -74,7 +74,7 @@ public:
 		@param cam : 	The camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	void draw(camera_ptr cam, int frame, draw_type type = draw_type::ALL, bool on_required = false);
+	virtual void draw(camera_ptr cam, int frame, draw_type type = draw_type::ALL, bool on_required = false);
 
 	void update();
 

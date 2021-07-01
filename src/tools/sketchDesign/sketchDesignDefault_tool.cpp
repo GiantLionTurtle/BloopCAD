@@ -101,7 +101,8 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 
 	geom_3d::plane_abstr_ptr pl = sk->basePlane();
 	camera_ptr cam = mEnv->state()->cam;
-	glm::vec2 pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
+	glm::vec2 mousePos(event->x, event->y);
+	glm::vec2 pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(mousePos, false)));
 
 	if(event->state & GDK_BUTTON1_MASK) {
 		if(mAllowedToMove) {
@@ -110,7 +111,7 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 				mEnv->target()->for_each_selected([&](sketchEntity_ptr ent) { ent->set_dragged(true); });
 				mStartMoveSnapshot = mEnv->target()->selectedGeometriesSnapshots();
 			}
-			mEnv->target()->for_each_selected([&](sketchEntity_ptr ent) { ent->move(mPrevPos, pos);	});
+			mEnv->target()->for_each_selected([&](sketchEntity_ptr ent) { ent->move(mPrevPos, pos, mPrevMousePos - mousePos);	});
 			bool update_attempt = sk->update_constraints(true, false);
 		} else {
 			mSelectionRect->set_endPoint(pos);
@@ -134,6 +135,7 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 		}
 	}
 	mPrevPos = pos;
+	mPrevMousePos = mousePos;
 
 	return true;
 }

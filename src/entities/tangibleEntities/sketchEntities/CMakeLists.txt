@@ -5,6 +5,8 @@ set(sketchEntities_source_files
   sketchLine.cpp
   sketchCircle.cpp
   constraintAnnotation.cpp
+  spriteAnnotation.cpp
+  sketchConstraint.cpp
   selectionRectangle.cpp
   )
 

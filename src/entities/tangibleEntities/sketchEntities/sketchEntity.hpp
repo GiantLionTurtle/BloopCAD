@@ -15,7 +15,7 @@ using entityPosSnapshot_ptr = std::shared_ptr<entityPosSnapshot_abstract>;
 
 class sketchEntity : public tangibleEntity {
 public:
-	enum types { POINT, LINE, CIRCLE };
+	enum types { POINT, LINE, CIRCLE, SPRITE, CONSTRAINT };
 protected:
 	geom_3d::plane_abstr_ptr mBasePlane;
 	int mType;
@@ -27,10 +27,10 @@ public:
 		mDragged(false)
 	{}
 	virtual ~sketchEntity() {}
-	
+
 	virtual void for_each(std::function<void(sketchEntity_ptr geom)> func) {}
 
-	virtual void move(glm::vec2 from, glm::vec2 to) {}
+	virtual void move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move) {}
 	bool dragged() const { return mDragged; }
 	void set_dragged(bool drag) { mDragged = drag; set_dragged_impl(drag); } //set_tmpConstant(drag); }
 
