@@ -1,16 +1,16 @@
 #include "spriteAnnotation.hpp"
 
 #include <constraintsSolver/constraint.hpp>
-#include <graphics_utils/textures/image.hpp>
-#include <graphics_utils/shadersPool.hpp>
+#include <graphics_utils/Image.hpp>
+#include <graphics_utils/ShadersPool.hpp>
 #include <graphics_utils/GLCall.hpp>
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 #include <utils/mathUtils.hpp>
 #include <utils/preferences.hpp>
 
 bool spriteAnnotation::kFisrstInst = true;
 glm::vec3 spriteAnnotation::kColorHovered = glm::vec3(0.0f);
-std::map<std::string, std::shared_ptr<texture>> spriteAnnotation::kTextures = {};
+std::map<std::string, std::shared_ptr<Texture>> spriteAnnotation::kTextures = {};
 
 spriteAnnotation::spriteAnnotation(geom_3d::plane_abstr_ptr basePlane_, glm::vec2 dims, std::string const& texturePath):
     sketchEntity(basePlane_, SPRITE),
@@ -30,30 +30,30 @@ spriteAnnotation::~spriteAnnotation()
 void spriteAnnotation::init()
 {
 	if(kTextures.find(mTexturePath) == kTextures.end()) {
-		mTexture = std::make_shared<image>(mTexturePath);
+		mTexture = std::make_shared<Image>(mTexturePath);
 		kTextures[mTexturePath] = mTexture;
 	} else {
 		mTexture = kTextures[mTexturePath];
 	}
 
 	mRequire_VBUpdate = false;
-	mVA = std::make_shared<vertexArray>();
-	vertexBufferLayout layout;
+	mVA = std::make_shared<VertexArray>();
+	VertexBufferLayout layout;
 	layout.add_proprety_float(3);
 	layout.add_proprety_float(2);
 	mVA->bind();
 
 	pos_offseted tmpPos= { mBasePlane->to_worldPos(pos()), mPixelOffset };
-	mVB = std::make_shared<vertexBuffer>(&tmpPos, sizeof(pos_offseted));
+	mVB = std::make_shared<VertexBuffer>(&tmpPos, sizeof(pos_offseted));
 	mVA->add_buffer(*mVB, layout);
 
-	mShader = shadersPool::get_instance().get("fixedSizeTexturedQuad");
+	mShader = ShadersPool::get_instance().get("fixedSizeTexturedQuad");
 	if(!mShader) {
-		mShader = shader::fromFiles_ptr({
+		mShader = Shader::fromFiles_ptr({
 		{"resources/shaders/offsetPointShader.vert", GL_VERTEX_SHADER},
 		{"resources/shaders/fixedSizeQuad.geom", GL_GEOMETRY_SHADER}, 
-		{"resources/shaders/annotationShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because point is expanded on the gpu
-		shadersPool::get_instance().add("fixedSizeTexturedQuad", mShader);
+		{"resources/shaders/annotationShader.frag", GL_FRAGMENT_SHADER}}); // Geometry Shader is needed because point is expanded on the gpu
+		ShadersPool::get_instance().add("fixedSizeTexturedQuad", mShader);
 	}
 	if(kFisrstInst) {
 		kColorHovered = preferences::get_instance().get_vec3("sketchEntityColorHovered");
@@ -68,7 +68,7 @@ void spriteAnnotation::move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move)
 	set_require_VBUpdate();
 }
 
-bool spriteAnnotation::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor)
+bool spriteAnnotation::in_selection_range(glm::vec2 planepos, Camera_ptr cam, glm::vec2 cursor)
 {
 	glm::vec4 onscreen_ndc = cam->mvp()     * glm::vec4(mBasePlane->to_worldPos(pos()), 1.0f);
 	glm::vec2 onscreen(     map(onscreen_ndc.x / onscreen_ndc.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
@@ -103,7 +103,7 @@ void spriteAnnotation::update_VB()
 	mVB->unbind();
 }
 
-void spriteAnnotation::draw_impl(camera_ptr cam, int frame)
+void spriteAnnotation::draw_impl(Camera_ptr cam, int frame)
 {
 	mShader->bind();
 	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);

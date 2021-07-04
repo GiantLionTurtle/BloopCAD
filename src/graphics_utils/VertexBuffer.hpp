@@ -3,25 +3,25 @@
 #define VERTEXBUFFER_HPP_
 
 /*
-	@class vertexBuffer describes an abstraction of openGL's vertex buffer
+	@class VertexBuffer describes an abstraction of openGL's vertex buffer
 	@warning : Make sure that all functions are called whithin the same openGL context
 */
-class vertexBuffer {
+class VertexBuffer {
 private:
 	unsigned int mRendererID; // The openGL handle to the buffer
 	unsigned int mSize; // The size in bytes of the buffer
 public:
 	/*
-		@function vertexBuffer creates a vertexBuffer object
+		@function VertexBuffer creates a VertexBuffer object
 
-		@param data : 	The data of the vertexBuffer, it can be of any types
+		@param data : 	The data of the VertexBuffer, it can be of any types
 		@param size_ : 	The size in bytes of the buffer
 	*/
-	vertexBuffer(void const* data, unsigned int size_);
+	VertexBuffer(void const* data, unsigned int size_);
 	/*
-		@function ~vertexBuffer destroys a vertexBuffer object and cleanly handles the deallocation in openGL
+		@function ~VertexBuffer destroys a VertexBuffer object and cleanly handles the deallocation in openGL
 	*/
-	~vertexBuffer();
+	~VertexBuffer();
 
 	/*
 		@function bind activates the buffer in openGL so that it can be used

@@ -1,6 +1,6 @@
 
 #include "toggleBaseObject_action.hpp"
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 #include <document.hpp>
 
 toggleBaseObject_action::toggleBaseObject_action(baseObject_ptr obj, bool toggle_to):

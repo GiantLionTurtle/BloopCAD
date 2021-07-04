@@ -1,12 +1,12 @@
 
-#include "texture.hpp"
+#include "Texture.hpp"
 
 #include <string>
 
 /*
 	@class image describes a texture loaded from an image file
 */
-class image : public texture {
+class Image : public Texture {
 private:
 	std::string mFilePath; // The path to the image file
 public:
@@ -15,9 +15,9 @@ public:
 
 		@param filePath : The path to the file that contains the image
 	*/
-	image(std::string const& filePath);
+	Image(std::string const& filePath);
 	/*
 		@function ~image destroys the image texture and cleanly deallocate in openGL
 	*/
-	~image();
+	~Image();
 };

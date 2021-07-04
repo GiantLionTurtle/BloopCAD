@@ -88,7 +88,7 @@ private:
 	workspace_ptr mCurrentWorkspace; // The currently used workspace
 
 	compositeCursor_ptr mCursor; // The current cursor
-	Gtk::Image* mHomePage, *mIcon; // Program icon and home page image (the latter will not be a thing)
+	Gtk::Image* mHomePage, *mIcon; // Program icon and home page Image (the latter will not be a thing)
 	Gtk::Notebook* mDocumentIndexer; // The widget containing the document rendering
 	Gtk::Stack* mUI_upperBar, *mSideBar; // A stack of all the workspaces upper bars and all the documents' side bars
 	Gtk::Overlay* mHome; // The home screen overlay (I guess that it could go with the document's)

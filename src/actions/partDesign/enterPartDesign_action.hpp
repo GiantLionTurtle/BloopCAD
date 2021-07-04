@@ -12,7 +12,7 @@ private:
 	std::shared_ptr<part> mTarget;
 	entity_ptr mInitialTarget;
 public:
-	enterPartDesign_action(bool set_camera = false);
+	enterPartDesign_action(bool set_Camera = false);
 
 	/*
 		@function do_work switches to desired workspace if it exists

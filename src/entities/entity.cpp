@@ -2,7 +2,7 @@
 #include "entity.hpp"
 
 #include "entityView.hpp"
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 
 entity::entity(): 
 	mState(BLOOP_ENTITY_EXISTS_FLAG),
@@ -27,7 +27,7 @@ entity::entity(entity* parent):
 
 }
 
-void entity::draw(camera_ptr cam, int frame, draw_type type /*= draw_type::ALL*/, bool on_required /*= false*/)
+void entity::draw(Camera_ptr cam, int frame, draw_type type /*= draw_type::ALL*/, bool on_required /*= false*/)
 {
 	if(exists()) { // Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
 		if(!mInited) {
@@ -56,7 +56,7 @@ void entity::update()
 		notify_parent(UPDATED);
 }
 
-entity_ptr entity::hovered_child(camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (entity_ptr)> filter_func)
+entity_ptr entity::hovered_child(Camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (entity_ptr)> filter_func)
 {
 	entity_ptr candidate_child(nullptr);
 	float min_dist = std::numeric_limits<float>::max();
@@ -291,7 +291,7 @@ bool entity::should_draw_self(draw_type type, bool on_required)
 	return false;
 }
 
-void entity::hovered_child_internal(camera_ptr cam, glm::vec2 cursor_pos, entity_ptr& candidate, float& min_dist, std::function<bool (entity_ptr)> filter_func)
+void entity::hovered_child_internal(Camera_ptr cam, glm::vec2 cursor_pos, entity_ptr& candidate, float& min_dist, std::function<bool (entity_ptr)> filter_func)
 {
 	for_each([&](entity_ptr ent) {
 		ent->hovered_child_internal(cam, cursor_pos, candidate, min_dist, filter_func);

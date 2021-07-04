@@ -3,33 +3,33 @@
 #define INDEXBUFFER_HPP_
 
 /*
-	@class indexBuffer describes an abstraction of an openGL indices buffer
+	@class IndexBuffer describes an abstraction of an openGL indices buffer
 	@warning : Make sure all the functions are called within the same openGL context
 */
-class indexBuffer {
+class IndexBuffer {
 private:
 	unsigned int mRendererID; // The internal openGL id
 	unsigned int mCount; // The NUMBER of indices contained
 public:
 	/*
-		@function indexBuffer creates an indexBuffer object
+		@function IndexBuffer creates an IndexBuffer object
 
 		@param data : 	A pointer to the data assigned to the buffer, currently, only unsigned ints are supported
 		@param count_ : The NUMBER of data points
 	*/
-	indexBuffer(unsigned int const* data, unsigned int count_);
+	IndexBuffer(unsigned int const* data, unsigned int count_);
 	/*
-		@function ~indexBuffer destroys the indexBuffer object and cleans it's openGL handle
+		@function ~IndexBuffer destroys the IndexBuffer object and cleans it's openGL handle
 	*/
-	~indexBuffer();
+	~IndexBuffer();
 
 	/*
-		@function bind activates the indexBuffer inside openGL
+		@function bind activates the IndexBuffer inside openGL
 	*/
 	void bind() const;
 	void unbind() const;
 	/*
-		@function unbind desactivates the indexBuffer inside openGL
+		@function unbind desactivates the IndexBuffer inside openGL
 	*/
 
 	/*

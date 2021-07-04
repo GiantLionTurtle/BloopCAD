@@ -6,7 +6,7 @@
 #include <workspaces/partDesign.hpp>
 #include <entities/sketch.hpp>
 
-struct cameraState;
+struct CameraState;
 
 /*
 	@class startSketch_tool describes the tool used to create a sketch in a part by selecting a plane
@@ -43,14 +43,14 @@ public:
 	virtual std::string name() { return "start sketch"; }
 // private:
 	/*
-		@function start_sketch is the core of the tool, it creates a sketch with a plane and a camera state
+		@function start_sketch is the core of the tool, it creates a sketch with a plane and a Camera state
 		it will try to make the pick and invert the w and v vectors of the base plane for the sketch plane 
-		to best fit the camera and spare unecesary movements
+		to best fit the Camera and spare unecesary movements
 
 		@param sketchPlane :	The plane on which the plane will sit
-		@param camState_ : 		The state of the camera at selection time
+		@param camState_ : 		The state of the Camera at selection time
 	*/
-	void start_sketch(geom_3d::plane_abstr_ptr sketchPlane, cameraState const& camState_);
+	void start_sketch(geom_3d::plane_abstr_ptr sketchPlane, CameraState const& camState_);
 };
 
 #endif

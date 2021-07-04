@@ -5,10 +5,10 @@
 #include <forward_bloop.hpp>
 #include <workspaces/workspace.hpp>
 #include <tools/tool.hpp>
-#include <graphics_utils/frameBuffer.hpp>
+#include <graphics_utils/FrameBuffer.hpp>
 #include <actions/action.hpp>
 #include <entities/part.hpp>
-#include <graphics_utils/camera.hpp>
+#include <graphics_utils/Camera.hpp>
 #include <entities/entityView.hpp>
 #include "eventsManager.hpp"
 
@@ -21,19 +21,19 @@
 #include <memory>
 
 /*
-	@struct selection describes a selected entity from a certain camera viewpoint
+	@struct selection describes a selected entity from a certain Camera viewpoint
 */
 struct selection {
 	entity_ptr ent; // The selected entity
-	cameraState camSt; // The camera state at the moment of the selection
+	CameraState camSt; // The Camera state at the moment of the selection
 
 	/*
 		@function selection creates a selection object
 
 		@param ent_ : 	The selected entity
-		@param camSt_ : The camera state during selection
+		@param camSt_ : The Camera state during selection
 	*/
-	selection(entity_ptr ent_, cameraState camSt_) :
+	selection(entity_ptr ent_, CameraState camSt_) :
 		ent(ent_),
 		camSt(camSt_)
 	{}
@@ -65,7 +65,7 @@ private:
 	Gtk::GLArea mViewport; // The rendering widget
 	int mFrameId; // The current frame id, it is NOT garanteed to be unique
 	bloop* mParentBloop; // The bloop window owning the document
-	cameraState mCurrentCamState;
+	CameraState mCurrentCamState;
 
 	bool mRequire_redraw;
 	bool mUseSelectionBuffer;
@@ -152,7 +152,7 @@ public:
 
 	Gtk::GLArea& viewport() { return mViewport; }
 
-	bool update_camera();
+	bool update_Camera();
 
 	/*
 		@function push_action adds an action to the action stack and executes it
@@ -204,7 +204,7 @@ public:
 	*/
 	void clear_selection();
 
-	void toggle_select(entity_ptr ent, cameraState cam, bool additive);
+	void toggle_select(entity_ptr ent, CameraState cam, bool additive);
 	void toggle_select(entity_ptr ent, bool additive);
 };
 

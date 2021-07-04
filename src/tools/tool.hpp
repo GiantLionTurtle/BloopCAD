@@ -19,7 +19,7 @@ class tool_abstract;
 using tool_abstract_ptr = std::shared_ptr<tool_abstract>;
 
 /*
-	@struct compositeCursor describes a cursor that has both an image and a cursor type
+	@struct compositeCursor describes a cursor that has both an Image and a cursor type
 */
 struct compositeCursor {
 	Glib::RefPtr<Gdk::Cursor> windowCursor; // Internal gtk cursor

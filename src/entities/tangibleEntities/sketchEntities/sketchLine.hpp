@@ -41,7 +41,7 @@ public:
 
 	virtual entityPosSnapshot_ptr posSnapshot();
 
-	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);
+	bool in_selection_range(glm::vec2 planepos, Camera_ptr cam, glm::vec2 cursor);
 	bool in_selection_range(glm::vec2 a, glm::vec2 b, bool contained);
 
 	void set_constant();
@@ -69,10 +69,10 @@ protected:
 	/*
 		@function draw_impl draws the line on screen
 
-		@param cam : 	The camera used for rendering
+		@param cam : 	The Camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	void draw_impl(camera_ptr cam, int frame);
+	void draw_impl(Camera_ptr cam, int frame);
 
 	void hover_impl(bool hov);
 

@@ -3,9 +3,9 @@
 #define WORKSPACE_HPP_
 
 #include <forward_bloop.hpp>
-#include <graphics_utils/camera.hpp>
+#include <graphics_utils/Camera.hpp>
 #include <tools/tool.hpp>
-#include <graphics_utils/frameBuffer.hpp>
+#include <graphics_utils/FrameBuffer.hpp>
 #include <entities/entity.hpp>
 #include <tools/tools_forward.hpp>
 
@@ -26,8 +26,8 @@ using workspaceState_ptr = std::shared_ptr<workspaceState>;
 struct workspaceState {
 	document* doc; // The document owning the state
 	entity_ptr target; // The target entity of the workspace
-	camera_ptr cam; // The camera rendering the scene for that workspace in the doc
-	cameraState startCamState;
+	Camera_ptr cam; // The Camera rendering the scene for that workspace in the doc
+	CameraState startCamState;
 	tool_abstract_ptr currentTool; // The tool being used by the workspace in the doc
 	int workspaceName; // The name of the workspace it is describing
 };

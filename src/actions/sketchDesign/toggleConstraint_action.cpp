@@ -1,6 +1,6 @@
 
 #include "toggleConstraint_action.hpp"
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 #include <document.hpp>
 
 toggleConstraint_action::toggleConstraint_action(sketch_ptr parent_sketch, std::shared_ptr<constraint_entity> constr, bool toggle_to):

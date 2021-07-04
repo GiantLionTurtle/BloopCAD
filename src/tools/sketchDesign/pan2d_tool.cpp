@@ -23,14 +23,14 @@ pan2d_tool::pan2d_tool(sketchDesign* env):
 void pan2d_tool::init()
 {
 	if(!mProxyCam)
-		mProxyCam = std::make_shared<camera>();
+		mProxyCam = std::make_shared<Camera>();
 }
 
 bool pan2d_tool::manage_button_press(GdkEventButton* event)
 {
 	if(!event->state & GDK_BUTTON1_MASK)
 		return true;
-    camera_ptr cam = mEnv->state()->cam;
+    Camera_ptr cam = mEnv->state()->cam;
 	mProxyCam->copy(cam);
 	mProxyCam->update();
 	mDragStart = mEnv->target()->basePlane()->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false));
@@ -49,10 +49,10 @@ bool pan2d_tool::manage_mouse_move(GdkEventMotion* event)
 {
 	if(mEnv->state() && event->state & GDK_BUTTON1_MASK) {
 		if(is_moving) {
-			camera_ptr cam = mEnv->state()->cam;
+			Camera_ptr cam = mEnv->state()->cam;
 			glm::vec3 pointedPos = mEnv->target()->basePlane()->line_intersection(mProxyCam->pos(), mProxyCam->cast_ray(glm::vec2(event->x, event->y), false));
 			glm::vec3 mov = pointedPos - mDragStart;
-			cam->set_translation(mTranStart + mov * mProxyCam->fscale()); // Move the model (no need to get fancy, it moves according to the "real position of the camera")
+			cam->set_translation(mTranStart + mov * mProxyCam->fscale()); // Move the model (no need to get fancy, it moves according to the "real position of the Camera")
 		} else {
 			is_moving = true; // Now moving, first point recorded
 		}

@@ -3,7 +3,7 @@
 
 #include <entities/sketch.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <actions/common/moveCamera_action.hpp>
@@ -66,7 +66,7 @@ bool sketchDesignDefault_tool::manage_button_press(GdkEventButton* event)
 		} else if(!clickedEnt) {
 			unselect_all();
 
-			camera_ptr cam = mEnv->state()->cam;
+			Camera_ptr cam = mEnv->state()->cam;
 			geom_3d::plane_abstr_ptr pl = mEnv->target()->basePlane();
 			glm::vec2 pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 			mSelectionRect->set_points(pos, pos);
@@ -100,7 +100,7 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 	DEBUG_ASSERT(sk, "No valid sketch.");
 
 	geom_3d::plane_abstr_ptr pl = sk->basePlane();
-	camera_ptr cam = mEnv->state()->cam;
+	Camera_ptr cam = mEnv->state()->cam;
 	glm::vec2 mousePos(event->x, event->y);
 	glm::vec2 pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(mousePos, false)));
 

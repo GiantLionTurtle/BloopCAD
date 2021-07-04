@@ -9,7 +9,7 @@
 #include <actions/common/moveCamera_action.hpp>
 #include <actions/sketchDesign/enterSketchDesign_action.hpp>
 #include <actions/partDesign/quitPartDesign_action.hpp>
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 #include <utils/mathUtils.hpp>
 #include <bloop.hpp>
 #include <document.hpp>
@@ -63,7 +63,7 @@ void sketch::print(int depth)
 	}
 }
 
-sketchEntity_ptr sketch::entity_at_point(camera_ptr cam, glm::vec2 cursor)
+sketchEntity_ptr sketch::entity_at_point(Camera_ptr cam, glm::vec2 cursor)
 {
 	// TODO: make this whole thingy less sketch
 	glm::vec2 planepos = mBasePlane->to_planePos(mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor)));
@@ -284,7 +284,7 @@ void sketch::invoke_workspace(document* doc)
 	})));
 }
 
-void sketch::draw_impl(camera_ptr cam, int frame)
+void sketch::draw_impl(Camera_ptr cam, int frame)
 {
 
 }

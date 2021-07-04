@@ -54,7 +54,7 @@ void startSketch_tool::act_on_entity(entity_ptr ent)
 		start_sketch(std::dynamic_pointer_cast<geom_3d::plane_abstr>(ent), mEnv->state()->cam->state());
 }
 
-void startSketch_tool::start_sketch(geom_3d::plane_abstr_ptr sketchPlane, cameraState const& camState_)
+void startSketch_tool::start_sketch(geom_3d::plane_abstr_ptr sketchPlane, CameraState const& camState_)
 {
 	// mEnv->state()->doc->make_glContext_current();
 	mCurrentSketch = std::make_shared<sketch>(sketchPlane);

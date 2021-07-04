@@ -2,7 +2,7 @@
 #include "plane.hpp"
 
 #include <graphics_utils/GLCall.hpp>
-#include <graphics_utils/shadersPool.hpp>
+#include <graphics_utils/ShadersPool.hpp>
 
 plane::plane(plane_abstr const& plane_):
 	plane_abstr(plane_)
@@ -15,20 +15,20 @@ void plane::init()
 	set_name("plane");
 	init_buffers(); // Set all the vertices to the right values
 	
-	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(mVertices, sizeof(glm::vec3) * 4)); // Upload the vertices
-	mVA = std::shared_ptr<vertexArray>(new vertexArray());
+	mVB = std::shared_ptr<VertexBuffer>(new VertexBuffer(mVertices, sizeof(glm::vec3) * 4)); // Upload the vertices
+	mVA = std::shared_ptr<VertexArray>(new VertexArray());
 
-	vertexBufferLayout layout;
+	VertexBufferLayout layout;
 	layout.add_proprety_float(3);
 	mVA->bind();
 	mVA->add_buffer(*mVB.get(), layout);
-	mIB = std::shared_ptr<indexBuffer>(new indexBuffer(mIndices, 6));
+	mIB = std::shared_ptr<IndexBuffer>(new IndexBuffer(mIndices, 6));
 
-	// Create the shaders
-	mShader = shadersPool::get_instance().get("plane");
+	// Create the Shaders
+	mShader = ShadersPool::get_instance().get("plane");
 	if(!mShader) {
-		mShader = shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/planeShader.frag");
-		shadersPool::get_instance().add("plane", mShader);
+		mShader = Shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/planeShader.frag");
+		ShadersPool::get_instance().add("plane", mShader);
 	}
 }
 
@@ -40,7 +40,7 @@ void plane::update_VB()
 	mVB->unbind();
 }
 
-void plane::draw_impl(camera_ptr cam, int frame)
+void plane::draw_impl(Camera_ptr cam, int frame)
 {
 	// TODO: make this less sketch?
 	// GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad
@@ -73,7 +73,7 @@ void plane::draw_impl(camera_ptr cam, int frame)
 	// GLCall(glEnable(GL_DEPTH_TEST));
 }
 
-float plane::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
+float plane::selection_depth(Camera_ptr cam, glm::vec2 cursor_pos)
 {
 	glm::vec3 pos = cam->pos();
 	glm::vec3 inter = line_intersection(pos, cam->cast_ray(cursor_pos));

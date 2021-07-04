@@ -10,7 +10,7 @@ private:
 	glm::vec3 mTranStart, mDragStart; // Helper record of the position of the mouse on the previous update
 	glm::vec3 mPl_right, mPl_up;
 	bool is_moving; // If the mouse is currently moving
-	camera_ptr mProxyCam; // Virtual camera used to calculate the pan offset
+	Camera_ptr mProxyCam; // Virtual Camera used to calculate the pan offset
 public:
 	/*
 		@function pan_tool creates an pan_tool object

@@ -1,11 +1,11 @@
 
 #include "switchWorkspace_action.hpp"
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 #include <document.hpp>
 
-switchWorkspace_action::switchWorkspace_action(int workspaceName, bool set_camera):
+switchWorkspace_action::switchWorkspace_action(int workspaceName, bool set_Camera):
 	mTargetWorkspaceName(workspaceName),
-	mSet_camera(set_camera)
+	mSet_Camera(set_Camera)
 {
 
 }
@@ -23,13 +23,13 @@ bool switchWorkspace_action::do_work(document* caller)
 		mValid = false;
 		LOG_WARNING("Document pointer is not valid.");
 	}
-	camera_ptr tmpCam;
-	if(mSet_camera)
+	Camera_ptr tmpCam;
+	if(mSet_Camera)
 		tmpCam = caller->state()->cam;
-	cameraState startState = caller->state()->cam->state();
+	CameraState startState = caller->state()->cam->state();
 	switch_workspace(caller, mTargetWorkspaceName);
 	caller->state()->startCamState = startState;
-	if(mSet_camera)
+	if(mSet_Camera)
 		caller->state()->cam->copy(tmpCam);
 	return true;
 }

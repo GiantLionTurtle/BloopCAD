@@ -34,7 +34,7 @@ public:
 	bool dragged() const { return mDragged; }
 	void set_dragged(bool drag) { mDragged = drag; set_dragged_impl(drag); } //set_tmpConstant(drag); }
 
-	virtual bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor) { return false; }
+	virtual bool in_selection_range(glm::vec2 planepos, Camera_ptr cam, glm::vec2 cursor) { return false; }
 	virtual bool in_selection_range(glm::vec2 a, glm::vec2 b, bool contained) { return false; }	
 
 	virtual void set_constant() {};

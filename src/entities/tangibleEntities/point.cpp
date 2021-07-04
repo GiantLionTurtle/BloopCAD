@@ -3,7 +3,7 @@
 
 #include <geometry/geometry_3d/plane_abstr.hpp>
 #include <graphics_utils/GLCall.hpp>
-#include <graphics_utils/shadersPool.hpp>
+#include <graphics_utils/ShadersPool.hpp>
 #include <utils/mathUtils.hpp>
 
 point::point(glm::vec3 const& basePoint)
@@ -25,22 +25,22 @@ point::point(glm::vec3 const& basePoint)
 
 void point::init()
 {
-	mVA = std::shared_ptr<vertexArray>(new vertexArray());
-	vertexBufferLayout layout;
+	mVA = std::shared_ptr<VertexArray>(new VertexArray());
+	VertexBufferLayout layout;
 	layout.add_proprety_float(3);
 	mVA->bind();
 
 	glm::vec3 pos_tmp = pos();
-	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(&pos_tmp[0], sizeof(glm::vec3)));
+	mVB = std::shared_ptr<VertexBuffer>(new VertexBuffer(&pos_tmp[0], sizeof(glm::vec3)));
 	mVA->add_buffer(*mVB.get(), layout);
 
-	mShader = shadersPool::get_instance().get("point");
+	mShader = ShadersPool::get_instance().get("point");
 	if(!mShader) {
-		mShader = shader::fromFiles_ptr({
+		mShader = Shader::fromFiles_ptr({
 		{"resources/shaders/pointShader.vert", GL_VERTEX_SHADER},
 		{"resources/shaders/pointShader.geom", GL_GEOMETRY_SHADER}, 
-		{"resources/shaders/pointShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because point is expanded on the gpu
-		shadersPool::get_instance().add("point", mShader);
+		{"resources/shaders/pointShader.frag", GL_FRAGMENT_SHADER}}); // Geometry Shader is needed because point is expanded on the gpu
+		ShadersPool::get_instance().add("point", mShader);
 	}
 	set_name("point");
 }
@@ -80,7 +80,7 @@ void point::update_VB()
 		mParent->notify(UPDATED);
 }
 
-void point::draw_impl(camera_ptr cam, int frame)
+void point::draw_impl(Camera_ptr cam, int frame)
 {
 	if(mRequire_VBUpdate) { // very sketch
 		update_VB();
@@ -111,7 +111,7 @@ void point::draw_impl(camera_ptr cam, int frame)
 	mShader->unbind();
 }
 
-float point::selection_depth(camera_ptr cam, glm::vec2 cursor_pos)
+float point::selection_depth(Camera_ptr cam, glm::vec2 cursor_pos)
 {
 	glm::vec4 screenPos = cam->mvp() * glm::vec4(pos(), 1.0f);
 	glm::vec2 screenPos_2d(	map(screenPos.x / screenPos.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),

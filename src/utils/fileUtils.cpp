@@ -1,6 +1,6 @@
 
 #include "fileUtils.hpp"
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 
 #include <fstream>
 #include <sstream>

@@ -5,9 +5,9 @@
 #include <vector>
 
 /*
-	@struct vertexBufferProprety describes a single proprety of a vertex (position, color, etc..)
+	@struct VertexBufferProprety describes a single proprety of a vertex (position, color, etc..)
 */
-struct vertexBufferProprety {
+struct VertexBufferProprety {
 	unsigned int count; // Number of element in the proprety
 	unsigned int type; // Type of the elements (float, int, etc..)
 	unsigned int normalized; // Whether ot not the proprety is normalized
@@ -21,17 +21,17 @@ struct vertexBufferProprety {
 };
 
 /*
-	@class vertexBufferLayout describes the way propreties are laid out in a vertex buffer
+	@class VertexBufferLayout describes the way propreties are laid out in a vertex buffer
 */
-class vertexBufferLayout {
+class VertexBufferLayout {
 private:
-	std::vector<vertexBufferProprety> mPropreties; // All the propreties of the layout
+	std::vector<VertexBufferProprety> mPropreties; // All the propreties of the layout
 	unsigned int mStride; // The total size in bytes of a vertex with all the propreties
 public:
 	/*
-		@function vertexBufferLayout creates an empty layout
+		@function VertexBufferLayout creates an empty layout
 	*/
-	vertexBufferLayout();
+	VertexBufferLayout();
 
 	/*
 		@function add_proprety_float adds a proprety of type float to the layout
@@ -57,7 +57,7 @@ public:
 
 		@return : All the propreties of the layout
 	*/
-	std::vector<vertexBufferProprety> const& propreties() const { return mPropreties; };
+	std::vector<VertexBufferProprety> const& propreties() const { return mPropreties; };
 	/*
 		@function stride 
 

@@ -3,7 +3,7 @@
 #define SKETCHCONSTRAINT_HPP_
 
 #include <constraintsSolver/expression.hpp>
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 #include "sketchEntity.hpp"
 #include "spriteAnnotation.hpp"
 #include <constraintsSolver/constraint.hpp>

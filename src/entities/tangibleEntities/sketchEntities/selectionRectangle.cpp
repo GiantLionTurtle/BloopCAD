@@ -2,7 +2,7 @@
 #include "selectionRectangle.hpp"
 
 #include <graphics_utils/GLCall.hpp>
-#include <graphics_utils/shadersPool.hpp>
+#include <graphics_utils/ShadersPool.hpp>
 
 selectionRectangle::selectionRectangle(glm::vec2 start, glm::vec2 end, geom_3d::plane_abstr_ptr basePlane_):
 	sketchEntity(basePlane_, -1),
@@ -18,20 +18,20 @@ void selectionRectangle::init()
 {
 	set_name("selection");
 	
-	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(mVertices, sizeof(glm::vec3) * 4)); // Upload the vertices
-	mVA = std::shared_ptr<vertexArray>(new vertexArray());
+	mVB = std::shared_ptr<VertexBuffer>(new VertexBuffer(mVertices, sizeof(glm::vec3) * 4)); // Upload the vertices
+	mVA = std::shared_ptr<VertexArray>(new VertexArray());
 
-	vertexBufferLayout layout;
+	VertexBufferLayout layout;
 	layout.add_proprety_float(3);
 	mVA->bind();
 	mVA->add_buffer(*mVB.get(), layout);
-	mIB = std::shared_ptr<indexBuffer>(new indexBuffer(mIndices, 6));
+	mIB = std::shared_ptr<IndexBuffer>(new IndexBuffer(mIndices, 6));
 
-	// Create the shaders
-	mShader = shadersPool::get_instance().get("plane");
+	// Create the Shaders
+	mShader = ShadersPool::get_instance().get("plane");
 	if(!mShader) {
-		mShader = shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/planeShader.frag");
-		shadersPool::get_instance().add("plane", mShader);
+		mShader = Shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/planeShader.frag");
+		ShadersPool::get_instance().add("plane", mShader);
 	}
 }
 
@@ -77,7 +77,7 @@ void selectionRectangle::set_points(glm::vec2 start_, glm::vec2 end_)
 	set_require_redraw();
 }
 
-void selectionRectangle::draw_impl(camera_ptr cam, int frame)
+void selectionRectangle::draw_impl(Camera_ptr cam, int frame)
 {
 	mShader->bind();
 	glm::vec3 color;

@@ -2,16 +2,16 @@
 #include "constraintAnnotation.hpp"
 
 #include <constraintsSolver/constraint.hpp>
-#include <graphics_utils/textures/image.hpp>
-#include <graphics_utils/shadersPool.hpp>
+#include <graphics_utils/Image.hpp>
+#include <graphics_utils/ShadersPool.hpp>
 #include <graphics_utils/GLCall.hpp>
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 #include <utils/mathUtils.hpp>
 #include <utils/preferences.hpp>
 
 bool constraintAnnotation::kFisrstInst = true;
 glm::vec3 constraintAnnotation::kColorHovered = glm::vec3(0.0f);
-std::map<int, std::shared_ptr<texture>> constraintAnnotation::kTextures = {};
+std::map<int, std::shared_ptr<Texture>> constraintAnnotation::kTextures = {};
 
 constraintAnnotation::constraintAnnotation(geom_3d::plane_abstr_ptr basePlane_, std::shared_ptr<constraint_abstract> constr):
 	sketchEntity(basePlane_, -1),
@@ -40,27 +40,27 @@ void constraintAnnotation::init()
 		switch(tp) {
 		case constraint_abstract::COINCIDENCE:
 			set_name("coincidence_annot");
-			mTexture = std::make_shared<image>("resources/textures/images/icons/sketch/constraints/coincidence.png");
+			mTexture = std::make_shared<Image>("resources/textures/images/icons/sketch/constraints/coincidence.png");
 			break;
 		case constraint_abstract::HORIZONTALITY:
 			set_name("horizontality_annot");
-			mTexture = std::make_shared<image>("resources/textures/images/icons/sketch/constraints/horizontality.png");
+			mTexture = std::make_shared<Image>("resources/textures/images/icons/sketch/constraints/horizontality.png");
 			break;
 		case constraint_abstract::VERTICALITY:
 			set_name("verticality_annot");
-			mTexture = std::make_shared<image>("resources/textures/images/icons/sketch/constraints/verticality.png");
+			mTexture = std::make_shared<Image>("resources/textures/images/icons/sketch/constraints/verticality.png");
 			break;
 		case constraint_abstract::PARALLELISM:
 			set_name("parallelism_annot");
-			mTexture = std::make_shared<image>("resources/textures/images/icons/sketch/constraints/parallelism.png");
+			mTexture = std::make_shared<Image>("resources/textures/images/icons/sketch/constraints/parallelism.png");
 			break;
 		case constraint_abstract::PERPENDICULARITY:
 			set_name("perpendicularity_annot");
-			mTexture = std::make_shared<image>("resources/textures/images/icons/sketch/constraints/perpendicularity.png");
+			mTexture = std::make_shared<Image>("resources/textures/images/icons/sketch/constraints/perpendicularity.png");
 			break;
 		default:
 			set_name("unknown_annot");
-			mTexture = std::make_shared<image>("resources/textures/images/icons/icon.png");
+			mTexture = std::make_shared<Image>("resources/textures/images/icons/icon.png");
 			break;
 		}
 		kTextures[tp] = mTexture;
@@ -69,22 +69,22 @@ void constraintAnnotation::init()
 	}
 
 	mRequire_VBUpdate = false;
-	mVA = std::make_shared<vertexArray>();
-	vertexBufferLayout layout;
+	mVA = std::make_shared<VertexArray>();
+	VertexBufferLayout layout;
 	layout.add_proprety_float(3);
 	mVA->bind();
 
 	glm::vec3 tmpPos = mBasePlane->to_worldPos(mPos + mWorldOffset);
-	mVB = std::make_shared<vertexBuffer>(&tmpPos[0], sizeof(glm::vec3));
+	mVB = std::make_shared<VertexBuffer>(&tmpPos[0], sizeof(glm::vec3));
 	mVA->add_buffer(*mVB, layout);
 
-	mShader = shadersPool::get_instance().get("fixedSizeTexturedQuad");
+	mShader = ShadersPool::get_instance().get("fixedSizeTexturedQuad");
 	if(!mShader) {
-		mShader = shader::fromFiles_ptr({
+		mShader = Shader::fromFiles_ptr({
 		{"resources/shaders/pointShader.vert", GL_VERTEX_SHADER},
 		{"resources/shaders/fixedSizeQuad.geom", GL_GEOMETRY_SHADER}, 
-		{"resources/shaders/annotationShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because point is expanded on the gpu
-		shadersPool::get_instance().add("fixedSizeTexturedQuad", mShader);
+		{"resources/shaders/annotationShader.frag", GL_FRAGMENT_SHADER}}); // Geometry Shader is needed because point is expanded on the gpu
+		ShadersPool::get_instance().add("fixedSizeTexturedQuad", mShader);
 	}
 	if(kFisrstInst) {
 		kColorHovered = preferences::get_instance().get_vec3("sketchEntityColorHovered");
@@ -106,7 +106,7 @@ void constraintAnnotation::print(int depth)
 	}
 	std::cout<<name()<<"[("<<mPos.x<<",  "<<mPos.y<<") ; ("<<mPixelOffset.x<<",  "<<mPixelOffset.y<<")]\n";
 }
-bool constraintAnnotation::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor)
+bool constraintAnnotation::in_selection_range(glm::vec2 planepos, Camera_ptr cam, glm::vec2 cursor)
 {
 	glm::vec4 onscreen_ndc = cam->mvp()	* glm::vec4(mBasePlane->to_worldPos(mPos + mWorldOffset), 1.0f);
 	glm::vec2 onscreen(	map(onscreen_ndc.x / onscreen_ndc.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
@@ -145,7 +145,7 @@ void constraintAnnotation::update_VB()
 	mVB->unbind();
 }
 
-void constraintAnnotation::draw_impl(camera_ptr cam, int frame)
+void constraintAnnotation::draw_impl(Camera_ptr cam, int frame)
 {
 	if(mRequire_VBUpdate) // very sketch
 		update_VB();

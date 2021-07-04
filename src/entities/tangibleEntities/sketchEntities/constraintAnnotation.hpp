@@ -4,7 +4,7 @@
 
 #include <entities/tangibleEntities/sketchEntities/sketchEntity.hpp>
 #include "entityPosSnapshot_abstract.hpp"
-#include <graphics_utils/textures/texture.hpp>
+#include <graphics_utils//Texture.hpp>
 
 #include <map>
 
@@ -16,9 +16,9 @@ class constraintAnnotation : public sketchEntity {
 private:
 	static bool kFisrstInst;
 	static glm::vec3 kColorHovered;
-	static std::map<int, std::shared_ptr<texture>> kTextures;
+	static std::map<int, std::shared_ptr<Texture>> kTextures;
 
-	std::shared_ptr<texture> mTexture;
+	std::shared_ptr<Texture> mTexture;
 	int mWidth, mHeight;
 
 	glm::vec2 mPos, mWorldOffset, mPixelOffset;
@@ -35,7 +35,7 @@ public:
 
 	void print(int depth = 0);
 
-	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);
+	bool in_selection_range(glm::vec2 planepos, Camera_ptr cam, glm::vec2 cursor);
 
 	glm::vec2 pos();
 	void set_pos(glm::vec2 const& pos_);
@@ -48,7 +48,7 @@ public:
 
 	int selection_rank() { return 1; }
 protected:
-	void draw_impl(camera_ptr cam, int frame);
+	void draw_impl(Camera_ptr cam, int frame);
 
 	void exists_impl(bool ex);
 	// void hidden_impl(bool hid);

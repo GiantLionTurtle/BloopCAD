@@ -42,12 +42,12 @@ protected:
 	/*
 		@function draw_impl draws the plane on screen
 
-		@param cam : The camera used for rendering
+		@param cam : The Camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	virtual void draw_impl(camera_ptr cam, int frame);
+	virtual void draw_impl(Camera_ptr cam, int frame);
 	
-	virtual float selection_depth(camera_ptr cam, glm::vec2 cursor_pos);
+	virtual float selection_depth(Camera_ptr cam, glm::vec2 cursor_pos);
 
 	void init_buffers();
 };

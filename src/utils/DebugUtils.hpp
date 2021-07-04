@@ -6,27 +6,27 @@
 #include <fstream>
 
 /*
-	@class errorLogger logs messages in stream and or console streams
+	@class ErrorLogger logs messages in stream and or console streams
 
 	@note : This class is a singleton
 */
-class errorLogger {
+class ErrorLogger {
 private:
 	int mMode; // How to log things
 	std::ofstream mFileStream; // File stream if needed
 public:
 	enum modes { CERR = 1 << 0, FILE = 1 << 1 }; // All the possible modes	
 
-	errorLogger(const errorLogger&) = delete;
+	ErrorLogger(const ErrorLogger&) = delete;
 
 	/*
 		@function get_instance gives the singleton instance
 
 		@return : The singleton instance
 	*/
-	static errorLogger& get_instance()
+	static ErrorLogger& get_instance()
 	{
-		static errorLogger logger;
+		static ErrorLogger logger;
 		return logger;
 	}
 
@@ -68,9 +68,9 @@ public:
 	}
 private:
 	/*
-		@function errorLogger creates the error logger
+		@function ErrorLogger creates the error logger
 	*/
-	errorLogger()
+	ErrorLogger()
 	{}
 
 	/*
@@ -90,21 +90,21 @@ private:
 };
 
 // Macro chooser inspired by https://stackoverflow.com/questions/3046889/optional-parameters-with-c-macros
-#define LOG_ERROR_EMPTY()				errorLogger::get_instance().log("ERROR", __FILE__, __FUNCTION__, __LINE__, "Unknown error."); exit(EXIT_FAILURE)
-#define LOG_ERROR_EXIT_FAILURE(msg) 	errorLogger::get_instance().log("ERROR", __FILE__, __FUNCTION__, __LINE__, msg); exit(EXIT_FAILURE)
-#define LOG_ERROR_CODE(msg, exitCode)	errorLogger::get_instance().log("ERROR", __FILE__, __FUNCTION__, __LINE__, msg); exit(exitCode)
+#define LOG_ERROR_EMPTY()				ErrorLogger::get_instance().log("ERROR", __FILE__, __FUNCTION__, __LINE__, "Unknown error."); exit(EXIT_FAILURE)
+#define LOG_ERROR_EXIT_FAILURE(msg) 	ErrorLogger::get_instance().log("ERROR", __FILE__, __FUNCTION__, __LINE__, msg); exit(EXIT_FAILURE)
+#define LOG_ERROR_CODE(msg, exitCode)	ErrorLogger::get_instance().log("ERROR", __FILE__, __FUNCTION__, __LINE__, msg); exit(exitCode)
 #define LOG_ERROR_CHOOSER(nothing, msg, exitCode, option, ...) option
 
 #define LOG_ERROR(...)				LOG_ERROR_CHOOSER(, ##__VA_ARGS__, LOG_ERROR_CODE(__VA_ARGS__), LOG_ERROR_EXIT_FAILURE(__VA_ARGS__), LOG_ERROR_EMPTY(__VA_ARGS__));
-#define LOG_WARNING(msg) 			errorLogger::get_instance().log("WARNING", __FILE__, __FUNCTION__, __LINE__, msg)
-#define BLOOP_MARKER				errorLogger::get_instance().log("MARKER", __FILE__, __FUNCTION__, __LINE__, "")
+#define LOG_WARNING(msg) 			ErrorLogger::get_instance().log("WARNING", __FILE__, __FUNCTION__, __LINE__, msg)
+#define BLOOP_MARKER				ErrorLogger::get_instance().log("MARKER", __FILE__, __FUNCTION__, __LINE__, "")
 
 // #define RELEASE_MODE
 #ifdef RELEASE_MODE
 #define DEBUG_ASSERT(condition, reaction)
 #else
 //#define DEBUG_ASSERT(condition, reaction) std::cout<<"a.\n"; if(static_cast<bool>(condition)) reaction; std::cout<<"b\n";
-#define DEBUG_ASSERT(x, msg) { if(!static_cast<bool>(x)) { errorLogger::get_instance().log("Assertion failed: ", __FILE__, __FUNCTION__, __LINE__, msg); exit(EXIT_FAILURE); } }
+#define DEBUG_ASSERT(x, msg) { if(!static_cast<bool>(x)) { ErrorLogger::get_instance().log("Assertion failed: ", __FILE__, __FUNCTION__, __LINE__, msg); exit(EXIT_FAILURE); } }
 #endif // !RELEASE_MODE
 
 #endif // !ERRORLOGGER_HPP_

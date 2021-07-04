@@ -34,7 +34,7 @@ public:
 
 	virtual entityPosSnapshot_ptr posSnapshot();
 
-	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);
+	bool in_selection_range(glm::vec2 planepos, Camera_ptr cam, glm::vec2 cursor);
 	bool in_selection_range(glm::vec2 a, glm::vec2 b, bool contained);
 
 	void set_constant();
@@ -56,7 +56,7 @@ public:
 	
 	void set_exists_vars(bool ex);
 protected:
-	void draw_impl(camera_ptr cam, int frame);
+	void draw_impl(Camera_ptr cam, int frame);
 
 	void post_set_behavior();
 	

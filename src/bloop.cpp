@@ -1,6 +1,6 @@
 
 #include "bloop.hpp"
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 
 statusBar::statusBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder):
 	Gtk::Box(cobject)
@@ -59,7 +59,7 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	builder->get_widget("sideBar", mSideBar);
 
 	if(mHome && mDocumentIndexer) {
-		try { // Fetch the icon and the home image
+		try { // Fetch the icon and the home Image
 			mHomePage = new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/normal/chat.png"));
 			mHome->add_overlay(*mHomePage);
 			set_icon(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/icon.png", 400, 400));

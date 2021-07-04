@@ -39,8 +39,8 @@ bool pan_tool::manage_mouse_move(GdkEventMotion* event)
 		glm::vec2 pos(event->x, -event->y);
 		if(is_moving) {
 			glm::vec2 abs_mov(pos.x-prevPos.x, pos.y-prevPos.y);
-			float speed_ratio = (float)mEnv->state()->cam->zoom() * 0.002f; // Since the zoom of the camera isn't really retrievable yet, this is just an arbitrary factor * 1.0f
-			camera_ptr cam = mEnv->state()->cam;
+			float speed_ratio = (float)mEnv->state()->cam->zoom() * 0.002f; // Since the zoom of the Camera isn't really retrievable yet, this is just an arbitrary factor * 1.0f
+			Camera_ptr cam = mEnv->state()->cam;
 			cam->internalPos() -= glm::vec3(abs_mov * speed_ratio, 0.0f);
 		} else {
 			is_moving = true; // Now moving, first point recorded

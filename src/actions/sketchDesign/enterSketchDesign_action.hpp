@@ -14,7 +14,7 @@ private:
 	sketch_ptr mTarget;
 	entity_ptr mInitialTarget;
 public:
-	enterSketchDesign_action(sketch_ptr target, bool set_camera = false);
+	enterSketchDesign_action(sketch_ptr target, bool set_Camera = false);
 
 	/*
 		@function do_work switches to desired workspace if it exists

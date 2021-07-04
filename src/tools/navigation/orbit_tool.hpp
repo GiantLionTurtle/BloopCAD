@@ -5,7 +5,7 @@
 #include <tools/tool.hpp>
 
 /*
-	@class orbit_tool describes the orbit function to rotate the camera around the center of the scene
+	@class orbit_tool describes the orbit function to rotate the Camera around the center of the scene
 	@parent : tool_abstract
 */
 class orbit_tool : public tool<workspace> {
@@ -30,7 +30,7 @@ public:
 	virtual void init();
 
 	/*
-		@function manage_mouse_move moves the camera around if the right conditions are met
+		@function manage_mouse_move moves the Camera around if the right conditions are met
 
 		@param event : The event handed out by gtk
 	*/

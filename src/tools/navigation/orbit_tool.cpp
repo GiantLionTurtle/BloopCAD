@@ -37,7 +37,7 @@ bool orbit_tool::manage_mouse_move(GdkEventMotion* event)
 		glm::vec2 pos(event->x, -event->y);
 		if(is_moving) {
 			glm::vec2 abs_mov = (pos-prevPos) * 0.005f; // Arbitrary scaling of the movement
-			std::shared_ptr<camera> cam = mEnv->state()->cam; // Convenience temporary
+			std::shared_ptr<Camera> cam = mEnv->state()->cam; // Convenience temporary
 			cam->set_orientation(cam->orientation() + glm::vec3(
 				-abs_mov.y, 
 				(cam->flipped() ? -abs_mov.x : abs_mov.x), // When flipped, the rotation around the y axis is flipped for usage consistency
@@ -47,7 +47,7 @@ bool orbit_tool::manage_mouse_move(GdkEventMotion* event)
 		}
 		prevPos = pos; // Record pos
 	} else {
-		is_moving = false; // The mouse might be moving, but not the camera
+		is_moving = false; // The mouse might be moving, but not the Camera
 	}
 	return true;
 } 

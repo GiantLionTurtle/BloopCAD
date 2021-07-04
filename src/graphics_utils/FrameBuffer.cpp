@@ -1,7 +1,7 @@
 
-#include "frameBuffer.hpp"
+#include "FrameBuffer.hpp"
 
-frameBuffer::frameBuffer(unsigned int width, unsigned int height):
+FrameBuffer::FrameBuffer(unsigned int width, unsigned int height):
 	mTexture(width, height, GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST, 4) // No need to get fancy with interpolation, it will likely be the exact same size as the screen
 {
 #ifdef BLOOP_TEST_SELCTIONCOLORS_ON_MAINBUFFER
@@ -26,7 +26,7 @@ frameBuffer::frameBuffer(unsigned int width, unsigned int height):
 	// Assign the render buffer to the frame buffer (and therefore the texture)
 	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rb));
 	
-	// Set the output of the fragment shaders to our render buffer
+	// Set the output of the fragment Shaders to our render buffer
 	unsigned int draw_bufs[] = {GL_COLOR_ATTACHMENT0};
 	GLCall(glDrawBuffers(1, draw_bufs));
 
@@ -40,12 +40,12 @@ frameBuffer::frameBuffer(unsigned int width, unsigned int height):
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, initialFrameBuffer));
 #endif
 }
-frameBuffer::~frameBuffer()
+FrameBuffer::~FrameBuffer()
 {
 	// The destructor of mTexture should clean everything up
 }
 
-void frameBuffer::bind() const
+void FrameBuffer::bind() const
 {
 #ifdef BLOOP_TEST_SELCTIONCOLORS_ON_MAINBUFFER
 #warning "Selection colors will be drawn on main buffer" // Do nothing to keeep it on the main frame buffer (screen)
@@ -53,7 +53,7 @@ void frameBuffer::bind() const
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, mRendererID));
 #endif
 }
-void frameBuffer::unbind(unsigned int defaultID) const
+void FrameBuffer::unbind(unsigned int defaultID) const
 {
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, defaultID)); // Bind to an id (defaults is 0)
 }

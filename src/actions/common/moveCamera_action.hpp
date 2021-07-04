@@ -3,14 +3,14 @@
 #define MOVECAMERA_ACTION_HPP_
 
 #include <actions/action.hpp>
-#include <graphics_utils/camera.hpp>
+#include <graphics_utils/Camera.hpp>
 #include <utils/animatable.hpp>
 #include <geometry/geometry_3d/plane_abstr.hpp>
 
 class moveCamera_action : public action {
 private:
-	camera_ptr mCamera;
-	cameraState mInitState, mTargetState;
+	Camera_ptr mCamera;
+	CameraState mInitState, mTargetState;
 	bool mStarted;
 	animatable<glm::quat> mRotation;
 	animatable<glm::vec3> mTranslation;
@@ -18,17 +18,17 @@ private:
 	glm::vec3 mFinalOrientation;
 	long mDuration;
 public:
-	moveCamera_action(camera_ptr cam, cameraState target, long duration_ms);
+	moveCamera_action(Camera_ptr cam, CameraState target, long duration_ms);
 
 	static std::shared_ptr<action> create_from_facingPlane(	geom_3d::plane_abstr_ptr toFace, float dist_to_plane, 
-															cameraState const& camSt, camera_ptr cam);
-	static std::shared_ptr<action> create_from_facingPlane(geom_3d::plane_abstr_ptr toFace, float dist_to_plane, camera_ptr cam);
+															CameraState const& camSt, Camera_ptr cam);
+	static std::shared_ptr<action> create_from_facingPlane(geom_3d::plane_abstr_ptr toFace, float dist_to_plane, Camera_ptr cam);
 
 	virtual bool do_work(document* caller);
 	virtual bool undo_work(document* caller);
 private:
-	bool move_camera();
-	void compute_animatables(cameraState const& state);
+	bool move_Camera();
+	void compute_animatables(CameraState const& state);
 };
 
 #endif

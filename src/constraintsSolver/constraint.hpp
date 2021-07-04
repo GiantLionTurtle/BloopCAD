@@ -3,7 +3,7 @@
 #define CONSTRAINT_HPP_
 
 #include "expression.hpp"
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 #include <baseObject.hpp>
 
 #include <array>

@@ -1,6 +1,6 @@
 
 #include "tool.hpp"
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 
 void tool_abstract::load_icon(std::string const& loc)
 {

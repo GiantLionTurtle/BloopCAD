@@ -1,65 +1,65 @@
 
-#include "shader.hpp"
+#include "Shader.hpp"
 #include "GLCall.hpp"
 #include <utils/fileUtils.hpp>
 
 #include <fstream>
 #include <filesystem>
 
-shader::shader(std::string const& vertexShaderSource, std::string const& fragmentShaderSource):
+Shader::Shader(std::string const& vertexShaderSource, std::string const& fragmentShaderSource):
 	mLastUsedAtFrame(0)
 {
 	mRendererID = createShader(vertexShaderSource, fragmentShaderSource);
 }
-shader::shader(unsigned int id) :
+Shader::Shader(unsigned int id) :
 	mRendererID(id),
 	mLastUsedAtFrame(0)
 {
 
 }
-shader::shader() :
+Shader::Shader() :
 	mRendererID(0),
 	mLastUsedAtFrame(0)
 {
 	
 }
-shader::~shader()
+Shader::~Shader()
 {
 	if(valid()) {
 		GLCall(glDeleteShader(mRendererID));
 	}
 }
 
-shader shader::fromFiles(std::string const& vertexShaderFilePath, std::string const& fragmentShaderFilePath)
+Shader Shader::fromFiles(std::string const& vertexShaderFilePath, std::string const& fragmentShaderFilePath)
 {
 	// Aquire the source code
 	std::string vertexShaderSource    = readFromFile(vertexShaderFilePath);
 	std::string fragmentShaderSource  = readFromFile(fragmentShaderFilePath);
 
-	// Actually create the shader
-	return shader(createShader(vertexShaderSource, fragmentShaderSource));
+	// Actually create the Shader
+	return Shader(createShader(vertexShaderSource, fragmentShaderSource));
 }
-shader shader::fromFiles(std::vector<shaderSource> shaderPaths)
+Shader Shader::fromFiles(std::vector<ShaderSource> ShaderPaths)
 {
-	if(shaderPaths.size() < 2 || shaderPaths.size() > 5) { // Those are invalid pipelines
-		LOG_WARNING("Invalid number of paths given, empty shader returned");
-		return shader();
+	if(ShaderPaths.size() < 2 || ShaderPaths.size() > 5) { // Those are invalid pipelines
+		LOG_WARNING("Invalid number of paths given, empty Shader returned");
+		return Shader();
 	}
 
-	// Kind of dirty, but shaderPaths contains path to source files and it latter contains the actual source code
-	for(int i = 0; i < shaderPaths.size(); ++i) {
+	// Kind of dirty, but ShaderPaths contains path to source files and it latter contains the actual source code
+	for(int i = 0; i < ShaderPaths.size(); ++i) {
 		// Aquire the source code
-		shaderPaths[i].source = readFromFile(shaderPaths[i].source);
+		ShaderPaths[i].source = readFromFile(ShaderPaths[i].source);
 	}
 
-	// Create the shader
-	return shader(createShader(shaderPaths));
+	// Create the Shader
+	return Shader(createShader(ShaderPaths));
 }
-shader shader::fromFile(std::string const& resourceFilePath)
+Shader Shader::fromFile(std::string const& resourceFilePath)
 {
 	std::ifstream stream(resourceFilePath);
 	if(!stream) // Check if file exists
-		return shader();
+		return Shader();
 
 	// Consider every line of the file as a path to source code
 	int i = 0;
@@ -80,44 +80,44 @@ shader shader::fromFile(std::string const& resourceFilePath)
 			std::filesystem::path(resourceFolderPath).append(filePaths[0]).string(), 
 			std::filesystem::path(resourceFolderPath).append(filePaths[1]).string());
 	} else {
-		LOG_WARNING("more than two shaders stages from single file not supported, empty shader returned.");
+		LOG_WARNING("more than two Shaders stages from single file not supported, empty Shader returned.");
 	}
 
-	// If file is invalid, return an empty shader
-	return shader();
+	// If file is invalid, return an empty Shader
+	return Shader();
 }
 
-std::shared_ptr<shader> shader::fromFiles_ptr(std::string const& vertexShaderFilePath, std::string const& fragmentShaderFilePath)
+std::shared_ptr<Shader> Shader::fromFiles_ptr(std::string const& vertexShaderFilePath, std::string const& fragmentShaderFilePath)
 {
 	// Aquire the source code, might be a bit redundant, from the non-ptr version, but I am uncertain of how to reuse the code
-	// Maybe create the shader normaly and use it's id to create the pointer while ensuring that the destructor doesn't deallocate the handle?
+	// Maybe create the Shader normaly and use it's id to create the pointer while ensuring that the destructor doesn't deallocate the handle?
 	std::string vertexShaderSource    = readFromFile(vertexShaderFilePath);
 	std::string fragmentShaderSource  = readFromFile(fragmentShaderFilePath);
 
-	// Create the shader
-	return std::shared_ptr<shader>(new shader(createShader(vertexShaderSource, fragmentShaderSource)));
+	// Create the Shader
+	return std::shared_ptr<Shader>(new Shader(createShader(vertexShaderSource, fragmentShaderSource)));
 }
-std::shared_ptr<shader> shader::fromFiles_ptr(std::vector<shaderSource> shaderPaths)
+std::shared_ptr<Shader> Shader::fromFiles_ptr(std::vector<ShaderSource> ShaderPaths)
 {
 	// Prety much the same as the non-ptr version...
-	if(shaderPaths.size() < 2 || shaderPaths.size() > 5) {
-		LOG_WARNING("Invalid number of paths in shader::fromFiles, empty shader returned");
-		return std::shared_ptr<shader>(nullptr);
+	if(ShaderPaths.size() < 2 || ShaderPaths.size() > 5) {
+		LOG_WARNING("Invalid number of paths in Shader::fromFiles, empty Shader returned");
+		return std::shared_ptr<Shader>(nullptr);
 	}
 
 	// Just as wack with the path => source thing
-	for(int i = 0; i < shaderPaths.size(); ++i) {
-		shaderPaths[i].source = readFromFile(shaderPaths[i].source);
+	for(int i = 0; i < ShaderPaths.size(); ++i) {
+		ShaderPaths[i].source = readFromFile(ShaderPaths[i].source);
 	}
 
-	// Create the shader
-	return std::shared_ptr<shader>(new shader(createShader(shaderPaths)));
+	// Create the Shader
+	return std::shared_ptr<Shader>(new Shader(createShader(ShaderPaths)));
 }
-std::shared_ptr<shader> shader::fromFile_ptr(std::string const& resourceFilePath)
+std::shared_ptr<Shader> Shader::fromFile_ptr(std::string const& resourceFilePath)
 {
 	std::ifstream stream(resourceFilePath);
 	if(!stream) // Ensure that the file exist, in the ptr version, it has the luxury of returning nullptr
-		return std::shared_ptr<shader>(nullptr);
+		return std::shared_ptr<Shader>(nullptr);
 
 	// Putting each line as a path
 	int i = 0;
@@ -138,27 +138,27 @@ std::shared_ptr<shader> shader::fromFile_ptr(std::string const& resourceFilePath
 			std::filesystem::path(resourceFolderPath).append(filePaths[0]).string(), 
 			std::filesystem::path(resourceFolderPath).append(filePaths[1]).string());
 	} else {
-		LOG_WARNING("More than two shaders stages from single file not supported, empty shader returned.");
+		LOG_WARNING("More than two Shaders stages from single file not supported, empty Shader returned.");
 	}
 
 	// Return nullptr if file is invalid	
-	return std::shared_ptr<shader>(nullptr);
+	return std::shared_ptr<Shader>(nullptr);
 }
 
-void shader::bind() const
+void Shader::bind() const
 {
 	GLCall(glUseProgram(mRendererID)); // The abstraction can make the API more consistent (bind everywhere)
 }
-void shader::unbind() const
+void Shader::unbind() const
 {
 #ifndef RELEASE_MODE // No unecesary bind in release mode, but useful in debug
 	GLCall(glUseProgram(0));
 #endif
 }
 
-unsigned int shader::compileShader(unsigned int type, std::string const& source)
+unsigned int Shader::compileShader(unsigned int type, std::string const& source)
 {
-	// Create, assign source and compile shader 
+	// Create, assign source and compile Shader 
 	GLCall(unsigned int id = glCreateShader(type));
 	const char* src = source.c_str();
 	GLCall(glShaderSource(id, 1, &src, nullptr));
@@ -176,16 +176,16 @@ unsigned int shader::compileShader(unsigned int type, std::string const& source)
 		GLCall(glGetShaderInfoLog(id, length, &length, (GLchar*)message.c_str()));
 		LOG_WARNING("Failed to compile " +
 			(type == GL_VERTEX_SHADER ? std::string("vertex") : (type == GL_FRAGMENT_SHADER ? std::string("fragment") : std::string("geometry")))
-			+ " shader: " + message);
+			+ " Shader: " + message);
 		return 0;
 	}
 
-	// Return the handle to the compiled shader
+	// Return the handle to the compiled Shader
 	return id;
 }
-unsigned int shader::createShader(std::string const& vertexShaderSource, std::string const& fragmentShaderSource)
+unsigned int Shader::createShader(std::string const& vertexShaderSource, std::string const& fragmentShaderSource)
 {
-	// Compile both expected shaders
+	// Compile both expected Shaders
 	GLCall(unsigned int program = glCreateProgram());
 	unsigned int vertexShader   = compileShader(GL_VERTEX_SHADER, vertexShaderSource);
 	unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
@@ -194,7 +194,7 @@ unsigned int shader::createShader(std::string const& vertexShaderSource, std::st
 		return 0;
 	}
 
-	// Link shader program
+	// Link Shader program
 	GLCall(glAttachShader(program, vertexShader));
 	GLCall(glAttachShader(program, fragmentShader));
 	GLCall(glLinkProgram(program));
@@ -210,7 +210,7 @@ unsigned int shader::createShader(std::string const& vertexShaderSource, std::st
 		std::string message;
 		message.reserve(length);
 		GLCall(glGetProgramInfoLog(program, length, &length, (GLchar*)message.c_str()));
-		LOG_WARNING("Failed to link shader program: \"" + message + "\"");
+		LOG_WARNING("Failed to link Shader program: \"" + message + "\"");
 
 		GLCall(glDetachShader(program, vertexShader));
 		GLCall(glDetachShader(program, fragmentShader));
@@ -223,37 +223,37 @@ unsigned int shader::createShader(std::string const& vertexShaderSource, std::st
 		return 0;
 	}
 
-	// Delete individual parts of the shader program to not clog up openGL
+	// Delete individual parts of the Shader program to not clog up openGL
 	GLCall(glDetachShader(program, vertexShader));
 	GLCall(glDetachShader(program, fragmentShader));
 
 	GLCall(glDeleteShader(vertexShader));
 	GLCall(glDeleteShader(fragmentShader));
 
-	// Return the shader program ID
+	// Return the Shader program ID
 	return program;
 }
-unsigned int shader::createShader(std::vector<shaderSource> const& shaderSources)
+unsigned int Shader::createShader(std::vector<ShaderSource> const& ShaderSources)
 {
-	if(shaderSources.size() < 2 || shaderSources.size() > 5) { // Check if the number of shaders in the pipeline is valid, might be a bit redundant..
-		LOG_WARNING("Invalid number of paths in shader::fromFiles, empty shader returned");
+	if(ShaderSources.size() < 2 || ShaderSources.size() > 5) { // Check if the number of Shaders in the pipeline is valid, might be a bit redundant..
+		LOG_WARNING("Invalid number of paths in Shader::fromFiles, empty Shader returned");
 		return 0;
 	}
 
-	// Compile all shaders (max of 5 in a valid pipeling)
-	unsigned int shaders[5];
-	for(int i = 0; i < shaderSources.size(); ++i) {
-		shaders[i] = compileShader(shaderSources[i].type, shaderSources[i].source);
-		if(!shaders[i]) {
-			LOG_WARNING("could not compile shader stage " + std::to_string(i) + ", empty shader returned");
+	// Compile all Shaders (max of 5 in a valid pipeling)
+	unsigned int Shaders[5];
+	for(int i = 0; i < ShaderSources.size(); ++i) {
+		Shaders[i] = compileShader(ShaderSources[i].type, ShaderSources[i].source);
+		if(!Shaders[i]) {
+			LOG_WARNING("could not compile Shader stage " + std::to_string(i) + ", empty Shader returned");
 		}
 	}
 
-	// Create shader program and link shaders
+	// Create Shader program and link Shaders
 	GLCall(unsigned int program = glCreateProgram());	
 	// TODO: check if for loops can be combined
-	for(int i = 0; i < shaderSources.size(); ++i) {
-		GLCall(glAttachShader(program, shaders[i]));
+	for(int i = 0; i < ShaderSources.size(); ++i) {
+		GLCall(glAttachShader(program, Shaders[i]));
 	}
 	GLCall(glLinkProgram(program));
 	GLCall(glValidateProgram(program));
@@ -268,15 +268,15 @@ unsigned int shader::createShader(std::vector<shaderSource> const& shaderSources
 		std::string message;
 		message.reserve(length);
 		GLCall(glGetProgramInfoLog(program, length, &length, (GLchar *)message.c_str()));
-		LOG_WARNING("Failed to link shader program: \"" + message + "\"");
+		LOG_WARNING("Failed to link Shader program: \"" + message + "\"");
 
 		// Deallocate and delete everything if there was an error
 		// TODO: check if for loops can be combined
-		for(int i = 0; i < shaderSources.size(); ++i) {
-			GLCall(glDetachShader(program, shaders[i]));
+		for(int i = 0; i < ShaderSources.size(); ++i) {
+			GLCall(glDetachShader(program, Shaders[i]));
 		}
-		for(int i = 0; i < shaderSources.size(); ++i) {
-			GLCall(glDeleteShader(shaders[i]));
+		for(int i = 0; i < ShaderSources.size(); ++i) {
+			GLCall(glDeleteShader(Shaders[i]));
 		}
 
 		GLCall(glDeleteProgram(program));
@@ -284,58 +284,58 @@ unsigned int shader::createShader(std::vector<shaderSource> const& shaderSources
 		return 0;
 	}
 
-	// Delete individual parts of the shader program to not clog up openGL
+	// Delete individual parts of the Shader program to not clog up openGL
 	// TODO: check if for loops can be combined
-	for(int i = 0; i < shaderSources.size(); ++i) {
-		GLCall(glDetachShader(program, shaders[i]));
+	for(int i = 0; i < ShaderSources.size(); ++i) {
+		GLCall(glDetachShader(program, Shaders[i]));
 	}
-	for(int i = 0; i < shaderSources.size(); ++i) {
-		GLCall(glDeleteShader(shaders[i]));
+	for(int i = 0; i < ShaderSources.size(); ++i) {
+		GLCall(glDeleteShader(Shaders[i]));
 	}
 
-	// Return the created shader program
+	// Return the created Shader program
 	return program;
 }
 
-void shader::setUniform1i(std::string const& name, int v0)
+void Shader::setUniform1i(std::string const& name, int v0)
 {
 	GLCall(glUniform1i(getUniformLocation(name), v0));
 }
-void shader::setUniform1f(std::string const& name, float v0)
+void Shader::setUniform1f(std::string const& name, float v0)
 {
 	GLCall(glUniform1f(getUniformLocation(name), v0));
 }
-void shader::setUniform2f(std::string const& name, float v0, float v1)
+void Shader::setUniform2f(std::string const& name, float v0, float v1)
 {
 	GLCall(glUniform2f(getUniformLocation(name), v0, v1));
 }
-void shader::setUniform2f(std::string const& name, glm::vec2 vec2)
+void Shader::setUniform2f(std::string const& name, glm::vec2 vec2)
 {
 	GLCall(glUniform2f(getUniformLocation(name), vec2.x, vec2.y));
 }
-void shader::setUniform3f(std::string const& name, float v0, float v1, float v2)
+void Shader::setUniform3f(std::string const& name, float v0, float v1, float v2)
 {
 	GLCall(glUniform3f(getUniformLocation(name), v0, v1, v2));
 }
-void shader::setUniform3f(std::string const& name, glm::vec3 vec3)
+void Shader::setUniform3f(std::string const& name, glm::vec3 vec3)
 {
 	GLCall(glUniform3f(getUniformLocation(name), vec3.x, vec3.y, vec3.z));
 }
-void shader::setUniform4f(std::string const& name, float v0, float v1, float v2, float v3)
+void Shader::setUniform4f(std::string const& name, float v0, float v1, float v2, float v3)
 {
 	GLCall(glUniform4f(getUniformLocation(name), v0, v1, v2, v3));
 }
-void shader::setUniform4f(std::string const& name, glm::vec4 vec3)
+void Shader::setUniform4f(std::string const& name, glm::vec4 vec3)
 {
 	GLCall(glUniform4f(getUniformLocation(name), vec3.x, vec3.y, vec3.z, vec3.w));
 }
 
-void shader::setUniformMat4f(std::string const& name, glm::mat4 const& matrix)
+void Shader::setUniformMat4f(std::string const& name, glm::mat4 const& matrix)
 {
 	GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
 }
 
-int shader::getUniformLocation(std::string const& name)
+int Shader::getUniformLocation(std::string const& name)
 {
 	if(mUniformCache.find(name) != mUniformCache.end()) // Check if the uniform's location is already cached 
 		return mUniformCache[name];

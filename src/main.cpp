@@ -1,5 +1,5 @@
 
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 #include <utils/preferences.hpp>
 #include <utils/conversionsUtils.hpp>
 
@@ -22,7 +22,7 @@
 // https://stackoverflow.com/questions/42115586/how-to-add-a-hover-effect-to-a-gtktreeview-cell
 int main(int argc, char *argv[])
 {
-	errorLogger::get_instance().init(); // Init the error logger singleton
+	ErrorLogger::get_instance().init(); // Init the error logger singleton
 	preferences::get_instance().load_from_file("resources/configs/configs.xml"); // Init the preferences service singleton
 
 	auto app = Gtk::Application::create(argc, argv, ""); // Create an application 

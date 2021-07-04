@@ -2,7 +2,7 @@
 #ifndef PREFERENCES_HPP_
 #define PREFERENCES_HPP_
 
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 
 #include <glm/glm.hpp>
 

@@ -2,8 +2,8 @@
 #include "sketchLine.hpp"
 #include "sketchPoint.hpp"
 
-#include <graphics_utils/shadersPool.hpp>
-#include <utils/errorLogger.hpp>
+#include <graphics_utils/ShadersPool.hpp>
+#include <utils/DebugUtils.hpp>
 #include <utils/mathUtils.hpp>
 #include <utils/preferences.hpp>
 #include <graphics_utils/GLCall.hpp>
@@ -75,22 +75,22 @@ void sketchLine::init()
 	mLength2 = (pow(mA->x()-mB->x(), 2.0) + pow(mA->y()-mB->y(), 2.0));
 
 	set_name("line");
-	mVA = std::shared_ptr<vertexArray>(new vertexArray());
-	vertexBufferLayout layout;
+	mVA = std::shared_ptr<VertexArray>(new VertexArray());
+	VertexBufferLayout layout;
 	layout.add_proprety_float(3);
 	mVA->bind();
 
 	glm::vec3 tmp[2] = { mBasePlane->to_worldPos(mA->pos()), mBasePlane->to_worldPos(mB->pos()) };
-	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(&tmp[0], sizeof(glm::vec3) * 2));
+	mVB = std::shared_ptr<VertexBuffer>(new VertexBuffer(&tmp[0], sizeof(glm::vec3) * 2));
 	mVA->add_buffer(*mVB.get(), layout);
 
-	mShader = shadersPool::get_instance().get("line");
+	mShader = ShadersPool::get_instance().get("line");
 	if(!mShader) {
-		mShader = shader::fromFiles_ptr({
+		mShader = Shader::fromFiles_ptr({
 		{"resources/shaders/lineShader.vert", GL_VERTEX_SHADER},
 		{"resources/shaders/lineShader.geom", GL_GEOMETRY_SHADER}, 
-		{"resources/shaders/lineShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because line is expanded on the gpu
-		shadersPool::get_instance().add("line", mShader);
+		{"resources/shaders/lineShader.frag", GL_FRAGMENT_SHADER}}); // Geometry Shader is needed because line is expanded on the gpu
+		ShadersPool::get_instance().add("line", mShader);
 	}
 	if(kFisrstInst) {
 		kSelDist2 = preferences::get_instance().get_float("seldistcurve2");
@@ -159,7 +159,7 @@ entityPosSnapshot_ptr sketchLine::posSnapshot()
 	return std::make_shared<linePosSnapshot>(shared_from_this());
 }
 
-bool sketchLine::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor)
+bool sketchLine::in_selection_range(glm::vec2 planepos, Camera_ptr cam, glm::vec2 cursor)
 {
 	glm::vec4 onscreen_ndc = cam->mvp()	* glm::vec4(mBasePlane->to_worldPos(closest_to_point(planepos)), 1.0f);
 	glm::vec2 onscreen(	map(onscreen_ndc.x / onscreen_ndc.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
@@ -233,7 +233,7 @@ void sketchLine::set_exists_vars(bool ex)
 	mB->set_exists_vars(ex);
 }
 
-void sketchLine::draw_impl(camera_ptr cam, int frame)
+void sketchLine::draw_impl(Camera_ptr cam, int frame)
 {
 	mShader->bind();
 	glm::vec4 color = glm::vec4(kColor, 1.0f);

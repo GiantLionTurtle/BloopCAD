@@ -2,13 +2,13 @@
 #include "moveCamera_action.hpp"
 
 #include <utils/mathUtils.hpp>
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 #include <utils/preferences.hpp>
 #include <document.hpp>
 
 #include <glm/gtx/vector_angle.hpp>
 
-moveCamera_action::moveCamera_action(camera_ptr cam, cameraState target, long duration_ms):
+moveCamera_action::moveCamera_action(Camera_ptr cam, CameraState target, long duration_ms):
 	mCamera(cam),
 	mTargetState({target.pos, glm::normalize(target.right), glm::normalize(target.up)}),
 	mStarted(false),
@@ -21,17 +21,17 @@ moveCamera_action::moveCamera_action(camera_ptr cam, cameraState target, long du
 }
 
 std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	geom_3d::plane_abstr_ptr toFace, float dist_to_plane, 
-																				cameraState const& camSt, camera_ptr cam)
+																				CameraState const& camSt, Camera_ptr cam)
 {
 	glm::vec3 right_plane, up_plane; // The v & w vectors that will be used for the sketch's plane
-	camera::get_alignedPlaneVectors(camSt, toFace, right_plane, up_plane, true);
+	Camera::get_alignedPlaneVectors(camSt, toFace, right_plane, up_plane, true);
 
-	cameraState targetCamState = {  toFace->origin() + glm::normalize(glm::cross(right_plane, up_plane)) * dist_to_plane, right_plane, up_plane };
+	CameraState targetCamState = {  toFace->origin() + glm::normalize(glm::cross(right_plane, up_plane)) * dist_to_plane, right_plane, up_plane };
 	return std::shared_ptr<action>(new moveCamera_action(cam, 
 	targetCamState, 
 	preferences::get_instance().get_long("camtrans")));
 }
-std::shared_ptr<action> moveCamera_action::create_from_facingPlane(geom_3d::plane_abstr_ptr toFace, float dist_to_plane, camera_ptr cam)
+std::shared_ptr<action> moveCamera_action::create_from_facingPlane(geom_3d::plane_abstr_ptr toFace, float dist_to_plane, Camera_ptr cam)
 {
 	return create_from_facingPlane(toFace, dist_to_plane, cam->state(), cam);
 }
@@ -47,7 +47,7 @@ bool moveCamera_action::do_work(document* caller)
 		mStarted = true;
 	}
 
-	return move_camera();
+	return move_Camera();
 }
 bool moveCamera_action::undo_work(document* caller)
 {
@@ -59,10 +59,10 @@ bool moveCamera_action::undo_work(document* caller)
 		mStarted = true;
 	}
 
-	return move_camera();
+	return move_Camera();
 }
 
-bool moveCamera_action::move_camera()
+bool moveCamera_action::move_Camera()
 {
 	mRotation.update();
 	mTranslation.update();
@@ -77,14 +77,14 @@ bool moveCamera_action::move_camera()
 	return false;
 }
 
-void moveCamera_action::compute_animatables(cameraState const& state)
+void moveCamera_action::compute_animatables(CameraState const& state)
 {
 	float angle_x, angle_y;
-	cameraState currState = mCamera->state();
+	CameraState currState = mCamera->state();
 	
 	angle_y = glm::orientedAngle(state.right, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-	bool revertX = 	(camera::flipped(state) && state.pos.y > 0. && state.pos.x > 0) ||
+	bool revertX = 	(Camera::flipped(state) && state.pos.y > 0. && state.pos.x > 0) ||
 					(std::abs(angle_y) >= M_PI_2);
 	glm::vec3 refX = glm::vec3(revertX ? -1.0f : 1.0f, 0.0f, 0.0f);
 
@@ -97,7 +97,7 @@ void moveCamera_action::compute_animatables(cameraState const& state)
 	);
 	
 	glm::quat rotation;
-	camera::orientation_to_rotation(mFinalOrientation, rotation); // Set the quaternion to the computed orientation
+	Camera::orientation_to_rotation(mFinalOrientation, rotation); // Set the quaternion to the computed orientation
 	mRotation.set(mCamera->rotation());
 	mRotation.set(rotation, mDuration);
 

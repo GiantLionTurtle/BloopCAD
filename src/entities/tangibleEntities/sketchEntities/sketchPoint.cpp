@@ -1,8 +1,8 @@
 
 #include "sketchPoint.hpp"
 
-#include <utils/errorLogger.hpp>
-#include <graphics_utils/shadersPool.hpp>
+#include <utils/DebugUtils.hpp>
+#include <graphics_utils/ShadersPool.hpp>
 #include <utils/mathUtils.hpp>
 #include <graphics_utils/GLCall.hpp>
 #include <utils/preferences.hpp>
@@ -35,22 +35,22 @@ sketchPoint::sketchPoint(var_ptr x_, var_ptr y_, geom_3d::plane_abstr_ptr basePl
 void sketchPoint::init()
 {
 	mRequire_VBUpdate = false;
-	mVA = std::shared_ptr<vertexArray>(new vertexArray());
-	vertexBufferLayout layout;
+	mVA = std::shared_ptr<VertexArray>(new VertexArray());
+	VertexBufferLayout layout;
 	layout.add_proprety_float(3);
 	mVA->bind();
 
 	glm::vec3 pos_tmp = mBasePlane->to_worldPos(pos());
-	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(&pos_tmp[0], sizeof(glm::vec3)));
+	mVB = std::shared_ptr<VertexBuffer>(new VertexBuffer(&pos_tmp[0], sizeof(glm::vec3)));
 	mVA->add_buffer(*mVB.get(), layout);
 
-	mShader = shadersPool::get_instance().get("point");
+	mShader = ShadersPool::get_instance().get("point");
 	if(!mShader) {
-		mShader = shader::fromFiles_ptr({
+		mShader = Shader::fromFiles_ptr({
 		{"resources/shaders/pointShader.vert", GL_VERTEX_SHADER},
 		{"resources/shaders/pointShader.geom", GL_GEOMETRY_SHADER}, 
-		{"resources/shaders/pointShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because point is expanded on the gpu
-		shadersPool::get_instance().add("point", mShader);
+		{"resources/shaders/pointShader.frag", GL_FRAGMENT_SHADER}}); // Geometry Shader is needed because point is expanded on the gpu
+		ShadersPool::get_instance().add("point", mShader);
 	}
 	if(kFisrstInst) {
 		kSelDist2 = preferences::get_instance().get_float("seldistpoint2");
@@ -80,7 +80,7 @@ void sketchPoint::move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move)
 	set(pos() + to-from);
 }
 
-bool sketchPoint::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor)
+bool sketchPoint::in_selection_range(glm::vec2 planepos, Camera_ptr cam, glm::vec2 cursor)
 {
 	glm::vec2 closest_vec2 = closest_to_point(planepos);
 	glm::vec4 pos_vec4 = glm::vec4(mBasePlane->to_worldPos(closest_vec2), 1.0f);
@@ -157,7 +157,7 @@ void sketchPoint::set_exists_vars(bool ex)
 	mY->set_exists(ex);
 }
 
-void sketchPoint::draw_impl(camera_ptr cam, int frame)
+void sketchPoint::draw_impl(Camera_ptr cam, int frame)
 {
 	mShader->bind();
 	glm::vec4 color = glm::vec4(kColor, 1.0f);

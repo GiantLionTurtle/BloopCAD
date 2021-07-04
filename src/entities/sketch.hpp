@@ -89,7 +89,7 @@ public:
 
 	void print(int depth = 0);
 
-	sketchEntity_ptr entity_at_point(camera_ptr cam, glm::vec2 cursor);
+	sketchEntity_ptr entity_at_point(Camera_ptr cam, glm::vec2 cursor);
 
 	void add_geometry(sketchGeometry_ptr ent);
 	std::vector<entityPosSnapshot_ptr> geometriesSnapshots();
@@ -128,10 +128,10 @@ protected:
 	/*
 		@function draw_impl draws the part on screen, it calls draw on all it's components
 
-		@param cam : The camera used for rendering
+		@param cam : The Camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	virtual void draw_impl(camera_ptr cam, int frame);
+	virtual void draw_impl(Camera_ptr cam, int frame);
 };
 
 #endif

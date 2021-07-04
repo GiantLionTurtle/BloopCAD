@@ -5,7 +5,7 @@
 /*
 	@class texture describes an abstraction of an openGL texture
 */
-class texture {
+class Texture {
 protected:
 	unsigned int mRendererID; // The handle of the openGL texture
 	unsigned char* mLocalBuffer; // A local buffer containing the texture data
@@ -14,7 +14,7 @@ public:
 	/*
 		@function texture creates an empty texture object
 	*/
-	texture();
+	Texture();
 	/*
 		@function texture creates a parametrized texture object
 
@@ -26,11 +26,11 @@ public:
 		@param mag_filter : The magnifiying function of the texture
 		@param channels : 	The number of color channels of the texture
 	*/
-	texture(int width, int height, unsigned int wrap_s, unsigned int wrap_t, unsigned int min_filter, unsigned int mag_filter, unsigned int channels);
+	Texture(int width, int height, unsigned int wrap_s, unsigned int wrap_t, unsigned int min_filter, unsigned int mag_filter, unsigned int channels);
 	/*
 		@function ~texture destroys a texture object and handle deallocation in openGL
 	*/
-	virtual ~texture();
+	virtual ~Texture();
 
 	/*
 		@function bind activates the texture in openGL at a specific slot

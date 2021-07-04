@@ -31,7 +31,7 @@ bool zoom2d_tool::manage_button_press(GdkEventButton* event)
 {
 	if(event->button == 1) {
 		mIsZooming = true;
-		camera_ptr cam = mEnv->state()->cam;
+		Camera_ptr cam = mEnv->state()->cam;
 		geom_3d::plane_abstr_ptr pl = mEnv->target()->basePlane();
 		glm::vec2 screen_pos(event->x, event->y);
 		mZoomStart_world = pl->line_intersection(cam->pos(), cam->cast_ray(screen_pos));
@@ -57,7 +57,7 @@ bool zoom2d_tool::manage_mouse_move(GdkEventMotion* event)
 
 bool zoom2d_tool::manage_scroll(GdkEventScroll* event)
 {
-	camera_ptr cam = mEnv->state()->cam;
+	Camera_ptr cam = mEnv->state()->cam;
 	geom_3d::plane_abstr_ptr pl = mEnv->target()->basePlane();
 	glm::vec2 screen_pos(event->x, event->y);
 	zoom(pl->line_intersection(cam->pos(), cam->cast_ray(screen_pos)), -0.015f * event->delta_y); // Delta is scaled arbitrarly, zooming around scroll origin
@@ -67,7 +67,7 @@ bool zoom2d_tool::manage_scroll(GdkEventScroll* event)
 void zoom2d_tool::zoom(glm::vec3 world_origin, float amount)
 {
 	// The goal of this function is to scale the model and translate it so that the scale origin appears fixed
-	camera_ptr cam = mEnv->state()->cam;
+	Camera_ptr cam = mEnv->state()->cam;
 	float scale = 1.0f + amount;
 	float delta_scale = cam->fscale() * scale - cam->fscale();
 	

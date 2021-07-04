@@ -1,7 +1,7 @@
 
 
 // #include <constraintsSolver/DR_planner.hpp>
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 #include <utils/preferences.hpp>
 #include <utils/conversionsUtils.hpp>
 #include <constraintsSolver/constraint.hpp>
@@ -27,7 +27,7 @@ void printLine(sketchLine_ptr l, std::string pre = "")
 
 int main(int argc, char *argv[])
 {
-	errorLogger::get_instance().init(); // Init the error logger singleton
+	ErrorLogger::get_instance().init(); // Init the error logger singleton
 	preferences::get_instance().load_from_file("resources/configs/configs.xml"); // Init the preferences service singleton
 
 	auto app = Gtk::Application::create(argc, argv, ""); // Create an application 

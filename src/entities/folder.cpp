@@ -14,8 +14,10 @@ void folder::set_handle(entityHandle* handle_)
 {
 	mHandle = handle_;
 	for_each([this](entity_ptr ent) {
-		if(ent->handle())
+		if(ent->handle()) {
 			delete ent->handle();
+			ent->set_handle(nullptr);
+		}
 		ent->set_handle(new entityHandle(ent, mHandle->view(), mHandle));
 	});
 }

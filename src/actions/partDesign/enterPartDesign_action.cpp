@@ -3,8 +3,8 @@
 #include <document.hpp>
 #include <bloop.hpp>
 
-enterPartDesign_action::enterPartDesign_action(bool set_camera):
-	switchWorkspace_action(bloop::PART, set_camera),
+enterPartDesign_action::enterPartDesign_action(bool set_Camera):
+	switchWorkspace_action(bloop::PART, set_Camera),
 	mTarget(nullptr),
 	mInitialTarget(nullptr)
 {

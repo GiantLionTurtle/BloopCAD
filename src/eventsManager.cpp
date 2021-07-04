@@ -48,7 +48,7 @@ bool stimuli_eventsManager::manage_tick(const Glib::RefPtr<Gdk::FrameClock>& fra
 
 	if(doc) {
 		doc->update_actionStack();
-		bool cam_updated = doc->update_camera();
+		bool cam_updated = doc->update_Camera();
 
 		if(cam_updated || doc->target()->require_redraw()/* || self->mRequire_redraw*/) {
 			doc->viewport().queue_draw();

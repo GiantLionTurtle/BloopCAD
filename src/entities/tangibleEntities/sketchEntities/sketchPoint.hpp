@@ -32,7 +32,7 @@ public:
 
 	void move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move);
 
-	bool in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor);
+	bool in_selection_range(glm::vec2 planepos, Camera_ptr cam, glm::vec2 cursor);
 	bool in_selection_range(glm::vec2 a, glm::vec2 b, bool contained);
 
 	void for_each(std::function<void(sketchGeometry_ptr geom)> func) {}
@@ -55,7 +55,7 @@ public:
 
 	void print_ids() { std::cout<<"Point: "<<mX->id()<<",  "<<mY->id()<<"\n"; }
 protected:
-	void draw_impl(camera_ptr cam, int frame);
+	void draw_impl(Camera_ptr cam, int frame);
 
 	void post_set_behavior();
 

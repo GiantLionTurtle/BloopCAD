@@ -1,10 +1,10 @@
 
-#include "image.hpp"
+#include "Image.hpp"
 #include <graphics_utils/GLCall.hpp>
 
 #include <stb_image.h>
 
-image::image(std::string const& filePath):
+Image::Image(std::string const& filePath):
 	mFilePath(filePath)
 {
 	// Load the image using stbi_image
@@ -23,10 +23,10 @@ image::image(std::string const& filePath):
 
 	// Clean up
 	if(mLocalBuffer)
-		stbi_image_free(mLocalBuffer);
+		stbi_Image_free(mLocalBuffer);
 	unbind();
 }
-image::~image()
+Image::~Image()
 {
 
 }

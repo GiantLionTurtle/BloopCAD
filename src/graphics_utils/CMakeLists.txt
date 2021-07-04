@@ -1,18 +1,19 @@
 set(graphics_utils_source_files
   GLCall.cpp
-  shader.cpp
-  shadersPool.cpp
-  vertexBuffer.cpp
-  vertexBufferLayout.cpp
-  indexBuffer.cpp
-  vertexArray.cpp
-  frameBuffer.cpp
-  camera.cpp)
-
-add_subdirectory(textures)
+  Shader.cpp
+  ShadersPool.cpp
+  VertexBuffer.cpp
+  VertexBufferLayout.cpp
+  IndexBuffer.cpp
+  VertexArray.cpp
+  FrameBuffer.cpp
+  Camera.cpp
+  Texture.cpp
+  Image.cpp
+  TexturesPool.cpp)
 
 add_library(graphics_utils ${graphics_utils_source_files})
 
 target_link_libraries(graphics_utils
-    utils
-    textures)
+    vendor
+    utils)

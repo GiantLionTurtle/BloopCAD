@@ -40,7 +40,7 @@ bool circle_tool::manage_key_press(GdkEventKey* event)
 bool circle_tool::manage_mouse_move(GdkEventMotion* event)
 {
 	if(mStarted) {
-		camera_ptr cam = mEnv->state()->cam; // For ease of writing
+		Camera_ptr cam = mEnv->state()->cam; // For ease of writing
 		glm::vec2 circle_pos = mCirclePreview->basePlane()->to_planePos(
             mCirclePreview->basePlane()->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
         mCirclePreview->set_radius(glm::length(circle_pos - mCirclePreview->posCenter()));
@@ -57,7 +57,7 @@ bool circle_tool::manage_button_press(GdkEventButton* event)
 	DEBUG_ASSERT(target, "No valid target.");
 
     // Find where the ray intersectpos_on_plane
-    camera_ptr cam = mEnv->state()->cam; // For ease of writing
+    Camera_ptr cam = mEnv->state()->cam; // For ease of writing
     geom_3d::plane_abstr_ptr pl = target->basePlane();
     glm::vec2 circle_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 

@@ -24,16 +24,16 @@ document::document(eventsManager* manager):
 
 	mViewport.set_required_version(3, 2);
 	connect_signals();	
-	// Create the workspace states, their cameras and all
+	// Create the workspace states, their Cameras and all
 	mPartState 		= workspaceState_ptr(new workspaceState);
-	mPartState->cam = camera_ptr(new camera(glm::vec3(0.0f, 0.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f)));
+	mPartState->cam = Camera_ptr(new Camera(glm::vec3(0.0f, 0.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f)));
 	mPartState->cam->set_orientation(glm::vec3(0.615480037895f, -M_PI_4, 0.0f));
 
 	mPartState->doc 			= this;
 	mPartState->workspaceName 	= bloop::workspace_types::PART;
 
 	mSketchState 		= workspaceState_ptr(new workspaceState);
-	mSketchState->cam = camera_ptr(new camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f)));
+	mSketchState->cam = Camera_ptr(new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f)));
 	mSketchState->doc = this;
 	mSketchState->workspaceName = bloop::workspace_types::SKETCH;
 
@@ -208,7 +208,7 @@ void document::set_parent(bloop* parentBloop)
 	}
 }
 
-bool document::update_camera()
+bool document::update_Camera()
 {
 	if(mCurrentWorkspaceState->cam->require_update()) {
 		mCurrentWorkspaceState->cam->update();
@@ -287,7 +287,7 @@ void document::clear_selection()
 	}
 	mSelection.clear();
 }
-void document::toggle_select(entity_ptr ent, cameraState cam, bool additive)
+void document::toggle_select(entity_ptr ent, CameraState cam, bool additive)
 {
 	if(!ent && !additive) {
 		clear_selection();

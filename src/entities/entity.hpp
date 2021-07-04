@@ -2,12 +2,12 @@
 #ifndef ENTITY_HPP_
 #define ENTITY_HPP_
 
-#include <graphics_utils/vertexBuffer.hpp>
-#include <graphics_utils/vertexBufferLayout.hpp>
-#include <graphics_utils/vertexArray.hpp>
-#include <graphics_utils/indexBuffer.hpp>
-#include <graphics_utils/shader.hpp>
-#include <graphics_utils/camera.hpp>
+#include <graphics_utils/VertexBuffer.hpp>
+#include <graphics_utils/VertexBufferLayout.hpp>
+#include <graphics_utils/VertexArray.hpp>
+#include <graphics_utils/IndexBuffer.hpp>
+#include <graphics_utils/Shader.hpp>
+#include <graphics_utils/Camera.hpp>
 #include <baseObject.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -71,16 +71,16 @@ public:
 	/*
 		@function draw draws the entity
 
-		@param cam : 	The camera used for rendering
+		@param cam : 	The Camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	virtual void draw(camera_ptr cam, int frame, draw_type type = draw_type::ALL, bool on_required = false);
+	virtual void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL, bool on_required = false);
 
 	void update();
 
 	virtual void init() {}
 
-	entity_ptr hovered_child(camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (entity_ptr)> filter_func = ([](entity_ptr ent) { return true; }));
+	entity_ptr hovered_child(Camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (entity_ptr)> filter_func = ([](entity_ptr ent) { return true; }));
 
 	void notify_parent(int msg);
 	virtual void notify(int msg) {}
@@ -223,10 +223,10 @@ protected:
 	/*
 		@function draw_impl is an overiddable function for children classes to draw themselves
 
-		@param cam : 	The camera used for rendering
+		@param cam : 	The Camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	virtual void draw_impl(camera_ptr cam, int frame) {}
+	virtual void draw_impl(Camera_ptr cam, int frame) {}
 
 	virtual void update_impl() {}
 
@@ -237,9 +237,9 @@ protected:
 
 	bool should_draw_self(draw_type type, bool on_required);
 
-	virtual float selection_depth(camera_ptr cam, glm::vec2 cursor_pos) { return -1.0f; }
+	virtual float selection_depth(Camera_ptr cam, glm::vec2 cursor_pos) { return -1.0f; }
 
-	void hovered_child_internal(camera_ptr cam, glm::vec2 cursor_pos, entity_ptr& candidate, float& min_dist, std::function<bool (entity_ptr)> filter_func);
+	void hovered_child_internal(Camera_ptr cam, glm::vec2 cursor_pos, entity_ptr& candidate, float& min_dist, std::function<bool (entity_ptr)> filter_func);
 };
 
 std::ostream& operator<<(std::ostream& os, entity_ptr ent);

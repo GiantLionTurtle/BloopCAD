@@ -2,7 +2,7 @@
 #include "constraintSystem.hpp"
 #include "solverState.hpp"
 
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 
 constraintSystem::constraintSystem(int verboseLevel):
 	mBrokenDown(false),

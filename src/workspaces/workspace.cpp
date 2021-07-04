@@ -1,6 +1,6 @@
 
 #include "workspace.hpp"
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 #include <bloop.hpp>
 #include <tools/navigation/navigation.hpp>
 

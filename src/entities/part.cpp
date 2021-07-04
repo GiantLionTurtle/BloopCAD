@@ -2,7 +2,7 @@
 #include "part.hpp"
 
 #include "entityView.hpp"
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 #include "tangibleEntities/point.hpp"
 
 part::part():
@@ -91,7 +91,7 @@ sketch_ptr part::get_sketch(int ind)
 	return mSketches[ind]; 
 }
 
-void part::draw_impl(camera_ptr cam, int frame)
+void part::draw_impl(Camera_ptr cam, int frame)
 {
 
 }

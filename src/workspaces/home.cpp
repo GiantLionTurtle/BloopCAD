@@ -22,7 +22,7 @@ home::home(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
 			all_btns_valid = false;
 	}
 
-	if(all_btns_valid) { // Try to add images to buttons if they exist
+	if(all_btns_valid) { // Try to add Images to buttons if they exist
 		try {
 			std::get<1>(mButtons.at("new"))     = new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/home/new.png", 60, 60));
 			std::get<1>(mButtons.at("open"))    = new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/home/open.png", 60, 60));
@@ -31,7 +31,7 @@ home::home(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
 		} catch(const Gdk::PixbufError& ex) {
 			LOG_WARNING("Gtk pixbuf error: " + ex.what());
 		}
-		// Assign said images
+		// Assign said Images
 		std::get<0>(mButtons.at("new"))->	set_image(*std::get<1>(mButtons.at("new")));
 		std::get<0>(mButtons.at("open"))->	set_image(*std::get<1>(mButtons.at("open")));
 

@@ -1,6 +1,6 @@
 
-#include "camera.hpp"
-#include <utils/errorLogger.hpp>
+#include "Camera.hpp"
+#include <utils/DebugUtils.hpp>
 #include <utils/mathUtils.hpp>
 
 #include <glm/gtc/quaternion.hpp>
@@ -8,25 +8,25 @@
 #include <glm/ext/quaternion_trigonometric.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-void print_state(cameraState const& st)
+void print_state(CameraState const& st)
 {
 	std::cout<<glm::to_string(st.pos)<<" - "<<glm::to_string(st.right)<<" - "<<glm::to_string(st.up);
 }
-std::ostream& operator<<(std::ostream &os, cameraState const& st)
+std::ostream& operator<<(std::ostream &os, CameraState const& st)
 {
 	os<<glm::to_string(st.pos)<<" - "<<glm::to_string(st.right)<<" - "<<glm::to_string(st.up);
 	return os;
 }
-bool operator !=(cameraState const& st1, cameraState const& st2) 
+bool operator !=(CameraState const& st1, CameraState const& st2) 
 {
 	return st1.pos != st2.pos || st1.right != st2.right|| st1.up != st2.up;
 }
-bool operator ==(cameraState const& st1, cameraState const& st2) 
+bool operator ==(CameraState const& st1, CameraState const& st2) 
 {
 	return st1.pos == st2.pos && st1.right == st2.right && st1.up == st2.up;
 }
 
-camera::camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float FOV_, glm::vec2 viewport_):
+Camera::Camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float FOV_, glm::vec2 viewport_):
 	mInternalPos(cartesianCoords),
 	mInternalTarget(target),
 	mOrientation(glm::vec3(0.0f, 0.0f, 0.0f)),
@@ -43,7 +43,7 @@ camera::camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float 
 {
 
 }
-camera::camera():
+Camera::Camera():
 	mInternalPos(glm::vec3(0.0)),
 	mInternalTarget(glm::vec3(0.0)),
 	mOrientation(glm::vec3(0.0f, 0.0f, 0.0f)),
@@ -61,19 +61,19 @@ camera::camera():
 
 }
 
-glm::vec3 camera::predictedPos(transform trans) const
+glm::vec3 Camera::predictedPos(transform trans) const
 {
 	return model_inv(trans) * glm::vec4(mInternalPos, 1.0f);
 }
 
-void camera::set_orientation(glm::vec3 orient)
+void Camera::set_orientation(glm::vec3 orient)
 {
 	mOrientation = orient;
 	orientation_to_rotation(mOrientation, mTransformation.rotation);
 	mRequire_update = true; 
 }
 
-void camera::copy(camera_ptr other)
+void Camera::copy(Camera_ptr other)
 {
 	mInternalPos = other->mInternalPos;
 	mInternalTarget = other->mInternalTarget;
@@ -88,7 +88,7 @@ void camera::copy(camera_ptr other)
 	mTransformation.scale = other->mTransformation.scale;
 	mRequire_update = true;
 }
-void camera::update(bool silent)
+void Camera::update(bool silent)
 {
 	if(!silent)
 		mRequire_update = false;
@@ -106,9 +106,9 @@ void camera::update(bool silent)
 	mTarget = model_inv() * glm::vec4(mInternalTarget, 1.0f); // Apply the inverse transform to the "real" target
 }
 
-bool camera::flipped() const
+bool Camera::flipped() const
 {
-	// The camera is flipped it's rotation around the x axis is between 90 and 270 degrees
+	// The Camera is flipped it's rotation around the x axis is between 90 and 270 degrees
 	float mod_angle = std::fmod(mOrientation.x, M_PI * 2.0f);
 	if(mod_angle < 0)
 		mod_angle += M_PI * 2.0f;
@@ -116,24 +116,24 @@ bool camera::flipped() const
 	return (mod_angle > M_PI / 2.0f && mod_angle < M_PI * 3.0f / 2.0f);
 }
 
-bool camera::flipped(cameraState state_)
+bool Camera::flipped(CameraState state_)
 {
 	return state_.up.y < 0.0f;
 }
 
-cameraState camera::state() const 
+CameraState Camera::state() const 
 {
 	return { pos(), right(), up() };
 }
 
-void camera::orientation_to_rotation(glm::vec3 const& orientation, glm::quat& quaternion)
+void Camera::orientation_to_rotation(glm::vec3 const& orientation, glm::quat& quaternion)
 {
 	// Create the quaternion 
 	quaternion = 	glm::angleAxis(orientation.x, glm::vec3(1.0f, 0.0f, 0.0f)) * 
 					glm::angleAxis(orientation.y, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
-glm::vec3 camera::cast_ray(glm::vec2 screenPos, bool input_NDC/* = false*/)
+glm::vec3 Camera::cast_ray(glm::vec2 screenPos, bool input_NDC/* = false*/)
 {
 	float screen_dist = 1.0f / std::tan(FOV() / 2.0f);
 	float half_screenWidth = aspectRatio();
@@ -149,7 +149,7 @@ glm::vec3 camera::cast_ray(glm::vec2 screenPos, bool input_NDC/* = false*/)
 	}
 	return model_inv() * glm::vec4(glm::normalize(pos_on_screen), 0.0f);
 }
-glm::vec2 camera::screen_angle(glm::vec2 screenPos, bool input_NDC)
+glm::vec2 Camera::screen_angle(glm::vec2 screenPos, bool input_NDC)
 {
 	float screen_dist = 1.0f / std::tan(FOV() / 2.0f);
 	float half_screenWidth = aspectRatio();
@@ -163,18 +163,18 @@ glm::vec2 camera::screen_angle(glm::vec2 screenPos, bool input_NDC)
 	}
 	return glm::vec2(std::atan2(pos_on_screen.x, screen_dist), std::atan2(pos_on_screen.y, screen_dist));
 }
-void camera::get_alignedPlaneVectors(std::shared_ptr<geom_3d::plane_abstr> pl, glm::vec3& right, glm::vec3& up, bool allow_inversion)
+void Camera::get_alignedPlaneVectors(std::shared_ptr<geom_3d::plane_abstr> pl, glm::vec3& right, glm::vec3& up, bool allow_inversion)
 {
 	get_alignedPlaneVectors(state(), pl, right, up, allow_inversion);
 }
-void camera::get_alignedPlaneVectors(cameraState cst, std::shared_ptr<geom_3d::plane_abstr> pl, glm::vec3& right, glm::vec3& up, bool allow_inversion)
+void Camera::get_alignedPlaneVectors(CameraState cst, std::shared_ptr<geom_3d::plane_abstr> pl, glm::vec3& right, glm::vec3& up, bool allow_inversion)
 {
 	float dot_right_v 	= glm::dot(cst.right, pl->v()); // How similar is the camRight to the v vector?
 	float dot_up_v 		= glm::dot(cst.up, pl->v()); // How similar is the camUp to the v vector?
 	float dot_right_w 	= glm::dot(cst.right, pl->w());
 	float dot_up_w 		= glm::dot(cst.up, pl->w());
 
-	// Decide which of the camera vectors will be assigned to which of the plane's vectors
+	// Decide which of the Camera vectors will be assigned to which of the plane's vectors
 	if(std::abs(dot_right_w) > std::abs(dot_right_v) && (std::abs(dot_right_w) > std::abs(dot_up_w) || std::abs(dot_right_v) < std::abs(dot_up_v))) {
 		right 	= pl->w() * (dot_right_w < 0.0f && allow_inversion 	? -1.0f : 1.0f); // Invert it or not
 		up 		= pl->v() * (dot_up_v < 0.0f && allow_inversion 	? -1.0f : 1.0f); // Invert it or not
@@ -184,7 +184,7 @@ void camera::get_alignedPlaneVectors(cameraState cst, std::shared_ptr<geom_3d::p
 	}
 }
 
-glm::mat4 camera::model(transform transf) const
+glm::mat4 Camera::model(transform transf) const
 {
 	// The order matters!
 	return 
@@ -192,7 +192,7 @@ glm::mat4 camera::model(transform transf) const
 	glm::translate(glm::mat4(1.0f), transf.translation) * 
 	glm::scale(glm::mat4(1.0f), transf.scale);
 }
-glm::mat4 camera::model_inv(transform transf) const
+glm::mat4 Camera::model_inv(transform transf) const
 {
 	// The order matters! - it is the inverse of the model's order
 	return 

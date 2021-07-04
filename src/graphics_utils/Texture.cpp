@@ -1,11 +1,11 @@
 
-#include "texture.hpp"
+#include "Texture.hpp"
 
 #include <graphics_utils/GLCall.hpp>
 
 #include <stb_image.h>
 
-texture::texture() :
+Texture::Texture() :
 	mRendererID(0),
 	mLocalBuffer(nullptr),
 	mWidth(0),
@@ -14,7 +14,7 @@ texture::texture() :
 {
 	GLCall(glGenTextures(1, &mRendererID));
 }
-texture::texture(int width, int height, unsigned int wrap_s, unsigned int wrap_t, unsigned int min_filter, unsigned int mag_filter, unsigned int channels):
+Texture::Texture(int width, int height, unsigned int wrap_s, unsigned int wrap_t, unsigned int min_filter, unsigned int mag_filter, unsigned int channels):
 	mLocalBuffer(nullptr),
 	mWidth(width),
 	mHeight(height)
@@ -37,17 +37,17 @@ texture::texture(int width, int height, unsigned int wrap_s, unsigned int wrap_t
 	// Clean up
 	unbind();
 }
-texture::~texture()
+Texture::~Texture()
 {
 	GLCall(glDeleteTextures(1, &mRendererID));
 }
 
-void texture::bind(unsigned int slot/* = 0*/) const
+void Texture::bind(unsigned int slot/* = 0*/) const
 {
-	GLCall(glActiveTexture(GL_TEXTURE0+slot)); // All texture slots ids are contiguous 
+	GLCall(glActiveTexture(GL_TEXTURE0+slot)); // All Texture slots ids are contiguous 
 	GLCall(glBindTexture(GL_TEXTURE_2D, mRendererID));
 }
-void texture::unbind() const
+void Texture::unbind() const
 {
 #ifndef RELEASE_MODE // legit in this context?
 	GLCall(glBindTexture(GL_TEXTURE_2D, 0));

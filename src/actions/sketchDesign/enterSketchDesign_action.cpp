@@ -3,8 +3,8 @@
 #include <document.hpp>
 #include <bloop.hpp>
 
-enterSketchDesign_action::enterSketchDesign_action(sketch_ptr target, bool set_camera):
-	switchWorkspace_action(bloop::workspace_types::SKETCH, set_camera),
+enterSketchDesign_action::enterSketchDesign_action(sketch_ptr target, bool set_Camera):
+	switchWorkspace_action(bloop::workspace_types::SKETCH, set_Camera),
 	mPlane(nullptr),
 	mTarget(target)
 {

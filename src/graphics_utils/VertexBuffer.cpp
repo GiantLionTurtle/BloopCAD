@@ -1,9 +1,9 @@
 
-#include "vertexBuffer.hpp"
+#include "VertexBuffer.hpp"
 
 #include "GLCall.hpp"
 
-vertexBuffer::vertexBuffer(void const* data, unsigned int size_):
+VertexBuffer::VertexBuffer(void const* data, unsigned int size_):
 	mSize(size_)
 {
 	// Create the buffer
@@ -14,24 +14,24 @@ vertexBuffer::vertexBuffer(void const* data, unsigned int size_):
 	GLCall(glBufferData(GL_ARRAY_BUFFER, size_, data, GL_STATIC_DRAW)); // The draw mode might become an option eventually
 }
 
-vertexBuffer::~vertexBuffer()
+VertexBuffer::~VertexBuffer()
 {
 	// Destroy the buffer
 	GLCall(glDeleteBuffers(1, &mRendererID));
 }
 
-void vertexBuffer::bind() const
+void VertexBuffer::bind() const
 {
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, mRendererID));
 }
-void vertexBuffer::unbind() const
+void VertexBuffer::unbind() const
 {
 #ifndef RELEASE_MODE // No unecesary bind in release, but practical for debugging
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 #endif
 }
 
-void vertexBuffer::set(void const* data, unsigned int size_)
+void VertexBuffer::set(void const* data, unsigned int size_)
 {
 	if(size_ == mSize) {
 		GLCall(glBufferData(GL_ARRAY_BUFFER, size_, data, GL_STATIC_DRAW)); // The draw mode might become an option eventually

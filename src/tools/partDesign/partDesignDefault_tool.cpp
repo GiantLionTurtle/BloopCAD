@@ -1,7 +1,7 @@
 
 #include "partDesignDefault_tool.hpp"
 
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <actions/common/moveCamera_action.hpp>

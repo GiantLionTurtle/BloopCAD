@@ -4,7 +4,7 @@
 #include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
 #include <entities/tangibleEntities/sketchEntities/sketchCircle.hpp>
-#include <utils/errorLogger.hpp>
+#include <utils/DebugUtils.hpp>
 #include "sketchEntity.hpp"
 #include <entities/sketch.hpp>
 #include "spriteAnnotation.hpp"

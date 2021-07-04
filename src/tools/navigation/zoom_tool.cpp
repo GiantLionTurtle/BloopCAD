@@ -63,7 +63,7 @@ void zoom_tool::zoom(glm::vec2 origin, float amount)
 {
 	// The goal of this function is to scale the model and translate it so that the scale origin appears fixed
 	float scale = 1.0f + amount;
-	camera_ptr cam = mEnv->state()->cam;
+	Camera_ptr cam = mEnv->state()->cam;
 	
 	glm::vec3 ray1 = cam->cast_ray(origin, false);
 	glm::vec4 model_pos1 = cam->model() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);

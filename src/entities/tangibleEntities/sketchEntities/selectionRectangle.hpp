@@ -35,7 +35,7 @@ public:
 
 	int selection_rank() { return -1; }
 protected:
-	void draw_impl(camera_ptr cam, int frame);
+	void draw_impl(Camera_ptr cam, int frame);
 	
 	void init_buffers();
 };

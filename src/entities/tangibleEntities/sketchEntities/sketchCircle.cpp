@@ -2,7 +2,7 @@
 #include "sketchCircle.hpp"
 
 #include <graphics_utils/GLCall.hpp>
-#include <graphics_utils/shadersPool.hpp>
+#include <graphics_utils/ShadersPool.hpp>
 #include <utils/mathUtils.hpp>
 #include <utils/preferences.hpp>
 #include <geometry/geometry_2d/line_abstr.hpp>
@@ -32,29 +32,29 @@ void sketchCircle::init()
 	set_name("sketchCircle");
 	init_buffers(); // Set all the vertices to the right values
 	
-	mVB = std::shared_ptr<vertexBuffer>(new vertexBuffer(mVertices, sizeof(glm::vec3) * CIRCLE_RES)); // Upload the vertices
-	mVA = std::shared_ptr<vertexArray>(new vertexArray());
+	mVB = std::shared_ptr<VertexBuffer>(new VertexBuffer(mVertices, sizeof(glm::vec3) * CIRCLE_RES)); // Upload the vertices
+	mVA = std::shared_ptr<VertexArray>(new VertexArray());
 
-	vertexBufferLayout layout;
+	VertexBufferLayout layout;
 	layout.add_proprety_float(3);
 	mVA->bind();
 	mVA->add_buffer(*mVB.get(), layout);
-	mIB = std::shared_ptr<indexBuffer>(new indexBuffer(mIndices, 2*CIRCLE_RES));
+	mIB = std::shared_ptr<IndexBuffer>(new IndexBuffer(mIndices, 2*CIRCLE_RES));
 
-	// // Create the shader
-	// mShader = shadersPool::get_instance().get("circle");
+	// // Create the Shader
+	// mShader = ShadersPool::get_instance().get("circle");
 	// if(!mShader) {
-	// 	mShader = shader::fromFiles_ptr("resources/shaders/circleShader.vert", "resources/shaders/circleShader.frag");
-	// 	shadersPool::get_instance().add("circle", mShader);
+	// 	mShader = Shader::fromFiles_ptr("resources/shaders/circleShader.vert", "resources/shaders/circleShader.frag");
+	// 	ShadersPool::get_instance().add("circle", mShader);
 	// }
 
-	mShader = shadersPool::get_instance().get("line");
+	mShader = ShadersPool::get_instance().get("line");
 	if(!mShader) {
-		mShader = shader::fromFiles_ptr({
+		mShader = Shader::fromFiles_ptr({
 		{"resources/shaders/lineShader.vert", GL_VERTEX_SHADER},
 		{"resources/shaders/lineShader.geom", GL_GEOMETRY_SHADER}, 
-		{"resources/shaders/lineShader.frag", GL_FRAGMENT_SHADER}}); // Geometry shader is needed because line is expanded on the gpu
-		shadersPool::get_instance().add("line", mShader);
+		{"resources/shaders/lineShader.frag", GL_FRAGMENT_SHADER}}); // Geometry Shader is needed because line is expanded on the gpu
+		ShadersPool::get_instance().add("line", mShader);
 	}
 	if(kFisrstInst) {
 		kSelDist2 = preferences::get_instance().get_float("seldistcurve2");
@@ -86,7 +86,7 @@ void sketchCircle::move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move)
 		set_radius(glm::length(to - mCenter->pos()));
 }
 
-bool sketchCircle::in_selection_range(glm::vec2 planepos, camera_ptr cam, glm::vec2 cursor)
+bool sketchCircle::in_selection_range(glm::vec2 planepos, Camera_ptr cam, glm::vec2 cursor)
 {
 	glm::vec4 onscreen_ndc = cam->mvp()	* glm::vec4(mBasePlane->to_worldPos(closest_to_point(planepos)), 1.0f);
 	glm::vec2 onscreen(	map(onscreen_ndc.x / onscreen_ndc.w, -1.0f, 1.0f, 0.0f, cam->viewport().x),
@@ -169,7 +169,7 @@ void sketchCircle::set_exists_vars(bool ex)
 	mCenter->set_exists_vars(ex);
 }
 
-void sketchCircle::draw_impl(camera_ptr cam, int frame)
+void sketchCircle::draw_impl(Camera_ptr cam, int frame)
 {
 	mShader->bind();
 	glm::vec4 color = glm::vec4(kColor, 1.0f);

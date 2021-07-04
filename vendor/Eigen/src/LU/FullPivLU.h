@@ -184,7 +184,7 @@ template<typename _MatrixType> class FullPivLU
       * Example: \include FullPivLU_kernel.cpp
       * Output: \verbinclude FullPivLU_kernel.out
       *
-      * \sa image()
+      * \sa Image()
       */
     inline const internal::kernel_retval<FullPivLU> kernel() const
     {
@@ -192,27 +192,27 @@ template<typename _MatrixType> class FullPivLU
       return internal::kernel_retval<FullPivLU>(*this);
     }
 
-    /** \returns the image of the matrix, also called its column-space. The columns of the returned matrix
-      * will form a basis of the image (column-space).
+    /** \returns the Image of the matrix, also called its column-space. The columns of the returned matrix
+      * will form a basis of the Image (column-space).
       *
       * \param originalMatrix the original matrix, of which *this is the LU decomposition.
       *                       The reason why it is needed to pass it here, is that this allows
       *                       a large optimization, as otherwise this method would need to reconstruct it
       *                       from the LU decomposition.
       *
-      * \note If the image has dimension zero, then the returned matrix is a column-vector filled with zeros.
+      * \note If the Image has dimension zero, then the returned matrix is a column-vector filled with zeros.
       *
       * \note This method has to determine which pivots should be considered nonzero.
       *       For that, it uses the threshold value that you can control by calling
       *       setThreshold(const RealScalar&).
       *
-      * Example: \include FullPivLU_image.cpp
-      * Output: \verbinclude FullPivLU_image.out
+      * Example: \include FullPivLU_Image.cpp
+      * Output: \verbinclude FullPivLU_Image.out
       *
       * \sa kernel()
       */
     inline const internal::image_retval<FullPivLU>
-      image(const MatrixType& originalMatrix) const
+      Image(const MatrixType& originalMatrix) const
     {
       eigen_assert(m_isInitialized && "LU is not initialized.");
       return internal::image_retval<FullPivLU>(*this, originalMatrix);
@@ -699,7 +699,7 @@ struct kernel_retval<FullPivLU<_MatrixType> >
   }
 };
 
-/***** Implementation of image() *****************************************************/
+/***** Implementation of Image() *****************************************************/
 
 template<typename _MatrixType>
 struct image_retval<FullPivLU<_MatrixType> >

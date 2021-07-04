@@ -71,10 +71,10 @@ protected:
 	/*
 		@function draw_impl draws the part on screen, it calls draw on all it's components
 
-		@param cam : The camera used for rendering
+		@param cam : The Camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	virtual void draw_impl(camera_ptr cam, int frame);
+	virtual void draw_impl(Camera_ptr cam, int frame);
 };
 
 #endif

@@ -6,10 +6,10 @@
 
 class tangibleEntity : public entity {
 protected:
-	std::shared_ptr<vertexBuffer> 	mVB; // The vertex buffer to contain the vertices on the gpu
-	std::shared_ptr<vertexArray> 	mVA; // The vertex array to contain the attributes on the gpu
-	std::shared_ptr<indexBuffer>    mIB; // The index buffer to contain vertex handles on the gpu
-	std::shared_ptr<shader> 		mShader; // Shader to draw the entity
+	std::shared_ptr<VertexBuffer> 	mVB; // The vertex buffer to contain the vertices on the gpu
+	std::shared_ptr<VertexArray> 	mVA; // The vertex array to contain the attributes on the gpu
+	std::shared_ptr<IndexBuffer>    mIB; // The index buffer to contain vertex handles on the gpu
+	std::shared_ptr<Shader> 		mShader; // Shader to draw the entity
 	bool mRequire_VBUpdate;
 public:
 	tangibleEntity(): 
@@ -22,7 +22,7 @@ public:
 
 	virtual void init() = 0;
 
-	void draw(camera_ptr cam, int frame, draw_type type = draw_type::ALL, bool on_required = false)
+	void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL, bool on_required = false)
 	{
 		// This is not exactly duplicate logic from what is in entity.cpp
 		if(!mInited) {

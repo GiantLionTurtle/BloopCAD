@@ -36,3 +36,7 @@ Project started on september 27 2020
     * Orbit
     * Pan
     * Zoom
+
+
+
+Bloop: Window containing everything
