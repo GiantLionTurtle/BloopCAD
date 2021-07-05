@@ -1,7 +1,7 @@
 #ifndef SPRITEANNOTATION_HPP_
 #define SPRITEANNOTATION_HPP_
 
-#include <entities/tangibleEntities/sketchEntities/sketchEntity.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchEntity.hpp>
 #include <constraintsSolver/expression.hpp>
 #include <graphics_utils//Texture.hpp>
 

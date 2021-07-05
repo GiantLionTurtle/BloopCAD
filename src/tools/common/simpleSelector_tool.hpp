@@ -13,8 +13,8 @@
 template<typename wst>
 class simpleSelector_tool : public tool<wst> {
 protected:
-	entity_ptr mCurrentHover; // The entity under the mouse, if there is one
-	std::function<bool (entity_ptr)> mFilter;
+	Drawable_ptr mCurrentHover; // The entity under the mouse, if there is one
+	std::function<bool (Drawable_ptr)> mFilter;
 public: 
 	/*
 		@function simpleSelector_tool creates a simpleSelector_tool object 
@@ -24,13 +24,13 @@ public:
 	simpleSelector_tool(wst* env): 
 		tool<wst>(env),
 		mCurrentHover(nullptr), // No entity is under the mouse
-		mFilter([](entity_ptr) { return true; })
+		mFilter([](Drawable_ptr) { return true; })
 	{
 		
 	}
 	virtual ~simpleSelector_tool() {};
 
-	virtual bool should_hover(entity_ptr ent) {	return mFilter(ent); }
+	virtual bool should_hover(Drawable_ptr ent) {	return mFilter(ent); }
 
 	/*
 		@function manage_button_press manages selection when clicking at a point on screen
@@ -57,7 +57,7 @@ public:
 	virtual bool manage_mouse_move(GdkEventMotion* event)
 	{
 		if(tool<wst>::mEnv->state()) {
-			entity_ptr ent = entity_at_point(glm::vec2(event->x, event->y));
+			Drawable_ptr ent = entity_at_point(glm::vec2(event->x, event->y));
 			// Toggle hovering
 			if(ent != mCurrentHover) {
 				if(mCurrentHover) {
@@ -81,7 +81,7 @@ public:
 
 		@return : A pointer to the entity under a point if it exists
 	*/
-	virtual entity_ptr entity_at_point(glm::vec2 pt)
+	virtual Drawable_ptr entity_at_point(glm::vec2 pt)
 	{
 		return tool<wst>::mEnv->state()->doc->target()->hovered_child(tool<wst>::mEnv->state()->cam, pt, mFilter);
 	}

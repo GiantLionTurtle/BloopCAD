@@ -20,7 +20,7 @@ partDesignDefault_tool::partDesignDefault_tool(partDesign* env):
 	}
 }
 
-void partDesignDefault_tool::act_on_entity(entity_ptr ent)
+void partDesignDefault_tool::act_on_entity(Drawable_ptr ent)
 {
 	ent->invoke_workspace(mEnv->state()->doc);
 }

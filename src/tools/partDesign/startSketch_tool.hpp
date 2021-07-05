@@ -4,7 +4,7 @@
 
 #include <tools/common/simpleSelector_tool.hpp>
 #include <workspaces/partDesign.hpp>
-#include <entities/sketch.hpp>
+#include <Drawables/sketch.hpp>
 
 struct CameraState;
 
@@ -38,7 +38,7 @@ public:
 	*/
    	virtual bool manage_button_press(GdkEventButton* event);
 
-	virtual void act_on_entity(entity_ptr ent);
+	virtual void act_on_entity(Drawable_ptr ent);
 
 	virtual std::string name() { return "start sketch"; }
 // private:

@@ -2,7 +2,7 @@
 #ifndef ENTITYVIEW_HPP_
 #define ENTITYVIEW_HPP_
 
-#include "entity.hpp"
+#include "Drawable.hpp"
 #include <workspaces/workspace.hpp>
 
 #include <gtkmm.h>
@@ -16,7 +16,7 @@ private:
 	Gtk::Label mCollapser, mContent;
 	Gtk::EventBox mCollapserEvents;
 
-	entity_ptr mEntity;
+	Drawable_ptr mEntity;
 	entityHandle* mParent;
 	std::vector<entityHandle*> mChildren;
 	entityView* mView;
@@ -24,7 +24,7 @@ private:
 	bool mCollapsed;
 	int mLevel;
 public:
-	entityHandle(entity_ptr ent, entityView* view, entityHandle* parent);
+	entityHandle(Drawable_ptr ent, entityView* view, entityHandle* parent);
 	entityHandle(); // for root handles
 
 	bool set_hover(GdkEventCrossing* event);

@@ -3,8 +3,8 @@
 #define QUITSKETCHDESIGN_ACTION_HPP_
 
 #include <actions/action.hpp>
-#include <entities/sketch.hpp>
-#include <entities/tangibleEntities/plane.hpp>
+#include <Drawables/sketch.hpp>
+#include <Drawables/tangibleEntities/plane.hpp>
 
 #include <memory>
 

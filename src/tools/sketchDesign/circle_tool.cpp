@@ -2,7 +2,7 @@
 #include "circle_tool.hpp"
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
-#include <entities/sketch.hpp>
+#include <Drawables/sketch.hpp>
 #include <actions/common/toggleBaseObject_action.hpp>
 #include <utils/mathUtils.hpp>
 

@@ -3,7 +3,7 @@
 #define TOOL_HPP_
 
 #include <forward_bloop.hpp>
-#include <entities/entity.hpp>
+#include <Drawables/Drawable.hpp>
 
 #include <glm/glm.hpp>
 #include <gtkmm.h>
@@ -101,8 +101,8 @@ public:
 	*/
 	compositeCursor_ptr cursor() const { return mCursor; };
 
-	virtual void act_on_entity(entity_ptr ent) {};
-	virtual bool should_hover(entity_ptr ent) { return true; }
+	virtual void act_on_entity(Drawable_ptr ent) {};
+	virtual bool should_hover(Drawable_ptr ent) { return true; }
 
 	virtual std::string name() { return "unkown tool"; }
 

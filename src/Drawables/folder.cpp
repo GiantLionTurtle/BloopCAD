@@ -4,8 +4,8 @@
 #include "entityView.hpp"
 
 
-folder::folder(std::string const& name_, entity* parent_):
-	entity(parent_)
+folder::folder(std::string const& name_, Drawable* parent_):
+	Drawable(parent_)
 {
 	set_name(name_);
 }
@@ -13,7 +13,7 @@ folder::folder(std::string const& name_, entity* parent_):
 void folder::set_handle(entityHandle* handle_)
 {
 	mHandle = handle_;
-	for_each([this](entity_ptr ent) {
+	for_each([this](Drawable_ptr ent) {
 		if(ent->handle()) {
 			delete ent->handle();
 			ent->set_handle(nullptr);
@@ -21,10 +21,10 @@ void folder::set_handle(entityHandle* handle_)
 		ent->set_handle(new entityHandle(ent, mHandle->view(), mHandle));
 	});
 }
-void folder::add(entity_ptr ent)
+void folder::add(Drawable_ptr ent)
 {
 	if(ent) {
-		require_redraw();
+		need_redraw();
 		ent->set_parent(this);
 		mChildren.push_back(ent);
 		if(mHandle)
@@ -32,9 +32,9 @@ void folder::add(entity_ptr ent)
 	}
 }
 
-void folder::for_each(std::function<void (entity_ptr)> func)
+void folder::for_each(std::function<void (Drawable_ptr)> func)
 {
-	for(entity_ptr ent : mChildren) {
+	for(Drawable_ptr ent : mChildren) {
 		func(ent);
 	}
 }

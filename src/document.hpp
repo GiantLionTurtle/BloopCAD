@@ -7,9 +7,9 @@
 #include <tools/tool.hpp>
 #include <graphics_utils/FrameBuffer.hpp>
 #include <actions/action.hpp>
-#include <entities/part.hpp>
+#include <Drawables/part.hpp>
 #include <graphics_utils/Camera.hpp>
-#include <entities/entityView.hpp>
+#include <Drawables/entityView.hpp>
 #include "eventsManager.hpp"
 
 #include <gtkmm.h>
@@ -24,7 +24,7 @@
 	@struct selection describes a selected entity from a certain Camera viewpoint
 */
 struct selection {
-	entity_ptr ent; // The selected entity
+	Drawable_ptr ent; // The selected entity
 	CameraState camSt; // The Camera state at the moment of the selection
 
 	/*
@@ -33,7 +33,7 @@ struct selection {
 		@param ent_ : 	The selected entity
 		@param camSt_ : The Camera state during selection
 	*/
-	selection(entity_ptr ent_, CameraState camSt_) :
+	selection(Drawable_ptr ent_, CameraState camSt_) :
 		ent(ent_),
 		camSt(camSt_)
 	{}
@@ -67,7 +67,7 @@ private:
 	bloop* mParentBloop; // The bloop window owning the document
 	CameraState mCurrentCamState;
 
-	bool mRequire_redraw;
+	bool mNeed_redraw;
 	bool mUseSelectionBuffer;
 	entityView* mSideBar;
 
@@ -198,14 +198,14 @@ public:
 
 		@return : The linear index of the required selection or -1
 	*/
-	int selection_ind(entity_ptr ent);
+	int selection_ind(Drawable_ptr ent);
 	/*
 		@function clear_selection clears the selection buffer
 	*/
 	void clear_selection();
 
-	void toggle_select(entity_ptr ent, CameraState cam, bool additive);
-	void toggle_select(entity_ptr ent, bool additive);
+	void toggle_select(Drawable_ptr ent, CameraState cam, bool additive);
+	void toggle_select(Drawable_ptr ent, bool additive);
 };
 
 #endif

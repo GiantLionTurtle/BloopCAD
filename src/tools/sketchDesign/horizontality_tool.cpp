@@ -3,8 +3,8 @@
 
 #include <geometry/geometry_2d/point_abstr.hpp>
 #include <geometry/geometry_2d/line_abstr.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchConstraint.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchLine.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchConstraint.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 

@@ -75,7 +75,7 @@ void point::update_VB()
 	glm::vec3 pos_tmp = pos();
 	mVB->set(&pos_tmp[0], sizeof(glm::vec3));
 	mVB->unbind();
-	set_require_redraw();
+	set_need_redraw();
 	if(mParent)
 		mParent->notify(UPDATED);
 }
@@ -125,6 +125,6 @@ float point::selection_depth(Camera_ptr cam, glm::vec2 cursor_pos)
 
 void point::post_set_update()
 {
-	set_require_redraw();
+	set_need_redraw();
 	mRequire_VBUpdate = true;
 }

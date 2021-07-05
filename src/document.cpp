@@ -14,7 +14,7 @@ document::document(eventsManager* manager):
 	mActionStackSize(0),
 	mActionInd(0),
 	mCurrentActionNum(0),
-	mRequire_redraw(false),
+	mNeed_redraw(false),
 	mUseSelectionBuffer(true),
 	mName("Unamed doc")
 {
@@ -109,15 +109,15 @@ void document::do_resize(int width, int height)
 }
 bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 {
-	mRequire_redraw = false;
+	mNeed_redraw = false;
 	// Background draw
 	GLCall(glViewport(0, 0, get_width(), get_height()));
 	GLCall(glClearColor(mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, 1.0));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad	
 	if(mPart) {
-		mPart->draw(mCurrentWorkspaceState->cam, mFrameId, entity::draw_type::INACTIVE);
-		mPart->draw(mCurrentWorkspaceState->cam, mFrameId, entity::draw_type::ACTIVE);
+		mPart->draw(mCurrentWorkspaceState->cam, mFrameId, Drawable::draw_type::INACTIVE);
+		mPart->draw(mCurrentWorkspaceState->cam, mFrameId, Drawable::draw_type::ACTIVE);
 	}
 	mFrameId++;
 	return true;
@@ -272,7 +272,7 @@ selection document::selection_at(unsigned int ind)
 	}
 	return {nullptr, {glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)}}; // Empty selection
 }
-int document::selection_ind(entity_ptr ent)
+int document::selection_ind(Drawable_ptr ent)
 {
 	for(int i = 0; i < mSelection.size(); ++i) { // Linear search because I don't see huge selections coming, but it might change
 		if(mSelection.at(i).ent == ent)
@@ -287,7 +287,7 @@ void document::clear_selection()
 	}
 	mSelection.clear();
 }
-void document::toggle_select(entity_ptr ent, CameraState cam, bool additive)
+void document::toggle_select(Drawable_ptr ent, CameraState cam, bool additive)
 {
 	if(!ent && !additive) {
 		clear_selection();
@@ -310,7 +310,7 @@ void document::toggle_select(entity_ptr ent, CameraState cam, bool additive)
 		mSelection.push_back(selection(ent, cam)); // Add it to the buffer
 	}
 }
-void document::toggle_select(entity_ptr ent, bool additive)
+void document::toggle_select(Drawable_ptr ent, bool additive)
 {
 	toggle_select(ent, mCurrentCamState, additive);
 }

@@ -1,8 +1,8 @@
 
 #include "sketchDesignDefault_tool.hpp"
 
-#include <entities/sketch.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
+#include <Drawables/sketch.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchPoint.hpp>
 #include <utils/DebugUtils.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>

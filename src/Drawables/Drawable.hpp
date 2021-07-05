@@ -21,9 +21,9 @@
 class bloop;
 class document;
 
-class entity;
+class Drawable;
 class entityHandle;
-using entity_ptr = std::shared_ptr<entity>;
+using Drawable_ptr = std::shared_ptr<Drawable>;
 
 /*
 	@define BLOOP_ENTITY_ describe state flags for an entity
@@ -42,7 +42,7 @@ using entity_ptr = std::shared_ptr<entity>;
 /*
 	@class entity describes a basic entity that appears on screen
 */
-class entity : virtual public baseObject {
+class Drawable : virtual public baseObject {
 public: 
 	enum draw_type { ALL, TRANSLUCID, ACTIVE, INACTIVE };
 	enum notifications { SELECTED, UNSELECTED, HOVERED, UNHOVERED, HIDEN, UNHIDEN, DELETED, RESURRECTED, UPDATED};
@@ -50,11 +50,11 @@ protected:
 	int mState;	// The state of the entity, described by the above flags
 	int mStdNotifs; // Standard notifications sent by a child to it's parent
 	bool mInited;
-	bool mRequire_redraw, mRequire_selfRedraw;
+	bool mNeed_redraw;
 
 	std::string mName;
 
-	entity* mParent;
+	Drawable* mParent;
 
 	entityHandle* mHandle;
 public:
@@ -65,8 +65,7 @@ public:
 		* Not hidden
 		* Does exist
 	*/
-	entity();
-	entity(entity* parent);
+	Drawable();
 
 	/*
 		@function draw draws the entity
@@ -74,13 +73,15 @@ public:
 		@param cam : 	The Camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	virtual void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL, bool on_required = false);
-
-	void update();
+	virtual void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL, bool on_required = false) = 0;
+	
+	virtual void update() = 0;
+	virtual void update_self();
 
 	virtual void init() {}
 
-	entity_ptr hovered_child(Camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (entity_ptr)> filter_func = ([](entity_ptr ent) { return true; }));
+	// BLOOPBLOOPGOAWAY
+	Drawable_ptr hovered_child(Camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (Drawable_ptr)> filter_func = ([](Drawable_ptr ent) { return true; }));
 
 	void notify_parent(int msg);
 	virtual void notify(int msg) {}
@@ -199,8 +200,6 @@ public:
 	std::string name() const { return mName; }
 	void set_name(std::string const& name_) { mName = name_; }
 
-	virtual void print(int depth = 0);
-
 	entityHandle* handle() const { return mHandle; }
 	virtual void set_handle(entityHandle* handle_) { mHandle = handle_; }
 
@@ -210,13 +209,11 @@ public:
 		@return : Wheter or not the indexer is following another indexer
 	*/
 	bool is_following() const { if(mParent) return true; return false; }
-	entity* parent() const { return mParent; }
-	void set_parent(entity* parent_) { mParent = parent_; }
+	Drawable* parent() const { return mParent; }
+	void set_parent(Drawable* parent_) { mParent = parent_; }
 
-	virtual void for_each(std::function<void (entity_ptr)> func) {}
-
-	void set_require_redraw(bool self = true);
-	bool require_redraw() const { return mRequire_redraw; }
+	void set_need_redraw();
+	bool need_redraw() const { return mNeed_redraw; }
 
 	virtual void invoke_workspace(document* doc) {}
 protected:
@@ -235,15 +232,13 @@ protected:
 	virtual void hidden_impl(bool hid) {}
 	virtual void exists_impl(bool ex) {}
 
-	bool should_draw_self(draw_type type, bool on_required);
+	// bool should_draw_self(draw_type type, bool on_required);
 
 	virtual float selection_depth(Camera_ptr cam, glm::vec2 cursor_pos) { return -1.0f; }
 
-	void hovered_child_internal(Camera_ptr cam, glm::vec2 cursor_pos, entity_ptr& candidate, float& min_dist, std::function<bool (entity_ptr)> filter_func);
+	// BLOOPBLOOPGOAWAY
+	void hovered_child_internal(Camera_ptr cam, glm::vec2 cursor_pos, Drawable_ptr& candidate, float& min_dist, std::function<bool (Drawable_ptr)> filter_func);
 };
 
-std::ostream& operator<<(std::ostream& os, entity_ptr ent);
-std::ostream& operator<<(std::ostream& os, entity& ent);
-std::ostream& operator<<(std::ostream& os, entity ent);
 
 #endif

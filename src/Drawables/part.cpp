@@ -6,14 +6,14 @@
 #include "tangibleEntities/point.hpp"
 
 part::part():
-	entity()
+	Drawable()
 {
 	set_name("Part");
 	// init();
 	// init_scene();
 }
-part::part(entity* parent):
-	entity(parent)
+part::part(Drawable* parent):
+	Drawable(parent)
 {
 	set_name("Part");
 	// init();
@@ -53,7 +53,7 @@ void part::set_handle(entityHandle* handle_)
 {
 	mHandle = handle_;
 	
-	for_each([this](entity_ptr ent) {
+	for_each([this](Drawable_ptr ent) {
 		if(ent->handle())
 			delete ent->handle();
 			
@@ -63,7 +63,7 @@ void part::set_handle(entityHandle* handle_)
 void part::add_sketch(sketch_ptr sk)
 {
 	if(sk) {
-		set_require_redraw();
+		set_need_redraw();
 		sk->set_parent(this);
 		mSketches.push_back(sk);
 		if(mHandle)
@@ -71,7 +71,7 @@ void part::add_sketch(sketch_ptr sk)
 	}
 }
 
-void part::for_each(std::function<void (entity_ptr)> func)
+void part::for_each(std::function<void (Drawable_ptr)> func)
 {
 	for(sketch_ptr sk : mSketches) {
 		func(sk);

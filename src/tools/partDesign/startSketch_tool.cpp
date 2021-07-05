@@ -4,7 +4,7 @@
 #include <utils/preferences.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
-#include <entities/tangibleEntities/plane.hpp>
+#include <Drawables/tangibleEntities/plane.hpp>
 #include <actions/common/toggleBaseObject_action.hpp>
 #include <actions/sketchDesign/enterSketchDesign_action.hpp>
 #include <actions/partDesign/quitPartDesign_action.hpp>
@@ -16,7 +16,7 @@ startSketch_tool::startSketch_tool(partDesign* env):
 	simpleSelector_tool(env)
 {
 	load_icon("resources/textures/images/icons/partDesign/cursors/startSketch_cursor.png");
-	mFilter = [](entity_ptr ent) -> bool { return std::dynamic_pointer_cast<geom_3d::plane_abstr>(ent).operator bool(); };
+	mFilter = [](Drawable_ptr ent) -> bool { return std::dynamic_pointer_cast<geom_3d::plane_abstr>(ent).operator bool(); };
 }
 
 void startSketch_tool::init()
@@ -38,7 +38,7 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 {
 	if(mEnv->state()) {
 		// If the hovered entity is a plane, start sketch
-		entity_ptr ent = entity_at_point(glm::vec2(event->x, event->y));
+		Drawable_ptr ent = entity_at_point(glm::vec2(event->x, event->y));
 		geom_3d::plane_abstr_ptr sketchPlane = std::dynamic_pointer_cast<geom_3d::plane_abstr>(ent);
 		if(sketchPlane) {
 			start_sketch(sketchPlane, mEnv->state()->cam->state());
@@ -48,7 +48,7 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 	return true;
 }
 
-void startSketch_tool::act_on_entity(entity_ptr ent)
+void startSketch_tool::act_on_entity(Drawable_ptr ent)
 {
 	if(mEnv->state() && mFilter(ent))
 		start_sketch(std::dynamic_pointer_cast<geom_3d::plane_abstr>(ent), mEnv->state()->cam->state());

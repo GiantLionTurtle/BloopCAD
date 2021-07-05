@@ -10,7 +10,7 @@ sketchGeometry::sketchGeometry(geom_3d::plane_abstr_ptr basePlane_, int type_):
 	
 }
 
-void sketchGeometry::for_each(std::function<void(entity_ptr geom)> func)
+void sketchGeometry::for_each(std::function<void(Drawable_ptr geom)> func)
 {
 	// for(constraintAnnotation_ptr annot : mAnnotations) {
 	// 	if(annot->exists())
@@ -40,7 +40,7 @@ void sketchGeometry::for_each_annot(std::function<void(sketchEntity_ptr geom)> f
 // 		annot->set_parent(this);
 // 		if(selected()) {
 // 			annot->set_hidden(false);
-// 			set_require_redraw();
+// 			set_need_redraw();
 // 		} else {
 // 			annot->set_hidden(true);
 // 		}

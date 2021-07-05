@@ -2,8 +2,8 @@
 #include "line_tool.hpp"
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
-#include <entities/sketch.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchLine.hpp>
+#include <Drawables/sketch.hpp>
 #include <actions/common/toggleBaseObject_action.hpp>
 #include <utils/mathUtils.hpp>
 

@@ -3,8 +3,8 @@
 #define TOGGLEBASECONSTRAINT_ACTION_HPP_
 
 #include <actions/action.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchConstraint.hpp>
-#include <entities/sketch.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchConstraint.hpp>
+#include <Drawables/sketch.hpp>
 
 class toggleConstraint_action : public action {
 private:

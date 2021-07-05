@@ -3,7 +3,7 @@
 #define SKETCHDESIGN_HPP_
 
 #include "workspace.hpp"
-#include <entities/sketch.hpp>
+#include <Drawables/sketch.hpp>
 #include <tools/tools_forward.hpp>
 
 #include <map>

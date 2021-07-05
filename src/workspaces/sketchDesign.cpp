@@ -18,7 +18,7 @@
 #include <tools/sketchDesign/pan2d_tool.hpp>
 #include <tools/sketchDesign/zoom2d_tool.hpp>
 #include <utils/xmlParser.hpp>
-#include <entities/svgEntity.hpp>
+#include <Drawables/svgEntity.hpp>
 #include <bloop.hpp>
 
 sketchDesign::sketchDesign(bloop* parent) :
@@ -277,7 +277,7 @@ void sketchDesign::to_svg()
 	// svgDoc.add_lastChild(svg);
 	// glm::vec2 min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max()), max(std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
 	// if(mState && mState->target) {
-	// 	mState->target->for_each([&svg, &min, &max, this](entity_ptr ent) {
+	// 	mState->target->for_each([&svg, &min, &max, this](Drawable_ptr ent) {
 	// 		std::shared_ptr<svgEntity> svgEnt = std::dynamic_pointer_cast<svgEntity>(ent);
 	// 		sketch_ptr sk = target();
 	// 		if(svgEnt && sk) {

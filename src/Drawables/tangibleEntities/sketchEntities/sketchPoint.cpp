@@ -188,7 +188,7 @@ void sketchPoint::draw_impl(Camera_ptr cam, int frame)
 
 void sketchPoint::post_set_behavior()
 {
-	set_require_redraw();
+	set_need_redraw();
 	mRequire_VBUpdate = true;
 }
 

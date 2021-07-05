@@ -4,8 +4,8 @@
 
 #include <tools/tool.hpp>
 
-#include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchCircle.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchPoint.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchCircle.hpp>
 #include <workspaces/sketchDesign.hpp>
 
 #include <glm/glm.hpp>

@@ -3,7 +3,7 @@
 #define QUITPARTDESIGN_ACTION_HPP_
 
 #include <actions/action.hpp>
-#include <entities/part.hpp>
+#include <Drawables/part.hpp>
 
 #include <memory>
 

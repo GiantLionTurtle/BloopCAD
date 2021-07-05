@@ -4,8 +4,8 @@
 
 #include <tools/tool.hpp>
 
-#include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchPoint.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchLine.hpp>
 #include <workspaces/sketchDesign.hpp>
 
 #include <glm/glm.hpp>

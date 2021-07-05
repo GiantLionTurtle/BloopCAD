@@ -2,7 +2,7 @@
 #ifndef CONSTRAINTANNOTATION_HPP_
 #define CONSTRAINTANNOTATION_HPP_
 
-#include <entities/tangibleEntities/sketchEntities/sketchEntity.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchEntity.hpp>
 #include "entityPosSnapshot_abstract.hpp"
 #include <graphics_utils//Texture.hpp>
 

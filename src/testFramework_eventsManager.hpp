@@ -4,8 +4,8 @@
 
 #include "eventsManager.hpp"
 
-#include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchPoint.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchLine.hpp>
 
 class test_eventsManager : public stimuli_eventsManager {
 private:

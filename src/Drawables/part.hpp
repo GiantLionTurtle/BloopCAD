@@ -2,7 +2,7 @@
 #ifndef PART_HPP_
 #define PART_HPP_
 
-#include "entity.hpp"
+#include "Drawable.hpp"
 #include "folder.hpp"
 #include "tangibleEntities/plane.hpp"
 #include "sketch.hpp"
@@ -21,7 +21,7 @@ using part_ptr = std::shared_ptr<part>;
 	@class part describes a part, which is composed of sub entities and sketches
 	@parent : entity
 */
-class part : public entity {
+class part : public Drawable {
 private:
 	std::shared_ptr<plane> mXY, mYZ, mZX; // Origin planes
 	folder_ptr mOrigin;
@@ -37,7 +37,7 @@ public:
 
 		@param parent : The parent entity to follow
 	*/
-	part(entity* parent);
+	part(Drawable* parent);
 
 	/*
 		@function init sets up the scene by :
@@ -49,7 +49,7 @@ public:
 
 	void add_sketch(sketch_ptr sk);
 
-	virtual void for_each(std::function<void (entity_ptr)> func);
+	virtual void for_each(std::function<void (Drawable_ptr)> func);
 
 	/*
 		@function get_sketch grants linear access to the part's sketches

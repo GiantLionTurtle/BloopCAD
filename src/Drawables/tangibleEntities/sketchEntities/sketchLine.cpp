@@ -120,7 +120,7 @@ void sketchLine::print(int depth)
 	// }
 }
 
-void sketchLine::for_each(std::function<void (entity_ptr)> func)
+void sketchLine::for_each(std::function<void (Drawable_ptr)> func)
 {
 	if(!exists())
 		return;

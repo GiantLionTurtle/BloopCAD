@@ -1,12 +1,12 @@
 #include "sketchConstraint.hpp"
 
 #include <constraintsSolver/expression.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchCircle.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchPoint.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchLine.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchCircle.hpp>
 #include <utils/DebugUtils.hpp>
 #include "sketchEntity.hpp"
-#include <entities/sketch.hpp>
+#include <Drawables/sketch.hpp>
 #include "spriteAnnotation.hpp"
 #include <constraintsSolver/constraint.hpp>
 
@@ -14,7 +14,6 @@
 #include <string>
 
 constraint_entity::constraint_entity(std::vector<var_ptr> vars, std::vector<equ_ptr> equs):
-	entity(),
 	mVars(vars),
 	mEqus(equs)
 {

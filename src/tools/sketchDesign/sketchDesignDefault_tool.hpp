@@ -1,6 +1,6 @@
 
-#include <entities/tangibleEntities/sketchEntities/sketchEntity.hpp>
-#include <entities/tangibleEntities/sketchEntities/selectionRectangle.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchEntity.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/selectionRectangle.hpp>
 #include <workspaces/sketchDesign.hpp>
 
 class sketchDesignDefault_tool : public tool<sketchDesign> {

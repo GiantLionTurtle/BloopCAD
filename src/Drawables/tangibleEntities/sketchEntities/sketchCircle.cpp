@@ -127,7 +127,7 @@ void sketchCircle::set_tmpConstant(bool const_)
 	}
 }
 
-void sketchCircle::for_each(std::function<void (entity_ptr)> func)
+void sketchCircle::for_each(std::function<void (Drawable_ptr)> func)
 {
 	func(mCenter);
 	sketchGeometry::for_each(func);
@@ -200,7 +200,7 @@ void sketchCircle::draw_impl(Camera_ptr cam, int frame)
 void sketchCircle::post_set_behavior()
 {
 	mRequire_VBUpdate = true;
-	set_require_redraw();
+	set_need_redraw();
 }
 
 void sketchCircle::init_buffers()

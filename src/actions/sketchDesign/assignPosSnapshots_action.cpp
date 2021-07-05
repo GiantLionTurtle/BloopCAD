@@ -1,7 +1,7 @@
 
 
 #include "assignPosSnapshots_action.hpp"
-#include <entities/tangibleEntities/sketchEntities/entityPosSnapshot_abstract.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/entityPosSnapshot_abstract.hpp>
 
 assignPosSnapshots_action::assignPosSnapshots_action(entityPosSnapshot_ptr source, entityPosSnapshot_ptr target):
 	mSourceSnapshots({source}),

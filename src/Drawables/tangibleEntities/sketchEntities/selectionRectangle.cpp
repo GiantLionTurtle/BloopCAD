@@ -52,7 +52,7 @@ void selectionRectangle::set_startPoint(glm::vec2 pt)
 	mVertices[1] = mBasePlane->to_worldPos(mStartPt + glm::vec2(0.0f, diff.y));
 	mVertices[3] = mBasePlane->to_worldPos(mStartPt + glm::vec2(diff.x, 0.0f));
 	mRequire_VBUpdate = true;
-	set_require_redraw();
+	set_need_redraw();
 }
 void selectionRectangle::set_endPoint(glm::vec2 pt)
 {
@@ -62,7 +62,7 @@ void selectionRectangle::set_endPoint(glm::vec2 pt)
 	mVertices[2] = mBasePlane->to_worldPos(mEndPt);
 	mVertices[3] = mBasePlane->to_worldPos(mStartPt + glm::vec2(diff.x, 0.0f));
 	mRequire_VBUpdate = true;
-	set_require_redraw();
+	set_need_redraw();
 }
 void selectionRectangle::set_points(glm::vec2 start_, glm::vec2 end_)
 {
@@ -74,7 +74,7 @@ void selectionRectangle::set_points(glm::vec2 start_, glm::vec2 end_)
 	mVertices[2] = mBasePlane->to_worldPos(mEndPt);
 	mVertices[3] = mBasePlane->to_worldPos(mStartPt + glm::vec2(diff.x, 0.0f));
 	mRequire_VBUpdate = true;
-	set_require_redraw();
+	set_need_redraw();
 }
 
 void selectionRectangle::draw_impl(Camera_ptr cam, int frame)

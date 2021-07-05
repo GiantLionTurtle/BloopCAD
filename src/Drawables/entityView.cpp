@@ -3,7 +3,7 @@
 
 #include <document.hpp>
 
-entityHandle::entityHandle(entity_ptr ent, entityView* view, entityHandle* parent):
+entityHandle::entityHandle(Drawable_ptr ent, entityView* view, entityHandle* parent):
 	mEntity(ent),
 	mView(view),
 	mParent(parent),

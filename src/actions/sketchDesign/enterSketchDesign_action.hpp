@@ -3,8 +3,8 @@
 #define ENTERSKETCHDESIGN_ACTION_HPP_
 
 #include <actions/common/switchWorkspace_action.hpp>
-#include <entities/sketch.hpp>
-#include <entities/tangibleEntities/plane.hpp>
+#include <Drawables/sketch.hpp>
+#include <Drawables/tangibleEntities/plane.hpp>
 
 #include <memory>
 
@@ -12,7 +12,7 @@ class enterSketchDesign_action : public switchWorkspace_action {
 private:
 	std::shared_ptr<plane> mPlane;
 	sketch_ptr mTarget;
-	entity_ptr mInitialTarget;
+	Drawable_ptr mInitialTarget;
 public:
 	enterSketchDesign_action(sketch_ptr target, bool set_Camera = false);
 

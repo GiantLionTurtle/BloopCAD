@@ -1,10 +1,10 @@
 
 #include "coincidence_tool.hpp"
 
-#include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchCircle.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchConstraint.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchPoint.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchLine.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchCircle.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchConstraint.hpp>
 #include <actions/sketchDesign/toggleConstraint_action.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>

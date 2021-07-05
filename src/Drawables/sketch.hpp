@@ -2,12 +2,12 @@
 #ifndef SKETCH_HPP_
 #define SKETCH_HPP_
 
-#include "entity.hpp"
+#include "Drawable.hpp"
 #include <geometry/geometry_3d/plane_abstr.hpp>
-#include <entities/folder.hpp>
+#include <Drawables/folder.hpp>
 #include <constraintsSolver/constraintSystem.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchGeometry.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchConstraint.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchGeometry.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchConstraint.hpp>
 
 #include <memory>
 #include <vector>
@@ -55,12 +55,12 @@ using sketch_ptr = std::shared_ptr<sketch>;
 	@class sketch describes a sketch which is a bunch of geometries with constraints
 	@parent : entity
 */
-class sketch : public entity, public std::enable_shared_from_this<sketch> {
+class sketch : public Drawable, public std::enable_shared_from_this<sketch> {
 private:
 	geom_3d::plane_abstr_ptr mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
 
 	std::vector<sketchGeometry_ptr> mGeometries;
-	std::vector<entity_ptr> mToolPreview;
+	std::vector<Drawable_ptr> mToolPreview;
 	std::vector<sketchEntity_ptr> mSelectedEntities;
 	std::vector<std::shared_ptr<constraint_entity>> mConstraints;
 
@@ -81,7 +81,7 @@ public:
 		@param base_plane : The plane onto which everything is constructed in the sketch
 		@param parent : 	An entity that contains this sketch
 	*/
-	sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent);
+	sketch(geom_3d::plane_abstr_ptr base_plane, Drawable* parent);
 
 	void init();
 
@@ -94,7 +94,7 @@ public:
 	void add_geometry(sketchGeometry_ptr ent);
 	std::vector<entityPosSnapshot_ptr> geometriesSnapshots();
 	std::vector<entityPosSnapshot_ptr> selectedGeometriesSnapshots();
-	void add_toolPreview(entity_ptr ent);
+	void add_toolPreview(Drawable_ptr ent);
 	void clear_toolPreview();
 	void add_selectedGeometry(sketchEntity_ptr ent);
 	void remove_selectedGeometry(sketchEntity_ptr ent);
@@ -103,7 +103,7 @@ public:
 
 	bool can_delete(sketchEntity_ptr ent);
 
-	void for_each(std::function<void (entity_ptr)> func);
+	void for_each(std::function<void (Drawable_ptr)> func);
 	void for_each_selected(std::function<void (sketchEntity_ptr)> func);
 	void toggle_selection_from_area(glm::vec2 a, glm::vec2 b, bool contained);
 

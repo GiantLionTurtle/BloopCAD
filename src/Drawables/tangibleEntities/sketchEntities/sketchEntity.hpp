@@ -3,7 +3,7 @@
 #define SKETCHENTITY_HPP_
 
 #include <geometry/geometry_3d/plane_abstr.hpp>
-#include <entities/tangibleEntities/tangibleEntity.hpp>
+#include <Drawables/tangibleEntities/tangibleEntity.hpp>
 
 #include <memory>
 

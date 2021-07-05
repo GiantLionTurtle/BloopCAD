@@ -2,9 +2,9 @@
 #include "sketch.hpp"
 
 #include <constraintsSolver/solverState.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchLine.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchPoint.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchCircle.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchLine.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchPoint.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchCircle.hpp>
 #include <actions/common/serial_action.hpp>
 #include <actions/common/moveCamera_action.hpp>
 #include <actions/sketchDesign/enterSketchDesign_action.hpp>
@@ -23,8 +23,8 @@ sketch::sketch(geom_3d::plane_abstr_ptr base_plane):
 
 	// mSystem.set_solver(constraintSystem::LevenbergMarquardt);
 }
-sketch::sketch(geom_3d::plane_abstr_ptr base_plane, entity* parent):
-	entity(parent), // Follow that entity
+sketch::sketch(geom_3d::plane_abstr_ptr base_plane, Drawable* parent):
+	Drawable(parent), // Follow that entity
 	mBasePlane(base_plane),
 	mSystem(1)
 {
@@ -102,7 +102,7 @@ void sketch::add_geometry(sketchGeometry_ptr ent)
 		LOG_WARNING("Trying to add null geometry.");
 		return;
 	}
-	set_require_redraw();
+	set_need_redraw();
 	ent->set_parent(this);
 	mGeometries.push_back(ent);
 }
@@ -126,20 +126,20 @@ std::vector<entityPosSnapshot_ptr> sketch::selectedGeometriesSnapshots()
 	}
 	return snapshots;
 }
-void sketch::add_toolPreview(entity_ptr ent)
+void sketch::add_toolPreview(Drawable_ptr ent)
 {
 	if(!ent) {
 		LOG_WARNING("Trying to add null entity.");
 		return;
 	}
-	set_require_redraw();
+	set_need_redraw();
 	ent->set_parent(this);
 	mToolPreview.push_back(ent);
 }
 void sketch::clear_toolPreview()
 {
 	mToolPreview.clear();
-	set_require_redraw();
+	set_need_redraw();
 }
 
 void sketch::add_selectedGeometry(sketchEntity_ptr ent)
@@ -149,7 +149,7 @@ void sketch::add_selectedGeometry(sketchEntity_ptr ent)
 		return;
 	}
 	ent->select();
-	set_require_redraw();
+	set_need_redraw();
 	mSelectedEntities.push_back(ent);
 }
 void sketch::remove_selectedGeometry(sketchEntity_ptr ent)
@@ -175,12 +175,12 @@ bool sketch::can_delete(sketchEntity_ptr ent)
 	return false;
 }
 
-void sketch::for_each(std::function<void (entity_ptr)> func)
+void sketch::for_each(std::function<void (Drawable_ptr)> func)
 {
 	for(sketchGeometry_ptr geom : mGeometries) {
 		func(geom);
 	}
-	for(entity_ptr ent : mToolPreview) {
+	for(Drawable_ptr ent : mToolPreview) {
 		func(ent);
 	}
 	for(auto constr : mConstraints) {

@@ -3,7 +3,7 @@
 #define ASSIGNPOSSNAPSHOT_ACTION_HPP_
 
 #include <actions/action.hpp>
-#include <entities/tangibleEntities/sketchEntities/sketchGeometry.hpp>
+#include <Drawables/tangibleEntities/sketchEntities/sketchGeometry.hpp>
 
 class assignPosSnapshots_action : public action {
 private:

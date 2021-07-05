@@ -10,7 +10,7 @@ set(tools_source_files
 add_library(tools ${tools_source_files})
 
 target_link_libraries(tools
-  entities
+  Drawables
   actions
   common_tools
   navigation_tools
