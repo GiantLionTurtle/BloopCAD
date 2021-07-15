@@ -3,14 +3,14 @@
 #define ENTERPARTHDESIGN_ACTION_HPP_
 
 #include <actions/common/switchWorkspace_action.hpp>
-#include <Drawables/part.hpp>
+#include <Drawables/Part.hpp>
 
 #include <memory>
 
 class enterPartDesign_action : public switchWorkspace_action {
 private:
-	std::shared_ptr<part> mTarget;
-	Drawable_ptr mInitialTarget;
+	std::shared_ptr<Part> mTarget;
+	Drawable* mInitialTarget;
 public:
 	enterPartDesign_action(bool set_Camera = false);
 

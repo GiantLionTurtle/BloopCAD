@@ -3,16 +3,16 @@
 #define QUITSKETCHDESIGN_ACTION_HPP_
 
 #include <actions/action.hpp>
-#include <Drawables/sketch.hpp>
-#include <Drawables/tangibleEntities/plane.hpp>
+#include <Drawables/Sketch.hpp>
+#include <Drawables/tangibleEntities/Plane.hpp>
 
 #include <memory>
 
 class quitSketchDesign_action : public action {
 private:
-	std::shared_ptr<plane> mPlane;
+	std::shared_ptr<Plane> mPlane;
 public:
-	quitSketchDesign_action(sketch_ptr target);
+	quitSketchDesign_action(Sketch_ptr target);
 
 	/*
 		@function do_work switches to desired workspace if it exists

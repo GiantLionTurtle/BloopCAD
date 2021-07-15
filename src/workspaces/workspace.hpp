@@ -25,7 +25,7 @@ using workspaceState_ptr = std::shared_ptr<workspaceState>;
 */
 struct workspaceState {
 	document* doc; // The document owning the state
-	Drawable_ptr target; // The target entity of the workspace
+	Drawable* target; // The target entity of the workspace
 	Camera_ptr cam; // The Camera rendering the scene for that workspace in the doc
 	CameraState startCamState;
 	tool_abstract_ptr currentTool; // The tool being used by the workspace in the doc

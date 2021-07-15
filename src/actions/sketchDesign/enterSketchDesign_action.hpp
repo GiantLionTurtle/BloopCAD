@@ -3,18 +3,18 @@
 #define ENTERSKETCHDESIGN_ACTION_HPP_
 
 #include <actions/common/switchWorkspace_action.hpp>
-#include <Drawables/sketch.hpp>
-#include <Drawables/tangibleEntities/plane.hpp>
+#include <Drawables/Sketch.hpp>
+#include <Drawables/tangibleEntities/Plane.hpp>
 
 #include <memory>
 
 class enterSketchDesign_action : public switchWorkspace_action {
 private:
-	std::shared_ptr<plane> mPlane;
-	sketch_ptr mTarget;
-	Drawable_ptr mInitialTarget;
+	std::shared_ptr<Plane> mPlane;
+	Sketch* mTarget;
+	Drawable* mInitialTarget;
 public:
-	enterSketchDesign_action(sketch_ptr target, bool set_Camera = false);
+	enterSketchDesign_action(Sketch* target, bool set_Camera = false);
 
 	/*
 		@function do_work switches to desired workspace if it exists

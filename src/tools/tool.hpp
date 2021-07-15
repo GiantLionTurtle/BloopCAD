@@ -101,8 +101,8 @@ public:
 	*/
 	compositeCursor_ptr cursor() const { return mCursor; };
 
-	virtual void act_on_entity(Drawable_ptr ent) {};
-	virtual bool should_hover(Drawable_ptr ent) { return true; }
+	virtual void act_on_entity(Drawable* ent) {};
+	virtual bool should_hover(Drawable* ent) { return true; }
 
 	virtual std::string name() { return "unkown tool"; }
 

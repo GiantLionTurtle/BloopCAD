@@ -3,7 +3,7 @@
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <Drawables/tangibleEntities/sketchEntities/sketchLine.hpp>
-#include <Drawables/sketch.hpp>
+#include <Drawables/Sketch.hpp>
 #include <actions/common/toggleBaseObject_action.hpp>
 #include <utils/mathUtils.hpp>
 
@@ -44,7 +44,7 @@ bool line_tool::manage_key_press(GdkEventKey* event)
 bool line_tool::manage_mouse_move(GdkEventMotion* event)
 {
 	if(mStarted) {
-		sketch_ptr target = mEnv->target();
+		Sketch_ptr target = mEnv->target();
 		DEBUG_ASSERT(target, "No valid target.");
 
 		Camera_ptr cam = mEnv->state()->cam; // For ease of writing

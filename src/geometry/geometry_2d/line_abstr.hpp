@@ -17,7 +17,7 @@ public:
 	virtual glm::vec2 posA() = 0;
 	virtual glm::vec2 posB() = 0;
 
-	virtual glm::vec2 at(float t);
+	glm::vec2 at(float t);
 	virtual glm::vec2 closest_to_point(glm::vec2 const& pt);
 	virtual float dist_to_point(glm::vec2 const& pt);
 
@@ -25,10 +25,7 @@ public:
 	float length2();
 
 	bool intersects(line_abstr* l);
-	bool intersects(std::shared_ptr<line_abstr> l) { return intersects(l.get()); }
 protected:
-	virtual void post_set_update() {}
-
 	bool ccw(glm::vec2 A, glm::vec2 B, glm::vec2 C);
 	glm::vec2 as_vec();
 };

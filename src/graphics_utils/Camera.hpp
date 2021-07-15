@@ -114,6 +114,8 @@ public:
 	*/
 	glm::vec3 target() const { return mTarget; }
 
+	glm::vec2 world_to_screen(glm::vec3 worldpos) const;
+
 	/*
 		@function up
 
@@ -154,7 +156,7 @@ public:
 
 		@return : The zoom of the Camera
 	*/
-	float zoom() { return mZoom; }
+	float zoom() const { return mZoom; }
 	void set_zoom(float aZoom) { mZoom = aZoom; mRequire_update = true; };
 
 	float nearPlane() { return mNearPlane; }
@@ -162,7 +164,7 @@ public:
 	float farPlane() { return mFarPlane; }
 	void set_farPlane(float far) { mFarPlane = far; mRequire_update = true; }
 
-	glm::vec2 viewport() { return mViewport; }
+	glm::vec2 viewport() const { return mViewport; }
 	void set_viewport(glm::vec2 dimensions) { mViewport = dimensions; mRequire_update = true; }
 	/*
 		@function aspectRatio

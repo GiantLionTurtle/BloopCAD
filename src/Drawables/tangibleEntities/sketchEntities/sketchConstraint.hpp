@@ -19,7 +19,7 @@ using sketchLine_ptr = std::shared_ptr<sketchLine>;
 class sketchCircle;
 using sketchCircle_ptr = std::shared_ptr<sketchCircle>;
 
-class constraint_entity : public Drawable, public constraint_abstr {
+class constraint_entity : public sketchEntity, public constraint_abstr {
 protected:
 	std::vector<equ_ptr> mEqus;
 	std::vector<var_ptr> mVars;
@@ -53,7 +53,7 @@ public:
 			mAnnots[i]->set_parent(this);
 		}
 	}
-	virtual void for_each(std::function<void (Drawable_ptr)> func)
+	virtual void for_each(std::function<void (Drawable*)> func)
 	{
 		for(auto annot : mAnnots)
 			func(annot);

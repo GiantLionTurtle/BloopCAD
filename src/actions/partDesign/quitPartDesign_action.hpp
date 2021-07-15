@@ -3,13 +3,13 @@
 #define QUITPARTDESIGN_ACTION_HPP_
 
 #include <actions/action.hpp>
-#include <Drawables/part.hpp>
+#include <Drawables/Part.hpp>
 
 #include <memory>
 
 class quitPartDesign_action : public action {
 private:
-	std::shared_ptr<part> mTarget;
+	std::shared_ptr<Part> mTarget;
 public:
 	quitPartDesign_action();
 

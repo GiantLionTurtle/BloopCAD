@@ -19,7 +19,7 @@ protected:
 public:
 	sketchGeometry(geom_3d::plane_abstr_ptr basePlane_, int type_);
 
-	virtual void for_each(std::function<void(Drawable_ptr geom)> func);
+	virtual void for_each(std::function<void(Drawable* geom)> func);
 	virtual void for_each(std::function<void(sketchEntity_ptr geom)> func);
 	virtual void for_each(std::function<void(sketchGeometry_ptr geom)> func) = 0;
 	void for_each_annot(std::function<void(sketchEntity_ptr geom)> func);

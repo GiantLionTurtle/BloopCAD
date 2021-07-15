@@ -28,6 +28,7 @@ public:
 	{}
 	virtual ~sketchEntity() {}
 
+	
 	virtual void for_each(std::function<void(sketchEntity_ptr geom)> func) {}
 
 	virtual void move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move) {}

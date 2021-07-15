@@ -6,7 +6,7 @@
 #include <Drawables/tangibleEntities/sketchEntities/sketchCircle.hpp>
 #include <utils/DebugUtils.hpp>
 #include "sketchEntity.hpp"
-#include <Drawables/sketch.hpp>
+#include <Drawables/Sketch.hpp>
 #include "spriteAnnotation.hpp"
 #include <constraintsSolver/constraint.hpp>
 

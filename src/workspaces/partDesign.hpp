@@ -3,7 +3,7 @@
 #define PARTDESIGN_HPP_
 
 #include "workspace.hpp"
-#include <Drawables/part.hpp>
+#include <Drawables/Part.hpp>
 
 #include <string>
 
@@ -15,7 +15,7 @@ private:
 
 	std::map<std::string, std::pair<Gtk::Button*, Gtk::Image*>> mButtons; // Buttons with names and icons
 
-	part_ptr mTarget;
+	Part_ptr mTarget;
 public:
 	/*
 		@function partDesign creates an empty workspace
@@ -33,8 +33,8 @@ public:
 	*/
 	partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
 
-	void set_target(part_ptr prt) { mTarget = prt; }
-	part_ptr target() { return mTarget; }
+	void set_target(Part_ptr prt) { mTarget = prt; }
+	Part_ptr target() { return mTarget; }
 
 	virtual bool set_tool(int name);
 

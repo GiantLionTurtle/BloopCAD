@@ -23,7 +23,6 @@ class document;
 
 class Drawable;
 class entityHandle;
-using Drawable_ptr = std::shared_ptr<Drawable>;
 
 /*
 	@define BLOOP_ENTITY_ describe state flags for an entity
@@ -39,6 +38,28 @@ using Drawable_ptr = std::shared_ptr<Drawable>;
 #define BLOOP_ENTITY_EXISTS_NOTIF	8
 #define BLOOP_ENTITY_UPDATED_NOTIF	16
 
+enum Drawable_types {
+	DRAWABLE = 1,
+	SKDRAWABLE = 2,
+	POINT = 4,
+	AXIS = 8,
+	PLANE = 16
+};
+
+struct SelectionPoint {
+	SelectionPoint():
+		ent(nullptr),
+		dist_to_cam(0.0f)
+	{}
+	SelectionPoint(Drawable* d, float dist):
+		ent(d),
+		dist_to_cam(dist)
+	{}
+
+	Drawable* ent;
+	float dist_to_cam;
+};
+
 /*
 	@class entity describes a basic entity that appears on screen
 */
@@ -49,8 +70,9 @@ public:
 protected:
 	int mState;	// The state of the entity, described by the above flags
 	int mStdNotifs; // Standard notifications sent by a child to it's parent
+	int mType;
 	bool mInited;
-	bool mNeed_redraw;
+	bool mNeed_redraw, mNeed_update;
 
 	std::string mName;
 
@@ -66,6 +88,9 @@ public:
 		* Does exist
 	*/
 	Drawable();
+	virtual ~Drawable() {}
+
+	virtual void init() {}
 
 	/*
 		@function draw draws the entity
@@ -73,18 +98,17 @@ public:
 		@param cam : 	The Camera used for rendering
 		@param frame : 	The current frame id
 	*/
-	virtual void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL, bool on_required = false) = 0;
-	
+	virtual void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL) = 0;
+	void clock(int frame);
+
 	virtual void update() = 0;
 	virtual void update_self();
 
-	virtual void init() {}
-
 	// BLOOPBLOOPGOAWAY
-	Drawable_ptr hovered_child(Camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (Drawable_ptr)> filter_func = ([](Drawable_ptr ent) { return true; }));
+	Drawable* hovered_child(Camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (Drawable*)> filter_func = ([](Drawable* ent) { return true; }));
 
-	void notify_parent(int msg);
-	virtual void notify(int msg) {}
+	void notify_parent(int msg); // BLOOPBLOOPCHECKIFUSED
+	virtual void notify(Drawable* who, int msg, bool child) {}
 
 	/*
 		@function set_selected sets the selected
@@ -196,6 +220,8 @@ public:
 	virtual bool translucid() { return false; }
 
 	virtual int selection_rank() { return -1; }
+	virtual int selection_dist() { return 0; } // pixel distance for selection
+	virtual SelectionPoint closest(glm::vec2 cursor, Camera* cam, glm::vec3 cam_ray, int filter) { return SelectionPoint(); }
 
 	std::string name() const { return mName; }
 	void set_name(std::string const& name_) { mName = name_; }
@@ -214,6 +240,8 @@ public:
 
 	void set_need_redraw();
 	bool need_redraw() const { return mNeed_redraw; }
+	void set_need_update();
+	bool need_update() const { return mNeed_update; }
 
 	virtual void invoke_workspace(document* doc) {}
 protected:
@@ -234,10 +262,10 @@ protected:
 
 	// bool should_draw_self(draw_type type, bool on_required);
 
-	virtual float selection_depth(Camera_ptr cam, glm::vec2 cursor_pos) { return -1.0f; }
+	// virtual float selection_depth(Camera_ptr cam, glm::vec2 cursor_pos) { return -1.0f; }
 
 	// BLOOPBLOOPGOAWAY
-	void hovered_child_internal(Camera_ptr cam, glm::vec2 cursor_pos, Drawable_ptr& candidate, float& min_dist, std::function<bool (Drawable_ptr)> filter_func);
+	void hovered_child_internal(Camera_ptr cam, glm::vec2 cursor_pos, Drawable*& candidate, float& min_dist, std::function<bool (Drawable*)> filter_func);
 };
 
 

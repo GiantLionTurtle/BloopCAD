@@ -277,9 +277,9 @@ void sketchDesign::to_svg()
 	// svgDoc.add_lastChild(svg);
 	// glm::vec2 min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max()), max(std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
 	// if(mState && mState->target) {
-	// 	mState->target->for_each([&svg, &min, &max, this](Drawable_ptr ent) {
+	// 	mState->target->for_each([&svg, &min, &max, this](Drawable* ent) {
 	// 		std::shared_ptr<svgEntity> svgEnt = std::dynamic_pointer_cast<svgEntity>(ent);
-	// 		sketch_ptr sk = target();
+	// 		Sketch_ptr sk = target();
 	// 		if(svgEnt && sk) {
 	// 			svg->add_lastChild(svgEnt->to_svg(sk->basePlane().get(), min, max));
 	// 		}

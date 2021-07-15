@@ -37,6 +37,6 @@ Project started on september 27 2020
     * Pan
     * Zoom
 
+TODO: (removed things that should be relocalised)
 
-
-Bloop: Window containing everything
+Removed tool previews from sketch, they should be unique to the document instead

@@ -10,14 +10,27 @@ Drawable::Drawable():
 	mParent(nullptr),
 	mHandle(nullptr),
 	mNeed_redraw(false),
-	mInited(false)
+	mInited(false),
+	mType(0)
 {
-
+	mType |= Drawable_types::DRAWABLE;
 }
 
-Drawable_ptr Drawable::hovered_child(Camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (Drawable_ptr)> filter_func)
+void Drawable::clock(int frame)
 {
-	Drawable_ptr candidate_child(nullptr);
+	if(!mInited) {
+		init();
+		mInited = true;
+	}
+	if(mNeed_update) {
+		update();
+		mNeed_update = false;
+	}
+}
+
+Drawable* Drawable::hovered_child(Camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (Drawable*)> filter_func)
+{
+	Drawable* candidate_child(nullptr);
 	float min_dist = std::numeric_limits<float>::max();
 	hovered_child_internal(cam, cursor_pos, candidate_child, min_dist, filter_func);
 	return candidate_child;
@@ -26,7 +39,7 @@ Drawable_ptr Drawable::hovered_child(Camera_ptr cam, glm::vec2 cursor_pos, std::
 void Drawable::notify_parent(int msg)
 {
 	if(mParent)
-		mParent->notify(msg);
+		mParent->notify(this, msg, true);
 }
 
 void Drawable::set_selected(bool select_, bool silent) 
@@ -110,7 +123,7 @@ void Drawable::show(bool silent)
 bool Drawable::hidden() const
 {
 	if(mParent)
-		return mState & BLOOP_ENTITY_HIDDEN_FLAG || mParent->hidden();
+		return mState & BLOOP_ENTITY_HIDDEN_FLAG || mParent->hidden() || !exists();
 	return mState & BLOOP_ENTITY_HIDDEN_FLAG; 
 }
 bool Drawable::visible() const
@@ -217,6 +230,15 @@ void Drawable::set_need_redraw()
 	}
 	mNeed_redraw = true;
 }
+void Drawable::set_need_update()
+{
+	if(mNeed_update)
+		return;
+	if(mParent) {
+		mParent->set_need_update();
+	}
+	mNeed_update = true;
+}
 
 // bool Drawable::should_draw_self(draw_type type, bool on_required)
 // {
@@ -235,9 +257,9 @@ void Drawable::set_need_redraw()
 // 	return false;
 // }
 
-void Drawable::hovered_child_internal(Camera_ptr cam, glm::vec2 cursor_pos, Drawable_ptr& candidate, float& min_dist, std::function<bool (Drawable_ptr)> filter_func)
+void Drawable::hovered_child_internal(Camera_ptr cam, glm::vec2 cursor_pos, Drawable*& candidate, float& min_dist, std::function<bool (Drawable*)> filter_func)
 {
-	// for_each([&](Drawable_ptr ent) {
+	// for_each([&](Drawable* ent) {
 	// 	ent->hovered_child_internal(cam, cursor_pos, candidate, min_dist, filter_func);
 
 	// 	if(ent->visible() && filter_func(ent)) {

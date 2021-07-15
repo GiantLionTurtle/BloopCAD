@@ -137,7 +137,7 @@
 #ifdef GLM_ENABLE_EXPERIMENTAL
 #include "./gtx/associated_min_max.hpp"
 #include "./gtx/bit.hpp"
-#include "./gtx/closest_point.hpp"
+#include "./gtx/closest_Point.hpp"
 #include "./gtx/color_encoding.hpp"
 #include "./gtx/color_space.hpp"
 #include "./gtx/color_space_YCoCg.hpp"

@@ -7,7 +7,7 @@
 #include <tools/tool.hpp>
 #include <graphics_utils/FrameBuffer.hpp>
 #include <actions/action.hpp>
-#include <Drawables/part.hpp>
+#include <Drawables/Part.hpp>
 #include <graphics_utils/Camera.hpp>
 #include <Drawables/entityView.hpp>
 #include "eventsManager.hpp"
@@ -24,7 +24,7 @@
 	@struct selection describes a selected entity from a certain Camera viewpoint
 */
 struct selection {
-	Drawable_ptr ent; // The selected entity
+	Drawable* ent; // The selected entity
 	CameraState camSt; // The Camera state at the moment of the selection
 
 	/*
@@ -33,7 +33,7 @@ struct selection {
 		@param ent_ : 	The selected entity
 		@param camSt_ : The Camera state during selection
 	*/
-	selection(Drawable_ptr ent_, CameraState camSt_) :
+	selection(Drawable* ent_, CameraState camSt_) :
 		ent(ent_),
 		camSt(camSt_)
 	{}
@@ -50,7 +50,7 @@ class document : public Gtk::Box {
 private:
 	eventsManager* mEventsManager;
 
-	std::shared_ptr<part> mPart; // Curently, documents only work on a single part
+	std::shared_ptr<Part> mPart; // Curently, documents only work on a single part
 	std::vector<selection> mSelection; // This will be kept linear for as long as there is no need for large selections
 
 	// std::map<std::string, workspaceState_ptr> mWorkspaceStates; // All the workspace states for the various workspaces
@@ -148,7 +148,7 @@ public:
 
 		@return : The part that is worked on in the document, as a part
 	*/
-	std::shared_ptr<part> target() { return mPart; }
+	std::shared_ptr<Part> target() { return mPart; }
 
 	Gtk::GLArea& viewport() { return mViewport; }
 
@@ -198,14 +198,14 @@ public:
 
 		@return : The linear index of the required selection or -1
 	*/
-	int selection_ind(Drawable_ptr ent);
+	int selection_ind(Drawable* ent);
 	/*
 		@function clear_selection clears the selection buffer
 	*/
 	void clear_selection();
 
-	void toggle_select(Drawable_ptr ent, CameraState cam, bool additive);
-	void toggle_select(Drawable_ptr ent, bool additive);
+	void toggle_select(Drawable* ent, CameraState cam, bool additive);
+	void toggle_select(Drawable* ent, bool additive);
 };
 
 #endif

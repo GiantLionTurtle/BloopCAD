@@ -13,8 +13,8 @@ public:
 	point_abstr();
     virtual ~point_abstr();
 
-	virtual glm::vec2 pos() const = 0;
-	virtual void set(glm::vec2 p) = 0;
+	virtual glm::vec2 pos() = 0;
+	// virtual void set(glm::vec2 p) = 0; // Useful but not necessary I say
 
 	virtual glm::vec2 at(float t) { return pos(); }
 

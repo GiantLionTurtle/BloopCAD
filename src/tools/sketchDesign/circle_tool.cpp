@@ -2,7 +2,7 @@
 #include "circle_tool.hpp"
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
-#include <Drawables/sketch.hpp>
+#include <Drawables/Sketch.hpp>
 #include <actions/common/toggleBaseObject_action.hpp>
 #include <utils/mathUtils.hpp>
 
@@ -53,7 +53,7 @@ bool circle_tool::manage_button_press(GdkEventButton* event)
 	// on screen on a point on a plane is pretty basic
 	DEBUG_ASSERT(mEnv->state(), "No valid state.");
 	
-	sketch_ptr target = mEnv->target();		
+	Sketch_ptr target = mEnv->target();		
 	DEBUG_ASSERT(target, "No valid target.");
 
     // Find where the ray intersectpos_on_plane

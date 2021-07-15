@@ -33,7 +33,7 @@ public:
 
 	virtual void print(int depth = 0);
 
-	void for_each(std::function<void (Drawable_ptr)> func);
+	void for_each(std::function<void (Drawable*)> func);
 	void for_each(std::function<void(sketchEntity_ptr ent)> func);
 	void for_each(std::function<void(sketchGeometry_ptr geom)> func);
 	

@@ -75,7 +75,7 @@ void document::do_realize()
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		
 		// Create an empty part. This surely should be in the constructor right?
-		mPart = std::shared_ptr<part>(new part());
+		mPart = std::shared_ptr<Part>(new part());
 
 		// Start with the part design workspace
 		set_workspace(bloop::workspace_types::PART);
@@ -272,7 +272,7 @@ selection document::selection_at(unsigned int ind)
 	}
 	return {nullptr, {glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)}}; // Empty selection
 }
-int document::selection_ind(Drawable_ptr ent)
+int document::selection_ind(Drawable* ent)
 {
 	for(int i = 0; i < mSelection.size(); ++i) { // Linear search because I don't see huge selections coming, but it might change
 		if(mSelection.at(i).ent == ent)
@@ -287,7 +287,7 @@ void document::clear_selection()
 	}
 	mSelection.clear();
 }
-void document::toggle_select(Drawable_ptr ent, CameraState cam, bool additive)
+void document::toggle_select(Drawable* ent, CameraState cam, bool additive)
 {
 	if(!ent && !additive) {
 		clear_selection();
@@ -310,7 +310,7 @@ void document::toggle_select(Drawable_ptr ent, CameraState cam, bool additive)
 		mSelection.push_back(selection(ent, cam)); // Add it to the buffer
 	}
 }
-void document::toggle_select(Drawable_ptr ent, bool additive)
+void document::toggle_select(Drawable* ent, bool additive)
 {
 	toggle_select(ent, mCurrentCamState, additive);
 }

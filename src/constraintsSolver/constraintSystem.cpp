@@ -24,7 +24,7 @@ bool constraintSystem::satisfied()
 	}
 	return true;
 }
-void constraintSystem::add_constraint(std::shared_ptr<constraint_abstr> constr) 
+void constraintSystem::add_constraint(constraint_abstr* constr) 
 {
 	mNum_activeConstraints++;
 	mBrokenDown = false;
@@ -39,7 +39,7 @@ void constraintSystem::add_constraint(std::shared_ptr<constraint_abstr> constr)
 		mVarsToConstr[var].push_back(constr);
 	}
 }
-void constraintSystem::toggle_constraint(std::shared_ptr<constraint_abstr> constr, bool enable)
+void constraintSystem::toggle_constraint(constraint_abstr* constr, bool enable)
 {
 	if(std::find(mConstraints.begin(), mConstraints.end(), constr) == mConstraints.end())
 		return;
@@ -136,7 +136,7 @@ void constraintSystem::set_varState(std::vector<double> state)
 	}
 }
 
-constraintSystem::constraintGraph::constraintGraph(std::vector<std::shared_ptr<constraint_abstr>>& constrs, std::vector<var_ptr>& vars):
+constraintSystem::constraintGraph::constraintGraph(std::vector<constraint_abstr*>& constrs, std::vector<var_ptr>& vars):
 	mNumConstr(0),
 	mNumVar(0)
 {

@@ -9,15 +9,13 @@
 #include <graphics_utils/VertexBuffer.hpp>
 #include <graphics_utils/IndexBuffer.hpp>
 
-class Tangible : public Drawable {
-protected:
-	bool mGPU_outOfSync; // If the geometry on the GPU is not what it should be (e.g. a point was moved or anything really)
+class Tangible : virtual public Drawable {
 public:
 	Tangible();
 
-	void update();
+	virtual void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL, bool on_required = false);
 
-	virtual void sync_GPU() = 0;
+	virtual void update();
 };
 
 #endif

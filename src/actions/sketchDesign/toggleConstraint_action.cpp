@@ -3,7 +3,7 @@
 #include <utils/DebugUtils.hpp>
 #include <document.hpp>
 
-toggleConstraint_action::toggleConstraint_action(sketch_ptr parent_sketch, std::shared_ptr<constraint_entity> constr, bool toggle_to):
+toggleConstraint_action::toggleConstraint_action(Sketch_ptr parent_sketch, std::shared_ptr<constraint_entity> constr, bool toggle_to):
 	mSketch_parent(parent_sketch),
 	mConstraint(constr),
 	mToggle_to(toggle_to)

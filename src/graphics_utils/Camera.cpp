@@ -61,6 +61,14 @@ Camera::Camera():
 
 }
 
+glm::vec2 Camera::world_to_screen(glm::vec3 worldpos) const
+{
+	glm::vec4 onscreen_ndc = mvp() * glm::vec4(worldpos, 1.0f);
+	glm::vec2 onscreen(	map(onscreen_ndc.x / onscreen_ndc.w, -1.0f, 1.0f, 0.0f, viewport().x),
+						map(onscreen_ndc.y / onscreen_ndc.w, -1.0f, 1.0f, viewport().y, 0.0f));
+	return onscreen;
+}
+
 glm::vec3 Camera::predictedPos(transform trans) const
 {
 	return model_inv(trans) * glm::vec4(mInternalPos, 1.0f);

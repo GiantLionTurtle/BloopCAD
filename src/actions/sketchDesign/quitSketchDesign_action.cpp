@@ -2,7 +2,7 @@
 #include "quitSketchDesign_action.hpp"
 #include <document.hpp>
 
-quitSketchDesign_action::quitSketchDesign_action(sketch_ptr target):
+quitSketchDesign_action::quitSketchDesign_action(Sketch_ptr target):
 	mPlane(nullptr)
 {
 	mPlane = std::dynamic_pointer_cast<plane>(target->basePlane());

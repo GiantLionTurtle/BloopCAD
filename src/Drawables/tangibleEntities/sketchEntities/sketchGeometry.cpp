@@ -10,7 +10,7 @@ sketchGeometry::sketchGeometry(geom_3d::plane_abstr_ptr basePlane_, int type_):
 	
 }
 
-void sketchGeometry::for_each(std::function<void(Drawable_ptr geom)> func)
+void sketchGeometry::for_each(std::function<void(Drawable* geom)> func)
 {
 	// for(constraintAnnotation_ptr annot : mAnnotations) {
 	// 	if(annot->exists())

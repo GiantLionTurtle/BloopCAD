@@ -127,7 +127,7 @@ void sketchCircle::set_tmpConstant(bool const_)
 	}
 }
 
-void sketchCircle::for_each(std::function<void (Drawable_ptr)> func)
+void sketchCircle::for_each(std::function<void (Drawable*)> func)
 {
 	func(mCenter);
 	sketchGeometry::for_each(func);
