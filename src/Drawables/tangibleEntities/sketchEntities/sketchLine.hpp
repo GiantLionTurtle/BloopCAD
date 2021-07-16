@@ -4,12 +4,12 @@
 
 #include "sketchGeometry.hpp"
 #include "sketchPoint.hpp"
-#include <geometry/geometry_2d/line_abstr.hpp>
+#include <geometry/geometry_2d/Line_abstr.hpp>
 
 class sketchLine;
 using sketchLine_ptr = std::shared_ptr<sketchLine>;
 
-class sketchLine : public sketchGeometry, public geom_2d::line_abstr, public std::enable_shared_from_this<sketchLine> {
+class sketchLine : public sketchGeometry, public Geom2d::Line_abstr, public std::enable_shared_from_this<sketchLine> {
 private:
 	// std::shared_ptr<expression_substr_funky> dirX, dirY;
 	// expressionVector2_ptr dir;

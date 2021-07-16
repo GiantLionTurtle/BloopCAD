@@ -3,8 +3,8 @@
 #define PLANE_ABSTR3_HPP_
 
 #include "geometry_3d_abstr.hpp"
-#include "point_abstr.hpp"
-#include <geometry/geometry_2d/point_abstr.hpp>
+#include "Point_abstr.hpp"
+#include <geometry/geometry_2d/Point_abstr.hpp>
 
 #include <glm/glm.hpp>
 
@@ -87,11 +87,11 @@ public:
 	glm::vec3 line_intersection(glm::vec3 const& point, glm::vec3 const& vec);
 
 	glm::vec2 to_planePos(glm::vec3 const& pt);
-	glm::vec2 to_planePos(point_abstr& pt) { return to_planePos(pt.pos()); }
-	glm::vec2 to_planePos(point_abstr_ptr pt) { return to_planePos(pt->pos()); }
+	glm::vec2 to_planePos(Point_abstr& pt) { return to_planePos(pt.pos()); }
+	glm::vec2 to_planePos(Point_abstr_ptr pt) { return to_planePos(pt->pos()); }
 	glm::vec3 to_worldPos(glm::vec2 const& pt);
-	glm::vec3 to_worldPos(geom_2d::point_abstr& pt) { return to_worldPos(pt.pos()); }
-	glm::vec3 to_worldPos(geom_2d::point_abstr_ptr pt) { return to_worldPos(pt->pos()); }
+	glm::vec3 to_worldPos(Geom2d::Point_abstr& pt) { return to_worldPos(pt.pos()); }
+	glm::vec3 to_worldPos(Geom2d::Point_abstr_ptr pt) { return to_worldPos(pt->pos()); }
 
 
 	/*

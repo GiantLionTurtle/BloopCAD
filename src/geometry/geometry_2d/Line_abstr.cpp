@@ -1,21 +1,22 @@
 
-#include "line_abstr.hpp"
+#include "Line_abstr.hpp"
+#include "Point_abstr.hpp"
 
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtx/norm.hpp>
 
-namespace geom_2d {
+namespace Geom2d {
 
-line_abstr::line_abstr()
+Line_abstr::Line_abstr()
 {
 
 }
-line_abstr::~line_abstr()
+Line_abstr::~Line_abstr()
 {
 	
 }
 
-// XML_element* line_abstract::to_svg(plane_abstract* drawingPlane, glm::vec2 &min, glm::vec2 &max)
+// XML_element* Line_abstract::to_svg(plane_abstract* drawingPlane, glm::vec2 &min, glm::vec2 &max)
 // {
 // 	glm::vec2 ptA = drawingPlane->point_3d_to_2d(mPointA->pos_val());
 // 	glm::vec2 ptB = drawingPlane->point_3d_to_2d(mPointB->pos_val());
@@ -35,7 +36,7 @@ line_abstr::~line_abstr()
 // 	return svgLine;
 // }
 
-// point_abstract_ptr line_abstract::closest_point(point_abstract const& pt, float& on_line)
+// Point_abstract_ptr Line_abstract::closest_point(Point_abstract const& pt, float& on_line)
 // {
 // 	float len2 = length2();
 // 	if(len2 == 0) {
@@ -52,11 +53,19 @@ line_abstr::~line_abstr()
 // 	}
 // }
 
-glm::vec2 line_abstr::at(float t)
+glm::vec2 Line_abstr::at(float t)
 {
 	return (posA() - t * as_vec());
 }
-glm::vec2 line_abstr::closest_to_point(glm::vec2 const& pt)
+bool Line_abstr::within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
+{
+	if(contained) {
+		return Point_abstr::within(posA(), top_left, bottom_right) && Point_abstr::within(posB(), top_left, bottom_right);
+	}
+	Geom2d::simple_line diag_1(top_left, bottom_right), diag_2(glm::vec2(top_left.x, bottom_right.y), glm::vec2(bottom_right.x, top_left.y));
+	return intersects(&diag_1) || intersects(&diag_2);
+}
+glm::vec2 Line_abstr::closest_to_point(glm::vec2 const& pt)
 {
 	float len2 = length2();
 	if(len2 == 0) {
@@ -71,32 +80,32 @@ glm::vec2 line_abstr::closest_to_point(glm::vec2 const& pt)
 		return at(t);
 	}
 }
-float line_abstr::dist_to_point(glm::vec2 const& pt)
+float Line_abstr::dist_to_point(glm::vec2 const& pt)
 {
 	return glm::distance(closest_to_point(pt), pt);
 }
 
-float line_abstr::length()
+float Line_abstr::length()
 {
 	return glm::distance(posA(), posB());
 }
-float line_abstr::length2()
+float Line_abstr::length2()
 {
 	return glm::distance2(posA(), posB());
 }
 
-bool line_abstr::intersects(line_abstr* l)
+bool Line_abstr::intersects(Line_abstr* l)
 {
 	return ccw(posA(), l->posA(), l->posB()) != ccw(posB(), l->posA(), l->posB()) && ccw(posA(), posB(), l->posA()) != ccw(posA(), posB(), l->posB());
 }
 
 
-glm::vec2 line_abstr::as_vec()
+glm::vec2 Line_abstr::as_vec()
 {
 	return posA() - posB();
 }
 
-bool line_abstr::ccw(glm::vec2 A, glm::vec2 B, glm::vec2 C)
+bool Line_abstr::ccw(glm::vec2 A, glm::vec2 B, glm::vec2 C)
 {
 	return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x);
 }
@@ -112,4 +121,4 @@ simple_line::simple_line(glm::vec2 a, glm::vec2 b):
 	
 }
 
-} // !geom_2d
+} // !Geom2d

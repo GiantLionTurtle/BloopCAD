@@ -124,7 +124,7 @@ public:
 	// BLOOPBLOOPWACK
 	bool can_delete(SkDrawable* ent);
 
-	void toggle_selection_from_area(glm::vec2 a, glm::vec2 b, bool contained);
+	// void toggle_selection_from_area(glm::vec2 a, glm::vec2 b, bool contained);
 
 	/*
 		@function basePlane

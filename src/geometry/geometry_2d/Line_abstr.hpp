@@ -2,29 +2,31 @@
 #ifndef LINE_ABSTR2_HPP_
 #define LINE_ABSTR2_HPP_
 
-#include "point_abstr.hpp"
+#include "Point_abstr.hpp"
 
 #include <glm/glm.hpp>
 #include <iostream>
 
-namespace geom_2d {
+namespace Geom2d {
 
-class line_abstr : public geometry_2d_abstr {
+class Line_abstr : public virtual Geom2d_abstr {
 public:
-	line_abstr();
-	virtual ~line_abstr();
+	Line_abstr();
+	virtual ~Line_abstr();
 
 	virtual glm::vec2 posA() = 0;
 	virtual glm::vec2 posB() = 0;
 
 	glm::vec2 at(float t);
+	bool within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained);
+
 	virtual glm::vec2 closest_to_point(glm::vec2 const& pt);
 	virtual float dist_to_point(glm::vec2 const& pt);
 
 	float length();
 	float length2();
 
-	bool intersects(line_abstr* l);
+	bool intersects(Line_abstr* l);
 protected:
 	bool ccw(glm::vec2 A, glm::vec2 B, glm::vec2 C);
 	glm::vec2 as_vec();
@@ -33,7 +35,7 @@ protected:
 
 // bool line_intersect(glm::vec2 A, glm::vec2 B, glm::vec2 C, glm::vec2 D);
 
-class simple_line : public line_abstr {
+class simple_line : public Line_abstr {
 private:
 	glm::vec2 mA, mB;
 public:
@@ -43,6 +45,6 @@ public:
 	virtual glm::vec2 posB() { return mB; }
 };
 
-} // !geom_2ds
+} // !Geom2ds
 
 #endif

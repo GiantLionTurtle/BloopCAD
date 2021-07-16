@@ -128,26 +128,26 @@ void Sketch::add_geometry(SkGeometry* ent)
 
 bool Sketch::can_delete(SkDrawable* ent)
 {
-	if((ent->parent() == this && ent != mDrawList.geom(0) && ent != mDrawList.geom(1) && ent != mDrawList.geom(2)) || ent->type() < 0) {
+	if((ent->parent() == this && ent != mDrawList.geom(0) && ent != mDrawList.geom(1) && ent != mDrawList.geom(2))) {
 		return true;
 	}
 	return false;
 }
 
-void Sketch::toggle_selection_from_area(glm::vec2 a, glm::vec2 b, bool contained)
-{
-	glm::vec2 low_right(std::max(a.x, b.x), std::min(a.y, b.y)), high_left(std::min(a.x, b.x), std::max(a.y, b.y));
+// void Sketch::toggle_selection_from_area(glm::vec2 a, glm::vec2 b, bool contained)
+// {
+// 	glm::vec2 low_right(std::max(a.x, b.x), std::min(a.y, b.y)), high_left(std::min(a.x, b.x), std::max(a.y, b.y));
 
-	for(size_t i = 0; i < mDrawList.num_geom(); ++i) {
-		auto geom = mDrawList.geom(i);
-		bool in_sel = geom->in_selection_range(low_right, high_left, contained);
-		if(in_sel && !geom->selected()) {
-			geom->select();
-		} else if(!in_sel && geom->selected()) {
-			geom->unselect();
-		}
-	}
-}
+// 	for(size_t i = 0; i < mDrawList.num_geom(); ++i) {
+// 		auto geom = mDrawList.geom(i);
+// 		bool in_sel = geom->in_selection_range(low_right, high_left, contained);
+// 		if(in_sel && !geom->selected()) {
+// 			geom->select();
+// 		} else if(!in_sel && geom->selected()) {
+// 			geom->unselect();
+// 		}
+// 	}
+// }
 
 bool Sketch::add_constraint(SkConstraint* constr, SkDrawable* immovable_hint) 
 {

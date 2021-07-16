@@ -1,14 +1,14 @@
 
 #include "circle_abstr.hpp"
 
-#include "line_abstr.hpp"
+#include "Line_abstr.hpp"
 
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtx/norm.hpp>
 
 #include <iostream>
 
-namespace geom_2d {
+namespace Geom2d {
 
 circle_abstr::circle_abstr()
 {
@@ -41,7 +41,7 @@ float circle_abstr::dist_to_point(glm::vec2 const& pt)
 	}
 }
 
-bool circle_abstr::intersects(line_abstr* l)
+bool circle_abstr::intersects(Line_abstr* l)
 {
 	// Maths from https://stackoverflow.com/questions/1073336/circle-line-segment-collision-detection-algorithm
 
@@ -73,4 +73,4 @@ bool circle_abstr::intersects(line_abstr* l)
 	return false;
 }
 
-} // !geom_2d
+} // !Geom2d

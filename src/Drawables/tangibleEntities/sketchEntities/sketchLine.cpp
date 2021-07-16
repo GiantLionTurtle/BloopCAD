@@ -173,7 +173,7 @@ bool sketchLine::in_selection_range(glm::vec2 a, glm::vec2 b, bool contained)
 	if(contained) {
 		return mA->in_selection_range(a, b, true) && mB->in_selection_range(a, b, true);
 	} else {
-		geom_2d::simple_line diag_1(a, b), diag_2(glm::vec2(a.x, b.y), glm::vec2(b.x, a.y));
+		Geom2d::simple_line diag_1(a, b), diag_2(glm::vec2(a.x, b.y), glm::vec2(b.x, a.y));
 		return mA->in_selection_range(a, b, true) || mB->in_selection_range(a, b, true) ||
 		intersects(&diag_1) || intersects(&diag_2);
 	}

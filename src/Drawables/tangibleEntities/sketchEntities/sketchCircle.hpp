@@ -11,7 +11,7 @@
 class sketchCircle;
 using sketchCircle_ptr = std::shared_ptr<sketchCircle>;
 
-class sketchCircle : public sketchGeometry, public geom_2d::circle_abstr, public std::enable_shared_from_this<sketchCircle> {
+class sketchCircle : public sketchGeometry, public Geom2d::circle_abstr, public std::enable_shared_from_this<sketchCircle> {
 private:
 	static float kSelDist2;
 	static bool kFisrstInst;

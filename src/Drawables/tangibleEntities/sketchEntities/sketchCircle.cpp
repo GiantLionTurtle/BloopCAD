@@ -5,7 +5,7 @@
 #include <graphics_utils/ShadersPool.hpp>
 #include <utils/mathUtils.hpp>
 #include <utils/preferences.hpp>
-#include <geometry/geometry_2d/line_abstr.hpp>
+#include <geometry/geometry_2d/Line_abstr.hpp>
 
 float sketchCircle::kSelDist2 = 0.0f;
 bool sketchCircle::kFisrstInst = true;
@@ -104,7 +104,7 @@ bool sketchCircle::in_selection_range(glm::vec2 a, glm::vec2 b, bool contained)
 	} else {
 		glm::vec2 centerpos = posCenter();
 		double r = valRadius();
-		geom_2d::simple_line 	up(b, glm::vec2(a.x, b.y)),
+		Geom2d::simple_line 	up(b, glm::vec2(a.x, b.y)),
 								down(glm::vec2(b.x, a.y), a),
 								// right(a, glm::vec2(a.x, b.y)),
 								left(glm::vec2(b.x, a.y), b);

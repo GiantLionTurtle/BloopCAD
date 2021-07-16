@@ -4,15 +4,15 @@
 
 #include "SkGeometry.hpp"
 #include <Drawables/Tangible.hpp>
-#include <geometry/geometry_2d/line_abstr.hpp>
+#include <geometry/geometry_2d/Line_abstr.hpp>
 
 #include <graphics_utils/VertexArray.hpp>
 #include <graphics_utils/VertexBuffer.hpp>
 #include <graphics_utils/Shader.hpp>
 
-class SkLineCurve : public geom_2d::line_abstr, public SkGeometry {
+class SkLineCurve : public Geom2d::Line_abstr, public SkPrimitiveGeometry {
 private:
-	geom_2d::point_abstr* mPtA, *mPtB;
+	Geom2d::Point_abstr* mPtA, *mPtB;
 
 	static float kSelDist2;
 	static bool kFisrstInst;
@@ -24,7 +24,7 @@ private:
 	VertexBuffer* mVB;
 	std::shared_ptr<Shader> mShader;
 public:
-	SkLineCurve(geom_2d::point_abstr* ptA, geom_2d::point_abstr* ptB, geom_3d::plane_abstr_ptr pl, bool fixed_);
+	SkLineCurve(Geom2d::Point_abstr* ptA, Geom2d::Point_abstr* ptB, geom_3d::plane_abstr_ptr pl, bool fixed_);
 	~SkLineCurve();
 
 	glm::vec2 posA() { return mPtA->pos(); }

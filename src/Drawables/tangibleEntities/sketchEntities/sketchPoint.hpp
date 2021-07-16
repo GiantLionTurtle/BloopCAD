@@ -4,13 +4,13 @@
 
 #include "sketchGeometry.hpp"
 #include "entityPosSnapshot_abstract.hpp"
-#include <geometry/geometry_2d/point_abstr.hpp>
+#include <geometry/geometry_2d/Point_abstr.hpp>
 #include <constraintsSolver/expression.hpp>
 
 class sketchPoint;
 using sketchPoint_ptr = std::shared_ptr<sketchPoint>;
 
-class sketchPoint : public sketchGeometry, public geom_2d::point_abstr, public std::enable_shared_from_this<sketchPoint> {
+class sketchPoint : public sketchGeometry, public Geom2d::Point_abstr, public std::enable_shared_from_this<sketchPoint> {
 private:
 	static float kSelDist2;
 	static bool kFisrstInst;

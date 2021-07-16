@@ -5,13 +5,13 @@
 #include "SkGeometry.hpp"
 #include <Drawables/Tangible.hpp>
 #include <constraintsSolver/expression.hpp>
-#include <geometry/geometry_2d/point_abstr.hpp>
+#include <geometry/geometry_2d/Point_abstr.hpp>
 
 #include <graphics_utils/VertexArray.hpp>
 #include <graphics_utils/VertexBuffer.hpp>
 #include <graphics_utils/Shader.hpp>
 
-class ExpressionPoint : public geom_2d::point_abstr {
+class ExpressionPoint : public Geom2d::Point_abstr {
 protected:
 	expression_ptr mX, mY;
 public:
@@ -26,7 +26,7 @@ public:
 	expression_ptr y() { return mY; }
 };
 
-class SkPoint : public ExpressionPoint, public SkGeometry {
+class SkPoint : public ExpressionPoint, public SkPrimitiveGeometry {
 private:
 	static float kSelDist2;
 	static bool kFisrstInst;

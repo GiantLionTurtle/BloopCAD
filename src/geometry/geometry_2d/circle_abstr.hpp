@@ -2,13 +2,13 @@
 #ifndef CIRCLE_ABSTR2_HPP_
 #define CIRCLE_ABSTR2_HPP_
 
-#include "point_abstr.hpp"
+#include "Point_abstr.hpp"
 
 #include <memory>
 
-namespace geom_2d {
+namespace Geom2d {
 
-class circle_abstr : public geometry_2d_abstr {
+class circle_abstr : public Geom2d_abstr {
 public:
 	circle_abstr();
 	virtual ~circle_abstr();
@@ -21,10 +21,10 @@ public:
 	virtual glm::vec2 closest_to_point(glm::vec2 const& pt);
 	virtual float dist_to_point(glm::vec2 const& pt);
 
-	bool intersects(line_abstr* l);
-	bool intersects(std::shared_ptr<line_abstr> l) { return intersects(l.get()); }
+	bool intersects(Line_abstr* l);
+	bool intersects(std::shared_ptr<Line_abstr> l) { return intersects(l.get()); }
 };
 
-} // !geom_2d
+} // !Geom2d
 
 #endif

@@ -7,7 +7,7 @@
 
 SkPoint::SkPoint(glm::vec2 pos, geom_3d::plane_abstr_ptr pl, bool fixed_):
     ExpressionPoint(expression_var::make(pos.x), expression_var::make(pos.y)),
-    SkGeometry(pl, fixed_),
+    SkPrimitiveGeometry(pl, fixed_),
 	mVA(nullptr),
 	mVB(nullptr),
 	mShader(nullptr)

@@ -39,8 +39,8 @@ public:
 	{
 		// Keep in mind that Drawables added after the constructor need to be
 		// assigned this as parent as well through indexer class or other
-		for(size_t i = 0; i < mDrawList.size(); ++i) {
-			mDrawList.at(i)->set_parent(this);
+		for(size_t i = 0; i < num_children(); ++i) {
+			child(i)->set_parent(this);
 		}	
 	}
 
@@ -49,6 +49,13 @@ public:
 
 	size_t num_children() { return mDrawList.size(); }
 	Drawable* child(size_t ind) { return mDrawList.at(ind); }
+
+	void select_within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
+	{
+		for(size_t i = 0; i < num_children(); ++i) {
+			child(i)->select_within(top_left, bottom_right, contained);
+		}
+	}
 };
 
 template<typename containerType>

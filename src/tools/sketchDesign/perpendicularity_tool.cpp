@@ -1,8 +1,8 @@
 
 #include "perpendicularity_tool.hpp"
 
-#include <geometry/geometry_2d/point_abstr.hpp>
-#include <geometry/geometry_2d/line_abstr.hpp>
+#include <geometry/geometry_2d/Point_abstr.hpp>
+#include <geometry/geometry_2d/Line_abstr.hpp>
 #include <Drawables/tangibleEntities/sketchEntities/sketchLine.hpp>
 #include <constraintsSolver/constraint.hpp>
 #include <actions/sketchDesign/toggleConstraint_action.hpp>
