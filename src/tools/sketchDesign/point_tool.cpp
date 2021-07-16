@@ -23,7 +23,7 @@ bool point_tool::manage_button_press(GdkEventButton* event)
 {
 	// Most of the code of this function will be abstracted eventually because projecting a point 
 	// on screen on a point on a plane is pretty basic
-	Sketch_ptr target = mEnv->target();	
+	Sketch* target = mEnv->target();	
 	DEBUG_ASSERT(target, "No valid target.");
 
 	// Find where the ray intersectpos_on_plane

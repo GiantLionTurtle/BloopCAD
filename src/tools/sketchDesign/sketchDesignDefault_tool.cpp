@@ -40,7 +40,7 @@ bool sketchDesignDefault_tool::manage_key_press(GdkEventKey* event)
 		return false;
 	} else if(event->keyval == GDK_KEY_Delete) {
 		auto mDeleteAllSelected = std::make_shared<serial_action>();
-		Sketch_ptr sk = mEnv->target();
+		Sketch* sk = mEnv->target();
 		sk->for_each_selected([&](sketchEntity_ptr ent) {
 			if(sk->can_delete(ent))
 				mDeleteAllSelected->add_action(std::make_shared<toggleBaseObject_action>(ent, false));
@@ -96,7 +96,7 @@ bool sketchDesignDefault_tool::manage_button_release(GdkEventButton* event)
 
 bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event) 
 {
-	Sketch_ptr sk = mEnv->target();
+	Sketch* sk = mEnv->target();
 	DEBUG_ASSERT(sk, "No valid sketch.");
 
 	geom_3d::plane_abstr_ptr pl = sk->basePlane();

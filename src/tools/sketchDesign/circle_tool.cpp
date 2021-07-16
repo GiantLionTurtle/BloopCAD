@@ -53,7 +53,7 @@ bool circle_tool::manage_button_press(GdkEventButton* event)
 	// on screen on a point on a plane is pretty basic
 	DEBUG_ASSERT(mEnv->state(), "No valid state.");
 	
-	Sketch_ptr target = mEnv->target();		
+	Sketch* target = mEnv->target();		
 	DEBUG_ASSERT(target, "No valid target.");
 
     // Find where the ray intersectpos_on_plane

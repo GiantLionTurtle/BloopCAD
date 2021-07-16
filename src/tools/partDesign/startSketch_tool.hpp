@@ -16,7 +16,7 @@ struct CameraState;
 */
 class startSketch_tool : public simpleSelector_tool<partDesign> {
 private:
-	Sketch_ptr mCurrentSketch;
+	Sketch* mCurrentSketch;
 public:
 	/*
 		@function startSketch_tool creates a startSketch_tool object

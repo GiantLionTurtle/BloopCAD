@@ -50,7 +50,7 @@ class document : public Gtk::Box {
 private:
 	eventsManager* mEventsManager;
 
-	std::shared_ptr<Part> mPart; // Curently, documents only work on a single part
+	Part* mPart; // Curently, documents only work on a single part
 	std::vector<selection> mSelection; // This will be kept linear for as long as there is no need for large selections
 
 	// std::map<std::string, workspaceState_ptr> mWorkspaceStates; // All the workspace states for the various workspaces
@@ -148,7 +148,7 @@ public:
 
 		@return : The part that is worked on in the document, as a part
 	*/
-	std::shared_ptr<Part> target() { return mPart; }
+	Part* target() { return mPart; }
 
 	Gtk::GLArea& viewport() { return mViewport; }
 

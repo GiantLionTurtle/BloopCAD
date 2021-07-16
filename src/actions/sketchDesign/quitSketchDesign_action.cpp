@@ -2,24 +2,19 @@
 #include "quitSketchDesign_action.hpp"
 #include <document.hpp>
 
-quitSketchDesign_action::quitSketchDesign_action(Sketch_ptr target):
-	mPlane(nullptr)
+quitSketchDesign_action::quitSketchDesign_action(Sketch* target)
 {
-	mPlane = std::dynamic_pointer_cast<plane>(target->basePlane());
+
 }
 
 bool quitSketchDesign_action::do_work(document* caller)
 {
-	if(mPlane) {
-		mPlane->show();
-	}
+	LOG_WARNING("?_? what's going on here");
 	return true;
 }
 
 bool quitSketchDesign_action::undo_work(document* caller)
 {
-	if(mPlane) {
-		mPlane->hide();
-	}
+	LOG_WARNING("?_? what's going on here"); // I don't remember right now if it is used
 	return true;
 }

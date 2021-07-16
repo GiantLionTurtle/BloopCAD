@@ -51,7 +51,7 @@ public:
 	void add_sketch(Sketch* g) { mSketches.push_back(g); }
 
 	size_t num_origin() { return mOrigin.num_children(); }
-	Drawable* origin(size_t ind) { return mOrigin.child(ind); }
+	Folder& origin() { return mOrigin; }
 	void add_origin(Drawable* d) { mOrigin.add(d); }
 };
 
@@ -79,7 +79,7 @@ public:
 
 	bool has_volume() const { return false; }
 
-	PartIndexer indexer() { return mDrawList; }
+	PartIndexer& indexer() { return mDrawList; }
 };
 
 #endif

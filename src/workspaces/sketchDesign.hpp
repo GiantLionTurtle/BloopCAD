@@ -26,7 +26,7 @@ protected:
 	std::shared_ptr<perpendicularity_tool> 		mPerpendiculatiry_tool;
 
 	std::map<std::string, std::pair<Gtk::Button*, Gtk::Image*>> mButtons; // Buttons with names and icons
-	Sketch_ptr mTarget;
+	Sketch* mTarget;
 public:
 	/*
 		@function sketchDesign creates an empty workspace
@@ -44,8 +44,8 @@ public:
 	*/
 	sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
 
-	void set_target(Sketch_ptr sk) { mTarget = sk; }
-	Sketch_ptr target() { return mTarget; }
+	void set_target(Sketch* sk) { mTarget = sk; }
+	Sketch* target() { return mTarget; }
 
 	virtual bool set_tool(int name);
 

@@ -279,7 +279,7 @@ void sketchDesign::to_svg()
 	// if(mState && mState->target) {
 	// 	mState->target->for_each([&svg, &min, &max, this](Drawable* ent) {
 	// 		std::shared_ptr<svgEntity> svgEnt = std::dynamic_pointer_cast<svgEntity>(ent);
-	// 		Sketch_ptr sk = target();
+	// 		Sketch* sk = target();
 	// 		if(svgEnt && sk) {
 	// 			svg->add_lastChild(svgEnt->to_svg(sk->basePlane().get(), min, max));
 	// 		}

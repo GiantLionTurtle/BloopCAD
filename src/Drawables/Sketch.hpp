@@ -79,9 +79,6 @@ public:
 	void add_constr(SkConstraint* c) { mConstraints.push_back(c); }
 };
 
-class Sketch;
-using Sketch_ptr = std::shared_ptr<Sketch>;
-
 /*
 	@class sketch describes a sketch which is a bunch of geometries with constraints
 	@parent : entity

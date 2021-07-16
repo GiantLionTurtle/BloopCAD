@@ -9,7 +9,7 @@
 
 class quitPartDesign_action : public action {
 private:
-	std::shared_ptr<Part> mTarget;
+	Part* mTarget;
 public:
 	quitPartDesign_action();
 

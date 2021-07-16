@@ -44,7 +44,7 @@ bool line_tool::manage_key_press(GdkEventKey* event)
 bool line_tool::manage_mouse_move(GdkEventMotion* event)
 {
 	if(mStarted) {
-		Sketch_ptr target = mEnv->target();
+		Sketch* target = mEnv->target();
 		DEBUG_ASSERT(target, "No valid target.");
 
 		Camera_ptr cam = mEnv->state()->cam; // For ease of writing

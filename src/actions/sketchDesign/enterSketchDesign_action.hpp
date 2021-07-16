@@ -10,7 +10,6 @@
 
 class enterSketchDesign_action : public switchWorkspace_action {
 private:
-	std::shared_ptr<Plane> mPlane;
 	Sketch* mTarget;
 	Drawable* mInitialTarget;
 public:

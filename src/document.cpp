@@ -75,7 +75,7 @@ void document::do_realize()
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		
 		// Create an empty part. This surely should be in the constructor right?
-		mPart = std::shared_ptr<Part>(new part());
+		mPart = new Part();
 
 		// Start with the part design workspace
 		set_workspace(bloop::workspace_types::PART);

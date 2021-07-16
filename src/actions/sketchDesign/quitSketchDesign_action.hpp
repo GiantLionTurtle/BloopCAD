@@ -9,10 +9,8 @@
 #include <memory>
 
 class quitSketchDesign_action : public action {
-private:
-	std::shared_ptr<Plane> mPlane;
 public:
-	quitSketchDesign_action(Sketch_ptr target);
+	quitSketchDesign_action(Sketch* target);
 
 	/*
 		@function do_work switches to desired workspace if it exists

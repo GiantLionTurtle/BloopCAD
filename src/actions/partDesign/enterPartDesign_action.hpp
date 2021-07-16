@@ -9,7 +9,7 @@
 
 class enterPartDesign_action : public switchWorkspace_action {
 private:
-	std::shared_ptr<Part> mTarget;
+	Part* mTarget;
 	Drawable* mInitialTarget;
 public:
 	enterPartDesign_action(bool set_Camera = false);
