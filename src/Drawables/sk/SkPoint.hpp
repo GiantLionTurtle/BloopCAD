@@ -11,22 +11,23 @@
 #include <graphics_utils/VertexBuffer.hpp>
 #include <graphics_utils/Shader.hpp>
 
+template<typename eT>
 class ExpressionPoint : public Geom2d::Point_abstr {
 protected:
-	expression_ptr mX, mY;
+	eT mX, mY;
 public:
-	ExpressionPoint(expression_ptr x_, expression_ptr y_):
+	ExpressionPoint(eT x_, eT y_):
 		mX(x_),
 		mY(y_)
 	{}
 
 	glm::vec2 pos() { return glm::vec2(mX->eval(), mY->eval()); }
 
-	expression_ptr x() { return mX; }
-	expression_ptr y() { return mY; }
+	eT x() { return mX; }
+	eT y() { return mY; }
 };
 
-class SkPoint : public ExpressionPoint, public SkPrimitiveGeometry {
+class SkPoint : public ExpressionPoint<var_ptr>, public SkPrimitiveGeometry {
 private:
 	static float kSelDist2;
 	static bool kFisrstInst;
@@ -40,13 +41,14 @@ public:
 	~SkPoint();
 
 	void init();
-
 	void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
-
 	void update();
 
 	SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
+	void move(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov);
+
+	void set(glm::vec2 pt);
 };
 
 #endif

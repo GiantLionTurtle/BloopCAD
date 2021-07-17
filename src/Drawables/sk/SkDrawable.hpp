@@ -30,8 +30,13 @@ public:
 		mType |= Drawable_types::SKDRAWABLE;
 	}
 
+	geom_3d::plane_abstr_ptr basePlane() { return mBasePlane; }
+	void set_basePlane(geom_3d::plane_abstr_ptr pl) { mBasePlane = pl; set_need_update(); }
+
 	virtual SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
 	virtual DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
+	virtual void move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov) { if(selected()) move(start, end, pix_mov); }
+	virtual void move(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov) {}
 };
 
 #endif

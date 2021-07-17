@@ -3,6 +3,7 @@ set(sk_source_files
 SkLineCurve.cpp
 SkLine.cpp
 SkPoint.cpp
+SkSelRect.cpp
 )
 
 add_library(sk ${sk_source_files})

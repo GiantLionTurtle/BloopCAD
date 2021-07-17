@@ -2,10 +2,10 @@
 #ifndef SELECTIONRECTANGLE_HPP_
 #define SELECTIONRECTANGLE_HPP_
 
-#include "sketchEntity.hpp"
+#include "SkDrawable.hpp"
 #include <geometry/geometry_3d/plane_abstr.hpp>
 
-class selectionRectangle : public sketchEntity {
+class SkSelRect : public SkDrawable {
 public:
 	enum mode_types { TOUCH, COVER };
 private:
@@ -17,12 +17,18 @@ private:
 	glm::vec2 mStartPt, mEndPt;
 
 	int mMode;
+
+	VertexArray* mVA;
+	VertexBuffer* mVB;
+	IndexBuffer* mIB;
+	std::shared_ptr<Shader> mShader;
 public:
-	selectionRectangle(glm::vec2 start_, glm::vec2 end_, geom_3d::plane_abstr_ptr basePlane_);
-	virtual ~selectionRectangle() {}
+	SkSelRect(glm::vec2 start_, glm::vec2 end_, geom_3d::plane_abstr_ptr basePlane_);
+	virtual ~SkSelRect() {}
 
 	void init();
-	void update_VB();
+	void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
+	void update();
 
 	glm::vec2 start() const { return mStartPt; }
 	void set_startPoint(glm::vec2 pt);
@@ -34,9 +40,11 @@ public:
 	int mode() const { return mMode; }
 
 	int selection_rank() { return -1; }
-protected:
-	void draw_impl(Camera_ptr cam, int frame);
-	
+
+	// These should not be called
+	virtual SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return SelectionPoint(); }
+	virtual DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return DraggableSelectionPoint(); }
+protected:	
 	void init_buffers();
 };
 

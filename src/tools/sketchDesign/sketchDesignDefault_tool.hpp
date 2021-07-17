@@ -1,20 +1,20 @@
 
-#include <Drawables/tangibleEntities/sketchEntities/sketchEntity.hpp>
-#include <Drawables/tangibleEntities/sketchEntities/selectionRectangle.hpp>
+#include <Drawables/sk/SkDrawable.hpp>
+#include <Drawables/sk/SkSelRect.hpp>
 #include <workspaces/sketchDesign.hpp>
 
 class sketchDesignDefault_tool : public tool<sketchDesign> {
 private:   
-    std::shared_ptr<selectionRectangle> mSelectionRect;
-    sketchEntity_ptr /*mDraggedEnt, */mHoveredEnt;
+    SkSelRect* mSelectionRect;
+    Drawable* /*mDraggedEnt, */mHoveredEnt;
     bool mAllowedToMove, mMoving;
     glm::vec2 mPrevPos, mPrevMousePos;
     glm::vec2 mStartPos;
 
-    std::vector<entityPosSnapshot_ptr> mStartMoveSnapshot;
+    // std::vector<entityPosSnapshot_ptr> mStartMoveSnapshot;
 public:
     sketchDesignDefault_tool(sketchDesign* env);
-    virtual ~sketchDesignDefault_tool() {};
+    virtual ~sketchDesignDefault_tool();
     
     void init();
 
@@ -25,6 +25,4 @@ public:
     bool manage_mouse_move(GdkEventMotion* event);
 
 	std::string name() { return "sketch design default"; }
-private:
-    void unselect_all();
 };

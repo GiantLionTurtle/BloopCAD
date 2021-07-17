@@ -16,7 +16,9 @@ document::document(eventsManager* manager):
 	mCurrentActionNum(0),
 	mNeed_redraw(false),
 	mUseSelectionBuffer(true),
-	mName("Unamed doc")
+	mName("Unamed doc"),
+	mPart(nullptr),
+	mToolPreview(nullptr)
 {
 	if(!mEventsManager) {
 		mEventsManager = new stimuli_eventsManager();
@@ -116,8 +118,12 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad	
 	if(mPart) {
-		mPart->draw(mCurrentWorkspaceState->cam, mFrameId, Drawable::draw_type::INACTIVE);
-		mPart->draw(mCurrentWorkspaceState->cam, mFrameId, Drawable::draw_type::ACTIVE);
+		mPart->draw(mCurrentWorkspaceState->cam, mFrameId); // the other draw types are not used anywhere yet
+		// mPart->draw(mCurrentWorkspaceState->cam, mFrameId, Drawable::draw_type::INACTIVE);
+		// mPart->draw(mCurrentWorkspaceState->cam, mFrameId, Drawable::draw_type::ACTIVE);
+	}
+	if(mToolPreview) {
+		mToolPreview->draw(mCurrentWorkspaceState->cam, mFrameId);
 	}
 	mFrameId++;
 	return true;

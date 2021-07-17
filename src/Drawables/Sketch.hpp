@@ -9,44 +9,10 @@
 #include "sk/SkDrawable.hpp"
 #include "sk/SkGeometry.hpp"
 #include "sk/SkConstraint.hpp"
+#include <actions/common/serial_action.hpp>
 
 #include <memory>
 #include <vector>
-
-#define RECORD_SNAPSHOT_DELTAS(sk, call, delta_in, delta_out) { \
-	delta_in.clear(); \
-	delta_out.clear(); \
-	std::vector<entityPosSnapshot_ptr> init, final; \
-	init = sk->geometriesSnapshots(); \
-	call; \
-	final = sk->geometriesSnapshots(); \
-	for(int i = 0; i < init.size() && i < final.size(); ++i) { \
-		delta_in.push_back(init[i]); \
-		delta_out.push_back(final[i]);\
-	} \
-}
-
-#define RECORD_SNAPSHOT_DELTAS_IN(sk, call, delta_in) { \
-	delta_in.clear(); \
-	std::vector<entityPosSnapshot_ptr> init, final; \
-	init = sk->geometriesSnapshots(); \
-	call; \
-	final = sk->geometriesSnapshots(); \
-	for(int i = 0; i < init.size() && i < final.size(); ++i) { \
-		delta_in.push_back(init[i]); \
-	} \
-}
-
-#define RECORD_SNAPSHOT_DELTAS_OUT(sk, call, delta_out) { \
-	delta_out.clear(); \
-	std::vector<entityPosSnapshot_ptr> init, final; \
-	init = sk->geometriesSnapshots(); \
-	call; \
-	final = sk->geometriesSnapshots(); \
-	for(int i = 0; i < init.size() && i < final.size(); ++i) { \
-		delta_out.push_back(final[i]);\
-	} \
-}
 
 class SkIndexer {
 private:
@@ -106,6 +72,9 @@ public:
 
 	SelectionPoint closest(glm::vec2 cursor, Camera* cam, glm::vec3 cam_ray, int filter);
 	DraggableSelectionPoint closest_draggable(glm::vec2 cursor, Camera* cam, glm::vec3 cam_ray, int filter);
+	void move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov);
+	std::shared_ptr<serial_action> delete_selected(); 
+	void unselect_all();
 
 	void add_geometry(SkGeometry* ent);
 	// std::vector<entityPosSnapshot_ptr> geometriesSnapshots(int state_mask = 0); // TODO: Check that it is really 0 and not the max int that is needed

@@ -51,6 +51,7 @@ private:
 	eventsManager* mEventsManager;
 
 	Part* mPart; // Curently, documents only work on a single part
+	Drawable* mToolPreview;
 	std::vector<selection> mSelection; // This will be kept linear for as long as there is no need for large selections
 
 	// std::map<std::string, workspaceState_ptr> mWorkspaceStates; // All the workspace states for the various workspaces
@@ -149,6 +150,9 @@ public:
 		@return : The part that is worked on in the document, as a part
 	*/
 	Part* target() { return mPart; }
+	Drawable* toolPreview() { return mToolPreview; }
+	void set_toolPreview(Drawable* prev) { mToolPreview = prev; }
+	void clear_toolPreview() { set_toolPreview(nullptr); }
 
 	Gtk::GLArea& viewport() { return mViewport; }
 

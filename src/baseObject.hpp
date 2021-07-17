@@ -4,9 +4,6 @@
 
 #include <memory>
 
-class baseObject;
-using baseObject_ptr = std::shared_ptr<baseObject>;
-
 class baseObject {
 public:
     virtual bool exists() const = 0;

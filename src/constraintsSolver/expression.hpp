@@ -2,11 +2,13 @@
 #ifndef EXPRESSION_HPP_
 #define EXPRESSION_HPP_
 
+#include <baseObject.hpp>
+
 #include <memory>
 #include <string>
 #include <vector>
 #include <functional>
-#include <baseObject.hpp>
+#include <map>
 
 class expression;
 class expression_var;
@@ -41,6 +43,10 @@ public:
 	var_ptr get_single_var();
 	virtual void print_all_vars() {}
 	virtual var_ptr get_single_var_impl(int& state) { return nullptr; }
+
+	// Not a 100% sure the callback thingy is the right way to go, might change later
+	virtual void add_changeCallBack(void* owner, std::function<void(void)> func) {}
+	virtual void delete_callBack(void* owner) {}
 private:
 	bool unary(operationType op);
 };
@@ -52,8 +58,10 @@ public:
 	unary_expression();
 	unary_expression(expression_ptr operand);
 
-	virtual var_ptr get_single_var_impl(int& state);
-	virtual void print_all_vars();
+	void print_all_vars();
+	var_ptr get_single_var_impl(int& state);
+	void add_changeCallBack(void* owner, std::function<void(void)> func);
+	void delete_callBack(void* owner);
 };
 
 class binary_expression : public expression {
@@ -62,9 +70,11 @@ protected:
 public:
 	binary_expression();
 	binary_expression(expression_ptr left, expression_ptr right);
-
-	virtual var_ptr get_single_var_impl(int& state);
-	virtual void print_all_vars();
+	
+	void print_all_vars();
+	var_ptr get_single_var_impl(int& state);
+	void add_changeCallBack(void* owner, std::function<void(void)> func);
+	void delete_callBack(void* owner);	
 };
 
 class expression_const : public expression {
@@ -137,6 +147,8 @@ private:
 	// TODO: do this for expressions in general??
 	bool mIs_substituted, mIs_dragged;
 	var_ptr mSubstituant;
+	std::function<void(void)> mCallbackFunc;
+	std::map<void*, std::function<void(void)>> mChangeCallbacks;
 public:
 	expression_var(double val, bool is_coefficient = false);
 
@@ -172,6 +184,10 @@ public:
 
 	bool dragged() { return mIs_dragged; }
 	void set_dragged(bool dr) { mIs_dragged = dr; }
+
+	void callback();
+	void add_changeCallBack(void* owner, std::function<void(void)> func);
+	void delete_callBack(void* owner);
 };
 
 class expression_plus : public unary_expression {

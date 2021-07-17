@@ -15,7 +15,7 @@ private:
 
 	std::map<std::string, std::pair<Gtk::Button*, Gtk::Image*>> mButtons; // Buttons with names and icons
 
-	Part_ptr mTarget;
+	Part* mTarget;
 public:
 	/*
 		@function partDesign creates an empty workspace
@@ -33,8 +33,8 @@ public:
 	*/
 	partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
 
-	void set_target(Part_ptr prt) { mTarget = prt; }
-	Part_ptr target() { return mTarget; }
+	void set_target(Part* prt) { mTarget = prt; }
+	Part* target() { return mTarget; }
 
 	virtual bool set_tool(int name);
 

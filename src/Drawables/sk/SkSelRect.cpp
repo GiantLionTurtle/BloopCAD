@@ -1,31 +1,34 @@
 
-#include "selectionRectangle.hpp"
+#include "SkSelRect.hpp"
 
 #include <graphics_utils/GLCall.hpp>
 #include <graphics_utils/ShadersPool.hpp>
 
-selectionRectangle::selectionRectangle(glm::vec2 start, glm::vec2 end, geom_3d::plane_abstr_ptr basePlane_):
-	sketchEntity(basePlane_, -1),
+SkSelRect::SkSelRect(glm::vec2 start, glm::vec2 end, geom_3d::plane_abstr_ptr basePlane_):
+	SkDrawable(basePlane_),
 	mStartPt(start),
 	mEndPt(end),
-	mMode(TOUCH)
+	mMode(TOUCH),
+	mVA(nullptr),
+	mVB(nullptr),
+	mShader(nullptr)
 {
-	init_buffers();
 	set_points(start, end);
 }
 
-void selectionRectangle::init()
+void SkSelRect::init()
 {
+	init_buffers();
 	set_name("selection");
 	
-	mVB = std::shared_ptr<VertexBuffer>(new VertexBuffer(mVertices, sizeof(glm::vec3) * 4)); // Upload the vertices
-	mVA = std::shared_ptr<VertexArray>(new VertexArray());
+	mVB = new VertexBuffer(mVertices, sizeof(glm::vec3) * 4); // Upload the vertices
+	mVA = new VertexArray();
 
 	VertexBufferLayout layout;
 	layout.add_proprety_float(3);
 	mVA->bind();
-	mVA->add_buffer(*mVB.get(), layout);
-	mIB = std::shared_ptr<IndexBuffer>(new IndexBuffer(mIndices, 6));
+	mVA->add_buffer(*mVB, layout);
+	mIB = new IndexBuffer(mIndices, 6);
 
 	// Create the Shaders
 	mShader = ShadersPool::get_instance().get("plane");
@@ -34,50 +37,7 @@ void selectionRectangle::init()
 		ShadersPool::get_instance().add("plane", mShader);
 	}
 }
-
-void selectionRectangle::update_VB()
-{
-	init_buffers();
-	mVB->bind();
-	mVB->set(mVertices, sizeof(glm::vec3) * 4);
-	mVB->unbind();
-	mRequire_VBUpdate = false;
-}
-
-void selectionRectangle::set_startPoint(glm::vec2 pt)
-{
-	mStartPt = pt;
-    glm::vec2 diff = mEndPt - mStartPt;
-	mVertices[0] = mBasePlane->to_worldPos(mStartPt);
-	mVertices[1] = mBasePlane->to_worldPos(mStartPt + glm::vec2(0.0f, diff.y));
-	mVertices[3] = mBasePlane->to_worldPos(mStartPt + glm::vec2(diff.x, 0.0f));
-	mRequire_VBUpdate = true;
-	set_need_redraw();
-}
-void selectionRectangle::set_endPoint(glm::vec2 pt)
-{
-	mEndPt = pt;
-    glm::vec2 diff = mEndPt - mStartPt;
-	mVertices[1] = mBasePlane->to_worldPos(mStartPt + glm::vec2(0.0f, diff.y));
-	mVertices[2] = mBasePlane->to_worldPos(mEndPt);
-	mVertices[3] = mBasePlane->to_worldPos(mStartPt + glm::vec2(diff.x, 0.0f));
-	mRequire_VBUpdate = true;
-	set_need_redraw();
-}
-void selectionRectangle::set_points(glm::vec2 start_, glm::vec2 end_)
-{
-	mStartPt = start_;
-	mEndPt = end_;
-	glm::vec2 diff = end_ - start_;
-	mVertices[0] = mBasePlane->to_worldPos(mStartPt);
-	mVertices[1] = mBasePlane->to_worldPos(mStartPt + glm::vec2(0.0f, diff.y));
-	mVertices[2] = mBasePlane->to_worldPos(mEndPt);
-	mVertices[3] = mBasePlane->to_worldPos(mStartPt + glm::vec2(diff.x, 0.0f));
-	mRequire_VBUpdate = true;
-	set_need_redraw();
-}
-
-void selectionRectangle::draw_impl(Camera_ptr cam, int frame)
+void SkSelRect::draw(Camera_ptr cam, int frame, draw_type type)
 {
 	mShader->bind();
 	glm::vec3 color;
@@ -102,8 +62,48 @@ void selectionRectangle::draw_impl(Camera_ptr cam, int frame)
 	mVA->unbind();
 	mShader->unbind();
 }
+void SkSelRect::update()
+{
+	mVB->bind();
+	mVB->set(mVertices, sizeof(glm::vec3) * 4);
+	mVB->unbind();
+	mNeed_update = false;
+}
 
-void selectionRectangle::init_buffers()
+void SkSelRect::set_startPoint(glm::vec2 pt)
+{
+	mStartPt = pt;
+    glm::vec2 diff = mEndPt - mStartPt;
+	mVertices[0] = mBasePlane->to_worldPos(mStartPt);
+	mVertices[1] = mBasePlane->to_worldPos(mStartPt + glm::vec2(0.0f, diff.y));
+	mVertices[3] = mBasePlane->to_worldPos(mStartPt + glm::vec2(diff.x, 0.0f));
+	mNeed_update = true;
+	set_need_redraw();
+}
+void SkSelRect::set_endPoint(glm::vec2 pt)
+{
+	mEndPt = pt;
+    glm::vec2 diff = mEndPt - mStartPt;
+	mVertices[1] = mBasePlane->to_worldPos(mStartPt + glm::vec2(0.0f, diff.y));
+	mVertices[2] = mBasePlane->to_worldPos(mEndPt);
+	mVertices[3] = mBasePlane->to_worldPos(mStartPt + glm::vec2(diff.x, 0.0f));
+	mNeed_update = true;
+	set_need_redraw();
+}
+void SkSelRect::set_points(glm::vec2 start_, glm::vec2 end_)
+{
+	mStartPt = start_;
+	mEndPt = end_;
+	glm::vec2 diff = end_ - start_;
+	mVertices[0] = mBasePlane->to_worldPos(mStartPt);
+	mVertices[1] = mBasePlane->to_worldPos(mStartPt + glm::vec2(0.0f, diff.y));
+	mVertices[2] = mBasePlane->to_worldPos(mEndPt);
+	mVertices[3] = mBasePlane->to_worldPos(mStartPt + glm::vec2(diff.x, 0.0f));
+	mNeed_update = true;
+	set_need_redraw();
+}
+
+void SkSelRect::init_buffers()
 {
 	mIndices[0] = 0;
 	mIndices[1] = 1;

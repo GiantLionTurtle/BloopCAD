@@ -6,13 +6,15 @@
 #include <graphics_utils/GLCall.hpp>
 
 SkPoint::SkPoint(glm::vec2 pos, geom_3d::plane_abstr_ptr pl, bool fixed_):
-    ExpressionPoint(expression_var::make(pos.x), expression_var::make(pos.y)),
+    ExpressionPoint<var_ptr>(expression_var::make(pos.x), expression_var::make(pos.y)),
     SkPrimitiveGeometry(pl, fixed_),
 	mVA(nullptr),
 	mVB(nullptr),
 	mShader(nullptr)
 {
 	mType |= Drawable_types::POINT;
+	mX->add_changeCallBack(std::bind(&SkPoint::set_need_update, this));
+	mY->add_changeCallBack(std::bind(&SkPoint::set_need_update, this));
 }
 
 SkPoint::~SkPoint()
@@ -55,7 +57,6 @@ void SkPoint::init()
 	}
 	set_name("sketchPoint");
 }
-
 void SkPoint::draw(Camera_ptr cam, int frame, draw_type type)
 {
 	mShader->bind();
@@ -83,7 +84,6 @@ void SkPoint::draw(Camera_ptr cam, int frame, draw_type type)
 	mVA->unbind();
 	mShader->unbind();
 }
-
 void SkPoint::update()
 {
 	mVB->bind();
@@ -110,4 +110,14 @@ DraggableSelectionPoint SkPoint::closest_2d_draggable(glm::vec2 planePos, Camera
 			return { this };
 	}
 	return DraggableSelectionPoint();
+}
+void SkPoint::move(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
+{
+	set(pos() + end - start);
+}
+
+void SkPoint::set(glm::vec2 pt)
+{
+	mX->set(pt.x);
+	mY->set(pt.y);
 }

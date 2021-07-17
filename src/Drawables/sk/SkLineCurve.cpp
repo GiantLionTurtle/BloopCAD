@@ -116,3 +116,8 @@ DraggableSelectionPoint SkLineCurve::closest_2d_draggable(glm::vec2 planePos, Ca
 	}
 	return DraggableSelectionPoint();
 }
+void SkLineCurve::move(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
+{
+	mPtA->set(mPtA->pos() + end - start);
+	mPtB->set(mPtB->pos() + end - start);
+}

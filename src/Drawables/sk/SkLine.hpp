@@ -18,6 +18,7 @@ public:
 
 	SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
+	void move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov);
 };
 
 #endif

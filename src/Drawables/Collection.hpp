@@ -23,13 +23,16 @@ public:
 
 	void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL)
 	{
-		if(exists()) { // Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
+		// TODO: check logic for below line
+		if(mNeed_redraw && exists()) { // Only draw if it exists and it is either visible or selected (if it is selected in the tree view for instance)
 			if(!mInited) {
 				init();
 				mInited = true;
 			}
 			for(size_t i = 0; i < num_children(); ++i) {
-				child(i)->draw(cam, frame, type);
+				auto ch = child(i);
+				if(ch->need_redraw()) // Is this right?
+					child(i)->draw(cam, frame, type);
 			}
 			mNeed_redraw = false;
 		}

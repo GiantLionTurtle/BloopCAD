@@ -3,7 +3,7 @@
 #include <utils/DebugUtils.hpp>
 #include <document.hpp>
 
-toggleBaseObject_action::toggleBaseObject_action(baseObject_ptr obj, bool toggle_to):
+toggleBaseObject_action::toggleBaseObject_action(baseObject* obj, bool toggle_to):
 	mObj(obj),
 	mToggle_to(toggle_to)
 {

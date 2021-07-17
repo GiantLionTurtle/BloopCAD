@@ -8,6 +8,7 @@
 #include <actions/common/moveCamera_action.hpp>
 #include <actions/sketchDesign/enterSketchDesign_action.hpp>
 #include <actions/partDesign/quitPartDesign_action.hpp>
+#include <actions/common/toggleBaseObject_action.hpp>
 #include <utils/DebugUtils.hpp>
 #include <utils/mathUtils.hpp>
 #include <bloop.hpp>
@@ -82,6 +83,33 @@ DraggableSelectionPoint Sketch::closest_draggable(glm::vec2 cursor, Camera* cam,
 		}
 	}
 	return selPt;
+}
+
+void Sketch::move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
+{
+	for(size_t i = 0; i < mDrawList.size(); ++i) {
+		auto ch = mDrawList.at(i);
+		if(ch->exists())
+			ch->move_selected(start, end, pix_mov);	
+	}
+}
+std::shared_ptr<serial_action> Sketch::delete_selected()
+{
+	auto act = std::make_shared<serial_action>();
+	for(size_t i = 0; i < mDrawList.size(); ++i) {
+		auto ch = mDrawList.at(i);
+		if(ch->selected() && ch->exists())
+			act->add_action(std::make_shared<toggleBaseObject_action>(ch, false));
+	}
+	return act;
+}
+void Sketch::unselect_all()
+{
+	for(size_t i = 0; i < mDrawList.size(); ++i) {
+		auto ch = mDrawList.at(i);
+		if(ch->selected() && ch->exists())
+			ch->unselect();
+	}
 }
 
 void Sketch::add_geometry(SkGeometry* ent)

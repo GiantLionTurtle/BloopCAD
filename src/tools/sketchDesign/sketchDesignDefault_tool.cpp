@@ -1,8 +1,8 @@
 
 #include "sketchDesignDefault_tool.hpp"
 
+#include <document.hpp>
 #include <Drawables/Sketch.hpp>
-#include <Drawables/tangibleEntities/sketchEntities/sketchPoint.hpp>
 #include <utils/DebugUtils.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
@@ -10,7 +10,6 @@
 #include <actions/common/switchWorkspace_action.hpp>
 #include <actions/common/toggleBaseObject_action.hpp>
 #include <actions/common/serial_action.hpp>
-#include <actions/sketchDesign/assignPosSnapshots_action.hpp>
 
 #include <iostream>
 
@@ -21,14 +20,16 @@ sketchDesignDefault_tool::sketchDesignDefault_tool(sketchDesign* env):
 	mSelectionRect(nullptr),
 	mAllowedToMove(false)
 {
-
+	mSelectionRect = new SkSelRect(glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0), nullptr);
+}
+sketchDesignDefault_tool::~sketchDesignDefault_tool()
+{
+	delete mSelectionRect;
 }
 
 void sketchDesignDefault_tool::init()
 {
-	if(!mSelectionRect) {
-		mSelectionRect = std::make_shared<selectionRectangle>(glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0), mEnv->target()->basePlane());
-	}
+	mSelectionRect->set_basePlane(mEnv->target()->basePlane());
 	mAllowedToMove = false;
 	mMoving = false;
 }
@@ -36,57 +37,56 @@ void sketchDesignDefault_tool::init()
 bool sketchDesignDefault_tool::manage_key_press(GdkEventKey* event)
 {
 	if(event->keyval == GDK_KEY_Escape) {
-		unselect_all();
+		mEnv->target()->unselect_all();
 		return false;
 	} else if(event->keyval == GDK_KEY_Delete) {
-		auto mDeleteAllSelected = std::make_shared<serial_action>();
-		Sketch* sk = mEnv->target();
-		sk->for_each_selected([&](sketchEntity_ptr ent) {
-			if(sk->can_delete(ent))
-				mDeleteAllSelected->add_action(std::make_shared<toggleBaseObject_action>(ent, false));
-		});
-		mEnv->state()->doc->push_action(mDeleteAllSelected);
-		unselect_all();
+		auto deleteAllSelected = mEnv->target()->delete_selected();
+
+		mEnv->state()->doc->push_action(deleteAllSelected);
+		mEnv->target()->unselect_all();
 	}
 	return true;
 }
 
 bool sketchDesignDefault_tool::manage_button_press(GdkEventButton* event)
 {
+	Camera_ptr cam = mEnv->state()->cam;
+	glm::vec2 screenPos = glm::vec2(event->x, event->y);
 	mAllowedToMove = false;
 	if(event->button == 1) {
-		auto clickedEnt = mEnv->target()->entity_at_point(mEnv->state()->cam, glm::vec2(event->x, event->y));
-		if(clickedEnt) {
+		auto clickedPoint = mEnv->target()->closest(screenPos, cam.get(), cam->cast_ray(screenPos), DRAWABLE);
+		if(clickedPoint.ent) {
 			mAllowedToMove = true;
-			if(!clickedEnt->selected()) {
+			if(!clickedPoint.ent->selected()) {
 				if(!(event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK))
-					mEnv->target()->clear_selectedGeometries();
-				mEnv->target()->add_selectedGeometry(clickedEnt);
+					mEnv->target()->unselect_all();
 			}
-		} else if(!clickedEnt) {
-			unselect_all();
+		} else {
+			mEnv->target()->unselect_all();
 
-			Camera_ptr cam = mEnv->state()->cam;
 			geom_3d::plane_abstr_ptr pl = mEnv->target()->basePlane();
-			glm::vec2 pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
+			glm::vec2 pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(screenPos)));
 			mSelectionRect->set_points(pos, pos);
-			mEnv->target()->add_toolPreview(mSelectionRect);
-			mStartPos = glm::vec2(event->x, event->y);
+			mEnv->state()->doc->set_toolPreview(mSelectionRect);
+			mStartPos = screenPos;
 		}
 	}
 	return true;
 }
 bool sketchDesignDefault_tool::manage_button_release(GdkEventButton* event)
 {
-	if(event->button == 1)
-		mEnv->target()->clear_toolPreview();
+	if(event->button == 1) {
+		// mEnv->target()->clear_toolPreview();
+		mEnv->state()->doc->clear_toolPreview();
+	}
 
 	// mDraggedEnt = nullptr;
 	
 	if(mMoving) {
 		int i = 0;
-		std::vector<entityPosSnapshot_ptr> final_mov = mEnv->target()->selectedGeometriesSnapshots();
-		mEnv->state()->doc->push_action(std::make_shared<assignPosSnapshots_action>(mStartMoveSnapshot, final_mov));
+		// std::vector<entityPosSnapshot_ptr> final_mov = mEnv->target()->selectedGeometriesSnapshots();
+		// mEnv->state()->doc->push_action(std::make_shared<assignPosSnapshots_action>(mStartMoveSnapshot, final_mov));
+		LOG_WARNING("Implement snapshot with variables");
 	}
 
 	mAllowedToMove = false;
@@ -108,44 +108,39 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 		if(mAllowedToMove) {
 			if(!mMoving) {
 				mMoving = true;
-				mEnv->target()->for_each_selected([&](sketchEntity_ptr ent) { ent->set_dragged(true); });
-				mStartMoveSnapshot = mEnv->target()->selectedGeometriesSnapshots();
+				LOG_WARNING("Implement move snapshots");
+				// mStartMoveSnapshot = mEnv->target()->selectedGeometriesSnapshots();
 			}
-			mEnv->target()->for_each_selected([&](sketchEntity_ptr ent) { ent->move(mPrevPos, pos, mPrevMousePos - mousePos);	});
+			// mEnv->target()->for_each_selected([&](sketchEntity_ptr ent) { ent->move(mPrevPos, pos, mPrevMousePos - mousePos);	});
+			mEnv->target()->move_selected(mPrevPos, pos, mPrevMousePos - mousePos);
 			bool update_attempt = sk->update_constraints(true, false);
 		} else {
 			mSelectionRect->set_endPoint(pos);
 			if(event->x > mStartPos.x) {
-				mSelectionRect->set_mode(selectionRectangle::COVER);
+				mSelectionRect->set_mode(SkSelRect::COVER);
 			} else {
-				mSelectionRect->set_mode(selectionRectangle::TOUCH);
+				mSelectionRect->set_mode(SkSelRect::TOUCH);
 			}
-			sk->toggle_selection_from_area(mSelectionRect->start(), mSelectionRect->end(), mSelectionRect->mode() == selectionRectangle::COVER);
+			glm::vec2 a = mSelectionRect->start(), b = mSelectionRect->end(); // Just so that it is more concise
+			glm::vec2 bottom_right(std::max(a.x, b.x), std::min(a.y, b.y)), top_left(std::min(a.x, b.x), std::max(a.y, b.y));
+			sk->select_within(top_left, bottom_right, mSelectionRect->mode());
 		}
 	} else {
-		sketchEntity_ptr candidate = mEnv->target()->entity_at_point(mEnv->state()->cam, glm::vec2(event->x, event->y));
-		if(candidate != mHoveredEnt) {
+		Camera_ptr cam = mEnv->state()->cam;
+		glm::vec2 screenPos = glm::vec2(event->x, event->y);
+		auto hovered = mEnv->target()->closest(screenPos, cam.get(), cam->cast_ray(screenPos), DRAWABLE);
+		if(hovered.ent != mHoveredEnt) {
 			if(mHoveredEnt) {
 				mHoveredEnt->set_hover(false);
 			}
-			if(candidate) {
-				candidate->set_hover(true);
+			if(hovered.ent) {
+				hovered.ent->set_hover(true);
 			}
-			mHoveredEnt = candidate;
+			mHoveredEnt = hovered.ent;
 		}
 	}
 	mPrevPos = pos;
 	mPrevMousePos = mousePos;
 
 	return true;
-}
-
-
-void sketchDesignDefault_tool::unselect_all()
-{
-	mEnv->target()->for_each_selected([&](sketchEntity_ptr ent) { 
-		if(ent->dragged())
-			ent->set_dragged(false);
-	});
-	mEnv->target()->clear_selectedGeometries();
 }

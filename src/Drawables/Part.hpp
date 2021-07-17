@@ -15,9 +15,6 @@
 class document; // The forward declaration of document is needed for pointer declaration
 class modelColumns;
 
-class Part;
-using Part_ptr = std::shared_ptr<Part>;
-
 class PartIndexer {
 private:
 	std::vector<Sketch*> mSketches;

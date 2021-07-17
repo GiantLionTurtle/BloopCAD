@@ -14,7 +14,7 @@ public:
     virtual ~Point_abstr();
 
 	virtual glm::vec2 pos() = 0;
-	// virtual void set(glm::vec2 p) = 0; // Useful but not necessary I say
+	virtual void set(glm::vec2 p) {}
 
 	virtual glm::vec2 at(float t) { return pos(); }
 	bool within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained);
@@ -25,8 +25,6 @@ public:
 	virtual float dist_to_point_2(glm::vec2 const& pt);
 	virtual float dist_to_point_2(Point_abstr& pt) { return dist_to_point_2(pt.pos()); }
 	virtual float dist_to_point_2(Point_abstr_ptr pt) { return dist_to_point_2(pt->pos()); }
-protected:
-	virtual void post_set_behavior() {}
 };
 
 

@@ -2,6 +2,7 @@
 #include "expression.hpp"
 
 #include <cmath>
+#include <algorithm>
 #include <iostream>
 
 expression_ptr expConst::zero(new expression_const(0.0f));
@@ -52,6 +53,15 @@ unary_expression::unary_expression(expression_ptr operand):
 {
 
 }
+
+void unary_expression::print_all_vars()
+{
+	if(mOperand->op() == VARIABLE) {
+		std::cout<<"["<<mID<<"] "<<mOperand->id()<<"\n";
+	} else {
+		mOperand->print_all_vars();
+	}
+}
 var_ptr unary_expression::get_single_var_impl(int& state)
 {
 	if(state)
@@ -60,13 +70,13 @@ var_ptr unary_expression::get_single_var_impl(int& state)
 		return std::static_pointer_cast<expression_var>(mOperand);
 	return mOperand->get_single_var_impl(state);
 }
-void unary_expression::print_all_vars()
+void unary_expression::add_changeCallBack(void* owner, std::function<void(void)> func)
 {
-	if(mOperand->op() == VARIABLE) {
-		std::cout<<"["<<mID<<"] "<<mOperand->id()<<"\n";
-	} else {
-		mOperand->print_all_vars();
-	}
+	mOperand->add_changeCallBack(owner, func);
+}
+void unary_expression::delete_callBack(void* owner)
+{
+	mOperand->delete_callBack(owner);
 }
 
 binary_expression::binary_expression():
@@ -80,6 +90,20 @@ binary_expression::binary_expression(expression_ptr left, expression_ptr right):
 	mRight(right)
 {
 
+}
+
+void binary_expression::print_all_vars() 
+{
+	if(mLeft->op() == VARIABLE) {
+		std::cout<<"["<<mID<<"] "<<mLeft->id()<<"\n"; 
+	} else {
+		mLeft->print_all_vars();
+	}
+	if(mRight->op() == VARIABLE) {
+		std::cout<<"["<<mID<<"] "<<mRight->id()<<"\n"; 
+	} else {
+		mRight->print_all_vars();
+	}
 }
 var_ptr binary_expression::get_single_var_impl(int& state)
 {
@@ -108,19 +132,18 @@ var_ptr binary_expression::get_single_var_impl(int& state)
 	}
 	return nullptr;
 }
-void binary_expression::print_all_vars() 
+void binary_expression::add_changeCallBack(void* owner, std::function<void(void)> func)
 {
-	if(mLeft->op() == VARIABLE) {
-		std::cout<<"["<<mID<<"] "<<mLeft->id()<<"\n"; 
-	} else {
-		mLeft->print_all_vars();
-	}
-	if(mRight->op() == VARIABLE) {
-		std::cout<<"["<<mID<<"] "<<mRight->id()<<"\n"; 
-	} else {
-		mRight->print_all_vars();
-	}
+	mLeft->add_changeCallBack(owner, func);
+	mRight->add_changeCallBack(owner, func);
 }
+void binary_expression::delete_callBack(void* owner)
+{
+	mLeft->delete_callBack(owner);
+	mRight->delete_callBack(owner);
+}
+
+
 
 /* -------------- Const -------------- */
 expression_const::expression_const(double val)
@@ -411,6 +434,20 @@ void expression_var::substitute(var_ptr sub)
 	// sub->clear_substitution();
 	mSubstituant = sub;
 	mIs_substituted = true;
+}
+
+void expression_var::callback()
+{
+	for(auto call : mChangeCallbacks)
+		std::get<1>(call)();
+}
+void expression_var::add_changeCallBack(void* owner, std::function<void(void)> func)
+{
+	mChangeCallbacks[owner] = func;
+}
+void expression_var::delete_callBack(void* owner)
+{
+	mChangeCallbacks.erase(owner);
 }
 
 /* -------------- End variable -------------- */

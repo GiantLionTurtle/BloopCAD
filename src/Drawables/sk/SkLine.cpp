@@ -37,3 +37,15 @@ DraggableSelectionPoint SkLine::closest_2d_draggable(glm::vec2 planePos, Camera*
 	}
 	return DraggableSelectionPoint();
 }
+void SkLine::move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
+{
+	// All this logic to prevent the line to move two times (if the curve moves then the points)
+	if(mCurve->selected()) {
+		mCurve->move(start, end, pix_mov);
+	} else {
+		if(mPtA->selected())
+			mPtA->move(start, end, pix_mov);
+		if(mPtB->selected())
+			mPtB->move(start, end, pix_mov);
+	}
+}

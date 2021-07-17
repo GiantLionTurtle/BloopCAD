@@ -7,10 +7,10 @@
 
 class toggleBaseObject_action : public action {
 private:
-	baseObject_ptr mObj;
+	baseObject* mObj;
 	bool mToggle_to;
 public:
-	toggleBaseObject_action(baseObject_ptr obj, bool toggle_to);
+	toggleBaseObject_action(baseObject* obj, bool toggle_to);
 
 	virtual bool do_work(document* caller);
 	virtual bool undo_work(document* caller);

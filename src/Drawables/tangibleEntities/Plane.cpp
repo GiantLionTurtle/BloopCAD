@@ -5,7 +5,10 @@
 #include <graphics_utils/ShadersPool.hpp>
 
 Plane::Plane(plane_abstr const& plane_):
-	plane_abstr(plane_)
+	plane_abstr(plane_),
+	mVA(nullptr),
+	mVB(nullptr),
+	mShader(nullptr)
 {
 	mType |= Drawable_types::PLANE;
 }
