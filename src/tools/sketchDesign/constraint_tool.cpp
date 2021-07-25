@@ -2,7 +2,6 @@
 #include "constraint_tool.hpp"
 
 #include <actions/sketchDesign/toggleConstraint_action.hpp>
-#include <actions/sketchDesign/assignPosSnapshots_action.hpp>
 #include <actions/common/parallel_action.hpp>
 #include <document.hpp>
 

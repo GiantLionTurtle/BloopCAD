@@ -32,7 +32,7 @@ bool point_tool::manage_button_press(GdkEventButton* event)
 	glm::vec2 point_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 
 	// mEnv->state()->doc->make_glContext_current();
-	mCurrentPoint = sketchPoint_ptr(new sketchPoint(point_pos, pl));
+	mCurrentPoint = new SkPoint(point_pos, pl, false);
 	target->add_geometry(mCurrentPoint);
 	mEnv->state()->doc->push_action(std::make_shared<toggleBaseObject_action>(mCurrentPoint, true));
 	return true;

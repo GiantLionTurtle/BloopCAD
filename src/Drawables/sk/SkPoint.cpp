@@ -15,6 +15,7 @@ SkPoint::SkPoint(glm::vec2 pos, geom_3d::plane_abstr_ptr pl, bool fixed_):
 	mType |= Drawable_types::POINT;
 	mX->add_changeCallBack(this, std::bind(&SkPoint::set_need_update, this));
 	mY->add_changeCallBack(this, std::bind(&SkPoint::set_need_update, this));
+	set_name("SkPoint");
 }
 
 SkPoint::~SkPoint()
@@ -55,7 +56,6 @@ void SkPoint::init()
 
 		kFisrstInst = false;
 	}
-	set_name("sketchPoint");
 }
 void SkPoint::draw(Camera_ptr cam, int frame, draw_type type)
 {
@@ -86,6 +86,7 @@ void SkPoint::draw(Camera_ptr cam, int frame, draw_type type)
 }
 void SkPoint::update()
 {
+	update_annots();
 	mVB->bind();
 	glm::vec3 pos_tmp = mBasePlane->to_worldPos(pos());
 	mVB->set(&pos_tmp[0], sizeof(glm::vec3));
@@ -114,6 +115,13 @@ DraggableSelectionPoint SkPoint::closest_2d_draggable(glm::vec2 planePos, Camera
 void SkPoint::move(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
 {
 	set(pos() + end - start);
+}
+
+void SkPoint::set_annotOffset(SkSprite* sp, int ind)
+{
+	int level = ind / 6;
+	float angle = (float)(ind % 6) / 6.0f * M_PI * 2.0 + M_PI_2;
+	sp->set_pixelOffset(glm::vec2(std::cos(angle) * (float)(ind) * 25.0f, std::sin(angle) * (float)(ind) * 25.0f));
 }
 
 void SkPoint::set(glm::vec2 pt)

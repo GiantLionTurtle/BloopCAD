@@ -48,7 +48,6 @@ public:
 	}
 
 	virtual void update() = 0;
-	virtual void update_self() {}
 
 	size_t num_children() { return mDrawList.size(); }
 	Drawable* child(size_t ind) { return mDrawList.at(ind); }
@@ -67,7 +66,6 @@ public:
 	void update()
 	{
 		using pT = Collection_abstr<containerType>;
-		update_self();
 		for(size_t i = 0; i < pT::num_children(); ++i) {
 			if(pT::child(i)->need_update())
 				pT::child(i)->update();
@@ -75,8 +73,6 @@ public:
 		if(pT::notif_on_update())
 			pT::notify_parent(pT::UPDATED);
 	}
-
-	virtual void update_self() {}
 };
 
 // Collection where all siblings must be updated when one of them needs to
@@ -86,15 +82,12 @@ public:
 	virtual void update()
 	{
 		using pT = Collection_abstr<containerType>;
-		update_self();
 		for(size_t i = 0; i < pT::num_children(); ++i) {
 			pT::child(i)->update();
 		}
 		if(pT::notif_on_update())
 			pT::notify_parent(pT::UPDATED);
 	}
-
-	virtual void update_self() {}
 };
 
 /*

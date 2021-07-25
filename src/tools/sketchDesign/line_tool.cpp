@@ -2,7 +2,6 @@
 #include "line_tool.hpp"
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
-#include <Drawables/tangibleEntities/sketchEntities/sketchLine.hpp>
 #include <Drawables/Sketch.hpp>
 #include <actions/common/toggleBaseObject_action.hpp>
 #include <utils/mathUtils.hpp>
@@ -27,7 +26,7 @@ void line_tool::init()
 }
 void line_tool::finish()
 {
-	mEnv->target()->clear_toolPreview();
+	mEnv->state()->doc->clear_toolPreview();
 }
 
 bool line_tool::manage_key_press(GdkEventKey* event)
@@ -50,7 +49,7 @@ bool line_tool::manage_mouse_move(GdkEventMotion* event)
 		Camera_ptr cam = mEnv->state()->cam; // For ease of writing
 		geom_3d::plane_abstr_ptr pl = target->basePlane();
 		glm::vec2 line_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
-		mLinePreview->B()->set(line_pos);
+		mLinePreview->ptB()->set(line_pos);
 		target->update();
 	}
 	return true;
@@ -66,26 +65,27 @@ bool line_tool::manage_button_press(GdkEventButton* event)
 	return true;
 }
 
-sketchPoint_ptr line_tool::add_point(glm::vec2 pt)
+SkPoint* line_tool::add_point(glm::vec2 pt)
 {
 	if(!mStarted) {
-		mLinePreview = std::make_shared<sketchLine>(pt, pt, mEnv->target()->basePlane());
-		mEnv->target()->add_toolPreview(mLinePreview);
+		mLinePreview = new SkLine(pt, pt, mEnv->target()->basePlane(), false);
+		mEnv->state()->doc->set_toolPreview(mLinePreview);
 		mStarted = true;
-		return mLinePreview->A();
+		return mLinePreview->ptA();
 	} else {
-		mLinePreview->B()->set(pt);
+		mLinePreview->ptB()->set(pt);
 		mEnv->target()->add_geometry(mLinePreview);
 		mEnv->state()->doc->push_action(std::make_shared<toggleBaseObject_action>(mLinePreview, true));
-		mEnv->target()->clear_toolPreview();
+		mEnv->state()->doc->clear_toolPreview();
 
 		if(mEndPos) {
-			mEnv->target()->add_constraint(std::make_shared<pointPoint_coincidence>(mEnv->target()->basePlane(), mLinePreview->A(), mEndPos));
+			LOG_WARNING("Implement constraints");
+			// mEnv->target()->add_constraint(std::make_shared<pointPoint_coincidence>(mEnv->target()->basePlane(), mLinePreview->ptA(), mEndPos));
 		}
-		mEndPos = mLinePreview->B();
+		mEndPos = mLinePreview->ptB();
 		mLastAdded = mLinePreview;
-		mLinePreview = std::make_shared<sketchLine>(pt, pt, mEnv->target()->basePlane());
-		mEnv->target()->add_toolPreview(mLinePreview);
+		mLinePreview = new SkLine(pt, pt, mEnv->target()->basePlane(), false);
+		mEnv->state()->doc->set_toolPreview(mLinePreview);
 		return mEndPos;
 	}
 }

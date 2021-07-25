@@ -14,6 +14,7 @@ SkLineCurve::SkLineCurve(Geom2d::Point_abstr* ptA, Geom2d::Point_abstr* ptB, geo
 	mShader(nullptr)
 {
 	mType |= Drawable_types::AXIS;
+	set_name("SkLineCurve");
 }
 
 SkLineCurve::~SkLineCurve()
@@ -28,7 +29,6 @@ void SkLineCurve::init()
 	
 	// mLength2 = (pow(mA->x()-mB->x(), 2.0) + pow(mA->y()-mB->y(), 2.0));
 
-	set_name("line");
 	mVA = new VertexArray();
 	VertexBufferLayout layout;
 	layout.add_proprety_float(3);
@@ -90,6 +90,7 @@ void SkLineCurve::draw(Camera_ptr cam, int frame, draw_type type)
 }
 void SkLineCurve::update()
 {
+	update_annots();
 	mNeed_update = false;
 	mVertices[0] = mBasePlane->to_worldPos(posA());
 	mVertices[1] = mBasePlane->to_worldPos(posB());
@@ -120,4 +121,15 @@ void SkLineCurve::move(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
 {
 	mPtA->set(mPtA->pos() + end - start);
 	mPtB->set(mPtB->pos() + end - start);
+}
+
+void SkLineCurve::set_annotOffset(SkSprite* sp, int ind)
+{
+	glm::vec2 dir = glm::normalize(mPtA->pos() - mPtB->pos());
+	glm::vec2 normal = glm::cross(glm::vec3(dir, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+	int line_side = ind % 2 == 0 ? 1 : -1;
+	bool icon_dir = line_side == -1 ? ind % 4 ? -1 : 1 : ind % 3 ? -1 : 1;
+	float dir_offset = line_side == 1 ? ind : ind - 1;
+	sp->set_pixelOffset(dir * 25.0f * (float)icon_dir * dir_offset + normal * 25.0f * (float)line_side);
 }

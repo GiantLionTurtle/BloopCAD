@@ -4,14 +4,14 @@
 
 #include <tools/tool.hpp>
 
-#include <Drawables/tangibleEntities/sketchEntities/sketchPoint.hpp>
+#include <Drawables/sk/SkPoint.hpp>
 #include <workspaces/sketchDesign.hpp>
 
 #include <glm/glm.hpp>
 
 class point_tool : public tool<sketchDesign> {
 private:
-	sketchPoint_ptr mCurrentPoint;
+	SkPoint* mCurrentPoint;
 public:
 	/*
 		@function line_tool creates a line_tool object

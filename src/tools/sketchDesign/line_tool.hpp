@@ -4,8 +4,8 @@
 
 #include <tools/tool.hpp>
 
-#include <Drawables/tangibleEntities/sketchEntities/sketchPoint.hpp>
-#include <Drawables/tangibleEntities/sketchEntities/sketchLine.hpp>
+#include <Drawables/sk/SkPoint.hpp>
+#include <Drawables/sk/SkLine.hpp>
 #include <workspaces/sketchDesign.hpp>
 
 #include <glm/glm.hpp>
@@ -16,8 +16,8 @@
 */
 class line_tool : public tool<sketchDesign> {
 private:
-	sketchPoint_ptr mEndPos; // end pos of the last line added
-	sketchLine_ptr mLinePreview, mLastAdded;
+	SkPoint* mEndPos; // end pos of the last line added
+	SkLine* mLinePreview, *mLastAdded;
 	bool mStarted; // Whether or not the drawing of the line has started
 public:
 	/*
@@ -50,9 +50,9 @@ public:
 
 	virtual std::string name() { return "line"; }
 
-	sketchPoint_ptr add_point(glm::vec2 pt);
+	SkPoint* add_point(glm::vec2 pt);
 
-	sketchLine_ptr lastAdded() { return mLastAdded; }
+	SkLine* lastAdded() { return mLastAdded; }
 };
 
 #endif

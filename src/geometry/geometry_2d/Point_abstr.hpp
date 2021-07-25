@@ -27,7 +27,21 @@ public:
 	virtual float dist_to_point_2(Point_abstr_ptr pt) { return dist_to_point_2(pt->pos()); }
 };
 
+template<typename eT>
+class ExpressionPoint : public Geom2d::Point_abstr {
+protected:
+	eT mX, mY;
+public:
+	ExpressionPoint(eT x_, eT y_):
+		mX(x_),
+		mY(y_)
+	{}
 
+	glm::vec2 pos() { return glm::vec2(mX->eval(), mY->eval()); }
+
+	eT x() { return mX; }
+	eT y() { return mY; }
+};
 
 std::ostream& operator<<(std::ostream& os, Point_abstr_ptr p);
 std::ostream& operator<<(std::ostream& os, Point_abstr& p);

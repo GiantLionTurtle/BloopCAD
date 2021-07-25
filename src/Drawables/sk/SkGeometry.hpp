@@ -5,10 +5,13 @@
 #include "SkDrawable.hpp"
 
 #include <geometry/geometry_2d/Geom2d_abstr.hpp>
+#include "SkSprite.hpp"
+
+#include <vector>
 
 class SkGeometry : public SkDrawable {
 protected:
-	// Annotation stuff n all?
+	std::vector<SkSprite*> mAnnots;
 	bool mFixed;
 public:
 	SkGeometry(geom_3d::plane_abstr_ptr pl, bool fixed_):
@@ -18,7 +21,23 @@ public:
 
 	}
 
+	void update_annots()
+	{
+		for(int i = 0; i < mAnnots.size(); ++i) {
+			set_annotOffset(mAnnots[i], i+1);
+		}
+	}
+
 	virtual bool fixed() { return mFixed; }
+
+	virtual void add_annot(SkSprite* sp)
+	{
+		if(!sp) 
+			return;
+		mAnnots.push_back(sp);
+		set_annotOffset(sp, mAnnots.size());
+	}
+	virtual void set_annotOffset(SkSprite* sp, int ind) = 0;
 };
 
 class SkPrimitiveGeometry : public SkGeometry, virtual public Geom2d::Geom2d_abstr {

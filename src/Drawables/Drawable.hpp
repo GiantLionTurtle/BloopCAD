@@ -43,7 +43,8 @@ enum Drawable_types {
 	SKDRAWABLE = 2,
 	POINT = 4,
 	AXIS = 8,
-	PLANE = 16
+	PLANE = 16,
+	ANNOTATION = 32
 };
 
 struct SelectionPoint {
@@ -102,7 +103,6 @@ public:
 	void clock(int frame);
 
 	virtual void update() = 0;
-	virtual void update_self();
 
 	// BLOOPBLOOPGOAWAY
 	Drawable* hovered_child(Camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (Drawable*)> filter_func = ([](Drawable* ent) { return true; }));

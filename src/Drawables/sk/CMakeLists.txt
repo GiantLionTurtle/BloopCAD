@@ -4,6 +4,7 @@ SkLineCurve.cpp
 SkLine.cpp
 SkPoint.cpp
 SkSelRect.cpp
+SkSprite.cpp
 )
 
 add_library(sk ${sk_source_files})

@@ -11,6 +11,29 @@ SkLine::SkLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr_ptr pl, bool f
 	mDrawList[0] = mPtA;
 	mDrawList[1] = mPtB;
 	mDrawList[2] = mCurve;
+
+	set_name("SkLine");
+}
+
+void SkLine::notify(Drawable* who, int msg, bool child)
+{
+	if(!child || who != mCurve)
+		return;
+
+	switch(msg) {
+	case RESURRECTED:
+		set_exists(true);
+		break;
+	case DELETED:
+		set_exists(false);
+		break;
+	case SELECTED:
+		set_selected(true);
+		break;
+	case UNSELECTED:
+		set_selected(false);
+		break;
+	}
 }
 
 SelectionPoint SkLine::closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)

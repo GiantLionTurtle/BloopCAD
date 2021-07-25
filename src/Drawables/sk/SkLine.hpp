@@ -16,9 +16,18 @@ private:
 public:
 	SkLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr_ptr pl, bool fixed_);
 
+	SkPoint* ptA() { return mPtA; }
+	SkPoint* ptB() { return mPtB; }
+	SkLineCurve* curve() { return mCurve; }
+
+	void notify(Drawable* who, int msg, bool child);
+
 	SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
+	int selection_rank() { return 3; }
 	void move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov);
+	void add_annot(SkSprite* sp) { mCurve->add_annot(sp); }
+	void set_annotOffset(SkSprite* sp, int ind) { mCurve->set_annotOffset(sp, ind); }
 };
 
 #endif
