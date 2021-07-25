@@ -50,14 +50,13 @@ public:
 	@parent : entity
 */
 class Sketch : public Discrete_Collection<SkIndexer> {
+public:
 private:
 	geom_3d::plane_abstr_ptr mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
 
-
 	// Folder* mOrigin;
-
 	constraintSystem mSystem;
-	std::vector<double> mSystemBackup;
+	std::vector<VarState> mSystemBackup;
 public:
 	/*
 		@function sketch creates a sketch
@@ -77,8 +76,7 @@ public:
 	void unselect_all();
 
 	void add_geometry(SkGeometry* ent);
-	// std::vector<entityPosSnapshot_ptr> geometriesSnapshots(int state_mask = 0); // TODO: Check that it is really 0 and not the max int that is needed
-
+	
 	// void add_toolPreview(Drawable* ent);
 	// void clear_toolPreview();
 
@@ -105,6 +103,12 @@ public:
 	bool toggle_constraint(SkConstraint* constr, bool enable);
 	bool update_constraints(bool safeUpdate, bool update_on_solveFail);
 
+	std::map<var_ptr, float> snapshot();
+	std::vector<VarState> deltaSnapshot(std::map<var_ptr, float> first);
+	static void apply_snapshot(std::map<var_ptr, float> shot);
+	static void apply_snapshot(std::vector<VarState> shot);
+	static void apply_deltaSnapshot(std::vector<VarState> deltaShot);
+	static void apply_invDeltaSnapshot(std::vector<VarState> deltaShot);
 	void backup_system();
 	void revert_system_to_backup();
 

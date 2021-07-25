@@ -10,6 +10,7 @@
 #include <actions/common/switchWorkspace_action.hpp>
 #include <actions/common/toggleBaseObject_action.hpp>
 #include <actions/common/serial_action.hpp>
+#include <actions/sketchDesign/applySnapshot_action.hpp>
 
 #include <iostream>
 
@@ -76,7 +77,6 @@ bool sketchDesignDefault_tool::manage_button_press(GdkEventButton* event)
 bool sketchDesignDefault_tool::manage_button_release(GdkEventButton* event)
 {
 	if(event->button == 1) {
-		// mEnv->target()->clear_toolPreview();
 		mEnv->state()->doc->clear_toolPreview();
 	}
 
@@ -84,8 +84,7 @@ bool sketchDesignDefault_tool::manage_button_release(GdkEventButton* event)
 	
 	if(mMoving) {
 		int i = 0;
-		// std::vector<entityPosSnapshot_ptr> final_mov = mEnv->target()->selectedGeometriesSnapshots();
-		// mEnv->state()->doc->push_action(std::make_shared<assignPosSnapshots_action>(mStartMoveSnapshot, final_mov));
+		mEnv->state()->doc->push_action(std::make_shared<applySnapshot_action>(mEnv->target()->deltaSnapshot(mStartSnapshot), true));
 		LOG_WARNING("Implement snapshot with variables");
 	}
 
@@ -109,9 +108,8 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 			if(!mMoving) {
 				mMoving = true;
 				LOG_WARNING("Implement move snapshots");
-				// mStartMoveSnapshot = mEnv->target()->selectedGeometriesSnapshots();
+				mStartSnapshot = mEnv->target()->snapshot();
 			}
-			// mEnv->target()->for_each_selected([&](sketchEntity_ptr ent) { ent->move(mPrevPos, pos, mPrevMousePos - mousePos);	});
 			mEnv->target()->move_selected(mPrevPos, pos, mPrevMousePos - mousePos);
 			bool update_attempt = sk->update_constraints(true, false);
 		} else {

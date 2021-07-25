@@ -118,21 +118,28 @@ void constraintSystem::clear_subClusters()
 	mSubClusters.clear();
 }
 
-void constraintSystem::varState(std::vector<double>& state)
+void constraintSystem::varState(std::vector<VarState>& state)
 {
 	state.resize(mVariables.size());
 	for(int i = 0; i < mVariables.size(); ++i) {
-		state[i] = mVariables[i]->eval();
+		if(mVariables[i]->exists())
+			state[i] = VarState(mVariables[i], mVariables[i]->eval());
 	}
 }
-void constraintSystem::set_varState(std::vector<double> state)
+void constraintSystem::varState(std::map<var_ptr, float>& state)
 {
-	if(state.size() != mVariables.size()) {
-		LOG_WARNING("Given state does not match current size.");
-		// return;
+	state.clear();
+	for(int i = 0; i < mVariables.size(); ++i) {
+		if(mVariables[i]->exists())
+			state[mVariables[i]] = mVariables[i]->eval();
 	}
-	for(int i = 0; i < mVariables.size() && i < state.size(); ++i) {
-		mVariables[i]->set(state[i]);
+}
+void constraintSystem::varDelta(std::map<var_ptr, float> first, std::vector<VarState>& delta)
+{
+	delta.clear();
+	for(int i = 0; i < mVariables.size(); ++i) {
+		if(mVariables[i]->exists() && first.find(mVariables[i]) != first.end())
+			delta.push_back(VarState(mVariables[i], mVariables[i]->eval()));
 	}
 }
 

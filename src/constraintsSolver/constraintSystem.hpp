@@ -37,8 +37,10 @@ public:
 
 	void clear_subClusters();
 
-	void varState(std::vector<double>& state);
-	void set_varState(std::vector<double> state);
+	var_ptr var(size_t ind) { return mVariables[ind]; }
+	void varState(std::vector<VarState>& state);
+	void varState(std::map<var_ptr, float>& state);
+	void varDelta(std::map<var_ptr, float> first, std::vector<VarState>& delta);
 
 	void updatedSystem() { mBrokenDown = false; }
 

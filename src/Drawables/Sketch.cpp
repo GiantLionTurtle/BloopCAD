@@ -122,17 +122,6 @@ void Sketch::add_geometry(SkGeometry* ent)
 	ent->set_parent(this);
 	mDrawList.add_geom(ent);
 }
-// std::vector<entityPosSnapshot_ptr> Sketch::geometriesSnapshots(int state_mask /*= 0*/)
-// {
-// 	std::vector<entityPosSnapshot_ptr> snapshots(0);
-// 	for(size_t i = 0; i < mDrawList.num_geom(); ++i) {
-// 		SkGeometry* geom = mDrawList.geom(i);
-// 		if(!geom->state() & state_mask)
-// 			continue;
-// 		snapshots.push_back(geom->posSnapshot()); // TODO check that all geometries return a snapshot
-// 	}
-// 	return snapshots;
-// }
 
 // void Sketch::add_selectedGeometry(sketchEntity* ent)
 // {
@@ -230,13 +219,49 @@ bool Sketch::update_constraints(bool safeUpdate, bool update_on_solveFail)
 	return solve_out == solverState::SUCCESS;
 }
 
+std::map<var_ptr, float> Sketch::snapshot()
+{
+	std::map<var_ptr, float> shot;
+	mSystem.varState(shot);
+	return shot;
+}
+std::vector<VarState> Sketch::deltaSnapshot(std::map<var_ptr, float> first)
+{
+	std::vector<VarState> delta;
+	mSystem.varDelta(first, delta);
+	return delta;
+}
+void Sketch::apply_snapshot(std::map<var_ptr, float> shot)
+{
+	for(auto it = shot.begin(); it != shot.end(); ++it) {
+		it->first->set(it->second);
+	}
+}
+void Sketch::apply_snapshot(std::vector<VarState> shot)
+{
+	for(auto vst : shot) {
+		vst.var->set(vst.st);
+	}
+}
+void Sketch::apply_deltaSnapshot(std::vector<VarState> deltaShot)
+{
+	for(auto vst : deltaShot) {
+		vst.var->set(vst.var->eval() + vst.st);
+	}
+}
+void Sketch::apply_invDeltaSnapshot(std::vector<VarState> deltaShot)
+{
+	for(auto vst : deltaShot) {
+		vst.var->set(vst.var->eval() - vst.st);
+	}
+}
 void Sketch::backup_system()
 {
 	mSystem.varState(mSystemBackup);
 }
 void Sketch::revert_system_to_backup()
 {
-	mSystem.set_varState(mSystemBackup);
+	apply_snapshot(mSystemBackup);
 }
 
 void Sketch::invoke_workspace(document* doc)

@@ -190,6 +190,19 @@ public:
 	void delete_callBack(void* owner);
 };
 
+struct VarState {
+	VarState(var_ptr v, float s):
+		var(v),
+		st(s)
+	{}
+	VarState():
+		var(nullptr),
+		st(0.0f)
+	{}
+	var_ptr var;
+	float st;
+};
+
 class expression_plus : public unary_expression {
 public:
 	expression_plus(expression_ptr operand);
