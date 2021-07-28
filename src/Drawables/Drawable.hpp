@@ -44,7 +44,8 @@ enum Drawable_types {
 	POINT = 4,
 	AXIS = 8,
 	PLANE = 16,
-	ANNOTATION = 32
+	ANNOTATION = 32,
+	CURVE = 64,
 };
 
 struct SelectionPoint {
@@ -199,6 +200,7 @@ public:
 		@return : The entity's state
 	*/
 	int state() const { return mState; }
+	int type() const { return mType; }
 
 	bool notif_on_selected();
 	void set_notif_on_selected(bool do_);

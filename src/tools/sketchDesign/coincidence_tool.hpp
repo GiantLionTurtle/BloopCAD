@@ -10,9 +10,9 @@ public:
 
 	std::string name() { return "coincidence"; }
 // protected:
-	int could_add_entity(sketchEntity_ptr ent);
+	int could_add_entity(SkDrawable* ent);
 
-	void add_constraint_impl(std::shared_ptr<constraint_entity>& constr, sketchEntity_ptr& priority_ent);
+	void create_constraint(SkConstraint*& constr, SkDrawable*& priority_ent);
 };
 
 #endif

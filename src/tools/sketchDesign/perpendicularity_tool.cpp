@@ -3,8 +3,7 @@
 
 #include <geometry/geometry_2d/Point_abstr.hpp>
 #include <geometry/geometry_2d/Line_abstr.hpp>
-#include <Drawables/tangibleEntities/sketchEntities/sketchLine.hpp>
-#include <constraintsSolver/constraint.hpp>
+#include <Drawables/sk/SkLine.hpp>
 #include <actions/sketchDesign/toggleConstraint_action.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
@@ -15,7 +14,7 @@ perpendicularity_tool::perpendicularity_tool(sketchDesign* env):
 	load_icon("resources/textures/images/icons/sketch/cursors/perpendicularity_cursor.png");
 }
 
-int perpendicularity_tool::could_add_entity(sketchEntity_ptr ent)
+int perpendicularity_tool::could_add_entity(SkDrawable* ent)
 {
 	if(!ent) {
 		return add_states::COULDNT_ADD;
@@ -29,14 +28,14 @@ int perpendicularity_tool::could_add_entity(sketchEntity_ptr ent)
 	}
 	return add_states::COULDNT_ADD;
 }
-void perpendicularity_tool::add_constraint_impl(std::shared_ptr<constraint_entity>& constr, sketchEntity_ptr& priority_ent)
+void perpendicularity_tool::create_constraint(SkConstraint*& constr, SkDrawable*& priority_ent)
 {
 	if(!mEntA || !mEntB) {
 		LOG_WARNING("Attempting to add incomplete constraint.");
 		return;
 	}
 	LOG_WARNING("nfksjnfew");
-	constr = std::make_shared<lineLinePerpendicularity>(mEnv->target()->basePlane(), 
-		std::static_pointer_cast<sketchLine>(mEntA), std::static_pointer_cast<sketchLine>(mEntB));
+	constr = new lineLinePerpendicularity(mEnv->target()->basePlane(), 
+		static_cast<SkLineCurve*>(mEntA), static_cast<SkLineCurve*>(mEntB));
 	priority_ent = nullptr;
 }

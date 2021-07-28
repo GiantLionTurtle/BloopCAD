@@ -70,6 +70,23 @@ public:
 			break;
 		}
 	}
+
+	SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+	{
+		for(int i = 0; i < nA; ++i) {
+			SelectionPoint selPt = pT::mDrawList.at(i)->closest_2d(planePos, cam, cursorPos, filter);
+			if(selPt.ent)
+				return selPt;
+		}
+	}
+	DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+	{
+		for(int i = 0; i < nA; ++i) {
+			DraggableSelectionPoint selPt = pT::mDrawList.at(i)->closest_2d_draggable(planePos, cam, cursorPos, filter);
+			if(selPt.ent)
+				return selPt;
+		}
+	}
 protected:
 	virtual void select_impl(bool sel)
 	{

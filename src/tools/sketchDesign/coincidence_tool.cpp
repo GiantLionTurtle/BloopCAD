@@ -1,13 +1,12 @@
 
 #include "coincidence_tool.hpp"
 
-#include <Drawables/tangibleEntities/sketchEntities/sketchPoint.hpp>
-#include <Drawables/tangibleEntities/sketchEntities/sketchLine.hpp>
-#include <Drawables/tangibleEntities/sketchEntities/sketchCircle.hpp>
-#include <Drawables/tangibleEntities/sketchEntities/sketchConstraint.hpp>
+#include <Drawables/sk/SkPoint.hpp>
+#include <Drawables/sk/SkConstraint.hpp>
 #include <actions/sketchDesign/toggleConstraint_action.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
+
 
 coincidence_tool::coincidence_tool(sketchDesign* env):
 	constraint_tool(env)
@@ -15,7 +14,7 @@ coincidence_tool::coincidence_tool(sketchDesign* env):
 	load_icon("resources/textures/images/icons/sketch/cursors/coincidence_cursor.png");
 }
 
-int coincidence_tool::could_add_entity(sketchEntity_ptr ent)
+int coincidence_tool::could_add_entity(SkDrawable* ent)
 {
 	if(!ent) {
 		return add_states::COULDNT_ADD;
@@ -31,32 +30,32 @@ int coincidence_tool::could_add_entity(sketchEntity_ptr ent)
 	}
 }
 
-void coincidence_tool::add_constraint_impl(std::shared_ptr<constraint_entity>& constr, sketchEntity_ptr& priority_ent)
+void coincidence_tool::create_constraint(SkConstraint*& constr, SkDrawable*& priority_ent)
 {
 	if(!mEntA || !mEntB) {
 		LOG_WARNING("Attempting to add incomplete constraint.");
 		return;
 	}
 
-	sketchEntity_ptr curve;
-	sketchPoint_ptr pt;
+	SkDrawable* curve;
+	SkPoint* pt;
 	if(is_point(mEntA)) {
-		pt = std::static_pointer_cast<sketchPoint>(mEntA);
+		pt = static_cast<SkPoint*>(mEntA);
 		curve = mEntB;
 	} else {
-		pt = std::static_pointer_cast<sketchPoint>(mEntB);
+		pt = static_cast<SkPoint*>(mEntB);
 		curve = mEntA;
 	}
 
-	if(curve->type() == sketchEntity::LINE) {
-		// constr = pointLine_distance::make(pt, std::static_pointer_cast<sketchLine>(curve), expConst::zero);
+	if(is_line(curve)) {
+		// constr = pointLine_distance::make(pt, static_cast<sketchLine>(curve), expConst::zero);
 		priority_ent = curve;
-	} else if(curve->type() == sketchEntity::CIRCLE) {
-		// constr = pointCircle_distance::make(pt, std::static_pointer_cast<sketchCircle>(curve));
+	} else if(is_curve(curve)) {
+		// constr = pointCircle_distance::make(pt, static_cast<sketchCircle>(curve));
 		priority_ent = curve;
 	} else {
-		// constr = pointPoint_coincidence::make(pt, std::static_pointer_cast<sketchPoint>(curve));
-		constr = std::make_shared<pointPoint_coincidence>(mEnv->target()->basePlane(), pt, std::static_pointer_cast<sketchPoint>(curve));
+		// constr = pointPoint_coincidence::make(pt, static_cast<sketchPoint>(curve));
+		constr = new pointPoint_coincidence(mEnv->target()->basePlane(), pt, static_cast<SkPoint*>(curve));
 		priority_ent = mEntB;
 	}
 }

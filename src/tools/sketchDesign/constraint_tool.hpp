@@ -9,9 +9,10 @@ class constraint_tool : public tool<sketchDesign> {
 public:
 	enum add_states { COULDNT_ADD, COULD_ADD, WOULD_BE_COMPLETE };
 protected:
-	sketchEntity_ptr mEntA, mEntB, mCurrentHover;
+	SkDrawable* mEntA, *mEntB, *mCurrentHover;
+	int mFilter;
 public:
-	constraint_tool(sketchDesign* env);
+	constraint_tool(sketchDesign* env, int filter = Drawable_types::DRAWABLE);
 
 	virtual void init();
 	virtual void finish();
@@ -19,17 +20,16 @@ public:
 	virtual bool manage_button_press(GdkEventButton* event);
 	virtual bool manage_mouse_move(GdkEventMotion* event);
 // protected:
-	virtual int could_add_entity(sketchEntity_ptr ent) = 0;
+	virtual int could_add_entity(SkDrawable* ent) = 0;
 
-	virtual void add_entity(sketchEntity_ptr ent);
+	virtual void add_entity(SkDrawable* ent);
 	void add_constraint();
-	virtual void add_constraint_impl(std::shared_ptr<constraint_entity>& constr, 
-	sketchEntity_ptr& priority_ent) = 0;
+	virtual void create_constraint(SkConstraint*& constr, SkDrawable*& priority_ent) = 0;
 
 	// TODO: Inline these thingies?
-	static bool is_point(sketchEntity_ptr ent);
-	static bool is_line(sketchEntity_ptr ent);
-	static bool is_curve(sketchEntity_ptr ent);
-	static bool is_point_or_curve(sketchEntity_ptr ent);
+	static bool is_point(SkDrawable* ent);
+	static bool is_line(SkDrawable* ent);
+	static bool is_curve(SkDrawable* ent);
+	static bool is_point_or_curve(SkDrawable* ent);
 };
 #endif
