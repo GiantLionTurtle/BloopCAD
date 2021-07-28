@@ -52,7 +52,7 @@ public:
 class Sketch : public Discrete_Collection<SkIndexer> {
 public:
 private:
-	geom_3d::plane_abstr_ptr mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
+	geom_3d::plane_abstr* mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
 
 	// Folder* mOrigin;
 	constraintSystem mSystem;
@@ -63,7 +63,7 @@ public:
 
 		@param base_plane : The plane onto which everything is constructed in the sketch
 	*/
-	Sketch(geom_3d::plane_abstr_ptr base_plane);
+	Sketch(geom_3d::plane_abstr* base_plane);
 
 	void init();
 
@@ -95,7 +95,7 @@ public:
 
 		@return : The base plane of the sketch
 	*/
-	geom_3d::plane_abstr_ptr basePlane() { return mBasePlane; }
+	geom_3d::plane_abstr* basePlane() { return mBasePlane; }
 
 	// Folder* origin() const { return mOrigin; }
 

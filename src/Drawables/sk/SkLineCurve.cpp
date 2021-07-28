@@ -5,7 +5,7 @@
 #include <utils/preferences.hpp>
 #include <graphics_utils/GLCall.hpp>
 
-SkLineCurve::SkLineCurve(Geom2d::Point_abstr* ptA, Geom2d::Point_abstr* ptB, geom_3d::plane_abstr_ptr pl, bool fixed_):
+SkLineCurve::SkLineCurve(Geom2d::Point_abstr* ptA, Geom2d::Point_abstr* ptB, geom_3d::plane_abstr* pl, bool fixed_):
 	SkPrimitiveGeometry(pl, fixed_),
 	mPtA(ptA),
 	mPtB(ptB),

@@ -47,7 +47,7 @@ bool line_tool::manage_mouse_move(GdkEventMotion* event)
 		DEBUG_ASSERT(target, "No valid target.");
 
 		Camera_ptr cam = mEnv->state()->cam; // For ease of writing
-		geom_3d::plane_abstr_ptr pl = target->basePlane();
+		geom_3d::plane_abstr* pl = target->basePlane();
 		glm::vec2 line_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 		mLinePreview->ptB()->set(line_pos);
 		target->update();
@@ -58,7 +58,7 @@ bool line_tool::manage_button_press(GdkEventButton* event)
 {
 	// Find where the ray intersectpos_on_plane
 	Camera_ptr cam = mEnv->state()->cam; // For ease of writing
-	geom_3d::plane_abstr_ptr pl = mEnv->target()->basePlane();
+	geom_3d::plane_abstr* pl = mEnv->target()->basePlane();
 	glm::vec2 line_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 
 	add_point(line_pos);

@@ -23,7 +23,7 @@ private:
 	IndexBuffer* mIB;
 	std::shared_ptr<Shader> mShader;
 public:
-	SkSelRect(glm::vec2 start_, glm::vec2 end_, geom_3d::plane_abstr_ptr basePlane_);
+	SkSelRect(glm::vec2 start_, glm::vec2 end_, geom_3d::plane_abstr* basePlane_);
 	virtual ~SkSelRect() {}
 
 	void init();

@@ -22,9 +22,9 @@ plane_abstr plane_abstr::from_1Point2Vectors(glm::vec3 const& origin, glm::vec3 
 	return plane_abstr(origin, v, w, reversed);
 }
 
-plane_abstr_ptr plane_abstr::from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed)
+plane_abstr* plane_abstr::from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed)
 {
-	return plane_abstr_ptr(new plane_abstr(origin, v, w, reversed));
+	return new plane_abstr(origin, v, w, reversed);
 }
 
 float plane_abstr::dist_to_point(glm::vec3 const& point)

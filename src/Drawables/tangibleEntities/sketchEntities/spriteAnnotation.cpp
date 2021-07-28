@@ -12,7 +12,7 @@ bool spriteAnnotation::kFisrstInst = true;
 glm::vec3 spriteAnnotation::kColorHovered = glm::vec3(0.0f);
 std::map<std::string, std::shared_ptr<Texture>> spriteAnnotation::kTextures = {};
 
-spriteAnnotation::spriteAnnotation(geom_3d::plane_abstr_ptr basePlane_, glm::vec2 dims, std::string const& texturePath):
+spriteAnnotation::spriteAnnotation(geom_3d::plane_abstr* basePlane_, glm::vec2 dims, std::string const& texturePath):
     sketchEntity(basePlane_, SPRITE),
     mTexture(nullptr),
     mDimensions(dims),

@@ -58,7 +58,7 @@
 
 //     // Find where the ray intersectpos_on_plane
 //     Camera_ptr cam = mEnv->state()->cam; // For ease of writing
-//     geom_3d::plane_abstr_ptr pl = target->basePlane();
+//     geom_3d::plane_abstr* pl = target->basePlane();
 //     glm::vec2 circle_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 
 // 	if(!mStarted) {

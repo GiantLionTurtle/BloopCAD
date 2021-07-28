@@ -5,7 +5,7 @@
 #include <utils/preferences.hpp>
 #include <graphics_utils/GLCall.hpp>
 
-SkPoint::SkPoint(glm::vec2 pos, geom_3d::plane_abstr_ptr pl, bool fixed_):
+SkPoint::SkPoint(glm::vec2 pos, geom_3d::plane_abstr* pl, bool fixed_):
     ExpressionPoint<var_ptr>(expression_var::make(pos.x), expression_var::make(pos.y)),
     SkPrimitiveGeometry(pl, fixed_),
 	mVA(nullptr),

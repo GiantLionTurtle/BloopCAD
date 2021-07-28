@@ -14,7 +14,7 @@ protected:
 	std::vector<SkSprite*> mAnnots;
 	bool mFixed;
 public:
-	SkGeometry(geom_3d::plane_abstr_ptr pl, bool fixed_):
+	SkGeometry(geom_3d::plane_abstr* pl, bool fixed_):
 		SkDrawable(pl),
 		mFixed(fixed_)
 	{
@@ -42,7 +42,7 @@ public:
 
 class SkPrimitiveGeometry : public SkGeometry, virtual public Geom2d::Geom2d_abstr {
 public:
-	SkPrimitiveGeometry(geom_3d::plane_abstr_ptr pl, bool fixed_):
+	SkPrimitiveGeometry(geom_3d::plane_abstr* pl, bool fixed_):
 		SkGeometry(pl, fixed_)
 	{
 

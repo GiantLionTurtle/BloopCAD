@@ -26,7 +26,7 @@ private:
 	std::shared_ptr<constraint_abstract> mConstraint;
 	constraintAnnotation_ptr mTwin;
 public:
-	constraintAnnotation(geom_3d::plane_abstr_ptr basePlane_, std::shared_ptr<constraint_abstract> constr);
+	constraintAnnotation(geom_3d::plane_abstr* basePlane_, std::shared_ptr<constraint_abstract> constr);
 	~constraintAnnotation();
 
 	void init();

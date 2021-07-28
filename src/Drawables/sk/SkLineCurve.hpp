@@ -24,7 +24,7 @@ private:
 	VertexBuffer* mVB;
 	std::shared_ptr<Shader> mShader;
 public:
-	SkLineCurve(Geom2d::Point_abstr* ptA, Geom2d::Point_abstr* ptB, geom_3d::plane_abstr_ptr pl, bool fixed_);
+	SkLineCurve(Geom2d::Point_abstr* ptA, Geom2d::Point_abstr* ptB, geom_3d::plane_abstr* pl, bool fixed_);
 	~SkLineCurve();
 
 	glm::vec2 posA() { return mPtA->pos(); }

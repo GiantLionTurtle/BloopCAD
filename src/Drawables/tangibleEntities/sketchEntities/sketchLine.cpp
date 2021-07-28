@@ -53,7 +53,7 @@ sketchLine::sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, bool immovable/
 		set_constant();
 	// init();
 }
-sketchLine::sketchLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
+sketchLine::sketchLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr* basePlane_, bool immovable/* = false*/):
 	sketchGeometry(basePlane_, types::LINE),
 	mA(sketchPoint_ptr(new sketchPoint(ptA, basePlane_, immovable))),
 	mB(sketchPoint_ptr(new sketchPoint(ptB, basePlane_, immovable)))

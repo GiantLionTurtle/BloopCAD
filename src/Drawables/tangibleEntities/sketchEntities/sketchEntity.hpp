@@ -17,11 +17,11 @@ class sketchEntity : public tangibleEntity {
 public:
 	enum types { POINT, LINE, CIRCLE, SPRITE, CONSTRAINT };
 protected:
-	geom_3d::plane_abstr_ptr mBasePlane;
+	geom_3d::plane_abstr* mBasePlane;
 	int mType;
 	bool mDragged;
 public:
-	sketchEntity(geom_3d::plane_abstr_ptr basePlane_, int type_):
+	sketchEntity(geom_3d::plane_abstr* basePlane_, int type_):
 		mType(type_),
 		mBasePlane(basePlane_),
 		mDragged(false)
@@ -41,8 +41,8 @@ public:
 	virtual void set_constant() {};
 	virtual void set_tmpConstant(bool const_) {}
 
-	geom_3d::plane_abstr_ptr basePlane() const { return mBasePlane; }
-	virtual void set_basePlane(geom_3d::plane_abstr_ptr basePlane_) { mBasePlane = basePlane_; set_require_VBUpdate(); }
+	geom_3d::plane_abstr* basePlane() const { return mBasePlane; }
+	virtual void set_basePlane(geom_3d::plane_abstr* basePlane_) { mBasePlane = basePlane_; set_require_VBUpdate(); }
 
 	int type() { return mType; }
 

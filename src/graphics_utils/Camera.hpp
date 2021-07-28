@@ -216,8 +216,8 @@ public:
 
 	glm::vec3 cast_ray(glm::vec2 screenPos, bool input_NDC = false);
 	glm::vec2 screen_angle(glm::vec2 screenPos, bool input_NDC = false);
-	void get_alignedPlaneVectors(std::shared_ptr<geom_3d::plane_abstr> pl, glm::vec3& right, glm::vec3& up, bool allow_inversion);
-	static void get_alignedPlaneVectors(CameraState cst, std::shared_ptr<geom_3d::plane_abstr> pl, glm::vec3& right, glm::vec3& up, bool allow_inversion);
+	void get_alignedPlaneVectors(geom_3d::plane_abstr* pl, glm::vec3& right, glm::vec3& up, bool allow_inversion);
+	static void get_alignedPlaneVectors(CameraState cst, geom_3d::plane_abstr* pl, glm::vec3& right, glm::vec3& up, bool allow_inversion);
 private:
 	glm::mat4 model(transform transf) const;
 	glm::mat4 model_inv(transform transf) const;

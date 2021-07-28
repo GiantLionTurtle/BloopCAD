@@ -13,7 +13,7 @@ glm::vec3 sketchPoint::kColor = glm::vec3(0.0);
 glm::vec3 sketchPoint::kColorHovered = glm::vec3(0.0);
 glm::vec3 sketchPoint::kColorSelected = glm::vec3(0.0);
 
-sketchPoint::sketchPoint(glm::vec2 pos_2d, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
+sketchPoint::sketchPoint(glm::vec2 pos_2d, geom_3d::plane_abstr* basePlane_, bool immovable/* = false*/):
 	sketchGeometry(basePlane_, types::POINT),
 	mX(expression_var::make(pos_2d.x)),
 	mY(expression_var::make(pos_2d.y))
@@ -22,7 +22,7 @@ sketchPoint::sketchPoint(glm::vec2 pos_2d, geom_3d::plane_abstr_ptr basePlane_, 
 		set_constant();
 	// init();
 }
-sketchPoint::sketchPoint(var_ptr x_, var_ptr y_, geom_3d::plane_abstr_ptr basePlane_, bool immovable/* = false*/):
+sketchPoint::sketchPoint(var_ptr x_, var_ptr y_, geom_3d::plane_abstr* basePlane_, bool immovable/* = false*/):
 	sketchGeometry(basePlane_, types::POINT),
 	mX(x_),
 	mY(y_)

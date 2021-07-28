@@ -1,7 +1,7 @@
 
 #include "SkLine.hpp"
 
-SkLine::SkLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr_ptr pl, bool fixed_):
+SkLine::SkLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr* pl, bool fixed_):
 	SkGeometry(pl, fixed_),
 	mPtA(new SkPoint(ptA, pl, fixed_)),
 	mPtB(new SkPoint(ptB, pl, fixed_)),

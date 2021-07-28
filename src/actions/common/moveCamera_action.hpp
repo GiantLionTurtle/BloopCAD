@@ -20,9 +20,9 @@ private:
 public:
 	moveCamera_action(Camera_ptr cam, CameraState target, long duration_ms);
 
-	static std::shared_ptr<action> create_from_facingPlane(	geom_3d::plane_abstr_ptr toFace, float dist_to_plane, 
+	static std::shared_ptr<action> create_from_facingPlane(	geom_3d::plane_abstr* toFace, float dist_to_plane, 
 															CameraState const& camSt, Camera_ptr cam);
-	static std::shared_ptr<action> create_from_facingPlane(geom_3d::plane_abstr_ptr toFace, float dist_to_plane, Camera_ptr cam);
+	static std::shared_ptr<action> create_from_facingPlane(geom_3d::plane_abstr* toFace, float dist_to_plane, Camera_ptr cam);
 
 	virtual bool do_work(document* caller);
 	virtual bool undo_work(document* caller);

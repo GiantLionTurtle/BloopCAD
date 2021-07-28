@@ -56,7 +56,7 @@ public:
 
 		@return : A pointer to the created plane
 	*/
-	static plane_abstr_ptr from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed = false); // this one is just a wrapper around the basic constructor
+	static plane_abstr* from_1Point2Vectors_ptr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed = false); // this one is just a wrapper around the basic constructor
 	// static plane_abstract_ptr from_3Points_ptr(glm::vec3 origin, glm::vec3 pt1, glm::vec3 pt2);
 
 	/*

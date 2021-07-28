@@ -17,7 +17,7 @@ protected:
 	int mGeomID;
 	static int numGeoms;
 public:
-	sketchGeometry(geom_3d::plane_abstr_ptr basePlane_, int type_);
+	sketchGeometry(geom_3d::plane_abstr* basePlane_, int type_);
 
 	virtual void for_each(std::function<void(Drawable* geom)> func);
 	virtual void for_each(std::function<void(sketchEntity_ptr geom)> func);

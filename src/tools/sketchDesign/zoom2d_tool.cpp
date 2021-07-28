@@ -32,7 +32,7 @@ bool zoom2d_tool::manage_button_press(GdkEventButton* event)
 	if(event->button == 1) {
 		mIsZooming = true;
 		Camera_ptr cam = mEnv->state()->cam;
-		geom_3d::plane_abstr_ptr pl = mEnv->target()->basePlane();
+		geom_3d::plane_abstr* pl = mEnv->target()->basePlane();
 		glm::vec2 screen_pos(event->x, event->y);
 		mZoomStart_world = pl->line_intersection(cam->pos(), cam->cast_ray(screen_pos));
 	}
@@ -58,7 +58,7 @@ bool zoom2d_tool::manage_mouse_move(GdkEventMotion* event)
 bool zoom2d_tool::manage_scroll(GdkEventScroll* event)
 {
 	Camera_ptr cam = mEnv->state()->cam;
-	geom_3d::plane_abstr_ptr pl = mEnv->target()->basePlane();
+	geom_3d::plane_abstr* pl = mEnv->target()->basePlane();
 	glm::vec2 screen_pos(event->x, event->y);
 	zoom(pl->line_intersection(cam->pos(), cam->cast_ray(screen_pos)), -0.015f * event->delta_y); // Delta is scaled arbitrarly, zooming around scroll origin
 	return true;

@@ -29,7 +29,7 @@ private:
 	VertexBuffer* mVB;
 	std::shared_ptr<Shader> mShader;
 public:
-	SkSprite(geom_3d::plane_abstr_ptr basePlane_, glm::vec2 dims, std::string const& texturePath);
+	SkSprite(geom_3d::plane_abstr* basePlane_, glm::vec2 dims, std::string const& texturePath);
 	~SkSprite();
 
 	void init();

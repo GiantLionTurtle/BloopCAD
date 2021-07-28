@@ -49,7 +49,7 @@ void constraint_entity::exists_impl(bool ex)
 		equ->set_exists(ex);
 }
 
-pointPoint_horizontality::pointPoint_horizontality(geom_3d::plane_abstr_ptr baseplane_, sketchPoint_ptr p1, sketchPoint_ptr p2):
+pointPoint_horizontality::pointPoint_horizontality(geom_3d::plane_abstr* baseplane_, sketchPoint_ptr p1, sketchPoint_ptr p2):
 	sprite_constraint<2>({ }, { p1->y() ^= p2->y() }, baseplane_,
 	"resources/textures/images/icons/sketch/constraints/horizontality.png"),
 	mP1(p1),
@@ -64,7 +64,7 @@ pointPoint_horizontality::pointPoint_horizontality(geom_3d::plane_abstr_ptr base
 	mP2->add_floatingAnnotation(mAnnots[1]);
 }
 
-line_horizontality::line_horizontality(geom_3d::plane_abstr_ptr baseplane_, sketchLine_ptr l):
+line_horizontality::line_horizontality(geom_3d::plane_abstr* baseplane_, sketchLine_ptr l):
 	sprite_constraint<1>({ }, { l->A()->y() ^= l->B()->y() }, baseplane_,
 	"resources/textures/images/icons/sketch/constraints/horizontality.png"),
 	mLine(l)
@@ -75,7 +75,7 @@ line_horizontality::line_horizontality(geom_3d::plane_abstr_ptr baseplane_, sket
 }
 
 
-pointPoint_verticality::pointPoint_verticality(geom_3d::plane_abstr_ptr baseplane_, sketchPoint_ptr p1, sketchPoint_ptr p2):
+pointPoint_verticality::pointPoint_verticality(geom_3d::plane_abstr* baseplane_, sketchPoint_ptr p1, sketchPoint_ptr p2):
 	sprite_constraint<2>({ }, { p1->x() ^= p2->x() }, baseplane_,
 	"resources/textures/images/icons/sketch/constraints/verticality.png"),
 	mP1(p1),
@@ -89,7 +89,7 @@ pointPoint_verticality::pointPoint_verticality(geom_3d::plane_abstr_ptr baseplan
 	mP2->add_floatingAnnotation(mAnnots[1]);
 }
 
-line_verticality::line_verticality(geom_3d::plane_abstr_ptr baseplane_, sketchLine_ptr l):
+line_verticality::line_verticality(geom_3d::plane_abstr* baseplane_, sketchLine_ptr l):
 	sprite_constraint<1>({ }, { l->A()->x() ^= l->B()->x() }, baseplane_,
 	"resources/textures/images/icons/sketch/constraints/verticality.png"),
 	mLine(l)
@@ -99,7 +99,7 @@ line_verticality::line_verticality(geom_3d::plane_abstr_ptr baseplane_, sketchLi
 	mLine->add_floatingAnnotation(mAnnots[0]);
 }
 
-line_length::line_length(geom_3d::plane_abstr_ptr baseplane_, sketchLine_ptr l, expression_ptr length):
+line_length::line_length(geom_3d::plane_abstr* baseplane_, sketchLine_ptr l, expression_ptr length):
 	constraint_entity({ }, 
 	{ pow(l->A()->x() - l->B()->x(), 2.0) + pow(l->A()->y() - l->B()->y(), 2.0) ^= pow(length, 2.0) }),
 	mLine(l),
@@ -114,7 +114,7 @@ line_length::line_length(geom_3d::plane_abstr_ptr baseplane_, sketchLine_ptr l, 
 		mVars.insert(mVars.end(), { l->A()->x(), l->A()->y(), l->B()->x(), l->B()->y() });
 }
 
-pointPoint_horizontalDistance::pointPoint_horizontalDistance(geom_3d::plane_abstr_ptr baseplane_, 
+pointPoint_horizontalDistance::pointPoint_horizontalDistance(geom_3d::plane_abstr* baseplane_, 
 sketchPoint_ptr p1, sketchPoint_ptr p2, expression_ptr dist):
 	constraint_entity({ }, { abs(p1->x() - p2->x()) ^= dist }),
 	mP1(p1),
@@ -128,7 +128,7 @@ sketchPoint_ptr p1, sketchPoint_ptr p2, expression_ptr dist):
 	
 }
 
-pointPoint_verticalDistance::pointPoint_verticalDistance(geom_3d::plane_abstr_ptr baseplane_, 
+pointPoint_verticalDistance::pointPoint_verticalDistance(geom_3d::plane_abstr* baseplane_, 
 sketchPoint_ptr p1, sketchPoint_ptr p2, expression_ptr dist):
 	constraint_entity({ p1->y(), p2->y() }, { abs(p1->y() - p2->y()) ^= dist }),
 	mP1(p1),
@@ -141,7 +141,7 @@ sketchPoint_ptr p1, sketchPoint_ptr p2, expression_ptr dist):
 		mVars.push_back(mP2->y());	
 }
 
-pointLine_distance_abstr::pointLine_distance_abstr(geom_3d::plane_abstr_ptr baseplane_, sketchPoint_ptr p, sketchLine_ptr l, expression_ptr dist):
+pointLine_distance_abstr::pointLine_distance_abstr(geom_3d::plane_abstr* baseplane_, sketchPoint_ptr p, sketchLine_ptr l, expression_ptr dist):
 	constraint_entity({ },
 	{ abs((l->B()->x()-l->A()->x())*(p->y() - l->A()->y()) - (l->B()->y()-l->A()->y())*(p->x() - l->A()->x())) / sqrt(l->length2()) ^= dist })
 {
@@ -152,7 +152,7 @@ pointLine_distance_abstr::pointLine_distance_abstr(geom_3d::plane_abstr_ptr base
 }
 
 
-pointLine_distance::pointLine_distance(geom_3d::plane_abstr_ptr baseplane_, sketchPoint_ptr p, sketchLine_ptr l, expression_ptr dist):
+pointLine_distance::pointLine_distance(geom_3d::plane_abstr* baseplane_, sketchPoint_ptr p, sketchLine_ptr l, expression_ptr dist):
 	pointLine_distance_abstr(baseplane_, p, l, dist),
 	mPoint(p),
 	mLine(l),
@@ -161,13 +161,13 @@ pointLine_distance::pointLine_distance(geom_3d::plane_abstr_ptr baseplane_, sket
 
 }
 
-circleLine_distance::circleLine_distance(geom_3d::plane_abstr_ptr baseplane_, sketchCircle_ptr c, sketchLine_ptr l, expression_ptr dist):
+circleLine_distance::circleLine_distance(geom_3d::plane_abstr* baseplane_, sketchCircle_ptr c, sketchLine_ptr l, expression_ptr dist):
 	pointLine_distance_abstr(baseplane_, c->center(), l, dist + c->radius())
 {
 
 }
 
-lineLinePerpendicularity::lineLinePerpendicularity(geom_3d::plane_abstr_ptr baseplane_, sketchLine_ptr l1, sketchLine_ptr l2):
+lineLinePerpendicularity::lineLinePerpendicularity(geom_3d::plane_abstr* baseplane_, sketchLine_ptr l1, sketchLine_ptr l2):
 	sprite_constraint<2>({ }, { }, baseplane_, "resources/textures/images/icons/sketch/constraints/perpendicularity.png"),
 	mLine1(l1),
 	mLine2(l2)
@@ -190,7 +190,7 @@ lineLinePerpendicularity::lineLinePerpendicularity(geom_3d::plane_abstr_ptr base
 	mLine2->add_floatingAnnotation(mAnnots[1]);
 }
 
-pointPoint_coincidence::pointPoint_coincidence(geom_3d::plane_abstr_ptr baseplane_, sketchPoint_ptr p1, sketchPoint_ptr p2):
+pointPoint_coincidence::pointPoint_coincidence(geom_3d::plane_abstr* baseplane_, sketchPoint_ptr p1, sketchPoint_ptr p2):
 	sprite_constraint<1>({ }, { p1->x() ^= p2->x(), p1->y() ^= p2->y()}, baseplane_, 
 	"resources/textures/images/icons/sketch/constraints/coincidence.png"),
 	mP1(p1),

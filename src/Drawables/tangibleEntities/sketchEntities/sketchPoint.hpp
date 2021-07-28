@@ -18,8 +18,8 @@ private:
 
 	var_ptr mX, mY;
 public:
-	sketchPoint(glm::vec2 pos_2d, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
-	sketchPoint(var_ptr x_, var_ptr y_, geom_3d::plane_abstr_ptr basePlane_, bool immovable = false);
+	sketchPoint(glm::vec2 pos_2d, geom_3d::plane_abstr* basePlane_, bool immovable = false);
+	sketchPoint(var_ptr x_, var_ptr y_, geom_3d::plane_abstr* basePlane_, bool immovable = false);
 	virtual ~sketchPoint() {}
 
 	void print(int depth = 0);

@@ -21,7 +21,7 @@ private:
 	VertexBuffer* mVB;
 	std::shared_ptr<Shader> mShader;
 public:
-	SkPoint(glm::vec2 pos, geom_3d::plane_abstr_ptr pl, bool fixed_);
+	SkPoint(glm::vec2 pos, geom_3d::plane_abstr* pl, bool fixed_);
 	~SkPoint();
 
 	void init();
