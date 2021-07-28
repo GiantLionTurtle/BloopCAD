@@ -50,7 +50,7 @@ public:
 		@param sketchPlane :	The plane on which the plane will sit
 		@param camState_ : 		The state of the Camera at selection time
 	*/
-	void start_sketch(geom_3d::plane_abstr* sketchPlane, CameraState const& camState_);
+	void start_sketch(Geom3d::plane_abstr* sketchPlane, CameraState const& camState_);
 };
 
 #endif

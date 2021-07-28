@@ -48,14 +48,14 @@ void coincidence_tool::create_constraint(SkConstraint*& constr, SkDrawable*& pri
 	}
 
 	if(is_line(curve)) {
-		// constr = pointLine_distance::make(pt, static_cast<sketchLine>(curve), expConst::zero);
+		// constr = SkPointLine_distance::make(pt, static_cast<sketchLine>(curve), expConst::zero);
 		priority_ent = curve;
 	} else if(is_curve(curve)) {
 		// constr = pointCircle_distance::make(pt, static_cast<sketchCircle>(curve));
 		priority_ent = curve;
 	} else {
-		// constr = pointPoint_coincidence::make(pt, static_cast<sketchPoint>(curve));
-		constr = new pointPoint_coincidence(mEnv->target()->basePlane(), pt, static_cast<SkPoint*>(curve));
+		// constr = SkPointPoint_coincidence::make(pt, static_cast<sketchPoint>(curve));
+		constr = new SkPointPoint_coincidence(mEnv->target()->basePlane(), pt, static_cast<SkPoint*>(curve));
 		priority_ent = mEntB;
 	}
 }

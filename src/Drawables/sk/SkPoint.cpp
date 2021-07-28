@@ -5,7 +5,13 @@
 #include <utils/preferences.hpp>
 #include <graphics_utils/GLCall.hpp>
 
-SkPoint::SkPoint(glm::vec2 pos, geom_3d::plane_abstr* pl, bool fixed_):
+float SkPoint::kSelDist2 = 0.0f;
+bool SkPoint::kFisrstInst = true;
+glm::vec3 SkPoint::kColor = glm::vec3(0.0); 
+glm::vec3 SkPoint::kColorHovered = glm::vec3(0.0);
+glm::vec3 SkPoint::kColorSelected = glm::vec3(0.0);
+
+SkPoint::SkPoint(glm::vec2 pos, Geom3d::plane_abstr* pl, bool fixed_):
     ExpressionPoint<var_ptr>(expression_var::make(pos.x), expression_var::make(pos.y)),
     SkPrimitiveGeometry(pl, fixed_),
 	mVA(nullptr),

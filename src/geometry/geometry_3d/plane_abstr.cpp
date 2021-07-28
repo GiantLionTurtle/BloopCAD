@@ -3,7 +3,7 @@
 #include <iostream>
 #include <glm/gtx/string_cast.hpp>
 
-namespace geom_3d {
+namespace Geom3d {
 
 plane_abstr::plane_abstr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed) :
 	mOrigin(origin),
@@ -68,4 +68,4 @@ glm::vec3 plane_abstr::to_worldPos(glm::vec2 const& point)
 	return point_3d;;
 }
 
-} // !geom_3d
+} // !Geom3d

@@ -23,7 +23,7 @@ private:
 	sketchPoint_ptr mCenter;
 	var_ptr mRadius;
 public:
-	sketchCircle(glm::vec2 center_, float radius_, geom_3d::plane_abstr* basePlane_);
+	sketchCircle(glm::vec2 center_, float radius_, Geom3d::plane_abstr* basePlane_);
 	virtual ~sketchCircle();
 
 	void init();

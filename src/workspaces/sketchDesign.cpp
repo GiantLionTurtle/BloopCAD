@@ -36,7 +36,7 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 	mSketchDesignDefault_tool 	= std::make_shared<sketchDesignDefault_tool>(this);
 	mPoint_tool 				= std::make_shared<point_tool>(this);
 	mLine_tool 					= std::make_shared<line_tool>(this);
-	mCircle_tool 				= std::make_shared<circle_tool>(this);
+	// mCircle_tool 				= std::make_shared<circle_tool>(this);
 	mCoincidence_tool 			= std::make_shared<coincidence_tool>(this);
 	mVerticality_tool 			= std::make_shared<verticality_tool>(this);
 	mHorizontality_tool 		= std::make_shared<horizontality_tool>(this);
@@ -165,7 +165,8 @@ bool sketchDesign::set_tool(int name)
 		to_set = mLine_tool;
 		break;
 	case TOOLIDS::TOOLID_CIRCLE:
-		to_set = mCircle_tool;
+		// to_set = mCircle_tool;
+		to_set = nullptr;
 		break;
 	case TOOLIDS::TOOLID_COINCIDENCE:
 		to_set = mCoincidence_tool;
@@ -230,7 +231,8 @@ void sketchDesign::begin_polygon()
 }
 void sketchDesign::begin_circle()
 {
-	set_tool(TOOLIDS::TOOLID_CIRCLE);
+	LOG_WARNING("This tool is not available yet.");
+	// set_tool(TOOLIDS::TOOLID_CIRCLE);
 }
 void sketchDesign::begin_threePointsArc()
 {
@@ -290,7 +292,6 @@ void sketchDesign::to_svg()
 	// svg->set_attribute("viewbox", std::to_string(min.x) + " " + std::to_string(min.y) + " " + std::to_string(max.x-min.x) + " " + std::to_string(max.y-min.y));
 	// std::cout<<"Saving sketch in output.svg!\n";
 	// svgDoc.save("output.svg");
-	target()->print();
 }
 
 void sketchDesign::finish()

@@ -27,20 +27,20 @@ target_link_libraries(BloopCAD
 
 # ******************* tests ************************
 
-add_executable(constraintsSolverTest
-	testConstraintsSolver_main.cpp
-	document.cpp
-	eventsManager.cpp
-	testFramework_eventsManager.cpp
-	bloop.cpp
-	)
-target_link_libraries(constraintsSolverTest
-	vendor
-	utils
-	graphics_utils
-	Drawables
-	actions
-	tools
-	workspaces
-	${GTKMM_LIBRARIES}
-	${CMAKE_DL_LIBS} epoxy)
+# add_executable(constraintsSolverTest
+# 	testConstraintsSolver_main.cpp
+# 	document.cpp
+# 	eventsManager.cpp
+# 	testFramework_eventsManager.cpp
+# 	bloop.cpp
+# 	)
+# target_link_libraries(constraintsSolverTest
+# 	vendor
+# 	utils
+# 	graphics_utils
+# 	Drawables
+# 	actions
+# 	tools
+# 	workspaces
+# 	${GTKMM_LIBRARIES}
+# 	${CMAKE_DL_LIBS} epoxy)

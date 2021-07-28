@@ -6,7 +6,7 @@
 
 #include <glm/glm.hpp>
 
-namespace geom_3d {
+namespace Geom3d {
 
 class Point_abstr : public geometry_3d_abstr {
 public:
@@ -30,6 +30,6 @@ protected:
 std::ostream& operator<<(std::ostream& os, Point_abstr_ptr p);
 std::ostream& operator<<(std::ostream& os, Point_abstr& p);
 
-} // !geom_3d
+} // !Geom3d
 
 #endif

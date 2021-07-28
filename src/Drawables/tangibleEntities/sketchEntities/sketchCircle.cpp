@@ -13,7 +13,7 @@ glm::vec3 sketchCircle::kColor = glm::vec3(0.0);
 glm::vec3 sketchCircle::kColorHovered = glm::vec3(0.0);
 glm::vec3 sketchCircle::kColorSelected = glm::vec3(0.0);
 
-sketchCircle::sketchCircle(glm::vec2 center_, float radius_, geom_3d::plane_abstr* basePlane_):
+sketchCircle::sketchCircle(glm::vec2 center_, float radius_, Geom3d::plane_abstr* basePlane_):
 	sketchGeometry(basePlane_, types::CIRCLE),
 	mCenter(sketchPoint_ptr(new sketchPoint(center_, basePlane_))),
 	mRadius(expression_var::make(radius_))

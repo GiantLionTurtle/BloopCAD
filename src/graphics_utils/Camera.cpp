@@ -171,11 +171,11 @@ glm::vec2 Camera::screen_angle(glm::vec2 screenPos, bool input_NDC)
 	}
 	return glm::vec2(std::atan2(pos_on_screen.x, screen_dist), std::atan2(pos_on_screen.y, screen_dist));
 }
-void Camera::get_alignedPlaneVectors(geom_3d::plane_abstr* pl, glm::vec3& right, glm::vec3& up, bool allow_inversion)
+void Camera::get_alignedPlaneVectors(Geom3d::plane_abstr* pl, glm::vec3& right, glm::vec3& up, bool allow_inversion)
 {
 	get_alignedPlaneVectors(state(), pl, right, up, allow_inversion);
 }
-void Camera::get_alignedPlaneVectors(CameraState cst, geom_3d::plane_abstr* pl, glm::vec3& right, glm::vec3& up, bool allow_inversion)
+void Camera::get_alignedPlaneVectors(CameraState cst, Geom3d::plane_abstr* pl, glm::vec3& right, glm::vec3& up, bool allow_inversion)
 {
 	float dot_right_v 	= glm::dot(cst.right, pl->v()); // How similar is the camRight to the v vector?
 	float dot_up_v 		= glm::dot(cst.up, pl->v()); // How similar is the camUp to the v vector?

@@ -14,6 +14,7 @@ public:
 	virtual void set_handle(entityHandle* handle_);
 	
 	void add(Drawable* elem);
+	Drawable* get(size_t ind);
 };
 
 #endif

@@ -42,7 +42,7 @@ void test_eventsManager::do_test()
 		switch(mTestStep) {
 		case 0:
 			mBloopWindow->partWorkspace()->startSketch()->init();
-			mBloopWindow->partWorkspace()->startSketch()->start_sketch(doc->target()->XY(), mBloopWindow->partWorkspace()->state()->cam->state());
+			mBloopWindow->partWorkspace()->startSketch()->start_sketch(dynamic_cast<Geom3d::plane_abstr*>(doc->target()->indexer().origin().get(0)), mBloopWindow->partWorkspace()->state()->cam->state());
 			mTestStep = 0;
 			break;
 		case 1:

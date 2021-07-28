@@ -38,9 +38,9 @@ void horizontality_tool::create_constraint(SkConstraint*& constr, SkDrawable*& p
 	}
 
 	if(!mEntB) {
-		constr = new line_horizontality(mEnv->target()->basePlane(), static_cast<SkLineCurve*>(mEntA));
+		constr = new SkLine_horizontality(mEnv->target()->basePlane(), static_cast<SkLineCurve*>(mEntA));
 	} else {
-		constr = new pointPoint_horizontality(mEnv->target()->basePlane(), static_cast<SkPoint*>(mEntA), static_cast<SkPoint*>(mEntB));
+		constr = new SkPointPoint_horizontality(mEnv->target()->basePlane(), static_cast<SkPoint*>(mEntA), static_cast<SkPoint*>(mEntB));
 		priority_ent = mEntA;
 	}
 }

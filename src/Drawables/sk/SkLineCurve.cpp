@@ -5,7 +5,13 @@
 #include <utils/preferences.hpp>
 #include <graphics_utils/GLCall.hpp>
 
-SkLineCurve::SkLineCurve(Geom2d::Point_abstr* ptA, Geom2d::Point_abstr* ptB, geom_3d::plane_abstr* pl, bool fixed_):
+float SkLineCurve::kSelDist2 = 0.0f;
+bool SkLineCurve::kFisrstInst = true;
+glm::vec3 SkLineCurve::kColor = glm::vec3(0.0); 
+glm::vec3 SkLineCurve::kColorHovered = glm::vec3(0.0);
+glm::vec3 SkLineCurve::kColorSelected = glm::vec3(0.0);
+
+SkLineCurve::SkLineCurve(Geom2d::ExpressionPoint<var_ptr>* ptA, Geom2d::ExpressionPoint<var_ptr>* ptB, Geom3d::plane_abstr* pl, bool fixed_):
 	SkPrimitiveGeometry(pl, fixed_),
 	mPtA(ptA),
 	mPtB(ptB),

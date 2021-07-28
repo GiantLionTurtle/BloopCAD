@@ -35,7 +35,7 @@ void perpendicularity_tool::create_constraint(SkConstraint*& constr, SkDrawable*
 		return;
 	}
 	LOG_WARNING("nfksjnfew");
-	constr = new lineLinePerpendicularity(mEnv->target()->basePlane(), 
+	constr = new SkLineLinePerpendicularity(mEnv->target()->basePlane(), 
 		static_cast<SkLineCurve*>(mEntA), static_cast<SkLineCurve*>(mEntB));
 	priority_ent = nullptr;
 }

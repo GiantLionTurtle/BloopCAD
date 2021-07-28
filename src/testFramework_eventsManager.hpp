@@ -4,14 +4,14 @@
 
 #include "eventsManager.hpp"
 
-#include <Drawables/tangibleEntities/sketchEntities/sketchPoint.hpp>
-#include <Drawables/tangibleEntities/sketchEntities/sketchLine.hpp>
+#include <Drawables/sk/SkLine.hpp>
+#include <Drawables/sk/SkPoint.hpp>
 
 class test_eventsManager : public stimuli_eventsManager {
 private:
 	int mTestStep, mTestStepDone;
-	sketchPoint_ptr mPoints[5];
-	sketchLine_ptr mLines[4];
+	SkPoint* mPoints[5];
+	SkLine* mLines[4];
 	std::chrono::steady_clock::time_point mLastAction;
 public:
 	test_eventsManager();

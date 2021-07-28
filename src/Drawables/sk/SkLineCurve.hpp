@@ -4,6 +4,7 @@
 
 #include "SkGeometry.hpp"
 #include <Drawables/Tangible.hpp>
+#include <constraintsSolver/expression.hpp>
 #include <geometry/geometry_2d/Line_abstr.hpp>
 
 #include <graphics_utils/VertexArray.hpp>
@@ -12,7 +13,7 @@
 
 class SkLineCurve : public Geom2d::Line_abstr, public SkPrimitiveGeometry {
 private:
-	Geom2d::Point_abstr* mPtA, *mPtB;
+	Geom2d::ExpressionPoint<var_ptr>* mPtA, *mPtB;
 
 	static float kSelDist2;
 	static bool kFisrstInst;
@@ -24,11 +25,13 @@ private:
 	VertexBuffer* mVB;
 	std::shared_ptr<Shader> mShader;
 public:
-	SkLineCurve(Geom2d::Point_abstr* ptA, Geom2d::Point_abstr* ptB, geom_3d::plane_abstr* pl, bool fixed_);
+	SkLineCurve(Geom2d::ExpressionPoint<var_ptr>* ptA, Geom2d::ExpressionPoint<var_ptr>* ptB, Geom3d::plane_abstr* pl, bool fixed_);
 	~SkLineCurve();
 
 	glm::vec2 posA() { return mPtA->pos(); }
 	glm::vec2 posB() { return mPtB->pos(); }
+	Geom2d::ExpressionPoint<var_ptr>* ptA() { return mPtA; }
+	Geom2d::ExpressionPoint<var_ptr>* ptB() { return mPtB; }
 
 	void init();
 	void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);

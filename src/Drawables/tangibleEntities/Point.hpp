@@ -12,7 +12,7 @@
 
 #include <glm/glm.hpp>
 
-class Point : public Drawable, public geom_3d::Point_abstr {
+class Point : public Drawable, public Geom3d::Point_abstr {
 private:
 	const glm::vec3 mColor = glm::vec3(0.0f, 0.89f, 0.725f); // Point color
 

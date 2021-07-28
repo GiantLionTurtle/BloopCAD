@@ -13,7 +13,7 @@ bool constraintAnnotation::kFisrstInst = true;
 glm::vec3 constraintAnnotation::kColorHovered = glm::vec3(0.0f);
 std::map<int, std::shared_ptr<Texture>> constraintAnnotation::kTextures = {};
 
-constraintAnnotation::constraintAnnotation(geom_3d::plane_abstr* basePlane_, std::shared_ptr<constraint_abstract> constr):
+constraintAnnotation::constraintAnnotation(Geom3d::plane_abstr* basePlane_, std::shared_ptr<constraint_abstract> constr):
 	sketchEntity(basePlane_, -1),
 	mTexture(nullptr),
 	mWidth(20),

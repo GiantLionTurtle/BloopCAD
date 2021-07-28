@@ -30,3 +30,10 @@ void Folder::add(Drawable* ent)
 			ent->set_handle(new entityHandle(ent, mHandle->view(), mHandle));
 	}
 }
+
+Drawable* Folder::get(size_t ind)
+{
+	if(ind <= mDrawList.size())
+		return mDrawList[ind];
+	return nullptr;
+}

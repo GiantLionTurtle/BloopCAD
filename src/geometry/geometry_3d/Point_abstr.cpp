@@ -4,7 +4,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtx/norm.hpp>
 
-namespace geom_3d {
+namespace Geom3d {
 
 Point_abstr::Point_abstr()
 {
@@ -35,4 +35,4 @@ std::ostream& operator<<(std::ostream& os, Point_abstr& p)
 	return os;
 }
 
-} // !geom_3d
+} // !Geom3d

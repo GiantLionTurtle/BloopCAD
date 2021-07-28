@@ -6,7 +6,7 @@
 
 #include <glm/glm.hpp>
 
-namespace geom_3d {
+namespace Geom3d {
 
 class Point_abstr;
 class Line_abstr;
@@ -29,6 +29,6 @@ public:
 	virtual float dist_to_point(Point_abstr_ptr pt) { return dist_to_point(*pt.get()); }
 };
 
-} // !geom_3d
+} // !Geom3d
 
 #endif

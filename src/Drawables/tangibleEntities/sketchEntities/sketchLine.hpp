@@ -24,7 +24,7 @@ private:
 	expression_ptr mLength2;
 public:
 	sketchLine(sketchPoint_ptr ptA, sketchPoint_ptr ptB, bool immovable = false);
-	sketchLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr* basePlane_, bool immovable = false);
+	sketchLine(glm::vec2 ptA, glm::vec2 ptB, Geom3d::plane_abstr* basePlane_, bool immovable = false);
 	virtual ~sketchLine() {}
 
 	void notify(int msg = 0) { set_require_VBUpdate(); }

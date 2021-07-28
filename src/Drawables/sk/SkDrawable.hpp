@@ -22,16 +22,16 @@ struct DraggableSelectionPoint {
 
 class SkDrawable : virtual public Drawable {
 protected:
-	geom_3d::plane_abstr* mBasePlane; // Should it be the parent sketch directly??
+	Geom3d::plane_abstr* mBasePlane; // Should it be the parent sketch directly??
 public:
-	SkDrawable(geom_3d::plane_abstr* pl):
+	SkDrawable(Geom3d::plane_abstr* pl):
 		mBasePlane(pl)
 	{
 		mType |= Drawable_types::SKDRAWABLE;
 	}
 
-	geom_3d::plane_abstr* basePlane() { return mBasePlane; }
-	void set_basePlane(geom_3d::plane_abstr* pl) { mBasePlane = pl; set_need_update(); }
+	Geom3d::plane_abstr* basePlane() { return mBasePlane; }
+	void set_basePlane(Geom3d::plane_abstr* pl) { mBasePlane = pl; set_need_update(); }
 
 	virtual SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
 	virtual DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;

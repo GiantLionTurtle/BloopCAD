@@ -4,7 +4,7 @@
 #include <graphics_utils/GLCall.hpp>
 #include <graphics_utils/ShadersPool.hpp>
 
-SkSelRect::SkSelRect(glm::vec2 start, glm::vec2 end, geom_3d::plane_abstr* basePlane_):
+SkSelRect::SkSelRect(glm::vec2 start, glm::vec2 end, Geom3d::plane_abstr* basePlane_):
 	SkDrawable(basePlane_),
 	mStartPt(start),
 	mEndPt(end),

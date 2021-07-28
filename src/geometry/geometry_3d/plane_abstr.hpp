@@ -10,7 +10,7 @@
 
 #include <memory>
 
-namespace geom_3d {
+namespace Geom3d {
 
 /*
 	@class plane_abstract describes an abstract representation of a plane
@@ -121,6 +121,6 @@ public:
 	glm::vec3 w() const { return mW; }
 };
 
-} // !geom_3d
+} // !Geom3d
 
 #endif

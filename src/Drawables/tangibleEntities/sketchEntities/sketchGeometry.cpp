@@ -3,7 +3,7 @@
 
 int sketchGeometry::numGeoms = 0;
 
-sketchGeometry::sketchGeometry(geom_3d::plane_abstr* basePlane_, int type_):
+sketchGeometry::sketchGeometry(Geom3d::plane_abstr* basePlane_, int type_):
 	sketchEntity(basePlane_, type_),
 	mGeomID(numGeoms++)
 {

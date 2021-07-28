@@ -5,6 +5,7 @@ SkLine.cpp
 SkPoint.cpp
 SkSelRect.cpp
 SkSprite.cpp
+SkConstraint.cpp
 )
 
 add_library(sk ${sk_source_files})

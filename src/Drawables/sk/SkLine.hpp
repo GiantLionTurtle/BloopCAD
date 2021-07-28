@@ -14,7 +14,7 @@ private:
 	SkPoint* mPtA, *mPtB;
 	SkLineCurve* mCurve;
 public:
-	SkLine(glm::vec2 ptA, glm::vec2 ptB, geom_3d::plane_abstr* pl, bool fixed_);
+	SkLine(glm::vec2 ptA, glm::vec2 ptB, Geom3d::plane_abstr* pl, bool fixed_);
 
 	SkPoint* ptA() { return mPtA; }
 	SkPoint* ptB() { return mPtB; }

@@ -20,7 +20,7 @@ moveCamera_action::moveCamera_action(Camera_ptr cam, CameraState target, long du
 
 }
 
-std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	geom_3d::plane_abstr* toFace, float dist_to_plane, 
+std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	Geom3d::plane_abstr* toFace, float dist_to_plane, 
 																				CameraState const& camSt, Camera_ptr cam)
 {
 	glm::vec3 right_plane, up_plane; // The v & w vectors that will be used for the sketch's plane
@@ -31,7 +31,7 @@ std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	geom_3d::pla
 	targetCamState, 
 	preferences::get_instance().get_long("camtrans")));
 }
-std::shared_ptr<action> moveCamera_action::create_from_facingPlane(geom_3d::plane_abstr* toFace, float dist_to_plane, Camera_ptr cam)
+std::shared_ptr<action> moveCamera_action::create_from_facingPlane(Geom3d::plane_abstr* toFace, float dist_to_plane, Camera_ptr cam)
 {
 	return create_from_facingPlane(toFace, dist_to_plane, cam->state(), cam);
 }

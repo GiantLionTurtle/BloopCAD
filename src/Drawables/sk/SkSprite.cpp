@@ -12,7 +12,7 @@ bool SkSprite::kFisrstInst = true;
 glm::vec3 SkSprite::kColorHovered = glm::vec3(0.0f);
 std::map<std::string, std::shared_ptr<Texture>> SkSprite::kTextures = {};
 
-SkSprite::SkSprite(geom_3d::plane_abstr* basePlane_, glm::vec2 dims, std::string const& texturePath):
+SkSprite::SkSprite(Geom3d::plane_abstr* basePlane_, glm::vec2 dims, std::string const& texturePath):
     SkDrawable(basePlane_),
     mTexture(nullptr),
     mDimensions(dims),

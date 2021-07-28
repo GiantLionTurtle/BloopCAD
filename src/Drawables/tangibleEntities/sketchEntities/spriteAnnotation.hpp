@@ -25,7 +25,7 @@ private:
 	glm::vec2 mPixelOffset, mPos;   // A sprite has a position in the world as well
 																	// as a screen offset that stays constant regardless of zoom
 public:
-	spriteAnnotation(geom_3d::plane_abstr* basePlane_, glm::vec2 dims, std::string const& texturePath);
+	spriteAnnotation(Geom3d::plane_abstr* basePlane_, glm::vec2 dims, std::string const& texturePath);
 	~spriteAnnotation();
 
 	void init();

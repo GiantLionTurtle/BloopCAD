@@ -4,7 +4,7 @@
 
 #include "SkDrawable.hpp"
 #include "SkSprite.hpp"
-
+#include <Drawables/Collection.hpp>
 #include <constraintsSolver/constraint.hpp>
 #include <constraintsSolver/expression.hpp>
 #include <utils/DebugUtils.hpp>
@@ -16,12 +16,12 @@ class SkPoint;
 class SkLineCurve;
 // class SkCircle;
 
-class SkConstraint : virtual public SkDrawable, public constraint_abstr {
+class SkConstraint : public SkDrawable, public constraint_abstr {
 protected:
 	std::vector<equ_ptr> mEqus;
 	std::vector<var_ptr> mVars;
 public:
-	SkConstraint(std::vector<var_ptr> vars, std::vector<equ_ptr> equs);
+	SkConstraint(Geom3d::plane_abstr* baseplane_, std::vector<var_ptr> vars, std::vector<equ_ptr> equs);
 
 	double error(size_t eq);
 	bool satisfied();
@@ -37,13 +37,13 @@ public:
 };
 
 template<size_t nA>
-class sprite_constraint : public SkConstraint, public Linked_Collection<std::array<SkSprite*, nA>> {
+class SkSprite_constraint : public SkConstraint, public Linked_Collection<std::array<SkSprite*, nA>> {
 public:
 	using pT = Linked_Collection<std::array<SkSprite*, nA>>;
 
-	sprite_constraint(std::vector<var_ptr> vars, std::vector<equ_ptr> equs,
-		geom_3d::plane_abstr* baseplane_, std::string const& spritePath):
-		SkConstraint(vars, equs)
+	SkSprite_constraint(Geom3d::plane_abstr* baseplane_, std::vector<var_ptr> vars, std::vector<equ_ptr> equs,
+		std::string const& spritePath):
+		SkConstraint(baseplane_, vars, equs)
 	{
 		for(int i = 0; i < pT::mDrawList.size(); ++i) {
 			pT::mDrawList[i] = new SkSprite(baseplane_, glm::vec2(40, 40), spritePath);
@@ -78,6 +78,7 @@ public:
 			if(selPt.ent)
 				return selPt;
 		}
+		return SelectionPoint();
 	}
 	DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 	{
@@ -86,6 +87,12 @@ public:
 			if(selPt.ent)
 				return selPt;
 		}
+		return DraggableSelectionPoint();
+	}
+
+	SkSprite* annot(size_t ind)
+	{
+		return pT::mDrawList.at(ind);
 	}
 protected:
 	virtual void select_impl(bool sel)
@@ -109,111 +116,111 @@ protected:
 };
 
 /* ---------- Horizontality ---------- */
-class pointPoint_horizontality : public sprite_constraint<2> {
+class SkPointPoint_horizontality : public SkSprite_constraint<2> {
 private:
 	SkPoint* mP1, *mP2; // handles to the geometries involved, not used yet but might get handy
 public:
-	pointPoint_horizontality(geom_3d::plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2);
-	std::string name() { return "pointPoint_horizontality"; }
+	SkPointPoint_horizontality(Geom3d::plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2);
+	std::string name() { return "SkPointPoint_horizontality"; }
 };
-class line_horizontality : public sprite_constraint<1> {
+class SkLine_horizontality : public SkSprite_constraint<1> {
 private:
 	SkLineCurve* mLine; // Handles to the geometry involved, not used yet but might get handy
 public:
-	line_horizontality(geom_3d::plane_abstr* baseplane_, SkLineCurve* l);
-	std::string name() { return "line_horizontality"; }
+	SkLine_horizontality(Geom3d::plane_abstr* baseplane_, SkLineCurve* l);
+	std::string name() { return "SkLine_horizontality"; }
 };
 
 /* ---------- Verticality ---------- */
-class pointPoint_verticality : public sprite_constraint<2> {
+class SkPointPoint_verticality : public SkSprite_constraint<2> {
 private:
 	SkPoint* mP1, *mP2; // Handles to the geometries involved, not used yet but might get handy
 public:
-	pointPoint_verticality(geom_3d::plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2);
-	std::string name() { return "pointPoint_verticality"; }
+	SkPointPoint_verticality(Geom3d::plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2);
+	std::string name() { return "SkPointPoint_verticality"; }
 };
-class line_verticality : public sprite_constraint<1> {
+class SkLine_verticality : public SkSprite_constraint<1> {
 private:
 	SkLineCurve* mLine; // Handle to the geometry involved, not used yet but might get handy
 public:
-	line_verticality(geom_3d::plane_abstr* baseplane_, SkLineCurve* l);
-	std::string name() { return "line_verticality"; }
+	SkLine_verticality(Geom3d::plane_abstr* baseplane_, SkLineCurve* l);
+	std::string name() { return "SkLine_verticality"; }
 };
 
 /* ---------- Distance --------- */
-class line_length : public SkConstraint {
+class SkLine_length : public SkConstraint {
 private:
 	SkLineCurve* mLine; // Handle to the geometry involved, not used yet but might get handy
 	expression_ptr mLength; // Handle to the length value, migue be useful
 public:
-	line_length(geom_3d::plane_abstr* baseplane_, SkLineCurve* l, expression_ptr length);
+	SkLine_length(Geom3d::plane_abstr* baseplane_, SkLineCurve* l, expression_ptr length);
 };
-class pointPoint_horizontalDistance : public SkConstraint {
+class SkPointPoint_horizontalDistance : public SkConstraint {
 private:
 	SkPoint* mP1, *mP2; // Handles to the geometries involved, not used yet but might get handy
 	expression_ptr mDistance; // Handle to the length value, migue be useful
 public:
-	pointPoint_horizontalDistance(geom_3d::plane_abstr* baseplane_, 
+	SkPointPoint_horizontalDistance(Geom3d::plane_abstr* baseplane_, 
 	SkPoint* p1, SkPoint* p2, expression_ptr dist);
-	std::string name() { return "pointPoint_horizontalDistance"; }
+	std::string name() { return "SkPointPoint_horizontalDistance"; }
 };
-class pointPoint_verticalDistance : public SkConstraint {
+class SkPointPoint_verticalDistance : public SkConstraint {
 private:
 	SkPoint* mP1, *mP2; // Handles to the geometries involved, not used yet but might get handy
 	expression_ptr mDistance; // Handle to the length value, migue be useful
 public:
-	pointPoint_verticalDistance(geom_3d::plane_abstr* baseplane_, 
+	SkPointPoint_verticalDistance(Geom3d::plane_abstr* baseplane_, 
 	SkPoint* p1, SkPoint* p2, expression_ptr dist);
-	std::string name() { return "pointPoint_verticalDistance"; }
+	std::string name() { return "SkPointPoint_verticalDistance"; }
 };
-class pointLine_distance_abstr : public SkConstraint {
+class SkPointLine_distance_abstr : public SkConstraint {
 public:
-	pointLine_distance_abstr(geom_3d::plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, expression_ptr dist);
+	SkPointLine_distance_abstr(Geom3d::plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, expression_ptr dist);
 };
-class pointLine_distance : public pointLine_distance_abstr {
+class SkPointLine_distance : public SkPointLine_distance_abstr {
 private:
 	SkPoint* mPoint;
 	SkLineCurve* mLine;
 	expression_ptr mDistance;
 public:
-	pointLine_distance(geom_3d::plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, expression_ptr dist);
-	std::string name() { return "pointLine_distance"; }
+	SkPointLine_distance(Geom3d::plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, expression_ptr dist);
+	std::string name() { return "SkPointLine_distance"; }
 };
-// class circleLine_distance : public pointLine_distance_abstr {
+// class SkCircleLine_distance : public SkPointLine_distance_abstr {
 // private:
 // 	sketchCircle_ptr mCircle;
 // 	SkLineCurve* mLine;
 // 	expression_ptr mDistance;
 // public:
-// 	circleLine_distance(geom_3d::plane_abstr* baseplane_, sketchCircle_ptr c, SkLineCurve* l, expression_ptr dist);
-// 	std::string name() { return "circleLine_distance"; }
+// 	SkCircleLine_distance(Geom3d::plane_abstr* baseplane_, sketchCircle_ptr c, SkLineCurve* l, expression_ptr dist);
+// 	std::string name() { return "SkCircleLine_distance"; }
 // };
 
 // /* ---------- Angle ---------- */
-class lineLinePerpendicularity : public sprite_constraint<2> {
+class SkLineLinePerpendicularity : public SkSprite_constraint<2> {
 private:
 	SkLineCurve* mLine1, *mLine2;
 public:
-	lineLinePerpendicularity(geom_3d::plane_abstr* baseplane_, SkLineCurve* l1, SkLineCurve* l2);
-	std::string name() { return "lineLinePerpendicularity"; }
+	SkLineLinePerpendicularity(Geom3d::plane_abstr* baseplane_, SkLineCurve* l1, SkLineCurve* l2);
+	std::string name() { return "SkLineLinePerpendicularity"; }
 };
 
 // /* ---------- Coincidence ---------- */
-class pointPoint_coincidence : public sprite_constraint<1> {
+class SkPointPoint_coincidence : public SkSprite_constraint<1> {
 private:
 	SkPoint* mP1, *mP2;
 public:
-	pointPoint_coincidence(geom_3d::plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2);
-	std::string name() { return "pointPoint_coincidence"; }
+	SkPointPoint_coincidence(Geom3d::plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2);
+	std::string name() { return "SkPointPoint_coincidence"; }
 };
-// class circleLine_coincidence : public sprite_constraint<2> {
+// class circleLine_coincidence : public SkSprite_constraint<2> {
 // private:
 // 	sketchCircle_ptr mCircle;
 // 	SkLineCurve* mLine;
 // 	expression_ptr mDistance;
 // public:
-// 	circleLine_coincidence(geom_3d::plane_abstr* baseplane_, sketchCircle_ptr c, SkLineCurve* l, expression_ptr dist):
-// 		sprite_constraint<2>({ c->center()->x(), c->center()->y(), l->A()->x(), l->A()->y(), l->B()->x(), l->B()->y()},
+// 	circleLine_coincidence(Geom3d::plane_abstr* baseplane_, sketchCircle_ptr c, SkLineCurve* l, expression_ptr dist):
+// 		SkSprite_constraint<2>({ c->center()->x(), c->center()->y(), l->A()->x(), l->A()->y(), l->B()->x(), l->B()->y()},
 // 		{ abs((l->B()->x()-l->A()->x())*(c->center()->y() - l->A()->y()) - (l->B()->y()-l->A()->y())*(c->center()->x() - 
 // 		l->A()->x())) / sqrt(l->length2()) - c->radius() }, 
 // 		baseplane_)

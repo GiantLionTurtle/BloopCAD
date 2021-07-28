@@ -25,7 +25,7 @@ void startSketch_tool::init()
 		if(mEnv->state()->doc->selection_size() == 1) {
 			selection sel = mEnv->state()->doc->selection_at(0);
 			if(sel.ent->type() & PLANE) {
-				geom_3d::plane_abstr* sketchPlane = dynamic_cast<geom_3d::plane_abstr*>(sel.ent);
+				Geom3d::plane_abstr* sketchPlane = dynamic_cast<Geom3d::plane_abstr*>(sel.ent);
 				start_sketch(sketchPlane, sel.camSt);
 				sel.ent->set_hover(false);
 			}
@@ -39,7 +39,7 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 		// If the hovered entity is a plane, start sketch
 		Drawable* ent = entity_at_point(glm::vec2(event->x, event->y));
 		if(ent->type() & PLANE) {
-			geom_3d::plane_abstr* sketchPlane = dynamic_cast<geom_3d::plane_abstr*>(ent);
+			Geom3d::plane_abstr* sketchPlane = dynamic_cast<Geom3d::plane_abstr*>(ent);
 			start_sketch(sketchPlane, mEnv->state()->cam->state());
 			ent->set_hover(false);
 		}
@@ -50,10 +50,10 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 void startSketch_tool::act_on_entity(Drawable* ent)
 {
 	if(mEnv->state() && ent->type() & PLANE)
-		start_sketch(dynamic_cast<geom_3d::plane_abstr*>(ent), mEnv->state()->cam->state());
+		start_sketch(dynamic_cast<Geom3d::plane_abstr*>(ent), mEnv->state()->cam->state());
 }
 
-void startSketch_tool::start_sketch(geom_3d::plane_abstr* sketchPlane, CameraState const& camState_)
+void startSketch_tool::start_sketch(Geom3d::plane_abstr* sketchPlane, CameraState const& camState_)
 {
 	// mEnv->state()->doc->make_glContext_current();
 	mCurrentSketch = new Sketch(sketchPlane);

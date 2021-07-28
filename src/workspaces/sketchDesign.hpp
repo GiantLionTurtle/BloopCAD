@@ -19,7 +19,7 @@ protected:
 	std::shared_ptr<sketchDesignDefault_tool> 	mSketchDesignDefault_tool;
 	std::shared_ptr<point_tool> 				mPoint_tool;
 	std::shared_ptr<line_tool> 					mLine_tool;
-	std::shared_ptr<circle_tool> 				mCircle_tool;
+	// std::shared_ptr<circle_tool> 				mCircle_tool;
 	std::shared_ptr<coincidence_tool> 			mCoincidence_tool;
 	std::shared_ptr<verticality_tool> 			mVerticality_tool;
 	std::shared_ptr<horizontality_tool> 		mHorizontality_tool;
@@ -56,7 +56,7 @@ public:
 	std::shared_ptr<sketchDesignDefault_tool> sketchDesignDefault() { return mSketchDesignDefault_tool; }
 	std::shared_ptr<point_tool> point() { return mPoint_tool; }
 	std::shared_ptr<line_tool> line() { return mLine_tool; }
-	std::shared_ptr<circle_tool> circle() { return mCircle_tool; }
+	// std::shared_ptr<circle_tool> circle() { return mCircle_tool; }
 	std::shared_ptr<coincidence_tool> coincidence() { return mCoincidence_tool; }
 	std::shared_ptr<verticality_tool> verticality() { return mVerticality_tool; }
 	std::shared_ptr<horizontality_tool> horizontality() { return mHorizontality_tool; }

@@ -39,9 +39,9 @@ void verticality_tool::create_constraint(SkConstraint*& constr, SkDrawable*& pri
 	}
 
 	if(!mEntB) {
-		constr = new line_verticality(mEnv->target()->basePlane(), static_cast<SkLineCurve*>(mEntA));
+		constr = new SkLine_verticality(mEnv->target()->basePlane(), static_cast<SkLineCurve*>(mEntA));
 	} else {
-		constr = new pointPoint_verticality(mEnv->target()->basePlane(), static_cast<SkPoint*>(mEntA), static_cast<SkPoint*>(mEntB));
+		constr = new SkPointPoint_verticality(mEnv->target()->basePlane(), static_cast<SkPoint*>(mEntA), static_cast<SkPoint*>(mEntB));
 		priority_ent = mEntB;
 	}
 }

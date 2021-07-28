@@ -20,7 +20,7 @@
 	@parent : entity
 	@parent : plane_abstract
 */
-class Plane : public Drawable, public geom_3d::plane_abstr {
+class Plane : public Drawable, public Geom3d::plane_abstr {
 private:
 	const glm::vec3 mColorA = glm::vec3(1.0f, 0.35f, 0.90f), 	// Both colors of a plane, depending on the side from which it is observed
 					mColorB = glm::vec3(0.35f, 1.0f, 0.78f); 					// Maybe it should be an option
