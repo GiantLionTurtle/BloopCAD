@@ -120,7 +120,7 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 	GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad	
 
 	mPart->update();
-	if(mPart->need_redraw())
+	// if(mPart->need_redraw())
 		mPart->draw(mCurrentWorkspaceState->cam, mFrameId); // the other draw types are not used anywhere yet
 	// mPart->draw(mCurrentWorkspaceState->cam, mFrameId, Drawable::draw_type::INACTIVE);
 	// mPart->draw(mCurrentWorkspaceState->cam, mFrameId, Drawable::draw_type::ACTIVE);

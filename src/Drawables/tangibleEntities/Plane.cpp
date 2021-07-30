@@ -50,7 +50,6 @@ void Plane::init_impl()
 
 void Plane::draw_impl(Camera_ptr cam, int frame, draw_type type)
 {
-	std::cout<<"Draw plane!\n";
 	// TODO: make this less sketch?
 	// GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad
 	mShader->bind();
