@@ -13,7 +13,7 @@ Part::Part():
 	// init_scene();
 }
 
-void Part::init()
+void Part::init_impl()
 {
 	// Maybe this whole function should just be in the constructor
 	
@@ -40,6 +40,8 @@ void Part::init()
 	mDrawList.add_origin(zx);
 	mDrawList.add_origin(new Plane(
 		Geom3d::plane_abstr::from_1Point2Vectors(glm::vec3(-3.0f, 0.5f, 0.0f), glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.5f, 0.0f)))); // Temporary test plane
+
+	mDrawList.init_newElems();
 }
 
 void Part::set_handle(entityHandle* handle_)
@@ -53,6 +55,24 @@ void Part::set_handle(entityHandle* handle_)
 		drw->set_handle(new entityHandle(drw, mHandle->view(), mHandle));
 	}
 }
+
+SelectionPoint Part::closest(glm::vec2 cursor, Camera* cam, int filter)
+{
+	int maxpriority = -1;
+	SelectionPoint selPt;
+	for(size_t i = 0; i < mDrawList.size(); ++i) {
+		Drawable* ch = mDrawList.at(i);
+		if(ch->visible() && ch->selection_rank() > maxpriority) {
+			SelectionPoint tmpSelPt = ch->closest(cursor, cam, filter);
+			if(tmpSelPt.ent) {
+				selPt = tmpSelPt;
+				maxpriority = tmpSelPt.ent->selection_rank();
+			}
+		}
+	}
+	return selPt;
+}
+
 void Part::add_sketch(Sketch* sk)
 {
 	if(!sk) {

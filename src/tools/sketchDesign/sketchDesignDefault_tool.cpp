@@ -55,7 +55,7 @@ bool sketchDesignDefault_tool::manage_button_press(GdkEventButton* event)
 	glm::vec2 screenPos = glm::vec2(event->x, event->y);
 	mAllowedToMove = false;
 	if(event->button == 1) {
-		auto clickedPoint = mEnv->target()->closest(screenPos, cam.get(), cam->cast_ray(screenPos), DRAWABLE);
+		auto clickedPoint = mEnv->target()->closest(screenPos, cam.get(), DRAWABLE);
 		if(clickedPoint.ent) {
 			mAllowedToMove = true;
 			if(!clickedPoint.ent->selected()) {
@@ -126,7 +126,7 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 	} else {
 		Camera_ptr cam = mEnv->state()->cam;
 		glm::vec2 screenPos = glm::vec2(event->x, event->y);
-		auto hovered = mEnv->target()->closest(screenPos, cam.get(), cam->cast_ray(screenPos), DRAWABLE);
+		auto hovered = mEnv->target()->closest(screenPos, cam.get(), DRAWABLE);
 		if(hovered.ent != mHoveredEnt) {
 			if(mHoveredEnt) {
 				mHoveredEnt->set_hover(false);

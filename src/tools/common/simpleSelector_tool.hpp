@@ -4,9 +4,9 @@
 
 #include <tools/tool.hpp>
 #include <workspaces/workspace.hpp>
+#include <Drawables/Drawable.hpp>
 #include <document.hpp>
 
-#include <functional>
 /*
 	@class simpleSelector_tool describes a tool used to select entities in a document
 */
@@ -14,7 +14,7 @@ template<typename wst>
 class simpleSelector_tool : public tool<wst> {
 protected:
 	Drawable* mCurrentHover; // The entity under the mouse, if there is one
-	std::function<bool (Drawable*)> mFilter;
+	int mFilter;
 public: 
 	/*
 		@function simpleSelector_tool creates a simpleSelector_tool object 
@@ -24,13 +24,13 @@ public:
 	simpleSelector_tool(wst* env): 
 		tool<wst>(env),
 		mCurrentHover(nullptr), // No entity is under the mouse
-		mFilter([](Drawable*) { return true; })
+		mFilter(DRAWABLE)
 	{
 		
 	}
 	virtual ~simpleSelector_tool() {};
 
-	virtual bool should_hover(Drawable* ent) {	return mFilter(ent); }
+	virtual bool should_hover(Drawable* drw) {	return drw->type() & mFilter; }
 
 	/*
 		@function manage_button_press manages selection when clicking at a point on screen
@@ -83,7 +83,7 @@ public:
 	*/
 	virtual Drawable* entity_at_point(glm::vec2 pt)
 	{
-		return nullptr;
+		return tool<wst>::mEnv->state()->doc->target()->closest(pt, tool<wst>::mEnv->state()->cam.get(), mFilter).ent;
 	}
 };
 

@@ -83,9 +83,11 @@ public:
 		@function init sets up the scene by :
 		*creating the origin planes
 	*/
-	virtual void init();
+	virtual void init_impl();
 
 	virtual void set_handle(entityHandle* handle_);
+
+	SelectionPoint closest(glm::vec2 cursor, Camera* cam, int filter);
 
 	void add_sketch(Sketch* sk);
 

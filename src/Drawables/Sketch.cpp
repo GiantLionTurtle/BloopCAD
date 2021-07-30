@@ -18,13 +18,13 @@ Sketch::Sketch(Geom3d::plane_abstr* base_plane):
 	mBasePlane(base_plane),
 	mSystem(1)
 {
-	set_name("sketch");
+	set_name("Sketch");
 	// create_origin();
 
 	// mSystem.set_solver(constraintSystem::LevenbergMarquardt);
 }
 
-void Sketch::init()
+void Sketch::init_impl()
 {
 	// mOrigin = new Folder("skorigin");
 
@@ -32,6 +32,7 @@ void Sketch::init()
 	add_geometry(new SkLine(glm::vec2( 1.0f, 0.0f), glm::vec2(-1.0f, 0.0f), basePlane(), true));
 	add_geometry(new SkPoint(glm::vec2(0.0f, 0.0f), mBasePlane, true));
 
+	mDrawList.init_newElems();
 	// add(std::make_shared<sketchCircle>(circle_abstract(std::make_shared<sketchPoint>(glm::vec2(0.75f, 0.75f), mBasePlane), var_ptr(new variable(0.5f))), mBasePlane));
 }
 
@@ -49,7 +50,7 @@ void Sketch::notify(Drawable* who, int msg, bool child)
 	}
 }
 
-SelectionPoint Sketch::closest(glm::vec2 cursor, Camera* cam, glm::vec3 cam_ray, int filter)
+SelectionPoint Sketch::closest(glm::vec2 cursor, Camera* cam, int filter)
 {
 	glm::vec2 planepos = mBasePlane->to_planePos(mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor)));
 	int maxpriority = -1;
@@ -67,7 +68,7 @@ SelectionPoint Sketch::closest(glm::vec2 cursor, Camera* cam, glm::vec3 cam_ray,
 	return selPt;
 }
 
-DraggableSelectionPoint Sketch::closest_draggable(glm::vec2 cursor, Camera* cam, glm::vec3 cam_ray, int filter)
+DraggableSelectionPoint Sketch::closest_draggable(glm::vec2 cursor, Camera* cam, int filter)
 {
 	glm::vec2 planepos = mBasePlane->to_planePos(mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor)));
 	int maxpriority = -1;

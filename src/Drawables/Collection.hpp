@@ -25,13 +25,9 @@ public:
 		}
 	}
 
-	void init()
+	void init_impl()
 	{
-		// Keep in mind that Drawables added after the constructor need to be
-		// assigned this as parent as well through indexer class or other
-		for(size_t i = 0; i < num_children(); ++i) {
-			child(i)->set_parent(this);
-		}
+		mDrawList.init_newElems();
 	}
 	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL)
 	{

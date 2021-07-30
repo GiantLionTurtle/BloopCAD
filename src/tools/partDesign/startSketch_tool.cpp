@@ -38,7 +38,7 @@ bool startSketch_tool::manage_button_press(GdkEventButton* event)
 	if(mEnv->state()) {
 		// If the hovered entity is a plane, start sketch
 		Drawable* ent = entity_at_point(glm::vec2(event->x, event->y));
-		if(ent->type() & PLANE) {
+		if(ent && ent->type() & PLANE) {
 			Geom3d::plane_abstr* sketchPlane = dynamic_cast<Geom3d::plane_abstr*>(ent);
 			start_sketch(sketchPlane, mEnv->state()->cam->state());
 			ent->set_hover(false);

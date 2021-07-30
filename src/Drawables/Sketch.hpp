@@ -79,12 +79,12 @@ public:
 	*/
 	Sketch(Geom3d::plane_abstr* base_plane);
 
-	void init();
+	void init_impl();
 
 	void notify(Drawable* who, int msg, bool child);
 
-	SelectionPoint closest(glm::vec2 cursor, Camera* cam, glm::vec3 cam_ray, int filter);
-	DraggableSelectionPoint closest_draggable(glm::vec2 cursor, Camera* cam, glm::vec3 cam_ray, int filter);
+	SelectionPoint closest(glm::vec2 cursor, Camera* cam, int filter);
+	DraggableSelectionPoint closest_draggable(glm::vec2 cursor, Camera* cam, int filter);
 	void move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov);
 	std::shared_ptr<serial_action> delete_selected(); 
 	void unselect_all();

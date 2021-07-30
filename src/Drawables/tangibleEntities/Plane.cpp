@@ -13,11 +13,11 @@ Plane::Plane(plane_abstr const& plane_):
 	mType |= Drawable_types::PLANE;
 }
 
-SelectionPoint Plane::closest(glm::vec2 cursor, Camera* cam, glm::vec3 cam_ray, int filter)
+SelectionPoint Plane::closest(glm::vec2 cursor, Camera* cam, int filter)
 {
 	if(!(mType & filter))
 		return SelectionPoint();
-	glm::vec3 inter = line_intersection(cam->pos(), cam_ray);
+	glm::vec3 inter = line_intersection(cam->pos(), cam->cast_ray(cursor));
 	glm::vec2 plane_pos = to_planePos(inter);
 	if(std::abs(plane_pos.x) <= glm::length(mV) && std::abs(plane_pos.y) <= glm::length(mW)) {
 		return SelectionPoint(this, glm::length(cam->pos()-inter));

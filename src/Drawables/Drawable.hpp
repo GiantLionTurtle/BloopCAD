@@ -211,7 +211,7 @@ public:
 
 	virtual int selection_rank() { return -1; }
 	virtual int selection_dist() { return 0; } // pixel distance for selection
-	virtual SelectionPoint closest(glm::vec2 cursor, Camera* cam, glm::vec3 cam_ray, int filter) { return SelectionPoint(); }
+	virtual SelectionPoint closest(glm::vec2 cursor, Camera* cam, int filter) { return SelectionPoint(); }
 	virtual void select_within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained) {}	
 
 	std::string name() const { return mName; }

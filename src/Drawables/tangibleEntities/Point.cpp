@@ -24,7 +24,7 @@ Point::~Point()
 	delete mVA;
 }
 
-SelectionPoint Point::closest(glm::vec2 cursor, Camera* cam, glm::vec3 cam_ray, int filter)
+SelectionPoint Point::closest(glm::vec2 cursor, Camera* cam, int filter)
 {
 	if(!(mType & filter))
 		return SelectionPoint();
