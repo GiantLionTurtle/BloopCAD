@@ -9,7 +9,7 @@
 
 #include <glm/glm.hpp>
 
-class SkLine : public SkGeometry, public Linked_Collection<std::array<SkGeometry*, 3>> {
+class SkLine : public SkGeometry, public Collection_abstr<LinearFixed_indexer<SkGeometry*, 3>, true> {
 private:
 	SkPoint* mPtA, *mPtB;
 	SkLineCurve* mCurve;

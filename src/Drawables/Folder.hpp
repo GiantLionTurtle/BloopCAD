@@ -7,7 +7,7 @@
 class Folder;
 using Folder_ptr = std::shared_ptr<Folder>;
 
-class Folder : public Simple_Collection<Drawable> {
+class Folder : public Collection_abstr<LinearResizable_indexer<Drawable*>> {
 public:
 	Folder(std::string const& name_ = "folder");
 

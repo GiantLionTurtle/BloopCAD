@@ -15,19 +15,27 @@
 class document; // The forward declaration of document is needed for pointer declaration
 class modelColumns;
 
-class PartIndexer {
+class PartIndexer : public Indexer_abstr {
 private:
 	std::vector<Sketch*> mSketches;
+	std::vector<Drawable*> mOrigin;
 
-	Folder mOrigin;
+	int mInitInd_sk, mInitInd_origin;
 public:
+	PartIndexer(Drawable* driven):
+		Indexer_abstr(driven),
+		mInitInd_sk(0),
+		mInitInd_origin(0)
+	{
+
+	}
 	/*
 		NOTE: 	the indices validity is never checked within this class
 				because std::vector has a proper try-catch system (if the at() function is used), 
 				to not cause overhead in other parts of the code (checking for nullptr)
 				and to simplify debugging
 	*/
-	size_t size() { return num_sketches() + 4; }
+	size_t size() { return num_sketches() + num_origin(); }
 	Drawable* at(size_t ind)
 	{
 		if(ind < num_sketches()) {
@@ -36,27 +44,34 @@ public:
 		ind -= num_sketches();
 
 		if(ind < num_origin()) {
-			return mOrigin.child(ind);
+			return mOrigin.at(ind);
 		}
 
 		LOG_WARNING("Index out of bound");
 		return nullptr;
 	}
 
+	bool has_newElems() { return mInitInd_origin < mOrigin.size() || mInitInd_sk < mSketches.size(); }
+	void init_newElems()
+	{
+		init_newElems_stat(mSketches, mInitInd_sk, driven());
+		init_newElems_stat(mOrigin, mInitInd_origin, driven());
+	}
+
 	size_t num_sketches() { return mSketches.size(); }
 	Sketch* sketch(size_t ind) { return mSketches.at(ind); }
-	void add_sketch(Sketch* g) { mSketches.push_back(g); }
+	void add_sketch(Sketch* g) { mSketches.push_back(g); mDriven->set_need_update(); }
 
-	size_t num_origin() { return mOrigin.num_children(); }
-	Folder& origin() { return mOrigin; }
-	void add_origin(Drawable* d) { mOrigin.add(d); }
+	size_t num_origin() { return mOrigin.size(); }
+	Drawable* origin(size_t ind) { return mOrigin.at(ind); }
+	void add_origin(Drawable* d) { mOrigin.push_back(d); mDriven->set_need_update(); }
 };
 
 /*
 	@class part describes a part, which is composed of sub entities and sketches
 	@parent : entity
 */
-class Part : public Discrete_Collection<PartIndexer> {
+class Part : public Collection_abstr<PartIndexer> {
 private:
 public:
 	/*
@@ -77,6 +92,9 @@ public:
 	bool has_volume() const { return false; }
 
 	PartIndexer& indexer() { return mDrawList; }
+
+	void show_origin();
+	void hide_origin();
 };
 
 #endif

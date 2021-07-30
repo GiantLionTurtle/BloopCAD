@@ -8,9 +8,9 @@ SkLine::SkLine(glm::vec2 ptA, glm::vec2 ptB, Geom3d::plane_abstr* pl, bool fixed
 	mCurve(nullptr)
 {
 	mCurve = new SkLineCurve(mPtA, mPtB, pl, fixed_); // Created within bracket because it relies on the creation of the points
-	mDrawList[0] = mPtA;
-	mDrawList[1] = mPtB;
-	mDrawList[2] = mCurve;
+	mDrawList.set(0, mPtA);
+	mDrawList.set(1, mPtB);
+	mDrawList.set(2, mCurve);
 
 	set_name("SkLine");
 }

@@ -92,21 +92,9 @@ public:
 	Drawable();
 	virtual ~Drawable() {}
 
-	virtual void init() {}
-
-	/*
-		@function draw draws the entity
-
-		@param cam : 	The Camera used for rendering
-		@param frame : 	The current frame id
-	*/
-	virtual void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL) = 0;
-	void clock(int frame);
-
-	virtual void update() = 0;
-
-	// BLOOPBLOOPGOAWAY
-	Drawable* hovered_child(Camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (Drawable*)> filter_func = ([](Drawable* ent) { return true; }));
+	void init();
+	void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
+	void update(bool force = false);
 
 	void notify_parent(int msg); // BLOOPBLOOPCHECKIFUSED
 	virtual void notify(Drawable* who, int msg, bool child) {}
@@ -241,21 +229,17 @@ public:
 	Drawable* parent() const { return mParent; }
 	void set_parent(Drawable* parent_) { mParent = parent_; }
 
+	bool need_init() const { return !mInited; }
 	void set_need_redraw();
 	bool need_redraw() const { return mNeed_redraw; }
 	void set_need_update();
 	bool need_update() const { return mNeed_update; }
-
+	
 	virtual void invoke_workspace(document* doc) {}
 protected:
-	/*
-		@function draw_impl is an overiddable function for children classes to draw themselves
 
-		@param cam : 	The Camera used for rendering
-		@param frame : 	The current frame id
-	*/
-	virtual void draw_impl(Camera_ptr cam, int frame) {}
-
+	virtual void init_impl() {}
+	virtual void draw_impl(Camera_ptr cam, int frame, draw_type type) {}
 	virtual void update_impl() {}
 
 	virtual void select_impl(bool sel) {}
@@ -264,11 +248,6 @@ protected:
 	virtual void exists_impl(bool ex) {}
 
 	// bool should_draw_self(draw_type type, bool on_required);
-
-	// virtual float selection_depth(Camera_ptr cam, glm::vec2 cursor_pos) { return -1.0f; }
-
-	// BLOOPBLOOPGOAWAY
-	void hovered_child_internal(Camera_ptr cam, glm::vec2 cursor_pos, Drawable*& candidate, float& min_dist, std::function<bool (Drawable*)> filter_func);
 };
 
 

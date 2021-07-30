@@ -13,11 +13,35 @@ SkSelRect::SkSelRect(glm::vec2 start, glm::vec2 end, Geom3d::plane_abstr* basePl
 	mVB(nullptr),
 	mShader(nullptr)
 {
-	set_points(start, end);
+
 }
 
-void SkSelRect::init()
+void SkSelRect::set_endPoint(glm::vec2 pt)
 {
+	mEndPt = pt;
+    glm::vec2 diff = mEndPt - mStartPt;
+	mVertices[1] = mBasePlane->to_worldPos(mStartPt + glm::vec2(0.0f, diff.y));
+	mVertices[2] = mBasePlane->to_worldPos(mEndPt);
+	mVertices[3] = mBasePlane->to_worldPos(mStartPt + glm::vec2(diff.x, 0.0f));
+	mNeed_update = true;
+	set_need_redraw();
+}
+void SkSelRect::set_points(glm::vec2 start_, glm::vec2 end_)
+{
+	mStartPt = start_;
+	mEndPt = end_;
+	glm::vec2 diff = end_ - start_;
+	mVertices[0] = mBasePlane->to_worldPos(mStartPt);
+	mVertices[1] = mBasePlane->to_worldPos(mStartPt + glm::vec2(0.0f, diff.y));
+	mVertices[2] = mBasePlane->to_worldPos(mEndPt);
+	mVertices[3] = mBasePlane->to_worldPos(mStartPt + glm::vec2(diff.x, 0.0f));
+	mNeed_update = true;
+	set_need_redraw();
+}
+
+void SkSelRect::init_impl()
+{
+	set_points(mStartPt, mEndPt);
 	init_buffers();
 	set_name("selection");
 	
@@ -37,7 +61,7 @@ void SkSelRect::init()
 		ShadersPool::get_instance().add("plane", mShader);
 	}
 }
-void SkSelRect::draw(Camera_ptr cam, int frame, draw_type type)
+void SkSelRect::draw_impl(Camera_ptr cam, int frame, draw_type type)
 {
 	mShader->bind();
 	glm::vec3 color;
@@ -62,12 +86,11 @@ void SkSelRect::draw(Camera_ptr cam, int frame, draw_type type)
 	mVA->unbind();
 	mShader->unbind();
 }
-void SkSelRect::update()
+void SkSelRect::update_impl()
 {
 	mVB->bind();
 	mVB->set(mVertices, sizeof(glm::vec3) * 4);
 	mVB->unbind();
-	mNeed_update = false;
 }
 
 void SkSelRect::set_startPoint(glm::vec2 pt)
@@ -76,28 +99,6 @@ void SkSelRect::set_startPoint(glm::vec2 pt)
     glm::vec2 diff = mEndPt - mStartPt;
 	mVertices[0] = mBasePlane->to_worldPos(mStartPt);
 	mVertices[1] = mBasePlane->to_worldPos(mStartPt + glm::vec2(0.0f, diff.y));
-	mVertices[3] = mBasePlane->to_worldPos(mStartPt + glm::vec2(diff.x, 0.0f));
-	mNeed_update = true;
-	set_need_redraw();
-}
-void SkSelRect::set_endPoint(glm::vec2 pt)
-{
-	mEndPt = pt;
-    glm::vec2 diff = mEndPt - mStartPt;
-	mVertices[1] = mBasePlane->to_worldPos(mStartPt + glm::vec2(0.0f, diff.y));
-	mVertices[2] = mBasePlane->to_worldPos(mEndPt);
-	mVertices[3] = mBasePlane->to_worldPos(mStartPt + glm::vec2(diff.x, 0.0f));
-	mNeed_update = true;
-	set_need_redraw();
-}
-void SkSelRect::set_points(glm::vec2 start_, glm::vec2 end_)
-{
-	mStartPt = start_;
-	mEndPt = end_;
-	glm::vec2 diff = end_ - start_;
-	mVertices[0] = mBasePlane->to_worldPos(mStartPt);
-	mVertices[1] = mBasePlane->to_worldPos(mStartPt + glm::vec2(0.0f, diff.y));
-	mVertices[2] = mBasePlane->to_worldPos(mEndPt);
 	mVertices[3] = mBasePlane->to_worldPos(mStartPt + glm::vec2(diff.x, 0.0f));
 	mNeed_update = true;
 	set_need_redraw();

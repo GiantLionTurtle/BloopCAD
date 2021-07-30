@@ -25,10 +25,6 @@ public:
 	Point(glm::vec3 const& basePoint);
 	virtual ~Point();
 
-	void init();
-	void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
-	void update();
-
 	virtual int selection_rank() { return 5; }
 	SelectionPoint closest(glm::vec2 cursor, Camera* cam, glm::vec3 cam_ray, int filter);
 
@@ -39,6 +35,10 @@ public:
 
 	virtual void set_constant();
 	virtual void set_tmpConstant(bool const_);
+protected:
+	void init_impl();
+	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
+	void update_impl();
 };
 
 #endif

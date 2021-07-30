@@ -12,7 +12,7 @@ bool quitPartDesign_action::do_work(document* caller)
 {
 	mTarget = caller->target();
 	if(mTarget) {
-		mTarget->indexer().origin().hide();
+		mTarget->hide_origin();
 	}
 	return true;
 }
@@ -20,7 +20,7 @@ bool quitPartDesign_action::do_work(document* caller)
 bool quitPartDesign_action::undo_work(document* caller)
 {
 	if(mTarget && !mTarget->has_volume()) {
-		mTarget->indexer().origin().show();
+		mTarget->show_origin();
 	}
 	return true;
 }

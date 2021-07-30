@@ -14,12 +14,19 @@
 #include <memory>
 #include <vector>
 
-class SkIndexer {
+class SkIndexer : public Indexer_abstr {
 private:
 	std::vector<SkGeometry*> mGeometries;
 	std::vector<SkConstraint*> mConstraints;
+	int mInitInd_geom, mInitInd_constr;
 public:
+	SkIndexer(Drawable* driven):
+		Indexer_abstr(driven),
+		mInitInd_geom(0),
+		mInitInd_constr(0)
+	{
 
+	}
 	/*
 		NOTE: 	the indices validity is never checked within this class
 				because std::vector has a proper try-catch system (if the at() function is used), 
@@ -36,20 +43,27 @@ public:
 		}
 	}
 
+	bool has_newElems() { return mInitInd_geom < mGeometries.size() || mInitInd_constr < mConstraints.size(); }
+	void init_newElems()
+	{
+		init_newElems_stat(mGeometries, mInitInd_geom, driven());
+		init_newElems_stat(mConstraints, mInitInd_constr, driven());
+	}
+
 	size_t num_geom() { return mGeometries.size(); }
 	SkGeometry* geom(size_t ind) { return mGeometries.at(ind); }
-	void add_geom(SkGeometry* g) { mGeometries.push_back(g); }
+	void add_geom(SkGeometry* g) { mGeometries.push_back(g); mDriven->set_need_update(); }
 
 	size_t num_constr() { return mConstraints.size(); }
 	SkConstraint* constr(size_t ind) { return mConstraints.at(ind); }
-	void add_constr(SkConstraint* c) { mConstraints.push_back(c); }
+	void add_constr(SkConstraint* c) { mConstraints.push_back(c); mDriven->set_need_update(); }
 };
 
 /*
 	@class sketch describes a sketch which is a bunch of geometries with constraints
 	@parent : entity
 */
-class Sketch : public Discrete_Collection<SkIndexer> {
+class Sketch : public Collection_abstr<SkIndexer> {
 public:
 private:
 	Geom3d::plane_abstr* mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..

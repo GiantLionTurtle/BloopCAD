@@ -29,7 +29,42 @@ SkLineCurve::~SkLineCurve()
 	delete mVB;
 }
 
-void SkLineCurve::init()
+SelectionPoint SkLineCurve::closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+{
+	if(mType & filter) {
+		glm::vec3 worldpos = mBasePlane->to_worldPos(closest_to_point(planePos));
+		if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
+			return { this, glm::distance(cam->pos(), worldpos) };
+	}
+	return SelectionPoint();
+}
+DraggableSelectionPoint SkLineCurve::closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+{
+	if(mType & filter) {
+		glm::vec3 worldpos = mBasePlane->to_worldPos(closest_to_point(planePos));
+		if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
+			return { this };
+	}
+	return DraggableSelectionPoint();
+}
+void SkLineCurve::move(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
+{
+	mPtA->set(mPtA->pos() + end - start);
+	mPtB->set(mPtB->pos() + end - start);
+}
+
+void SkLineCurve::set_annotOffset(SkSprite* sp, int ind)
+{
+	glm::vec2 dir = glm::normalize(mPtA->pos() - mPtB->pos());
+	glm::vec2 normal = glm::cross(glm::vec3(dir, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+	int line_side = ind % 2 == 0 ? 1 : -1;
+	bool icon_dir = line_side == -1 ? ind % 4 ? -1 : 1 : ind % 3 ? -1 : 1;
+	float dir_offset = line_side == 1 ? ind : ind - 1;
+	sp->set_pixelOffset(dir * 25.0f * (float)icon_dir * dir_offset + normal * 25.0f * (float)line_side);
+}
+
+void SkLineCurve::init_impl()
 {
 	mNeed_update = false;
 	
@@ -67,7 +102,7 @@ void SkLineCurve::init()
 	}
 }
 
-void SkLineCurve::draw(Camera_ptr cam, int frame, draw_type type)
+void SkLineCurve::draw_impl(Camera_ptr cam, int frame, draw_type type)
 {
 	mShader->bind();
 	glm::vec4 color = glm::vec4(kColor, 1.0f);
@@ -94,7 +129,7 @@ void SkLineCurve::draw(Camera_ptr cam, int frame, draw_type type)
 	mVA->unbind();
 	mShader->unbind();
 }
-void SkLineCurve::update()
+void SkLineCurve::update_impl()
 {
 	update_annots();
 	mNeed_update = false;
@@ -103,39 +138,4 @@ void SkLineCurve::update()
 	mVB->bind();
 	mVB->set(&mVertices[0], sizeof(glm::vec3) * 2);
 	mVB->unbind();
-}
-
-SelectionPoint SkLineCurve::closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
-{
-	if(mType & filter) {
-		glm::vec3 worldpos = mBasePlane->to_worldPos(closest_to_point(planePos));
-		if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
-			return { this, glm::distance(cam->pos(), worldpos) };
-	}
-	return SelectionPoint();
-}
-DraggableSelectionPoint SkLineCurve::closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
-{
-	if(mType & filter) {
-		glm::vec3 worldpos = mBasePlane->to_worldPos(closest_to_point(planePos));
-		if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
-			return { this };
-	}
-	return DraggableSelectionPoint();
-}
-void SkLineCurve::move(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
-{
-	mPtA->set(mPtA->pos() + end - start);
-	mPtB->set(mPtB->pos() + end - start);
-}
-
-void SkLineCurve::set_annotOffset(SkSprite* sp, int ind)
-{
-	glm::vec2 dir = glm::normalize(mPtA->pos() - mPtB->pos());
-	glm::vec2 normal = glm::cross(glm::vec3(dir, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-
-	int line_side = ind % 2 == 0 ? 1 : -1;
-	bool icon_dir = line_side == -1 ? ind % 4 ? -1 : 1 : ind % 3 ? -1 : 1;
-	float dir_offset = line_side == 1 ? ind : ind - 1;
-	sp->set_pixelOffset(dir * 25.0f * (float)icon_dir * dir_offset + normal * 25.0f * (float)line_side);
 }

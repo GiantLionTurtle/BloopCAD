@@ -150,6 +150,7 @@ public:
 		@return : The part that is worked on in the document, as a part
 	*/
 	Part* target() { return mPart; }
+	int frameId() { return mFrameId; }
 	Drawable* toolPreview() { return mToolPreview; }
 	void set_toolPreview(Drawable* prev) { mToolPreview = prev; }
 	void clear_toolPreview() { set_toolPreview(nullptr); }

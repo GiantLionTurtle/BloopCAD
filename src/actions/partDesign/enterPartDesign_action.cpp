@@ -16,7 +16,7 @@ bool enterPartDesign_action::do_work(document* caller)
 	switchWorkspace_action::do_work(caller);
 	mTarget = caller->target();
 	if(mTarget && !mTarget->has_volume()) {
-		mTarget->indexer().origin().show();
+		mTarget->show_origin();
 	}
 	mInitialTarget = caller->state()->target;
 	caller->state()->target = mTarget;
@@ -27,7 +27,7 @@ bool enterPartDesign_action::undo_work(document* caller)
 {
 	switchWorkspace_action::undo_work(caller);
 	if(mTarget) {
-		mTarget->indexer().origin().hide();
+		mTarget->hide_origin();
 	}
 	caller->state()->target = mInitialTarget;
 	return true;

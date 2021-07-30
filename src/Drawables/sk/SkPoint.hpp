@@ -24,10 +24,6 @@ public:
 	SkPoint(glm::vec2 pos, Geom3d::plane_abstr* pl, bool fixed_);
 	~SkPoint();
 
-	void init();
-	void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
-	void update();
-
 	SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	int selection_rank() { return 5; }
@@ -35,6 +31,10 @@ public:
 	void set_annotOffset(SkSprite* sp, int ind);
 
 	void set(glm::vec2 pt);
+protected:
+	void init_impl();
+	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
+	void update_impl();
 };
 
 #endif

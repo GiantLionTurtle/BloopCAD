@@ -83,7 +83,7 @@ public:
 	*/
 	virtual Drawable* entity_at_point(glm::vec2 pt)
 	{
-		return tool<wst>::mEnv->state()->doc->target()->hovered_child(tool<wst>::mEnv->state()->cam, pt, mFilter);
+		return nullptr;
 	}
 };
 

@@ -9,31 +9,34 @@ Drawable::Drawable():
 	mStdNotifs(0),
 	mParent(nullptr),
 	mHandle(nullptr),
-	mNeed_redraw(false),
+	mNeed_redraw(true),
+	mNeed_update(false),
 	mInited(false),
 	mType(0)
 {
 	mType |= Drawable_types::DRAWABLE;
 }
 
-void Drawable::clock(int frame)
+void Drawable::init()
 {
-	if(!mInited) {
-		init();
+	if(need_init()) {
+		init_impl();
 		mInited = true;
 	}
-	if(mNeed_update) {
-		update();
-		mNeed_update = false;
+}
+void Drawable::draw(Camera_ptr cam, int frame, draw_type type)
+{
+	if(visible() && exists()) {
+		draw_impl(cam, frame, type);
+		mNeed_redraw = false;
 	}
 }
-
-Drawable* Drawable::hovered_child(Camera_ptr cam, glm::vec2 cursor_pos, std::function<bool (Drawable*)> filter_func)
+void Drawable::update(bool force)
 {
-	Drawable* candidate_child(nullptr);
-	float min_dist = std::numeric_limits<float>::max();
-	hovered_child_internal(cam, cursor_pos, candidate_child, min_dist, filter_func);
-	return candidate_child;
+	if((need_update() || force) && exists()) {
+		update_impl();
+		mNeed_update = false;
+	}
 }
 
 void Drawable::notify_parent(int msg)
@@ -256,20 +259,3 @@ void Drawable::set_need_update()
 // 	}
 // 	return false;
 // }
-
-void Drawable::hovered_child_internal(Camera_ptr cam, glm::vec2 cursor_pos, Drawable*& candidate, float& min_dist, std::function<bool (Drawable*)> filter_func)
-{
-	// for_each([&](Drawable* ent) {
-	// 	ent->hovered_child_internal(cam, cursor_pos, candidate, min_dist, filter_func);
-
-	// 	if(ent->visible() && filter_func(ent)) {
-	// 		float dist = ent->selection_depth(cam, cursor_pos);
-	// 		if(dist > 0.0f) {
-	// 			if((dist < (min_dist)) || (dist == min_dist && (!candidate || candidate->selection_rank() > ent->selection_rank()))) {
-	// 				candidate = ent;
-	// 				min_dist = dist;
-	// 			}
-	// 		}
-	// 	}
-	// });
-}

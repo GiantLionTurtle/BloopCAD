@@ -78,6 +78,7 @@ void document::do_realize()
 		
 		// Create an empty part. This surely should be in the constructor right?
 		mPart = new Part();
+		mPart->init();
 
 		// Start with the part design workspace
 		set_workspace(bloop::workspace_types::PART);
@@ -117,13 +118,16 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 	GLCall(glClearColor(mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, 1.0));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad	
-	if(mPart) {
+
+	mPart->update();
+	if(mPart->need_redraw())
 		mPart->draw(mCurrentWorkspaceState->cam, mFrameId); // the other draw types are not used anywhere yet
-		// mPart->draw(mCurrentWorkspaceState->cam, mFrameId, Drawable::draw_type::INACTIVE);
-		// mPart->draw(mCurrentWorkspaceState->cam, mFrameId, Drawable::draw_type::ACTIVE);
-	}
+	// mPart->draw(mCurrentWorkspaceState->cam, mFrameId, Drawable::draw_type::INACTIVE);
+	// mPart->draw(mCurrentWorkspaceState->cam, mFrameId, Drawable::draw_type::ACTIVE);
+
 	if(mToolPreview) {
-		mToolPreview->draw(mCurrentWorkspaceState->cam, mFrameId);
+		if(mToolPreview->need_redraw())
+			mToolPreview->draw(mCurrentWorkspaceState->cam, mFrameId);
 	}
 	mFrameId++;
 	return true;

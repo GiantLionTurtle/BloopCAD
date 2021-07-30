@@ -12,7 +12,8 @@ Folder::Folder(std::string const& name_)
 void Folder::set_handle(entityHandle* handle_)
 {
 	mHandle = handle_;
-	for(auto ent : mDrawList) {
+	for(int i = 0; i < mDrawList.size(); ++i) {
+		auto ent = mDrawList.at(i);
 		if(ent->handle()) {
 			delete ent->handle();
 			ent->set_handle(nullptr);
@@ -25,7 +26,7 @@ void Folder::add(Drawable* ent)
 	if(ent) {
 		need_redraw();
 		ent->set_parent(this);
-		mDrawList.push_back(ent);
+		mDrawList.add(ent);
 		if(mHandle)
 			ent->set_handle(new entityHandle(ent, mHandle->view(), mHandle));
 	}
@@ -34,6 +35,6 @@ void Folder::add(Drawable* ent)
 Drawable* Folder::get(size_t ind)
 {
 	if(ind <= mDrawList.size())
-		return mDrawList[ind];
+		return mDrawList.at(ind);
 	return nullptr;
 }

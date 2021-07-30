@@ -13,8 +13,21 @@ Plane::Plane(plane_abstr const& plane_):
 	mType |= Drawable_types::PLANE;
 }
 
-void Plane::init()
+SelectionPoint Plane::closest(glm::vec2 cursor, Camera* cam, glm::vec3 cam_ray, int filter)
 {
+	if(!(mType & filter))
+		return SelectionPoint();
+	glm::vec3 inter = line_intersection(cam->pos(), cam_ray);
+	glm::vec2 plane_pos = to_planePos(inter);
+	if(std::abs(plane_pos.x) <= glm::length(mV) && std::abs(plane_pos.y) <= glm::length(mW)) {
+		return SelectionPoint(this, glm::length(cam->pos()-inter));
+	}
+	return SelectionPoint();
+}
+
+void Plane::init_impl()
+{
+	set_need_redraw();
 	set_name("plane");
 	init_buffers(); // Set all the vertices to the right values
 	
@@ -35,8 +48,9 @@ void Plane::init()
 	}
 }
 
-void Plane::draw(Camera_ptr cam, int frame, draw_type type)
+void Plane::draw_impl(Camera_ptr cam, int frame, draw_type type)
 {
+	std::cout<<"Draw plane!\n";
 	// TODO: make this less sketch?
 	// GLCall(glDisable(GL_DEPTH_TEST)); // Disable the depth buffer to draw the whole quad, even if it is hidden by another semi-transparent quad
 	mShader->bind();
@@ -68,7 +82,7 @@ void Plane::draw(Camera_ptr cam, int frame, draw_type type)
 	// GLCall(glEnable(GL_DEPTH_TEST));
 }
 
-void Plane::update()
+void Plane::update_impl()
 {
 	init_buffers();
 	mVB->bind();
@@ -76,17 +90,6 @@ void Plane::update()
 	mVB->unbind();
 }
 
-SelectionPoint Plane::closest(glm::vec2 cursor, Camera* cam, glm::vec3 cam_ray, int filter)
-{
-	if(!(mType & filter))
-		return SelectionPoint();
-	glm::vec3 inter = line_intersection(cam->pos(), cam_ray);
-	glm::vec2 plane_pos = to_planePos(inter);
-	if(std::abs(plane_pos.x) <= glm::length(mV) && std::abs(plane_pos.y) <= glm::length(mW)) {
-		return SelectionPoint(this, glm::length(cam->pos()-inter));
-	}
-	return SelectionPoint();
-}
 
 void Plane::init_buffers()
 {

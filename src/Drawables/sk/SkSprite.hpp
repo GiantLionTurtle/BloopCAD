@@ -31,10 +31,6 @@ private:
 public:
 	SkSprite(Geom3d::plane_abstr* basePlane_, glm::vec2 dims, std::string const& texturePath);
 	~SkSprite();
-
-	void init();
-	void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
-	void update();
 	
 	SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	// will have to find another way to drag then the geometry drag, I think it would be ridiculous to solve a system for this (the solve would be fast but still)
@@ -47,6 +43,10 @@ public:
 
 	glm::vec2 pos() { return mPos; }
 	void set(glm::vec2 pos_);
+protected:
+	void init_impl();
+	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
+	void update_impl();
 };
 
 #endif

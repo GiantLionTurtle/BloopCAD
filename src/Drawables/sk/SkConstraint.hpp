@@ -37,17 +37,16 @@ public:
 };
 
 template<size_t nA>
-class SkSprite_constraint : public SkConstraint, public Linked_Collection<std::array<SkSprite*, nA>> {
+class SkSprite_constraint : public SkConstraint, public Collection_abstr<LinearFixed_indexer<SkSprite*, nA>> {
 public:
-	using pT = Linked_Collection<std::array<SkSprite*, nA>>;
+	using pT = Collection_abstr<LinearFixed_indexer<SkSprite*, nA>>;
 
 	SkSprite_constraint(Geom3d::plane_abstr* baseplane_, std::vector<var_ptr> vars, std::vector<equ_ptr> equs,
 		std::string const& spritePath):
 		SkConstraint(baseplane_, vars, equs)
 	{
-		for(int i = 0; i < pT::mDrawList.size(); ++i) {
-			pT::mDrawList[i] = new SkSprite(baseplane_, glm::vec2(40, 40), spritePath);
-			pT::mDrawList[i]->set_parent(this);
+		for(int i = 0; i < nA; ++i) {
+			pT::mDrawList.set(i, new SkSprite(baseplane_, glm::vec2(40, 40), spritePath));
 		}
 	}
 	void notify(Drawable* who, int msg, bool child)
@@ -98,20 +97,23 @@ protected:
 	virtual void select_impl(bool sel)
 	{
 		// True as second argument to avoid getting notified and causing recursion
-		for(auto annot : pT::mDrawList)
-			annot->set_selected(sel, true);
+		for(int i = 0; i < nA; ++i) {
+			pT::mDrawList.at(i)->set_selected(sel, true);
+		}
 	}
 	virtual void hover_impl(bool hov)
 	{
 		// True as second argument to avoid getting notified and causing recursion
-		for(auto annot : pT::mDrawList)	
-			annot->set_hover(hov, true);
+		for(int i = 0; i < nA; ++i) {
+			pT::mDrawList.at(i)->set_hover(hov, true);
+		}
 	}
 	virtual void hidden_impl(bool hid) 
 	{
 		// True as second argument to avoid getting notified and causing recursion
-		for(auto annot : pT::mDrawList)
-			annot->set_hidden(hid, true);
+		for(int i = 0; i < nA; ++i) {
+			pT::mDrawList.at(i)->set_hidden(hid, true);
+		}
 	}
 };
 

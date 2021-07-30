@@ -42,13 +42,13 @@ public:
 	Plane(plane_abstr const& plane_);
 	virtual ~Plane() {}
 
-	void init();
-	void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
-	void update();
-
 	virtual int selection_rank() { return 10; }
 	SelectionPoint closest(glm::vec2 cursor, Camera* cam, glm::vec3 cam_ray, int filter);
 protected:
+	void init_impl();
+	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
+	void update_impl();
+	
 	void init_buffers();
 };
 

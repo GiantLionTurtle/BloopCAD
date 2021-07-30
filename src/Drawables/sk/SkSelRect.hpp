@@ -26,10 +26,6 @@ public:
 	SkSelRect(glm::vec2 start_, glm::vec2 end_, Geom3d::plane_abstr* basePlane_);
 	virtual ~SkSelRect() {}
 
-	void init();
-	void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
-	void update();
-
 	glm::vec2 start() const { return mStartPt; }
 	void set_startPoint(glm::vec2 pt);
 	glm::vec2 end() const { return mEndPt; }
@@ -45,6 +41,10 @@ public:
 	virtual SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return SelectionPoint(); }
 	virtual DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return DraggableSelectionPoint(); }
 protected:	
+	void init_impl();
+	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
+	void update_impl();
+
 	void init_buffers();
 };
 
