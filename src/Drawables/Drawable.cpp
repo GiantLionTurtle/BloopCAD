@@ -235,6 +235,7 @@ void Drawable::set_need_redraw()
 }
 void Drawable::set_need_update()
 {
+	set_need_redraw();
 	if(mNeed_update)
 		return;
 	if(mParent) {

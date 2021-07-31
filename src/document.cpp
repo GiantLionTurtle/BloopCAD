@@ -126,6 +126,8 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 	// mPart->draw(mCurrentWorkspaceState->cam, mFrameId, Drawable::draw_type::ACTIVE);
 
 	if(mToolPreview) {
+		mToolPreview->init(); // Will only actually init if it is not inited
+		mToolPreview->update();
 		if(mToolPreview->need_redraw())
 			mToolPreview->draw(mCurrentWorkspaceState->cam, mFrameId);
 	}

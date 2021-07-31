@@ -402,6 +402,7 @@ void expression_var::set(double val)
 		if(!is_coef())
 			mVal = val;
 	}
+	callback();
 }
 
 bool expression_var::exists() const

@@ -35,7 +35,7 @@ bool line_tool::manage_key_press(GdkEventKey* event)
 		mStarted = false;
 		mLinePreview->set_exists(false);
 		mEndPos = nullptr;
-		return false;
+		return false;	
 	}
 	return true;
 }
@@ -50,7 +50,6 @@ bool line_tool::manage_mouse_move(GdkEventMotion* event)
 		Geom3d::plane_abstr* pl = target->basePlane();
 		glm::vec2 line_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 		mLinePreview->ptB()->set(line_pos);
-		target->update();
 	}
 	return true;
 }

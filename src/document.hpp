@@ -152,8 +152,11 @@ public:
 	Part* target() { return mPart; }
 	int frameId() { return mFrameId; }
 	Drawable* toolPreview() { return mToolPreview; }
-	void set_toolPreview(Drawable* prev) { mToolPreview = prev; }
+	void set_toolPreview(Drawable* prev) { mToolPreview = prev; mNeed_redraw = true; }
 	void clear_toolPreview() { set_toolPreview(nullptr); }
+
+	bool need_redraw() { return mNeed_redraw || (mToolPreview && mToolPreview->need_redraw()); }
+	bool need_update() { return (mToolPreview && mToolPreview->need_update()); }
 
 	Gtk::GLArea& viewport() { return mViewport; }
 
