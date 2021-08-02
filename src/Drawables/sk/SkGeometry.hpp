@@ -21,6 +21,18 @@ public:
 
 	}
 
+	void move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
+	{
+		if(!fixed())
+			move_selected_impl(start, end, pix_mov);
+	}
+	void move(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov) 
+	{
+		if(!fixed())
+			move_impl(start, end, pix_mov);
+	}
+
+
 	void update_annots()
 	{
 		for(int i = 0; i < mAnnots.size(); ++i) {
@@ -50,6 +62,9 @@ protected:
 			mAnnots[i]->set_hidden(!sel);
 		}		
 	}
+
+	virtual void move_selected_impl(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov) { if(selected()) move(start, end, pix_mov); }
+	virtual void move_impl(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov) {}
 };
 
 class SkPrimitiveGeometry : public SkGeometry, virtual public Geom2d::Geom2d_abstr {

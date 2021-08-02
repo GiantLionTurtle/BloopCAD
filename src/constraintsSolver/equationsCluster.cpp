@@ -1,10 +1,11 @@
 
 #include "equationsCluster.hpp"
 #include "solverState.hpp"
+#include <utils/DebugUtils.hpp>
 
 #include <iostream>
 
-equationsCluster::equationsCluster(std::vector<equ_ptr> equs, std::vector<var_ptr> vars, int solver_algo, int verbose):
+equationsCluster::equationsCluster(std::vector<equ_ptr> equs, std::set<var_ptr> vars, int solver_algo, int verbose):
 	mEqus(equs),
 	mVars(vars),
 	mVerboseLevel(verbose),
@@ -21,6 +22,23 @@ equationsCluster::~equationsCluster()
 void equationsCluster::init()
 {
 
+}
+
+void equationsCluster::add_equ(equ_ptr equ)
+{
+	if(!equ) {
+		LOG_WARNING("Attempted to add null equation");
+		return;
+	}
+	mEqus.push_back(equ);
+}
+void equationsCluster::add_var(var_ptr var)
+{
+	if(!var) {
+		LOG_WARNING("Attempted to add null equation");
+		return;
+	}
+	mVars.insert(var);
 }
 
 bool equationsCluster::satisfied()
@@ -69,22 +87,22 @@ int equationsCluster::solve()
 			break;
 			
 		had_fixed_vars = false;
-		for(int i = 0; i < mVars.size(); ++i) {
-			auto var = mVars[i];
+		int i = 0;
+		for(auto var : mVars) {
 			if(var->as_coef_int() > 1) {
 				had_fixed_vars = true;
 				var->set_as_var();
-				diminutions[i]++;
+				diminutions[i++]++;
 			}
 		}
 		n_diminutions++;
 	} while(had_fixed_vars);
 
 	for(int i = 0; i < n_diminutions; ++i) {
-		for(int i = 0; i < mVars.size(); ++i) {
+		for(auto var : mVars) {
 			if(diminutions[i]) {
 				diminutions[i]--;
-				mVars[i]->set_as_coef();
+				var->set_as_coef();
 			}
 		}
 	}
@@ -113,6 +131,9 @@ void equationsCluster::substitutions()
 		var_ptr a, b;
 		if(equ->can_substitute()) {
 			equ->get_substitution_params(a, b);
+
+			if(mVars.find(a) == mVars.end() || mVars.find(b) == mVars.end())
+				continue;
 
 			if(a->dragged()) {
 				b->substitute(a);
@@ -177,27 +198,28 @@ int equationsCluster::num_drivingVars()
 
 void equationsCluster::incr_variables(Eigen::VectorXd const& delta, bool drivingVars_only) 
 {
-	for(int i = 0; i < mVars.size(); ++i) {
-		if(!drivingVars_only || !mVars[i]->is_substituted())
-			mVars[i]->set(mVars[i]->eval() + delta(i));
+	int v = 0;
+	for(auto var : mVars) {
+		if(!drivingVars_only || !var->is_substituted())
+			var->set(var->eval() + delta(v++));
 	}
 }
 
 void equationsCluster::set_variables(Eigen::VectorXd const& values, bool drivingVars_only)
 {
 	int v = 0;
-	for(int i = 0; i < mVars.size(); ++i) {
-		if(!drivingVars_only || !mVars[i]->is_substituted())
-			mVars[i]->set(values(v++));
+	for(auto var : mVars) {
+		if(!drivingVars_only || !var->is_substituted())
+			var->set(values(v++));
 	}
 }
 
 void equationsCluster::retrieve_variables(Eigen::VectorXd& container, bool drivingVars_only) 
 {
 	int v = 0;
-	for(int i = 0; i < mVars.size(); ++i) {
-		if(!drivingVars_only || !mVars[i]->is_substituted())
-			container(v++) = mVars[i]->eval();
+	for(auto var : mVars) {
+		if(!drivingVars_only || !var->is_substituted())
+			container(v++) = var->eval();
 	}
 }
 

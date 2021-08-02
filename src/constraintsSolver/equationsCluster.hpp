@@ -5,13 +5,14 @@
 #include "expression.hpp"
 
 #include <vector>
+#include <set>
 
 #include <Eigen/Eigen>
 
 class equationsCluster {
-public:
+private:
 	std::vector<equ_ptr> mEqus;
-	std::vector<var_ptr> mVars;
+	std::set<var_ptr> mVars;
 	// std::map<std::shared_ptr<constraint_abstract>, std::vector<var_ptr>> mConstrToVars;
 	// std::map<var_ptr, std::vector<std::shared_ptr<constraint_abstract>>> mVarsToConstr;
 
@@ -21,10 +22,12 @@ public:
 
 	int mAlgorithm;
 public:	
-	equationsCluster(std::vector<equ_ptr> equs, std::vector<var_ptr> vars, int solver_algo, int verbose = 0);
+	equationsCluster(std::vector<equ_ptr> equs, std::set<var_ptr> vars, int solver_algo, int verbose = 0);
 	~equationsCluster();	
 	
 	void init();
+	void add_equ(equ_ptr equ);
+	void add_var(var_ptr var);
 
 	bool satisfied();
 

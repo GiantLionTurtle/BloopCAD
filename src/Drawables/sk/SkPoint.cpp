@@ -48,10 +48,6 @@ DraggableSelectionPoint SkPoint::closest_2d_draggable(glm::vec2 planePos, Camera
 	}
 	return DraggableSelectionPoint();
 }
-void SkPoint::move(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
-{
-	set(pos() + end - start);
-}
 
 void SkPoint::set_annotOffset(SkSprite* sp, int ind)
 {
@@ -138,4 +134,9 @@ void SkPoint::update_impl()
 	glm::vec3 pos_tmp = mBasePlane->to_worldPos(pos());
 	mVB->set(&pos_tmp[0], sizeof(glm::vec3));
 	mVB->unbind();
+}
+
+void SkPoint::move_impl(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
+{
+	set(pos() + end - start);
 }

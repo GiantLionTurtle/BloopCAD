@@ -89,7 +89,7 @@ void constraintSystem::breakDown_problem()
 		if(ind >= mSubClusters.size())
 			continue;
 		for(size_t j = 0; j < mConstraints[i]->n_equs(); ++j) {
-			mSubClusters[ind]->mEqus.push_back(mConstraints[i]->equ(j));
+			mSubClusters[ind]->add_equ(mConstraints[i]->equ(j));
 		}
 	}
 
@@ -97,7 +97,7 @@ void constraintSystem::breakDown_problem()
 		int ind = var_clust[i];
 		if(ind >= mSubClusters.size())
 			continue;
-		mSubClusters[ind]->mVars.push_back(mVariables[i]);
+		mSubClusters[ind]->add_var(mVariables[i]);
 	}
 
 	for(size_t i = 0; i < mSubClusters.size(); ++i) {

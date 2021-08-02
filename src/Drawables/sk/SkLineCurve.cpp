@@ -47,11 +47,6 @@ DraggableSelectionPoint SkLineCurve::closest_2d_draggable(glm::vec2 planePos, Ca
 	}
 	return DraggableSelectionPoint();
 }
-void SkLineCurve::move(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
-{
-	mPtA->set(mPtA->pos() + end - start);
-	mPtB->set(mPtB->pos() + end - start);
-}
 
 void SkLineCurve::set_annotOffset(SkSprite* sp, int ind)
 {
@@ -139,4 +134,10 @@ void SkLineCurve::update_impl()
 	mVB->bind();
 	mVB->set(&mVertices[0], sizeof(glm::vec3) * 2);
 	mVB->unbind();
+}
+
+void SkLineCurve::move_impl(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
+{
+	mPtA->set(mPtA->pos() + end - start);
+	mPtB->set(mPtB->pos() + end - start);
 }
