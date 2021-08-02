@@ -108,8 +108,7 @@ void Sketch::unselect_all()
 {
 	for(size_t i = 0; i < mDrawList.size(); ++i) {
 		auto ch = mDrawList.at(i);
-		if(ch->selected() && ch->exists())
-			ch->unselect();
+		ch->unselect();
 	}
 }
 

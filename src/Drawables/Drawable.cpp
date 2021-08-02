@@ -46,8 +46,10 @@ void Drawable::notify_parent(int msg)
 }
 
 void Drawable::set_selected(bool select_, bool silent) 
-{ 	
-	if(exists() && selected() != select_) {
+{
+	if(!exists())
+		return; 	
+	if(selected() != select_) {
 		set_need_redraw();
 		if(select_) {
 			mState |= BLOOP_ENTITY_SELECTED_FLAG;
@@ -56,31 +58,29 @@ void Drawable::set_selected(bool select_, bool silent)
 		}
 		if(!silent && notif_on_selected())
 			notify_parent(select_ ? SELECTED : UNSELECTED);
-		select_impl(select_);
 		if(mHandle)
 			mHandle->set_selected(select_);
 	}
+	select_impl(select_);
 }
 void Drawable::select(bool silent) 
 { 
-	if(exists()) // TODO: Are all these if(exists()) {} overkill?
-		set_selected(true, silent);
+	set_selected(true, silent);
 }
 void Drawable::unselect(bool silent) 
 { 
-	if(exists())
-		set_selected(false, silent); 
+	set_selected(false, silent); 
 }
 bool Drawable::selected() const
 { 	
-	if(exists())
-		return mState & BLOOP_ENTITY_SELECTED_FLAG; 
-	return false;
+	return mState & BLOOP_ENTITY_SELECTED_FLAG; 
 }
 
 void Drawable::set_hover(bool hover, bool silent) 
 { 	
-	if(exists() && hovered() != hover) {
+	if(!exists())
+		return;
+	if(hovered() != hover) {
 		set_need_redraw();
 		if(hover) {
 			mState |= BLOOP_ENTITY_HOVERED_FLAG;
@@ -96,14 +96,14 @@ void Drawable::set_hover(bool hover, bool silent)
 }
 bool Drawable::hovered() const
 { 	
-	if(exists())
-		return mState & BLOOP_ENTITY_HOVERED_FLAG;
-	return false; 
+	return mState & BLOOP_ENTITY_HOVERED_FLAG;
 }
 
 void Drawable::set_hidden(bool hide, bool silent)
 {
-	if(exists() && hidden() != hide) {
+	if(!exists())
+		return;
+	if(hidden() != hide) {
 		set_need_redraw();
 		if(hide) {
 			mState |= BLOOP_ENTITY_HIDDEN_FLAG;
@@ -112,8 +112,8 @@ void Drawable::set_hidden(bool hide, bool silent)
 		}
 		if(!silent && notif_on_hidden())
 			notify_parent(hide ? HIDEN : UNHIDEN);
-		hidden_impl(hide);
 	}
+	hidden_impl(hide);
 }
 void Drawable::hide(bool silent)
 {
@@ -158,6 +158,14 @@ bool Drawable::exists() const
 bool Drawable::active() const
 {
 	return hovered() || selected();
+}
+
+void Drawable::print_state()
+{
+	std::cout<<std::boolalpha	<<"Exists:\t\t"<<exists()<<"\n"
+								<<"Selected:\t"<<selected()<<"\n"
+								<<"Hovered:\t"<<hovered()<<"\n"
+								<<"Hidden:\t\t"<<hidden()<<"\n";
 }
 
 bool Drawable::notif_on_selected()

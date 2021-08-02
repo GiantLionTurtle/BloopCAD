@@ -8,6 +8,8 @@ SkLine::SkLine(glm::vec2 ptA, glm::vec2 ptB, Geom3d::plane_abstr* pl, bool fixed
 	mCurve(nullptr)
 {
 	mCurve = new SkLineCurve(mPtA, mPtB, pl, fixed_); // Created within bracket because it relies on the creation of the points
+	mCurve->set_notif_on_selected(true);
+	
 	mDrawList.set(0, mPtA);
 	mDrawList.set(1, mPtB);
 	mDrawList.set(2, mCurve);
@@ -70,5 +72,17 @@ void SkLine::move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
 			mPtA->move(start, end, pix_mov);
 		if(mPtB->selected())
 			mPtB->move(start, end, pix_mov);
+	}
+}
+
+void SkLine::select_impl(bool sel)
+{
+	if(sel != mCurve->selected()) {
+		mCurve->set_selected(sel, true);
+		mPtA->set_selected(sel, true);
+		mPtB->set_selected(sel, true);
+	} else if(!sel) {
+		mPtA->set_selected(sel, true);
+		mPtB->set_selected(sel, true);
 	}
 }

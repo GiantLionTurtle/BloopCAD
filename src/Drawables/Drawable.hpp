@@ -189,6 +189,7 @@ public:
 	*/
 	int state() const { return mState; }
 	int type() const { return mType; }
+	void print_state();
 
 	bool notif_on_selected();
 	void set_notif_on_selected(bool do_);

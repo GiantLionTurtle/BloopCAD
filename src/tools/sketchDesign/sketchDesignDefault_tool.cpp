@@ -61,6 +61,7 @@ bool sketchDesignDefault_tool::manage_button_press(GdkEventButton* event)
 			if(!clickedPoint.ent->selected()) {
 				if(!(event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK))
 					mEnv->target()->unselect_all();
+				clickedPoint.ent->select();
 			}
 		} else {
 			mEnv->target()->unselect_all();
@@ -107,7 +108,6 @@ bool sketchDesignDefault_tool::manage_mouse_move(GdkEventMotion* event)
 		if(mAllowedToMove) {
 			if(!mMoving) {
 				mMoving = true;
-				LOG_WARNING("Implement move snapshots");
 				mStartSnapshot = mEnv->target()->snapshot();
 			}
 			mEnv->target()->move_selected(mPrevPos, pos, mPrevMousePos - mousePos);
