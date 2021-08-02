@@ -36,12 +36,20 @@ public:
 		if(!sp) 
 			return;
 		mAnnots.push_back(sp);
+		sp->set_hidden(!selected());
 		
 		set_annotPos(sp);
 		set_annotOffset(sp, mAnnots.size());
 	}
 	virtual void set_annotPos(SkSprite* sp) = 0;
 	virtual void set_annotOffset(SkSprite* sp, int ind) = 0;
+protected:
+	virtual void select_impl(bool sel)
+	{
+		for(int i = 0; i < mAnnots.size(); ++i) {
+			mAnnots[i]->set_hidden(!sel);
+		}		
+	}
 };
 
 class SkPrimitiveGeometry : public SkGeometry, virtual public Geom2d::Geom2d_abstr {

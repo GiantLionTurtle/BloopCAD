@@ -202,4 +202,5 @@ SkPointPoint_coincidence::SkPointPoint_coincidence(Geom3d::plane_abstr* baseplan
 		mVars.insert(mVars.end(), { mP2->x(), mP2->y() });
 	
 	mP1->add_annot(annot(0));
+	mP2->add_annot(annot(0));
 }
