@@ -37,6 +37,7 @@ public:
 	DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	int selection_rank() { return 3; }
 	void move(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov);
+	void set_annotPos(SkSprite* sp) { sp->set((posA() + posB()) / 2.0f); }
 	void set_annotOffset(SkSprite* sp, int ind);
 private:
 	void init_impl();

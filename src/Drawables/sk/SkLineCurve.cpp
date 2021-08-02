@@ -19,7 +19,7 @@ SkLineCurve::SkLineCurve(Geom2d::ExpressionPoint<var_ptr>* ptA, Geom2d::Expressi
 	mVB(nullptr),
 	mShader(nullptr)
 {
-	mType |= Drawable_types::AXIS;
+	mType |= Drawable_types::AXIS | Drawable_types::CURVE;
 	set_name("SkLineCurve");
 }
 
@@ -79,6 +79,7 @@ void SkLineCurve::init_impl()
 	mVertices[1] = mBasePlane->to_worldPos(posB());
 	mVB = new VertexBuffer(&mVertices[0], sizeof(glm::vec3) * 2);
 	mVA->add_buffer(*mVB, layout);
+	mVA->unbind();
 
 	mShader = ShadersPool::get_instance().get("line");
 	if(!mShader) {

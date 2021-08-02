@@ -9,7 +9,7 @@ uniform vec2 u_Viewport;
 
 void main()
 {
-    gl_Position = u_MVP * vec4(vertexPosition, 1.0);
+    gl_Position = u_MVP * vec4(vertexPosition.xyz, 1.0);
     vec2 offset2 = gl_Position.w * pixelOffset / u_Viewport * 2;
 	vec4 offset = vec4(offset2, 0, 0);
     gl_Position += offset;

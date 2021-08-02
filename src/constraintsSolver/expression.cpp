@@ -435,6 +435,7 @@ void expression_var::substitute(var_ptr sub)
 	// sub->clear_substitution();
 	mSubstituant = sub;
 	mIs_substituted = true;
+	callback();
 }
 
 void expression_var::callback()

@@ -172,8 +172,8 @@ bool Sketch::add_constraint(SkConstraint* constr, SkDrawable* immovable_hint)
 		return false;
 	mDrawList.add_constr(constr);
 	mSystem.add_constraint(constr);
-	constr->set_parent(this);
-	mHandle->update_name(mName + "(" + std::to_string(mSystem.num_constraints()) + ",  " + std::to_string(mSystem.num_variables()) + ")");
+	// constr->set_parent(this);
+	// mHandle->update_name(mName + "(" + std::to_string(mSystem.num_constraints()) + ",  " + std::to_string(mSystem.num_variables()) + ")");
 
 	if(immovable_hint) {
 		// BLOOPBLOOPCHECK
@@ -212,7 +212,7 @@ bool Sketch::update_constraints(bool safeUpdate, bool update_on_solveFail)
 		backup_system();
 	int solve_out = mSystem.solve();
 	if(update_on_solveFail || solve_out == solverState::SUCCESS) {
-		update();
+		set_need_update();
 	} else if(safeUpdate && solve_out != solverState::SUCCESS) {
 		revert_system_to_backup();
 	}

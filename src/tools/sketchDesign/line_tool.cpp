@@ -4,6 +4,7 @@
 #include <document.hpp>
 #include <Drawables/Sketch.hpp>
 #include <actions/common/toggleBaseObject_action.hpp>
+#include <tools/sketchDesign/coincidence_tool.hpp>
 #include <utils/mathUtils.hpp>
 
 #include <glm/gtx/quaternion.hpp>
@@ -79,7 +80,9 @@ SkPoint* line_tool::add_point(glm::vec2 pt)
 
 		if(mEndPos) {
 			LOG_WARNING("Implement constraints");
-			// mEnv->target()->add_constraint(std::make_shared<SkPointPoint_coincidence>(mEnv->target()->basePlane(), mLinePreview->ptA(), mEndPos));
+			mEnv->coincidence()->add_entity(mEndPos);
+			mEnv->coincidence()->add_entity(mLinePreview->ptA());
+			mEnv->coincidence()->add_constraint();
 		}
 		mEndPos = mLinePreview->ptB();
 		mLastAdded = mLinePreview;

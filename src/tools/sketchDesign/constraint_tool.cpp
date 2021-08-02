@@ -92,15 +92,17 @@ void constraint_tool::add_constraint()
 		std::make_shared<applySnapshot_action>(mEnv->target()->deltaSnapshot(snp), true),
 		std::make_shared<toggleConstraint_action>(mEnv->target(), constr, true)
 	})));
+	mEntA = nullptr;
+	mEntB = nullptr;
 }
 
 bool constraint_tool::is_point(SkDrawable* drw)
 {
-	return drw->type() == Drawable_types::POINT;
+	return drw->type() & Drawable_types::POINT;
 }
 bool constraint_tool::is_line(SkDrawable* drw)
 {
-	return drw->type() == Drawable_types::AXIS;
+	return drw->type() & Drawable_types::AXIS;
 }
 bool constraint_tool::is_curve(SkDrawable* drw)
 {

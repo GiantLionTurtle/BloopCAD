@@ -77,6 +77,7 @@ void SkPoint::init_impl()
 	glm::vec3 pos_tmp = mBasePlane->to_worldPos(pos());
 	mVB = new VertexBuffer(&pos_tmp[0], sizeof(glm::vec3));
 	mVA->add_buffer(*mVB, layout);
+	mVA->unbind();
 
 	mShader = ShadersPool::get_instance().get("point");
 	if(!mShader) {

@@ -9,7 +9,7 @@
 
 
 coincidence_tool::coincidence_tool(sketchDesign* env):
-	constraint_tool(env)
+	constraint_tool(env, CURVE | POINT | SKDRAWABLE)
 {
 	load_icon("resources/textures/images/icons/sketch/cursors/coincidence_cursor.png");
 }
@@ -54,7 +54,6 @@ void coincidence_tool::create_constraint(SkConstraint*& constr, SkDrawable*& pri
 		// constr = pointCircle_distance::make(pt, static_cast<sketchCircle>(curve));
 		priority_ent = curve;
 	} else {
-		// constr = SkPointPoint_coincidence::make(pt, static_cast<sketchPoint>(curve));
 		constr = new SkPointPoint_coincidence(mEnv->target()->basePlane(), pt, static_cast<SkPoint*>(curve));
 		priority_ent = mEntB;
 	}

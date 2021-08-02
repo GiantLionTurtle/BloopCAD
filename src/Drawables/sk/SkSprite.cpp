@@ -85,8 +85,9 @@ void SkSprite::init_impl()
 	mVA->bind();
 
 	pos_offseted tmpPos= { mBasePlane->to_worldPos(pos()), mPixelOffset };
-	mVB = new VertexBuffer(&tmpPos, sizeof(pos_offseted));
+	mVB = new VertexBuffer(&tmpPos.pos[0], sizeof(pos_offseted));
 	mVA->add_buffer(*mVB, layout);
+	mVA->unbind();
 
 	mShader = ShadersPool::get_instance().get("fixedSizeTexturedQuad");
 	if(!mShader) {
@@ -107,6 +108,7 @@ void SkSprite::init_impl()
 void SkSprite::draw_impl(Camera_ptr cam, int frame, draw_type type)
 {
 	mShader->bind();
+
 	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);
 	if(hovered()) 
 		color = kColorHovered;
@@ -124,16 +126,18 @@ void SkSprite::draw_impl(Camera_ptr cam, int frame, draw_type type)
 	mTexture->bind();
 	mVA->bind();
 
+	glm::vec3 t;
+	GLCall(glGetNamedBufferSubData(mVB->id(), 0, sizeof(glm::vec3), &t[0]));
+
 	GLCall(glDrawArrays(GL_POINTS, 0, 1));
 
 	mVA->unbind();
+	mTexture->unbind();
 	mShader->unbind();
 }
 
 void SkSprite::update_impl()
 {
-	if(!mInited)
-		return;
 	mNeed_update = false;
 	pos_offseted tmpPos= { mBasePlane->to_worldPos(pos()), mPixelOffset };
 	mVB->bind();

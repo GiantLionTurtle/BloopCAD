@@ -93,12 +93,6 @@ public:
 	{
 
 	}
-	~Linear_indexer()
-	{
-		for(size_t i = 0; i < size(); ++i) {
-			delete at(i);
-		}
-	}
 	size_t size() { return mList.size(); }
 	eT& at(size_t ind) { return mList.at(ind); }
 	cT& list() { return mList; }

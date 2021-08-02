@@ -24,6 +24,7 @@ public:
 	void update_annots()
 	{
 		for(int i = 0; i < mAnnots.size(); ++i) {
+			set_annotPos(mAnnots[i]);
 			set_annotOffset(mAnnots[i], i+1);
 		}
 	}
@@ -35,8 +36,11 @@ public:
 		if(!sp) 
 			return;
 		mAnnots.push_back(sp);
+		
+		set_annotPos(sp);
 		set_annotOffset(sp, mAnnots.size());
 	}
+	virtual void set_annotPos(SkSprite* sp) = 0;
 	virtual void set_annotOffset(SkSprite* sp, int ind) = 0;
 };
 
