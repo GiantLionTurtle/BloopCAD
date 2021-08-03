@@ -1,4 +1,3 @@
-# add_subdirectory(sketchEntities)
 
 set(tangibleEntities_source_files
   Plane.cpp
