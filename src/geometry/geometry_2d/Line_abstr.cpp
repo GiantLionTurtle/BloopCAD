@@ -59,11 +59,17 @@ glm::vec2 Line_abstr::at(float t)
 }
 bool Line_abstr::within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
 {
+	// If the whole line has to be contained, return true if both points are within the selection
 	if(contained) {
 		return Point_abstr::within(posA(), top_left, bottom_right) && Point_abstr::within(posB(), top_left, bottom_right);
 	}
-	Geom2d::simple_line diag_1(top_left, bottom_right), diag_2(glm::vec2(top_left.x, bottom_right.y), glm::vec2(bottom_right.x, top_left.y));
-	return intersects(&diag_1) || intersects(&diag_2);
+
+	// If only a part has to be contained, return if either point is contained or 
+	// if the line crosses  any of the four lines of the selection rectangle
+	glm::vec2 top_right(bottom_right.x, top_left.y), bottom_left(top_left.x, bottom_right.y);
+	return Point_abstr::within(posA(), top_left, bottom_right) || Point_abstr::within(posB(), top_left, bottom_right)
+			|| intersects(top_left, top_right) || intersects(bottom_left, bottom_right)
+			|| intersects(top_left, bottom_left) || intersects(top_right, bottom_right);
 }
 glm::vec2 Line_abstr::closest_to_point(glm::vec2 const& pt)
 {
@@ -96,9 +102,16 @@ float Line_abstr::length2()
 
 bool Line_abstr::intersects(Line_abstr* l)
 {
+	// Better explanation than I could give
+	// https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
 	return ccw(posA(), l->posA(), l->posB()) != ccw(posB(), l->posA(), l->posB()) && ccw(posA(), posB(), l->posA()) != ccw(posA(), posB(), l->posB());
 }
-
+bool Line_abstr::intersects(glm::vec2 a, glm::vec2 b)
+{
+	// Better explanation than I could give
+	// https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
+	return ccw(posA(), a, b) != ccw(posB(), a, b) && ccw(posA(), posB(), a) != ccw(posA(), posB(), b);
+}
 
 glm::vec2 Line_abstr::as_vec()
 {

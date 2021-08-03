@@ -27,8 +27,9 @@ public:
 	float length2();
 
 	bool intersects(Line_abstr* l);
+	bool intersects(glm::vec2 a, glm::vec2 b);
 protected:
-	bool ccw(glm::vec2 A, glm::vec2 B, glm::vec2 C);
+	bool ccw(glm::vec2 A, glm::vec2 B, glm::vec2 C); // determine if three point are aranged in a counter clockwise fashion
 	glm::vec2 as_vec();
 };
 
