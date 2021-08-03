@@ -2,9 +2,9 @@
 #include "partDesign.hpp"
 
 #include <bloop.hpp>
-#include <tools/partDesign/partDesignDefault_tool.hpp>
-#include <tools/partDesign/startSketch_tool.hpp>
-#include <tools/navigation/navigation.hpp>
+#include <Tools/Part/PartDefault_tool.hpp>
+#include <Tools/Part/StartSketch_tool.hpp>
+#include <Tools/Navigation3d/Navigation3d.hpp>
 
 #include <memory>
 
@@ -16,10 +16,10 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 	workspace("partDesign_upperBar", builder, parent) // Create base workspace with ui upper bar
 {
 	// Creat all the tools used in this workspace
-	mPartDesignDefault_tool = std::make_shared<partDesignDefault_tool>(this);
-	mStartSketch_tool 		= std::make_shared<startSketch_tool>(this);
-	mPan_tool				= std::make_shared<pan_tool>(this);
-	mDefaultTool = mPartDesignDefault_tool;
+	mPartDefault_tool = std::make_shared<PartDefault_tool>(this);
+	mStartSketch_tool 		= std::make_shared<StartSketch_tool>(this);
+	mPan3d_tool				= std::make_shared<Pan3d_tool>(this);
+	mDefaultTool = mPartDefault_tool;
 
 	// Initialize all buttons as 2 nullptr
 	mButtons["startSketch"] = std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
@@ -57,16 +57,16 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 
 bool partDesign::set_tool(int name)
 {
-	tool_abstract_ptr to_set = nullptr;
+	Tool_abstract_ptr to_set = nullptr;
 	switch(name) {
 	case TOOLIDS::TOOLID_PARTDESIGNDEFAULT:
-		to_set = mPartDesignDefault_tool;
+		to_set = mPartDefault_tool;
 		break;
 	case TOOLIDS::TOOLID_STARTSKECTH:
 		to_set = mStartSketch_tool;
 		break;
 	case TOOLIDS::TOOLID_PAN:
-		to_set = mPan_tool;
+		to_set = mPan3d_tool;
 		break;
 	default:
 		return workspace::set_tool(name);

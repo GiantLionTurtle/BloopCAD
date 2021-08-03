@@ -4,7 +4,7 @@
 
 #include <forward_bloop.hpp>
 #include <workspaces/workspace.hpp>
-#include <tools/tool.hpp>
+#include <Tools/Tool.hpp>
 #include <graphics_utils/FrameBuffer.hpp>
 #include <actions/action.hpp>
 #include <Drawables/Part.hpp>

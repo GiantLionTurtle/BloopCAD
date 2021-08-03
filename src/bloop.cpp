@@ -179,10 +179,10 @@ void bloop::manage_tab_switch(Gtk::Widget* widget, unsigned int tab_ind)
 	}
 }
 
-void bloop::set_cursor(std::shared_ptr<compositeCursor> cursor_)
+void bloop::set_cursor(Glib::RefPtr<Gdk::Cursor> cursor_)
 {
 	mCursor = cursor_;
-	get_window()->set_cursor(cursor_->windowCursor);
+	get_window()->set_cursor(cursor_);
 }
 
 std::shared_ptr<document> bloop::get_document_at_tabInd(unsigned int ind)

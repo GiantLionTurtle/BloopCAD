@@ -2,7 +2,7 @@
 #include "workspace.hpp"
 #include <utils/DebugUtils.hpp>
 #include <bloop.hpp>
-#include <tools/navigation/navigation.hpp>
+#include <Tools/Navigation3d/Navigation3d.hpp>
 
 workspace::workspace(bloop* parent) :
 	mParentBloop(parent),
@@ -20,7 +20,7 @@ workspace::workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> c
 	builder->get_widget(upperBarID, mUpperBar);
 
 	// Create navigation/selection tools that are fairly common amongst workspaces
-	mOrbit_tool	= std::make_shared<orbit_tool>(this);
+	mOrbit3d_tool	= std::make_shared<Orbit3d_tool>(this);
 }
 
 bool workspace::manage_key_press(GdkEventKey* event)
@@ -53,8 +53,8 @@ bool workspace::manage_key_release(GdkEventKey* event)
 bool workspace::manage_mouse_move(GdkEventMotion* event)
 {
 	if(event->state & GDK_BUTTON2_MASK) { // Override the current tool and update the orbit
-		set_toolCursor(mOrbit_tool);
-		return mOrbit_tool->manage_mouse_move(event);
+		set_toolCursor(mOrbit3d_tool);
+		return mOrbit3d_tool->manage_mouse_move(event);
 	}
 
 	if(mState && mState->currentTool) {
@@ -73,7 +73,7 @@ bool workspace::manage_button_press(GdkEventButton* event)
 bool workspace::manage_button_release(GdkEventButton* event)
 {
 	if(event->state & GDK_BUTTON2_MASK) { // Clean up the orbit override
-		mOrbit_tool->finish();
+		mOrbit3d_tool->finish();
 		set_toolCursor(mState->currentTool);
 	}
 	if(mState && mState->currentTool) {
@@ -84,10 +84,10 @@ bool workspace::manage_button_release(GdkEventButton* event)
 
 bool workspace::set_tool(int name) 
 {
-	tool_abstract_ptr to_set = nullptr;
+	Tool_abstract_ptr to_set = nullptr;
 	switch(name) {
 	case TOOLIDS::TOOLID_ORBIT:
-		to_set = mOrbit_tool;
+		to_set = mOrbit3d_tool;
 		break;
 	default:
 		return false;
@@ -96,7 +96,7 @@ bool workspace::set_tool(int name)
 	return true;
 }
 
-void workspace::set_tool(tool_abstract_ptr tool_)
+void workspace::set_tool(Tool_abstract_ptr tool_)
 {
 	if(!tool_) {
 		LOG_WARNING("Attempting to set null tool.");
@@ -111,7 +111,7 @@ void workspace::set_tool(tool_abstract_ptr tool_)
 	set_toolCursor(mState->currentTool);
 	mParentBloop->notify_set_tool(tool_->name());
 }
-void workspace::set_toolCursor(tool_abstract_ptr tool_)
+void workspace::set_toolCursor(Tool_abstract_ptr tool_)
 {
 	mParentBloop->set_cursor(tool_->cursor());
 }

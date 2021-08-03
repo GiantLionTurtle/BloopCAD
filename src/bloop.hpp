@@ -4,7 +4,7 @@
 
 #include "forward_bloop.hpp"
 #include "document.hpp"
-#include <tools/tool.hpp>
+#include <Tools/Tool.hpp>
 #include <workspaces/workspace.hpp>
 #include <workspaces/navigationBar.hpp>
 #include "workspaces/partDesign.hpp"
@@ -87,7 +87,7 @@ private:
 	std::shared_ptr<home> mHomeWorkspace;
 	workspace_ptr mCurrentWorkspace; // The currently used workspace
 
-	compositeCursor_ptr mCursor; // The current cursor
+	Glib::RefPtr<Gdk::Cursor> mCursor; // The current cursor
 	Gtk::Image* mHomePage, *mIcon; // Program icon and home page Image (the latter will not be a thing)
 	Gtk::Notebook* mDocumentIndexer; // The widget containing the document rendering
 	Gtk::Stack* mUI_upperBar, *mSideBar; // A stack of all the workspaces upper bars and all the documents' side bars
@@ -172,7 +172,7 @@ public:
 
 		@param cursor_ : The cursor object to become the window's cursor
 	*/
-	void set_cursor(compositeCursor_ptr cursor_);
+	void set_cursor(Glib::RefPtr<Gdk::Cursor> cursor_);
 
 	/*
 		@function get_document_at_tabInd gets the document at the specified index

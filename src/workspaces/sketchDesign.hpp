@@ -4,7 +4,7 @@
 
 #include "workspace.hpp"
 #include <Drawables/Sketch.hpp>
-#include <tools/tools_forward.hpp>
+#include <Tools/Tools_forward.hpp>
 
 #include <map>
 
@@ -14,16 +14,16 @@
 */
 class sketchDesign : public workspace {
 protected:
-	std::shared_ptr<pan2d_tool> 				mPan_tool;
-	std::shared_ptr<zoom2d_tool> 				mZoom_tool;
-	std::shared_ptr<sketchDesignDefault_tool> 	mSketchDesignDefault_tool;
-	std::shared_ptr<point_tool> 				mPoint_tool;
-	std::shared_ptr<line_tool> 					mLine_tool;
-	// std::shared_ptr<circle_tool> 				mCircle_tool;
-	std::shared_ptr<coincidence_tool> 			mCoincidence_tool;
-	std::shared_ptr<verticality_tool> 			mVerticality_tool;
-	std::shared_ptr<horizontality_tool> 		mHorizontality_tool;
-	std::shared_ptr<perpendicularity_tool> 		mPerpendiculatiry_tool;
+	std::shared_ptr<Pan2d_tool> 				mPan3d_tool;
+	std::shared_ptr<Zoom2d_tool> 				mZoom3d_tool;
+	std::shared_ptr<SketchDefault_tool> 	mSketchDefault_tool;
+	std::shared_ptr<Point_tool> 				mPoint_tool;
+	std::shared_ptr<Line_tool> 					mLine_tool;
+	// std::shared_ptr<Circle_tool> 				mCircle_tool;
+	std::shared_ptr<Coincidence_tool> 			mCoincidence_tool;
+	std::shared_ptr<Verticality_tool> 			mVerticality_tool;
+	std::shared_ptr<Horizontality_tool> 		mHorizontality_tool;
+	std::shared_ptr<Perpendicularity_tool> 		mPerpendiculatiry_tool;
 
 	std::map<std::string, std::pair<Gtk::Button*, Gtk::Image*>> mButtons; // Buttons with names and icons
 	Sketch* mTarget;
@@ -52,15 +52,15 @@ public:
 	bool manage_key_press(GdkEventKey* event);
 	bool manage_mouse_scroll(GdkEventScroll* event);
 
-	std::shared_ptr<pan2d_tool> pan() { return mPan_tool; }
-	std::shared_ptr<sketchDesignDefault_tool> sketchDesignDefault() { return mSketchDesignDefault_tool; }
-	std::shared_ptr<point_tool> point() { return mPoint_tool; }
-	std::shared_ptr<line_tool> line() { return mLine_tool; }
-	// std::shared_ptr<circle_tool> circle() { return mCircle_tool; }
-	std::shared_ptr<coincidence_tool> coincidence() { return mCoincidence_tool; }
-	std::shared_ptr<verticality_tool> verticality() { return mVerticality_tool; }
-	std::shared_ptr<horizontality_tool> horizontality() { return mHorizontality_tool; }
-	std::shared_ptr<perpendicularity_tool> perpendicularity() { return mPerpendiculatiry_tool; }
+	std::shared_ptr<Pan2d_tool> pan() { return mPan3d_tool; }
+	std::shared_ptr<SketchDefault_tool> sketchDesignDefault() { return mSketchDefault_tool; }
+	std::shared_ptr<Point_tool> point() { return mPoint_tool; }
+	std::shared_ptr<Line_tool> line() { return mLine_tool; }
+	// std::shared_ptr<Circle_tool> circle() { return mCircle_tool; }
+	std::shared_ptr<Coincidence_tool> coincidence() { return mCoincidence_tool; }
+	std::shared_ptr<Verticality_tool> verticality() { return mVerticality_tool; }
+	std::shared_ptr<Horizontality_tool> horizontality() { return mHorizontality_tool; }
+	std::shared_ptr<Perpendicularity_tool> perpendicularity() { return mPerpendiculatiry_tool; }
 
 	/*
 		@function line invokes the line tool

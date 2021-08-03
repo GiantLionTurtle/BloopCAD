@@ -4,11 +4,11 @@
 #include <bloop.hpp>
 #include <document.hpp>
 
-#include <tools/partDesign/startSketch_tool.hpp>
-#include <tools/sketchDesign/line_tool.hpp>
-#include <tools/sketchDesign/coincidence_tool.hpp>
-#include <tools/sketchDesign/horizontality_tool.hpp>
-#include <tools/sketchDesign/perpendicularity_tool.hpp>
+#include <Tools/Part/StartSketch_tool.hpp>
+#include <Tools/Sketch/Line_tool.hpp>
+#include <Tools/Sketch/Coincidence_tool.hpp>
+#include <Tools/Sketch/Horizontality_tool.hpp>
+#include <Tools/Sketch/Perpendicularity_tool.hpp>
 
 test_eventsManager::test_eventsManager():
 	mTestStep(-1),

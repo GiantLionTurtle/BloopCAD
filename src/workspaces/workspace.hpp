@@ -4,10 +4,10 @@
 
 #include <forward_bloop.hpp>
 #include <graphics_utils/Camera.hpp>
-#include <tools/tool.hpp>
+#include <Tools/Tool.hpp>
 #include <graphics_utils/FrameBuffer.hpp>
 #include <Drawables/Drawable.hpp>
-#include <tools/tools_forward.hpp>
+#include <Tools/Tools_forward.hpp>
 
 #include <gtkmm.h>
 
@@ -28,7 +28,7 @@ struct workspaceState {
 	Drawable* target; // The target entity of the workspace
 	Camera_ptr cam; // The Camera rendering the scene for that workspace in the doc
 	CameraState startCamState;
-	tool_abstract_ptr currentTool; // The tool being used by the workspace in the doc
+	Tool_abstract_ptr currentTool; // The tool being used by the workspace in the doc
 	int workspaceName; // The name of the workspace it is describing
 };
 
@@ -37,10 +37,10 @@ using workspace_ptr = std::shared_ptr<workspace>;
 
 class workspace {
 protected:
-	std::shared_ptr<orbit_tool> mOrbit_tool;
+	std::shared_ptr<Orbit3d_tool> mOrbit3d_tool;
 
-	std::map<std::string, tool_abstract_ptr> mTools; // All the tools used by the workspace
-	tool_abstract_ptr mDefaultTool; // The tool used by default in the workspace (typically some sort of selector)
+	std::map<std::string, Tool_abstract_ptr> mTools; // All the tools used by the workspace
+	Tool_abstract_ptr mDefaultTool; // The tool used by default in the workspace (typically some sort of selector)
 
 	workspaceState_ptr mState; // The state used by the current document
 
@@ -77,22 +77,22 @@ public:
 
 		@param tool_ : The tool to set as active
 	*/
-	void set_tool(tool_abstract_ptr tool_);
+	void set_tool(Tool_abstract_ptr tool_);
 	/*
 		@function set_toolCursor sets a tool's cursor to it's 
 		own cursor
 
 		@param tool_ : The tool from which to extract the cursor info
 	*/
-	void set_toolCursor(tool_abstract_ptr tool_);
+	void set_toolCursor(Tool_abstract_ptr tool_);
 
-	std::shared_ptr<orbit_tool> orbit() { return mOrbit_tool; }
+	std::shared_ptr<Orbit3d_tool> orbit() { return mOrbit3d_tool; }
 	/*
 		@function defaultTool
 
 		@return : The workspace's default tool
 	*/
-	tool_abstract_ptr defaultTool() { return mDefaultTool; }
+	Tool_abstract_ptr defaultTool() { return mDefaultTool; }
 
 	/*
 		@function manage_key_press passes the key presses to the current tool and may

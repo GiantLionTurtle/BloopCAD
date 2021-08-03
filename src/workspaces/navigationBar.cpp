@@ -1,7 +1,7 @@
 
 #include "navigationBar.hpp"
 
-#include <tools/tools_forward.hpp>
+#include <Tools/Tools_forward.hpp>
 
 navigationBar::navigationBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder) :
 	Gtk::Box(cobject),

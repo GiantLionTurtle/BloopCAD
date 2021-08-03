@@ -7,16 +7,16 @@
 #include <actions/sketchDesign/quitSketchDesign_action.hpp>
 #include <actions/common/moveCamera_action.hpp>
 #include <actions/common/serial_action.hpp>
-#include <tools/sketchDesign/line_tool.hpp>
-#include <tools/sketchDesign/point_tool.hpp>
-#include <tools/sketchDesign/circle_tool.hpp>
-#include <tools/sketchDesign/coincidence_tool.hpp>
-#include <tools/sketchDesign/perpendicularity_tool.hpp>
-#include <tools/sketchDesign/verticality_tool.hpp>
-#include <tools/sketchDesign/horizontality_tool.hpp>
-#include <tools/sketchDesign/sketchDesignDefault_tool.hpp>
-#include <tools/sketchDesign/pan2d_tool.hpp>
-#include <tools/sketchDesign/zoom2d_tool.hpp>
+#include <Tools/Sketch/Line_tool.hpp>
+#include <Tools/Sketch/Point_tool.hpp>
+#include <Tools/Sketch/Circle_tool.hpp>
+#include <Tools/Sketch/Coincidence_tool.hpp>
+#include <Tools/Sketch/Perpendicularity_tool.hpp>
+#include <Tools/Sketch/Verticality_tool.hpp>
+#include <Tools/Sketch/Horizontality_tool.hpp>
+#include <Tools/Sketch/SketchDefault_tool.hpp>
+#include <Tools/Sketch/Pan2d_tool.hpp>
+#include <Tools/Sketch/Zoom2d_tool.hpp>
 #include <utils/xmlParser.hpp>
 #include <Drawables/svgEntity.hpp>
 #include <bloop.hpp>
@@ -31,17 +31,17 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 	workspace("sketchDesign_upperBar", builder, parent) // Create base workspace with upper bar
 {	
 	// Create all the tools used in this workspace
-	mPan_tool 					= std::make_shared<pan2d_tool>(this);
-	mZoom_tool					= std::make_shared<zoom2d_tool>(this);
-	mSketchDesignDefault_tool 	= std::make_shared<sketchDesignDefault_tool>(this);
-	mPoint_tool 				= std::make_shared<point_tool>(this);
-	mLine_tool 					= std::make_shared<line_tool>(this);
-	// mCircle_tool 				= std::make_shared<circle_tool>(this);
-	mCoincidence_tool 			= std::make_shared<coincidence_tool>(this);
-	mVerticality_tool 			= std::make_shared<verticality_tool>(this);
-	mHorizontality_tool 		= std::make_shared<horizontality_tool>(this);
-	mPerpendiculatiry_tool 		= std::make_shared<perpendicularity_tool>(this);
-	mDefaultTool = mSketchDesignDefault_tool;
+	mPan3d_tool 					= std::make_shared<Pan2d_tool>(this);
+	mZoom3d_tool					= std::make_shared<Zoom2d_tool>(this);
+	mSketchDefault_tool 	= std::make_shared<SketchDefault_tool>(this);
+	mPoint_tool 				= std::make_shared<Point_tool>(this);
+	mLine_tool 					= std::make_shared<Line_tool>(this);
+	// mCircle_tool 				= std::make_shared<Circle_tool>(this);
+	mCoincidence_tool 			= std::make_shared<Coincidence_tool>(this);
+	mVerticality_tool 			= std::make_shared<Verticality_tool>(this);
+	mHorizontality_tool 		= std::make_shared<Horizontality_tool>(this);
+	mPerpendiculatiry_tool 		= std::make_shared<Perpendicularity_tool>(this);
+	mDefaultTool = mSketchDefault_tool;
 
 	// Initialize all buttons as 2 nullptr
 	mButtons["line"] 			= std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
@@ -74,12 +74,12 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 
 	if(all_btns_valid) {
 		try { // Attempt to fetch all the buttons' icons
-			std::get<1>(mButtons.at("line")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/line.png", 60, 60));
-			std::get<1>(mButtons.at("point")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/point.png", 60, 60));
-			std::get<1>(mButtons.at("rectangle")) 		= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/rectangle.png", 60, 60));
-			std::get<1>(mButtons.at("circle")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/circle.png", 60, 60));
-			std::get<1>(mButtons.at("polygon")) 		= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/polygon.png", 60, 60));
-			std::get<1>(mButtons.at("threePointsArc")) 	= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/threePointsArc.png", 60, 60));
+			std::get<1>(mButtons.at("line")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/Tools/line.png", 60, 60));
+			std::get<1>(mButtons.at("point")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/Tools/point.png", 60, 60));
+			std::get<1>(mButtons.at("rectangle")) 		= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/Tools/rectangle.png", 60, 60));
+			std::get<1>(mButtons.at("circle")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/Tools/circle.png", 60, 60));
+			std::get<1>(mButtons.at("polygon")) 		= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/Tools/polygon.png", 60, 60));
+			std::get<1>(mButtons.at("threePointsArc")) 	= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/Tools/threePointsArc.png", 60, 60));
 
 			std::get<1>(mButtons.at("dimension")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/constraints/dimension.png", 30, 30));
 			std::get<1>(mButtons.at("verticality")) 		= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/constraints/verticality.png", 30, 30));
@@ -153,10 +153,10 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 
 bool sketchDesign::set_tool(int name)
 {
-	tool_abstract_ptr to_set = nullptr;
+	Tool_abstract_ptr to_set = nullptr;
 	switch(name) {
 	case TOOLIDS::TOOLID_SKETCHDESIGNDEFAULT:
-		to_set = mSketchDesignDefault_tool;
+		to_set = mSketchDefault_tool;
 		break;
 	case TOOLIDS::TOOLID_POINT:
 		to_set = mPoint_tool;
@@ -181,10 +181,10 @@ bool sketchDesign::set_tool(int name)
 		to_set = mPerpendiculatiry_tool;
 		break;
 	case TOOLIDS::TOOLID_PAN:
-		to_set = mPan_tool;
+		to_set = mPan3d_tool;
 		break;
 	case TOOLIDS::TOOLID_ZOOM:
-		to_set = mZoom_tool;
+		to_set = mZoom3d_tool;
 		break;
 	default:
 		return workspace::set_tool(name);
@@ -211,7 +211,7 @@ bool sketchDesign::manage_key_press(GdkEventKey* event)
 }
 bool sketchDesign::manage_mouse_scroll(GdkEventScroll* event)
 {
-	return mZoom_tool->manage_scroll(event);
+	return mZoom3d_tool->manage_scroll(event);
 }
 void sketchDesign::begin_line()
 {

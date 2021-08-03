@@ -4,7 +4,7 @@ add_subdirectory(graphics_utils)
 add_subdirectory(geometry)
 add_subdirectory(Drawables)
 add_subdirectory(actions)
-add_subdirectory(tools)
+add_subdirectory(Tools)
 add_subdirectory(workspaces)
 add_subdirectory(constraintsSolver)
 
@@ -20,7 +20,7 @@ target_link_libraries(BloopCAD
 	graphics_utils
 	Drawables
 	actions
-	tools
+	Tools
 	workspaces
 	${GTKMM_LIBRARIES}
 	${CMAKE_DL_LIBS} epoxy)
