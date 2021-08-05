@@ -128,6 +128,8 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 	if(mToolPreview) {
 		mToolPreview->init(); // Will only actually init if it is not inited
 		mToolPreview->update();
+		if(mToolPreview->need_update())
+			std::cout<<"Update!\n";
 		if(mToolPreview->need_redraw())
 			mToolPreview->draw(mCurrentWorkspaceState->cam, mFrameId);
 	}

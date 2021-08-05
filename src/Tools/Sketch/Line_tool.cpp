@@ -78,7 +78,6 @@ SkPoint* Line_tool::add_point(glm::vec2 pt)
 		mEnv->state()->doc->clear_toolPreview();
 
 		if(mEndPos) {
-			LOG_WARNING("Implement constraints");
 			mEnv->coincidence()->add_entity(mEndPos);
 			mEnv->coincidence()->add_entity(mLinePreview->ptA());
 			mEnv->coincidence()->add_constraint();

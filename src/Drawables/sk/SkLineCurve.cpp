@@ -5,21 +5,17 @@
 #include <utils/preferences.hpp>
 #include <graphics_utils/GLCall.hpp>
 
-float SkLineCurve::kSelDist2 = 0.0f;
+template<>
+float SkCurve<std::array<Geom2d::ExpressionPoint<var_ptr>*, 2>, SkLineCurve>::kSelDist2 = 0.0f;
 bool SkLineCurve::kFisrstInst = true;
 glm::vec3 SkLineCurve::kColor = glm::vec3(0.0); 
 glm::vec3 SkLineCurve::kColorHovered = glm::vec3(0.0);
 glm::vec3 SkLineCurve::kColorSelected = glm::vec3(0.0);
 
-SkLineCurve::SkLineCurve(Geom2d::ExpressionPoint<var_ptr>* ptA, Geom2d::ExpressionPoint<var_ptr>* ptB, Geom3d::plane_abstr* pl, bool fixed_):
-	SkPrimitiveGeometry(pl, fixed_),
-	mPtA(ptA),
-	mPtB(ptB),
-	mVA(nullptr),
-	mVB(nullptr),
-	mShader(nullptr)
+SkLineCurve::SkLineCurve(Geom3d::plane_abstr* pl, bool fixed_):
+	SkCurve<std::array<Geom2d::ExpressionPoint<var_ptr>*, 2>, SkLineCurve>(pl, fixed_)
 {
-	mType |= Drawable_types::AXIS | Drawable_types::CURVE;
+	mType |= Drawable_types::AXIS;
 	set_name("SkLineCurve");
 }
 
@@ -29,28 +25,9 @@ SkLineCurve::~SkLineCurve()
 	delete mVB;
 }
 
-SelectionPoint SkLineCurve::closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
-{
-	if(mType & filter) {
-		glm::vec3 worldpos = mBasePlane->to_worldPos(closest_to_point(planePos));
-		if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
-			return { this, glm::distance(cam->pos(), worldpos) };
-	}
-	return SelectionPoint();
-}
-DraggableSelectionPoint SkLineCurve::closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
-{
-	if(mType & filter) {
-		glm::vec3 worldpos = mBasePlane->to_worldPos(closest_to_point(planePos));
-		if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
-			return { this };
-	}
-	return DraggableSelectionPoint();
-}
-
 void SkLineCurve::set_annotOffset(SkSprite* sp, int ind)
 {
-	glm::vec2 dir = glm::normalize(mPtA->pos() - mPtB->pos());
+	glm::vec2 dir = glm::normalize(posA() - posB());
 	glm::vec2 normal = glm::cross(glm::vec3(dir, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
 	int line_side = ind % 2 == 0 ? 1 : -1;
@@ -100,6 +77,8 @@ void SkLineCurve::init_impl()
 
 void SkLineCurve::draw_impl(Camera_ptr cam, int frame, draw_type type)
 {
+	glm::vec2 pA = posA();
+	glm::vec2 pB = posB();
 	mShader->bind();
 	glm::vec4 color = glm::vec4(kColor, 1.0f);
 	if(selected()) {
@@ -134,10 +113,4 @@ void SkLineCurve::update_impl()
 	mVB->bind();
 	mVB->set(&mVertices[0], sizeof(glm::vec3) * 2);
 	mVB->unbind();
-}
-
-void SkLineCurve::move_impl(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
-{
-	mPtA->set(mPtA->pos() + end - start);
-	mPtB->set(mPtB->pos() + end - start);
 }
