@@ -33,14 +33,14 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 	// Create all the tools used in this workspace
 	mPan3d_tool 					= std::make_shared<Pan2d_tool>(this);
 	mZoom3d_tool					= std::make_shared<Zoom2d_tool>(this);
-	mSketchDefault_tool 	= std::make_shared<SketchDefault_tool>(this);
-	mPoint_tool 				= std::make_shared<Point_tool>(this);
-	mLine_tool 					= std::make_shared<Line_tool>(this);
+	mSketchDefault_tool 			= std::make_shared<SketchDefault_tool>(this);
+	mPoint_tool 					= std::make_shared<Point_tool>(this);
+	mLine_tool 						= std::make_shared<Line_tool>(this);
 	// mCircle_tool 				= std::make_shared<Circle_tool>(this);
-	mCoincidence_tool 			= std::make_shared<Coincidence_tool>(this);
-	mVerticality_tool 			= std::make_shared<Verticality_tool>(this);
-	mHorizontality_tool 		= std::make_shared<Horizontality_tool>(this);
-	mPerpendiculatiry_tool 		= std::make_shared<Perpendicularity_tool>(this);
+	mCoincidence_tool 				= std::make_shared<Coincidence_tool>(this);
+	mVerticality_tool 				= std::make_shared<Verticality_tool>(this);
+	mHorizontality_tool 			= std::make_shared<Horizontality_tool>(this);
+	mPerpendiculatiry_tool 			= std::make_shared<Perpendicularity_tool>(this);
 	mDefaultTool = mSketchDefault_tool;
 
 	// Initialize all buttons as 2 nullptr
@@ -74,12 +74,12 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 
 	if(all_btns_valid) {
 		try { // Attempt to fetch all the buttons' icons
-			std::get<1>(mButtons.at("line")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/Tools/line.png", 60, 60));
-			std::get<1>(mButtons.at("point")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/Tools/point.png", 60, 60));
-			std::get<1>(mButtons.at("rectangle")) 		= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/Tools/rectangle.png", 60, 60));
-			std::get<1>(mButtons.at("circle")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/Tools/circle.png", 60, 60));
-			std::get<1>(mButtons.at("polygon")) 		= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/Tools/polygon.png", 60, 60));
-			std::get<1>(mButtons.at("threePointsArc")) 	= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/Tools/threePointsArc.png", 60, 60));
+			std::get<1>(mButtons.at("line")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/line.png", 60, 60));
+			std::get<1>(mButtons.at("point")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/point.png", 60, 60));
+			std::get<1>(mButtons.at("rectangle")) 		= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/rectangle.png", 60, 60));
+			std::get<1>(mButtons.at("circle")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/circle.png", 60, 60));
+			std::get<1>(mButtons.at("polygon")) 		= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/polygon.png", 60, 60));
+			std::get<1>(mButtons.at("threePointsArc")) 	= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/tools/threePointsArc.png", 60, 60));
 
 			std::get<1>(mButtons.at("dimension")) 			= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/constraints/dimension.png", 30, 30));
 			std::get<1>(mButtons.at("verticality")) 		= new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/sketch/constraints/verticality.png", 30, 30));
