@@ -29,16 +29,29 @@ void constraintSystem::add_constraint(constraint_abstr* constr)
 	mNum_activeConstraints++;
 	mBrokenDown = false;
 	mConstraints.push_back(constr);
-	for(size_t i = 0; i < constr->n_vars(); ++i) {
-		var_ptr var = constr->var(i);
-		if(var->is_coef())
-			continue;
-		mConstrToVars[constr].push_back(var);			
-		if(mVarsToConstr.find(var) == mVarsToConstr.end())
-			mVariables.push_back(var);
-		mVarsToConstr[var].push_back(constr);
-	}
+	// for(size_t i = 0; i < constr->n_vars(); ++i) {
+	// 	var_ptr var = constr->var(i);
+	// 	if(var->is_coef())
+	// 		continue;
+	// 	mConstrToVars[constr].push_back(var);			
+	// 	if(mVarsToConstr.find(var) == mVarsToConstr.end())
+	// 		mVariables.push_back(var);
+	// 	mVarsToConstr[var].push_back(constr);
+	// }
 }
+void constraintSystem::add_variable(var_ptr v)
+{
+	if(!v)
+		return;
+	// if(std::find(mVariables.begin(), mVariables.end(), v) != mVariables.end())
+		mVariables.push_back(v);
+}
+void constraintSystem::add_variables(std::vector<var_ptr> vars)
+{
+	for(auto v : vars)
+		add_variable(v);
+}
+
 void constraintSystem::toggle_constraint(constraint_abstr* constr, bool enable)
 {
 	if(std::find(mConstraints.begin(), mConstraints.end(), constr) == mConstraints.end())
@@ -74,8 +87,21 @@ int constraintSystem::solve()
 void constraintSystem::breakDown_problem()
 {
 	mBrokenDown = false;
+
+	std::vector<constraint_abstr*> liveConstraints;
+	std::vector<var_ptr> liveVars;
+
+	for(auto constr : mConstraints) {
+		if(constr->exists())
+			liveConstraints.push_back(constr);
+	}
+	for(auto var : mVariables) {
+		if(var->exists())
+			liveVars.push_back(var);
+	}
+
 	clear_subClusters();
-	constraintGraph g(mConstraints, mVariables);
+	constraintGraph g(liveConstraints, liveVars);
 
 	std::vector<int> constr_clust(0), var_clust(0);
 	int num_clusters = g.connected_clusters(constr_clust, var_clust);
@@ -88,8 +114,8 @@ void constraintSystem::breakDown_problem()
 		int ind = constr_clust[i];
 		if(ind >= mSubClusters.size())
 			continue;
-		for(size_t j = 0; j < mConstraints[i]->n_equs(); ++j) {
-			mSubClusters[ind]->add_equ(mConstraints[i]->equ(j));
+		for(size_t j = 0; j < liveConstraints[i]->n_equs(); ++j) {
+			mSubClusters[ind]->add_equ(liveConstraints[i]->equ(j));
 		}
 	}
 
@@ -97,7 +123,7 @@ void constraintSystem::breakDown_problem()
 		int ind = var_clust[i];
 		if(ind >= mSubClusters.size())
 			continue;
-		mSubClusters[ind]->add_var(mVariables[i]);
+		mSubClusters[ind]->add_var(liveVars[i]);
 	}
 
 	for(size_t i = 0; i < mSubClusters.size(); ++i) {
@@ -138,8 +164,11 @@ void constraintSystem::varDelta(std::map<var_ptr, float> first, std::vector<VarS
 {
 	delta.clear();
 	for(int i = 0; i < mVariables.size(); ++i) {
-		if(mVariables[i]->exists() && first.find(mVariables[i]) != first.end())
-			delta.push_back(VarState(mVariables[i], mVariables[i]->eval()));
+		if(mVariables[i]->exists() && first.find(mVariables[i]) != first.end()) {
+			float diff = mVariables[i]->eval() - first[mVariables[i]];
+			if(diff != 0.0f)
+				delta.push_back(VarState(mVariables[i], diff));
+		}
 	}
 }
 

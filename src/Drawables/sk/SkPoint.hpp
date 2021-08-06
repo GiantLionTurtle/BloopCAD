@@ -31,6 +31,8 @@ public:
 	void set_annotOffset(SkSprite* sp, int ind);
 
 	void set(glm::vec2 pt);
+
+	std::vector<var_ptr> all_vars();
 protected:
 	void init_impl();
 	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);

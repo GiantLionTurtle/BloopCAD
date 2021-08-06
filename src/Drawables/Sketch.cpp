@@ -112,15 +112,16 @@ void Sketch::unselect_all()
 	}
 }
 
-void Sketch::add_geometry(SkGeometry* ent)
+void Sketch::add_geometry(SkGeometry* geom)
 {
-	if(!ent) {
+	if(!geom) {
 		LOG_WARNING("Trying to add null geometry.");
 		return;
 	}
 	set_need_redraw();
-	ent->set_parent(this);
-	mDrawList.add_geom(ent);
+	if(!geom->fixed())
+		mSystem.add_variables(geom->all_vars());
+	mDrawList.add_geom(geom);	
 }
 
 // void Sketch::add_selectedGeometry(sketchEntity* ent)
@@ -173,7 +174,7 @@ bool Sketch::add_constraint(SkConstraint* constr, SkDrawable* immovable_hint)
 	mDrawList.add_constr(constr);
 	mSystem.add_constraint(constr);
 	// constr->set_parent(this);
-	// mHandle->update_name(mName + "(" + std::to_string(mSystem.num_constraints()) + ",  " + std::to_string(mSystem.num_variables()) + ")");
+	mHandle->update_name(mName + "(" + std::to_string(mSystem.num_constraints()) + ",  " + std::to_string(mSystem.num_variables()) + ")");
 
 	if(immovable_hint) {
 		// BLOOPBLOOPCHECK

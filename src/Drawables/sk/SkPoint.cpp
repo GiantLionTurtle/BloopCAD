@@ -62,6 +62,11 @@ void SkPoint::set(glm::vec2 pt)
 	mY->set(pt.y);
 }
 
+std::vector<var_ptr> SkPoint::all_vars()
+{
+	return { mX, mY };
+}
+
 void SkPoint::init_impl()
 {
     mNeed_update = false;

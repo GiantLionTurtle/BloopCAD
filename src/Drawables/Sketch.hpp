@@ -89,7 +89,7 @@ public:
 	std::shared_ptr<serial_action> delete_selected(); 
 	void unselect_all();
 
-	void add_geometry(SkGeometry* ent);
+	void add_geometry(SkGeometry* geom);
 	
 	// void add_toolPreview(Drawable* ent);
 	// void clear_toolPreview();

@@ -46,7 +46,9 @@ public:
 		SkConstraint(baseplane_, vars, equs)
 	{
 		for(int i = 0; i < nA; ++i) {
-			pT::mDrawList.set(i, new SkSprite(baseplane_, glm::vec2(40, 40), spritePath));
+			SkSprite* sprite = new SkSprite(baseplane_, glm::vec2(40, 40), spritePath);
+			sprite->set_notif_on_exists(true);
+			pT::mDrawList.set(i, sprite);
 		}
 	}
 	void notify(Drawable* who, int msg, bool child)

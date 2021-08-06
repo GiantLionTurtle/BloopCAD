@@ -55,6 +55,8 @@ public:
 	}
 	virtual void set_annotPos(SkSprite* sp) = 0;
 	virtual void set_annotOffset(SkSprite* sp, int ind) = 0;
+
+	virtual std::vector<var_ptr> all_vars() { return {}; };
 protected:
 	virtual void select_impl(bool sel)
 	{
@@ -81,6 +83,16 @@ public:
 
 		if(should_select != selected())
 			set_selected(should_select);
+	}
+protected:
+	void exists_impl(bool ex)
+	{
+		for(auto v : all_vars()) {
+			v->set_exists(ex);
+		}
+		for(auto a : mAnnots) {
+			a->set_exists(ex);
+		}
 	}
 };
 

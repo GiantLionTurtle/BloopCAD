@@ -6,13 +6,14 @@
 #include "constraint.hpp"
 
 #include <map>
+#include <set>
 
 class constraintSystem {
 private:
 	std::vector<constraint_abstr*> mConstraints;
 	std::vector<var_ptr> mVariables;
-	std::map<constraint_abstr*, std::vector<var_ptr>> mConstrToVars;
-	std::map<var_ptr, std::vector<constraint_abstr*>> mVarsToConstr;
+	// std::map<constraint_abstr*, std::vector<var_ptr>> mConstrToVars;
+	// std::map<var_ptr, std::vector<constraint_abstr*>> mVarsToConstr;
 
 	bool mBrokenDown;
 	std::vector<equationsCluster*> mSubClusters;
@@ -27,6 +28,8 @@ public:
 
 	bool satisfied();
 	void add_constraint(constraint_abstr* constr);
+	void add_variable(var_ptr v);
+	void add_variables(std::vector<var_ptr> v);
 	void toggle_constraint(constraint_abstr* constr, bool enable);
 
 	int solve();
