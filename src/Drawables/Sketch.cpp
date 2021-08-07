@@ -226,9 +226,9 @@ std::map<var_ptr, float> Sketch::snapshot()
 	mSystem.varState(shot);
 	return shot;
 }
-std::vector<VarState> Sketch::deltaSnapshot(std::map<var_ptr, float> first)
+std::vector<VarDualState> Sketch::deltaSnapshot(std::map<var_ptr, float> first)
 {
-	std::vector<VarState> delta;
+	std::vector<VarDualState> delta;
 	mSystem.varDelta(first, delta);
 	return delta;
 }
@@ -244,18 +244,13 @@ void Sketch::apply_snapshot(std::vector<VarState> shot)
 		vst.var->set(vst.st);
 	}
 }
-void Sketch::apply_deltaSnapshot(std::vector<VarState> deltaShot)
+void Sketch::apply_deltaSnapshot(std::vector<VarDualState> deltaShot, bool first)
 {
 	for(auto vst : deltaShot) {
-		vst.var->set(vst.var->eval() + vst.st);
+		vst.var->set(first ? vst.st1 : vst.st2);
 	}
 }
-void Sketch::apply_invDeltaSnapshot(std::vector<VarState> deltaShot)
-{
-	for(auto vst : deltaShot) {
-		vst.var->set(vst.var->eval() - vst.st);
-	}
-}
+
 void Sketch::backup_system()
 {
 	mSystem.varState(mSystemBackup);

@@ -160,14 +160,14 @@ void constraintSystem::varState(std::map<var_ptr, float>& state)
 			state[mVariables[i]] = mVariables[i]->eval();
 	}
 }
-void constraintSystem::varDelta(std::map<var_ptr, float> first, std::vector<VarState>& delta)
+void constraintSystem::varDelta(std::map<var_ptr, float> first, std::vector<VarDualState>& delta)
 {
 	delta.clear();
 	for(int i = 0; i < mVariables.size(); ++i) {
 		if(mVariables[i]->exists() && first.find(mVariables[i]) != first.end()) {
 			float diff = mVariables[i]->eval() - first[mVariables[i]];
 			if(diff != 0.0f)
-				delta.push_back(VarState(mVariables[i], diff));
+				delta.push_back(VarDualState(mVariables[i], mVariables[i]->eval(), first[mVariables[i]]));
 		}
 	}
 }

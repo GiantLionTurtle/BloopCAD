@@ -118,11 +118,10 @@ public:
 	bool update_constraints(bool safeUpdate, bool update_on_solveFail);
 
 	std::map<var_ptr, float> snapshot();
-	std::vector<VarState> deltaSnapshot(std::map<var_ptr, float> first);
+	std::vector<VarDualState> deltaSnapshot(std::map<var_ptr, float> first);
 	static void apply_snapshot(std::map<var_ptr, float> shot);
 	static void apply_snapshot(std::vector<VarState> shot);
-	static void apply_deltaSnapshot(std::vector<VarState> deltaShot);
-	static void apply_invDeltaSnapshot(std::vector<VarState> deltaShot);
+	static void apply_deltaSnapshot(std::vector<VarDualState> deltaShot, bool first);
 	void backup_system();
 	void revert_system_to_backup();
 

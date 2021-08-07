@@ -43,7 +43,7 @@ public:
 	var_ptr var(size_t ind) { return mVariables[ind]; }
 	void varState(std::vector<VarState>& state);
 	void varState(std::map<var_ptr, float>& state);
-	void varDelta(std::map<var_ptr, float> first, std::vector<VarState>& delta);
+	void varDelta(std::map<var_ptr, float> first, std::vector<VarDualState>& delta);
 
 	void updatedSystem() { mBrokenDown = false; }
 

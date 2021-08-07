@@ -203,6 +203,22 @@ struct VarState {
 	float st;
 };
 
+struct VarDualState {
+	VarDualState(var_ptr v, float s1, float s2):
+		var(v),
+		st1(s1),
+		st2(s2)
+	{}
+	VarDualState():
+		var(nullptr),
+		st1(0.0f),
+		st2(0.0f)
+	{}
+	var_ptr var;
+	float st1, st2;
+};
+
+
 class expression_plus : public unary_expression {
 public:
 	expression_plus(expression_ptr operand);
