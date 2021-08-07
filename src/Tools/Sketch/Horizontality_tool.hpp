@@ -10,7 +10,7 @@ public:
 
 	std::string name() { return "horizontality"; }
 // protected:
-	int could_add_entity(SkDrawable* ent);
+	int could_add_geom(SkDrawable* geom);
 
 	void create_constraint(SkConstraint*& constr, SkDrawable*& priority_ent);
 };

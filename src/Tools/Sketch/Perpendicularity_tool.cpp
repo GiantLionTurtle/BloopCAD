@@ -12,15 +12,15 @@ Perpendicularity_tool::Perpendicularity_tool(sketchDesign* env):
 	load_icon("resources/textures/images/icons/sketch/cursors/perpendicularity_cursor.png");
 }
 
-int Perpendicularity_tool::could_add_entity(SkDrawable* ent)
+int Perpendicularity_tool::could_add_geom(SkDrawable* geom)
 {
-	if(!ent) {
+	if(!geom) {
 		return add_states::COULDNT_ADD;
 	} else if(mEntA) {
-		if(is_line(ent))
+		if(is_line(geom))
 			return add_states::WOULD_BE_COMPLETE;
 	} else {
-		if(is_line(ent)) {
+		if(is_line(geom)) {
 			return add_states::COULD_ADD;
 		}
 	}

@@ -38,9 +38,9 @@ bool Constraint_tool::manage_button_press(GdkEventButton* event)
 	glm::vec2 screenPos = glm::vec2(event->x, event->y);
 	SkDrawable* ent = mEnv->target()->closest_draggable(screenPos, mEnv->state()->cam.get(), mFilter).ent;
 	
-	int ent_state = could_add_entity(ent);
+	int ent_state = could_add_geom(ent);
 	if(ent_state > add_states::COULDNT_ADD) {
-		add_entity(ent);
+		add_geom(ent);
 		ent->select();
 		if(ent_state == add_states::WOULD_BE_COMPLETE) {
 			add_constraint();
@@ -63,7 +63,7 @@ bool Constraint_tool::manage_mouse_move(GdkEventMotion* event)
 		if(mCurrentHover) {
 			mCurrentHover->set_hover(false);
 		}
-		if(could_add_entity(ent)) {
+		if(could_add_geom(ent)) {
 			ent->set_hover(true);
 		}
 		mCurrentHover = ent;
@@ -71,12 +71,12 @@ bool Constraint_tool::manage_mouse_move(GdkEventMotion* event)
 	return true;
 }
 
-void Constraint_tool::add_entity(SkDrawable* ent)
+void Constraint_tool::add_geom(SkDrawable* geom)
 {
 	if(!mEntA) {
-		mEntA = ent;
+		mEntA = geom;
 	} else {
-		mEntB = ent;
+		mEntB = geom;
 	}
 }
 void Constraint_tool::add_constraint()
@@ -92,6 +92,11 @@ void Constraint_tool::add_constraint()
 		std::make_shared<applySnapshot_action>(mEnv->target()->deltaSnapshot(snp), true),
 		std::make_shared<toggleConstraint_action>(mEnv->target(), constr, true)
 	})));
+	clear_geometries();
+}
+
+void Constraint_tool::clear_geometries()
+{
 	mEntA = nullptr;
 	mEntB = nullptr;
 }

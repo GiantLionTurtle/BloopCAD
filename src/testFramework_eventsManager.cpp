@@ -73,39 +73,39 @@ void test_eventsManager::do_test()
 			break;
 		case 6:
 			mBloopWindow->sketchWorkspace()->coincidence()->init();			
-			mBloopWindow->sketchWorkspace()->coincidence()->add_entity(mPoints[0]);
-			mBloopWindow->sketchWorkspace()->coincidence()->add_entity(mPoints[4]);
+			mBloopWindow->sketchWorkspace()->coincidence()->add_geom(mPoints[0]);
+			mBloopWindow->sketchWorkspace()->coincidence()->add_geom(mPoints[4]);
 			mBloopWindow->sketchWorkspace()->coincidence()->add_constraint();
 			mBloopWindow->sketchWorkspace()->coincidence()->finish();
 			mTestStep = 6;
 			break;
 		case 7:
 			mBloopWindow->sketchWorkspace()->horizontality()->init();
-			mBloopWindow->sketchWorkspace()->horizontality()->add_entity(mLines[0]);
+			mBloopWindow->sketchWorkspace()->horizontality()->add_geom(mLines[0]);
 			mBloopWindow->sketchWorkspace()->horizontality()->add_constraint();
 			mBloopWindow->sketchWorkspace()->horizontality()->finish();
 			mTestStep = 7;
 			break;
 		case 8:
 			mBloopWindow->sketchWorkspace()->perpendicularity()->init();
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_entity(mLines[0]);
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_entity(mLines[1]);
+			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[0]);
+			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[1]);
 			mBloopWindow->sketchWorkspace()->perpendicularity()->add_constraint();
 			mBloopWindow->sketchWorkspace()->perpendicularity()->finish();
 			mTestStep = 8;
 			break;
 		case 9:
 			mBloopWindow->sketchWorkspace()->perpendicularity()->init();
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_entity(mLines[1]);
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_entity(mLines[2]);
+			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[1]);
+			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[2]);
 			mBloopWindow->sketchWorkspace()->perpendicularity()->add_constraint();
 			mBloopWindow->sketchWorkspace()->perpendicularity()->finish();
 			mTestStep = 9;
 			break;
 		case 10:
 			mBloopWindow->sketchWorkspace()->perpendicularity()->init();
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_entity(mLines[2]);
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_entity(mLines[3]);
+			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[2]);
+			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[3]);
 			mBloopWindow->sketchWorkspace()->perpendicularity()->add_constraint();
 			mBloopWindow->sketchWorkspace()->perpendicularity()->finish();
 			mTestStep = 10;

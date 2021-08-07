@@ -13,19 +13,19 @@ Coincidence_tool::Coincidence_tool(sketchDesign* env):
 	load_icon("resources/textures/images/icons/sketch/cursors/coincidence_cursor.png");
 }
 
-int Coincidence_tool::could_add_entity(SkDrawable* ent)
+int Coincidence_tool::could_add_geom(SkDrawable* geom)
 {
-	if(!ent) {
+	if(!geom) {
 		return add_states::COULDNT_ADD;
 	} else if(mEntA) {
-		if(is_curve(mEntA) && is_point(ent)) {
+		if(is_curve(mEntA) && is_point(geom)) {
 			return add_states::WOULD_BE_COMPLETE;
-		} else if(is_point(mEntA) && is_point_or_curve(ent)) {
+		} else if(is_point(mEntA) && is_point_or_curve(geom)) {
 			return add_states::WOULD_BE_COMPLETE;
 		}
 		return add_states::COULDNT_ADD;
 	} else {
-		return is_point_or_curve(ent) ? add_states::COULD_ADD : add_states::COULDNT_ADD;
+		return is_point_or_curve(geom) ? add_states::COULD_ADD : add_states::COULDNT_ADD;
 	}
 }
 

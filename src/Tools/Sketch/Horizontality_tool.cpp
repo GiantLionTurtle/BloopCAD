@@ -11,17 +11,17 @@ Horizontality_tool::Horizontality_tool(sketchDesign* env):
 	load_icon("resources/textures/images/icons/sketch/cursors/horizontality_cursor.png");
 }
 
-int Horizontality_tool::could_add_entity(SkDrawable* ent)
+int Horizontality_tool::could_add_geom(SkDrawable* geom)
 {
-	if(!ent) {
+	if(!geom) {
 		return add_states::COULDNT_ADD;
 	} else if(mEntA) {
-		if(is_point(ent))
+		if(is_point(geom))
 			return add_states::WOULD_BE_COMPLETE;
 	} else {
-		if(is_point(ent)) {
+		if(is_point(geom)) {
 			return add_states::COULD_ADD;
-		} else if(is_line(ent)) {
+		} else if(is_line(geom)) {
 			return add_states::WOULD_BE_COMPLETE;
 		}
 	}
