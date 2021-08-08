@@ -2,8 +2,8 @@
 #include "Sketch.hpp"
 
 #include <constraintsSolver/solverState.hpp>
-#include "sk/SkPoint.hpp"
-#include "sk/SkLine.hpp"
+#include "Sk/SkPoint.hpp"
+#include "Sk/SkLine.hpp"
 #include <actions/common/serial_action.hpp>
 #include <actions/common/moveCamera_action.hpp>
 #include <actions/sketchDesign/enterSketchDesign_action.hpp>

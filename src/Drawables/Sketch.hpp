@@ -6,9 +6,9 @@
 #include <geometry/geometry_3d/plane_abstr.hpp>
 #include <Drawables/Folder.hpp>
 #include <constraintsSolver/constraintSystem.hpp>
-#include "sk/SkDrawable.hpp"
-#include "sk/SkGeometry.hpp"
-#include "sk/SkConstraint.hpp"
+#include "Sk/SkDrawable.hpp"
+#include "Sk/SkGeometry.hpp"
+#include "Sk/SkConstraint.hpp"
 #include <actions/common/serial_action.hpp>
 
 #include <memory>

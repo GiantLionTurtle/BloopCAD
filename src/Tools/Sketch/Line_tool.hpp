@@ -4,8 +4,8 @@
 
 #include <Tools/Tool.hpp>
 
-#include <Drawables/sk/SkPoint.hpp>
-#include <Drawables/sk/SkLine.hpp>
+#include <Drawables/Sk/SkPoint.hpp>
+#include <Drawables/Sk/SkLine.hpp>
 #include <workspaces/sketchDesign.hpp>
 
 #include <glm/glm.hpp>

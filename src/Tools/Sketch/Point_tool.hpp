@@ -4,7 +4,7 @@
 
 #include <Tools/Tool.hpp>
 
-#include <Drawables/sk/SkPoint.hpp>
+#include <Drawables/Sk/SkPoint.hpp>
 #include <workspaces/sketchDesign.hpp>
 
 class Point_tool : public tool<sketchDesign> {

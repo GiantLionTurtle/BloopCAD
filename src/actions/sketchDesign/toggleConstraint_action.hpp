@@ -5,7 +5,7 @@
 #include <actions/action.hpp>
 
 #include <Drawables/Sketch.hpp>
-#include <Drawables/sk/SkConstraint.hpp>
+#include <Drawables/Sk/SkConstraint.hpp>
 
 class toggleConstraint_action : public action {
 private:

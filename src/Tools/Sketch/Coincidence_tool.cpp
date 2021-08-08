@@ -1,8 +1,8 @@
 
 #include "Coincidence_tool.hpp"
 
-#include <Drawables/sk/SkPoint.hpp>
-#include <Drawables/sk/SkConstraint.hpp>
+#include <Drawables/Sk/SkPoint.hpp>
+#include <Drawables/Sk/SkConstraint.hpp>
 #include <actions/sketchDesign/toggleConstraint_action.hpp>
 #include <document.hpp>
 

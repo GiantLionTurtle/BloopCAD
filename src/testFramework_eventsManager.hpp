@@ -4,8 +4,8 @@
 
 #include "eventsManager.hpp"
 
-#include <Drawables/sk/SkLine.hpp>
-#include <Drawables/sk/SkPoint.hpp>
+#include <Drawables/Sk/SkLine.hpp>
+#include <Drawables/Sk/SkPoint.hpp>
 
 class test_eventsManager : public stimuli_eventsManager {
 private:

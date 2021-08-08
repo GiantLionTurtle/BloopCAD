@@ -1,6 +1,6 @@
 
-#include <Drawables/sk/SkDrawable.hpp>
-#include <Drawables/sk/SkSelRect.hpp>
+#include <Drawables/Sk/SkDrawable.hpp>
+#include <Drawables/Sk/SkSelRect.hpp>
 #include <workspaces/sketchDesign.hpp>
 
 class SketchDefault_tool : public tool<sketchDesign> {

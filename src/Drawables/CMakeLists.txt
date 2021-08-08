@@ -1,5 +1,5 @@
 add_subdirectory(tangibleEntities)
-add_subdirectory(sk)
+add_subdirectory(Sk)
 
 set(Drawables_source_files
   Drawable.cpp

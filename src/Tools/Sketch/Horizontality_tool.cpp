@@ -1,7 +1,7 @@
 
 #include "Horizontality_tool.hpp"
 
-#include <Drawables/sk/SkLine.hpp>
+#include <Drawables/Sk/SkLine.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 
