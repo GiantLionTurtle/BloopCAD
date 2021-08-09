@@ -7,7 +7,7 @@
 #include <Drawables/Collection.hpp>
 #include "SkGeometry.hpp"
 
-template<size_t nH>
+template<size_t nH, typename Curve>
 class SkHandleCurve_FixedIndexer : public Indexer_abstr {
 public:
 	template<typename eT>
@@ -15,8 +15,9 @@ public:
 
 	using HandlesVec = HandlesTemplate<glm::vec2>;
 	using HandlesPoint = HandlesTemplate<SkPoint*>;
+	using cT = Curve;
 private:
-	SkCurve_abstr* mCurve;
+	Curve* mCurve;
 	HandlesPoint mHandles;
 	int mInitInd;
 public:
@@ -44,7 +45,7 @@ public:
 			return mHandles.at(ind-1);
 		}
 	}
-	SkCurve_abstr* curve() { return mCurve; }
+	Curve* curve() { return mCurve; }
 	std::array<SkPoint*, nH>& handles() { return mHandles; }
 
 	bool has_newElems() { return mInitInd < size(); }
@@ -63,7 +64,7 @@ public:
 		if(ind+1 < mInitInd)
 			mInitInd = ind+1;
 	}
-	void set_curve(SkCurve_abstr* elem)
+	void set_curve(Curve* elem)
 	{
 		mCurve = elem;
 		if(0 < mInitInd)
@@ -72,11 +73,12 @@ public:
 };
 
 // SkHandleCurve represents a curve and it's handle points
-template<typename Container, typename Curve>
+template<typename Container>
 class SkHandleCurve : public SkGeometry, public Collection_abstr<Container, true> {
 public:
 	using pT = Collection_abstr<Container, true>;
 	using pointIndexer = typename Container::HandlesVec;
+	using Curve = typename Container::cT;
 	SkHandleCurve(pointIndexer handles, Geom3d::plane_abstr* pl, bool fixed_):
 		SkGeometry(pl, fixed_)
 	{
@@ -92,7 +94,7 @@ public:
 
 	size_t num_handles() { return pT::mDrawList.handles().size(); }
 	SkPoint* handle(size_t ind) { return pT::mDrawList.handles().at(ind); }
-	SkCurve_abstr* curve() { return pT::mDrawList.curve(); }
+	Curve* curve() { return pT::mDrawList.curve(); }
 
 	void notify(Drawable* who, int msg, bool child)
 	{

@@ -10,10 +10,10 @@ namespace Geom2d {
 
 class Point_abstr;
 class Line_abstr;
-class circle_abstr;
+class Circle_abstr;
 using Point_abstr_ptr = std::shared_ptr<Point_abstr>;
 using Line_abstr_ptr = std::shared_ptr<Line_abstr>;
-using circle_abstr_ptr = std::shared_ptr<circle_abstr>;
+using Circle_abstr_ptr = std::shared_ptr<Circle_abstr>;
 
 class Geom2d_abstr {
 public:

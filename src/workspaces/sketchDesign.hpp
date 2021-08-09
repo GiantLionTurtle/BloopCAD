@@ -16,10 +16,10 @@ class sketchDesign : public workspace {
 protected:
 	std::shared_ptr<Pan2d_tool> 				mPan3d_tool;
 	std::shared_ptr<Zoom2d_tool> 				mZoom3d_tool;
-	std::shared_ptr<SketchDefault_tool> 	mSketchDefault_tool;
+	std::shared_ptr<SketchDefault_tool> 		mSketchDefault_tool;
 	std::shared_ptr<Point_tool> 				mPoint_tool;
 	std::shared_ptr<Line_tool> 					mLine_tool;
-	// std::shared_ptr<Circle_tool> 				mCircle_tool;
+	std::shared_ptr<Circle_tool> 				mCircle_tool;
 	std::shared_ptr<Coincidence_tool> 			mCoincidence_tool;
 	std::shared_ptr<Verticality_tool> 			mVerticality_tool;
 	std::shared_ptr<Horizontality_tool> 		mHorizontality_tool;

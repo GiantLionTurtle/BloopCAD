@@ -33,7 +33,7 @@ void Sketch::init_impl()
 	add_geometry(new SkPoint(glm::vec2(0.0f, 0.0f), mBasePlane, true));
 
 	mDrawList.init_newElems();
-	// add(std::make_shared<sketchCircle>(circle_abstract(std::make_shared<sketchPoint>(glm::vec2(0.75f, 0.75f), mBasePlane), var_ptr(new variable(0.5f))), mBasePlane));
+	// add(std::make_shared<sketchCircle>(Circle_abstract(std::make_shared<sketchPoint>(glm::vec2(0.75f, 0.75f), mBasePlane), var_ptr(new variable(0.5f))), mBasePlane));
 }
 
 void Sketch::notify(Drawable* who, int msg, bool child)

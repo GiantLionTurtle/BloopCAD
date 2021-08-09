@@ -1,7 +1,7 @@
 
 set(sk_source_files
 SkLineCurve.cpp
-SkLine.cpp
+SkCircleCurve.cpp
 SkPoint.cpp
 SkSelRect.cpp
 SkSprite.cpp

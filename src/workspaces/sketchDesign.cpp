@@ -36,7 +36,7 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 	mSketchDefault_tool 			= std::make_shared<SketchDefault_tool>(this);
 	mPoint_tool 					= std::make_shared<Point_tool>(this);
 	mLine_tool 						= std::make_shared<Line_tool>(this);
-	// mCircle_tool 				= std::make_shared<Circle_tool>(this);
+	mCircle_tool 					= std::make_shared<Circle_tool>(this);
 	mCoincidence_tool 				= std::make_shared<Coincidence_tool>(this);
 	mVerticality_tool 				= std::make_shared<Verticality_tool>(this);
 	mHorizontality_tool 			= std::make_shared<Horizontality_tool>(this);
@@ -165,8 +165,7 @@ bool sketchDesign::set_tool(int name)
 		to_set = mLine_tool;
 		break;
 	case TOOLIDS::TOOLID_CIRCLE:
-		// to_set = mCircle_tool;
-		to_set = nullptr;
+		to_set = mCircle_tool;
 		break;
 	case TOOLIDS::TOOLID_COINCIDENCE:
 		to_set = mCoincidence_tool;
@@ -231,8 +230,7 @@ void sketchDesign::begin_polygon()
 }
 void sketchDesign::begin_circle()
 {
-	LOG_WARNING("This tool is not available yet.");
-	// set_tool(TOOLIDS::TOOLID_CIRCLE);
+	set_tool(TOOLIDS::TOOLID_CIRCLE);
 }
 void sketchDesign::begin_threePointsArc()
 {

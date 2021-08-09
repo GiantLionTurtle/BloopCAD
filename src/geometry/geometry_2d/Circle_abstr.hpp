@@ -8,15 +8,16 @@
 
 namespace Geom2d {
 
-class circle_abstr : public Geom2d_abstr {
+class Circle_abstr : public virtual Geom2d_abstr {
 public:
-	circle_abstr();
-	virtual ~circle_abstr();
+	Circle_abstr();
+	virtual ~Circle_abstr();
 
-	virtual glm::vec2 posCenter() = 0;
-	virtual float valRadius() = 0;
+	virtual glm::vec2 center_pos() = 0;
+	virtual float radius_val() = 0;
 
 	virtual glm::vec2 at(float t);
+	virtual bool within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained) { return false; }
 
 	virtual glm::vec2 closest_to_point(glm::vec2 const& pt);
 	virtual float dist_to_point(glm::vec2 const& pt);

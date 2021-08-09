@@ -174,8 +174,26 @@ unsigned int Shader::compileShader(unsigned int type, std::string const& source)
 		std::string message;
 		message.reserve(length);
 		GLCall(glGetShaderInfoLog(id, length, &length, (GLchar*)message.c_str()));
+		std::string type_str = " UNKNOWN";
+		switch(type) {
+		case GL_VERTEX_SHADER:
+			type_str = "vertex shader";
+			break;
+		case GL_TESS_CONTROL_SHADER:
+			type_str = "tess control shader";
+			break;
+		case GL_TESS_EVALUATION_SHADER:
+			type_str = "tess evaluation shader";
+			break;
+		case GL_GEOMETRY_SHADER:
+			type_str = "geometry shader";
+			break;
+		case GL_FRAGMENT_SHADER:
+			type_str = "fragment shader";
+			break;
+		}
 		LOG_WARNING("Failed to compile " +
-			(type == GL_VERTEX_SHADER ? std::string("vertex") : (type == GL_FRAGMENT_SHADER ? std::string("fragment") : std::string("geometry")))
+			type_str
 			+ " Shader: " + message);
 		return 0;
 	}
