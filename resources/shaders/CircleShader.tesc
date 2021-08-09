@@ -3,7 +3,7 @@
 
 #version 400
 
-uniform int u_Outer1;
+uniform float u_Scale;
 layout(vertices = 1)  out;
 
 in vs_out {
@@ -30,5 +30,5 @@ void main()
 
     // Set tesselation level
     gl_TessLevelOuter[0] = 1.0; // Must be 1 because it renders a single curve
-    gl_TessLevelOuter[1] = float(u_Outer1); // TODO: calculate this instead of having it a fixed value
+    gl_TessLevelOuter[1] = 10 + pow(10, 5 * u_Scale) + pow(10, 5 * tscIn[gl_InvocationID].radius); // TODO: calculate this instead of having it a fixed value
 }

@@ -4,7 +4,7 @@
 
 #include "SkDrawable.hpp"
 
-#include <geometry/geometry_2d/Geom2d_abstr.hpp>
+#include <geometry/Geom2d/Geom2d_abstr.hpp>
 #include "SkSprite.hpp"
 
 #include <vector>

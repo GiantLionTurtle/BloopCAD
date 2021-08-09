@@ -1,5 +1,5 @@
 
-add_subdirectory(geometry_2d)
+add_subdirectory(Geom2d)
 add_subdirectory(geometry_3d)
 
 set(geometry_source_files
@@ -8,6 +8,6 @@ set(geometry_source_files
 add_library(geometry ${geometry_source_files})
 
 target_link_libraries(geometry
-  geometry_2d
+  Geom2d
   geometry_3d
   constraintsSolver)

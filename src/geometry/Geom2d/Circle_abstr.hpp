@@ -17,7 +17,7 @@ public:
 	virtual float radius_val() = 0;
 
 	virtual glm::vec2 at(float t);
-	virtual bool within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained) { return false; }
+	virtual bool within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained);
 
 	virtual glm::vec2 closest_to_point(glm::vec2 const& pt);
 	virtual float dist_to_point(glm::vec2 const& pt);

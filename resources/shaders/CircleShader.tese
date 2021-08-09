@@ -23,5 +23,7 @@ void main()
     vec4 w_vec = tseIn[0].w;
     float rad = tseIn[0].radius;
 
+    // The equation for parametric circle in 3d space taken from:
+    // https://math.stackexchange.com/questions/73237/parametric-equation-of-a-circle-in-3d-space
     gl_Position = p0 + rad * (cos(t) * v_vec + sin(t) * w_vec); 
 }

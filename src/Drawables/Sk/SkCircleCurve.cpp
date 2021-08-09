@@ -23,6 +23,7 @@ SkCircleCurve::SkCircleCurve(Geom3d::plane_abstr* pl, bool fixed_):
 	mRadius(std::make_shared<expression_var>(0.0f))
 {
 	set_name("SkCircleCurve");
+	mRadius->add_changeCallBack(this, std::bind(&SkCircleCurve::set_need_update, this));
 }
 
 SkCircleCurve::~SkCircleCurve()
@@ -91,11 +92,11 @@ void SkCircleCurve::draw_impl(Camera_ptr cam, int frame, draw_type type)
 	mShader->setUniform4f("u_Color", color);
 	mShader->setUniform1f("u_LineWidth", 5); 	// Line width is in pixel
 	mShader->setUniform1f("u_Feather", 0.6);	// Amount of feather, the formula might change so for the time being, higher is more feather
-	mShader->setUniform1i("u_Outer1", 100);
 
 	if(mShader->lastUsed() != frame) {
 		mShader->setUniformMat4f("u_MVP", cam->mvp());
 		mShader->setUniform2f("u_Viewport", cam->viewport());
+		mShader->setUniform1f("u_Scale", cam->fscale());
 		mShader->set_used(frame);
 	}
 

@@ -61,13 +61,13 @@ bool Circle_tool::manage_button_press(GdkEventButton* event)
 
 	if(!mStarted) {
 		// mEnv->state()->doc->make_glContext_current();
-		mCirclePreview = new SkCircle(circle_pos, 1.0f, target->basePlane(), false);
+		mCirclePreview = new SkCircle(circle_pos, 0.0f, target->basePlane(), false);
 		mEnv->state()->doc->set_toolPreview(mCirclePreview);
         mStarted = true;
 	} else {
 		target->add_geometry(mCirclePreview);
 		mEnv->state()->doc->push_action(std::make_shared<toggleBaseObject_action>(mCirclePreview, true)); // Doc is passed to activate glContext
-        // mCirclePreview->set_radius(glm::length(circle_pos - mCirclePreview->center_pos()));
+        mCirclePreview->set_radius(glm::length(circle_pos - mCirclePreview->center_pos()));
         mStarted = false;
 	}
 	return true;

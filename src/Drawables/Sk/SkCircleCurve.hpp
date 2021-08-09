@@ -5,7 +5,7 @@
 #include "SkGeometry.hpp"
 #include "SkCurve.hpp"
 #include <constraintsSolver/expression.hpp>
-#include <geometry/geometry_2d/Circle_abstr.hpp>
+#include <geometry/Geom2d/Circle_abstr.hpp>
 
 
 class SkCircleCurve : public Geom2d::Circle_abstr, public SkCurve<std::array<Geom2d::ExpressionPoint<var_ptr>*, 1>, SkCircleCurve> {

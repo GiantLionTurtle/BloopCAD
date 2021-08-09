@@ -24,7 +24,19 @@ glm::vec2 Circle_abstr::at(float t)
 	float angle = t * (M_PI * 2);
 	return center_pos() + glm::vec2(std::cos(angle), std::sin(angle)) * (float)radius_val();
 }
-
+bool Circle_abstr::within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
+{
+	if(contained) {
+		glm::vec2 c = center_pos();
+		float r = radius_val();
+		return top_left.x <= c.x - r && top_left.y >= c.y + r && bottom_right.x >= c.x + r && bottom_right.y <= c.y - r;
+	}
+	Geom2d::simple_line up(top_left, glm::vec2(bottom_right.x, top_left.y)),
+								down(glm::vec2(top_left.x, bottom_right.y), bottom_right),
+								// right(a, glm::vec2(a.x, b.y)),
+								left(glm::vec2(top_left.x, bottom_right.y), top_left);
+	return intersects(&up) || intersects(&down) /*|| intersects(&right)*/ || intersects(&left) || within(top_left, bottom_right, true);
+}
 glm::vec2 Circle_abstr::closest_to_point(glm::vec2 const& pt)
 {
 	glm::vec2 center_to_point = glm::normalize(pt - center_pos());

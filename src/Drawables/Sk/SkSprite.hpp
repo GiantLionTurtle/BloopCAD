@@ -3,7 +3,7 @@
 #define SKSPRITE_HPP_
 
 #include "SkDrawable.hpp"
-#include <geometry/geometry_2d/Point_abstr.hpp>
+#include <geometry/Geom2d/Point_abstr.hpp>
 #include <constraintsSolver/expression.hpp>
 #include <graphics_utils/Texture.hpp>
 

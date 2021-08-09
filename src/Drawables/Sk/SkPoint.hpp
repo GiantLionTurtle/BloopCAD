@@ -5,7 +5,7 @@
 #include "SkGeometry.hpp"
 #include <Drawables/Tangible.hpp>
 #include <constraintsSolver/expression.hpp>
-#include <geometry/geometry_2d/Point_abstr.hpp>
+#include <geometry/Geom2d/Point_abstr.hpp>
 
 #include <graphics_utils/VertexArray.hpp>
 #include <graphics_utils/VertexBuffer.hpp>
