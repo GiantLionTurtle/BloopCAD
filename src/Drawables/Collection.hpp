@@ -31,7 +31,7 @@ public:
 	}
 	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL)
 	{
-		for(size_t i = 0; i < num_children(); ++i) {
+		for(size_t i = 0; i < n_children(); ++i) {
 			auto ch = child(i);
 			child(i)->draw(cam, frame, type);
 		}
@@ -43,19 +43,19 @@ public:
 			mDrawList.init_newElems();
 		}
 
-		for(size_t i = 0; i < num_children(); ++i) {
+		for(size_t i = 0; i < n_children(); ++i) {
 			child(i)->update(linked);
 		}
 		if(notif_on_update())
 			notify_parent(UPDATED);
 	}
 
-	size_t num_children() { return mDrawList.size(); }
+	size_t n_children() { return mDrawList.size(); }
 	Drawable* child(size_t ind) { return mDrawList.at(ind); }
 
 	void select_within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
 	{
-		for(size_t i = 0; i < num_children(); ++i) {
+		for(size_t i = 0; i < n_children(); ++i) {
 			child(i)->select_within(top_left, bottom_right, contained);
 		}
 	}

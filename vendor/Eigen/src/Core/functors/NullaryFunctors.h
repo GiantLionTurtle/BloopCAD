@@ -42,8 +42,8 @@ template <typename Scalar, typename Packet, bool IsInteger> struct linspaced_op_
 template <typename Scalar, typename Packet>
 struct linspaced_op_impl<Scalar,Packet,/*IsInteger*/false>
 {
-  linspaced_op_impl(const Scalar& low, const Scalar& high, Index num_steps) :
-    m_low(low), m_high(high), m_size1(num_steps==1 ? 1 : num_steps-1), m_step(num_steps==1 ? Scalar() : (high-low)/Scalar(num_steps-1)),
+  linspaced_op_impl(const Scalar& low, const Scalar& high, Index n_steps) :
+    m_low(low), m_high(high), m_size1(n_steps==1 ? 1 : n_steps-1), m_step(n_steps==1 ? Scalar() : (high-low)/Scalar(n_steps-1)),
     m_flip(numext::abs(high)<numext::abs(low))
   {}
 
@@ -89,11 +89,11 @@ struct linspaced_op_impl<Scalar,Packet,/*IsInteger*/false>
 template <typename Scalar, typename Packet>
 struct linspaced_op_impl<Scalar,Packet,/*IsInteger*/true>
 {
-  linspaced_op_impl(const Scalar& low, const Scalar& high, Index num_steps) :
+  linspaced_op_impl(const Scalar& low, const Scalar& high, Index n_steps) :
     m_low(low),
-    m_multiplier((high-low)/convert_index<Scalar>(num_steps<=1 ? 1 : num_steps-1)),
-    m_divisor(convert_index<Scalar>((high>=low?num_steps:-num_steps)+(high-low))/((numext::abs(high-low)+1)==0?1:(numext::abs(high-low)+1))),
-    m_use_divisor(num_steps>1 && (numext::abs(high-low)+1)<num_steps)
+    m_multiplier((high-low)/convert_index<Scalar>(n_steps<=1 ? 1 : n_steps-1)),
+    m_divisor(convert_index<Scalar>((high>=low?n_steps:-n_steps)+(high-low))/((numext::abs(high-low)+1)==0?1:(numext::abs(high-low)+1))),
+    m_use_divisor(n_steps>1 && (numext::abs(high-low)+1)<n_steps)
   {}
 
   template<typename IndexType>
@@ -128,8 +128,8 @@ template <typename Scalar, typename PacketType> struct functor_traits< linspaced
 };
 template <typename Scalar, typename PacketType> struct linspaced_op
 {
-  linspaced_op(const Scalar& low, const Scalar& high, Index num_steps)
-    : impl((num_steps==1 ? high : low),high,num_steps)
+  linspaced_op(const Scalar& low, const Scalar& high, Index n_steps)
+    : impl((n_steps==1 ? high : low),high,n_steps)
   {}
 
   template<typename IndexType>

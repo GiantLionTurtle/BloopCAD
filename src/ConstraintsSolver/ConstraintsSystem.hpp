@@ -2,41 +2,37 @@
 #ifndef CONSTRAINTSYSTEM_HPP_
 #define CONSTRAINTSYSTEM_HPP_
 
-#include "equationsCluster.hpp"
-#include "constraint.hpp"
+#include "EquationsCluster.hpp"
+#include "Constraint_abstr.hpp"
 
 #include <map>
 #include <set>
 
-class constraintSystem {
+class ConstraintsSystem {
 private:
-	std::vector<constraint_abstr*> mConstraints;
+	std::vector<Constraint_abstr*> mConstraints;
 	std::vector<var_ptr> mVariables;
-	// std::map<constraint_abstr*, std::vector<var_ptr>> mConstrToVars;
-	// std::map<var_ptr, std::vector<constraint_abstr*>> mVarsToConstr;
+	std::vector<EquationsCluster*> mSubClusters;
 
 	bool mBrokenDown;
-	std::vector<equationsCluster*> mSubClusters;
-
-	int mAlgorithm;
-	int mNum_activeConstraints;
-
+	int mSolverType;
+	int mNum_liveConstrs, mNum_liveVars;
 	int mVerboseLevel;
 public:
-	constraintSystem(int verboseLevel = 0);
-	~constraintSystem();
+	ConstraintsSystem(int verboseLevel = 0);
+	~ConstraintsSystem();
 
 	bool satisfied();
-	void add_constraint(constraint_abstr* constr);
+	void add_constraint(Constraint_abstr* constr);
 	void add_variable(var_ptr v);
 	void add_variables(std::vector<var_ptr> v);
-	void toggle_constraint(constraint_abstr* constr, bool enable);
+	void toggle_constraint(Constraint_abstr* constr, bool enable);
 
 	int solve();
 	void breakDown_problem();
 
-	int solver() { return mAlgorithm; }
-	void set_solver(int algo) { mAlgorithm = algo; }
+	int solverType() { return mSolverType; }
+	void set_solverType(int type) { mSolverType = type; }
 
 	void clear_subClusters();
 
@@ -47,21 +43,21 @@ public:
 
 	void updatedSystem() { mBrokenDown = false; }
 
-	int num_constraints() { return mNum_activeConstraints; }
-	int num_variables() { return mVariables.size(); }
+	int n_constraints() { return mNum_liveConstrs; }
+	int n_variables() { return mNum_liveVars; }
 private:
-	class constraintGraph {
+	class ConstraintGraph {
 	public:
-		struct flagged_ent {
+		struct Flagged_node {
 			int flag;
 			int ind;
 		};
 	private:
-		std::vector<flagged_ent> mVert;
+		std::vector<Flagged_node> mVert;
 		std::map<int, std::vector<int>> mVertToVert;
-		int mNumConstr, mNumVar;
+		int mNum_Constrs, mNum_Vars;
 	public:
-		constraintGraph(std::vector<constraint_abstr*>& constrs, std::vector<var_ptr>& vars);
+		ConstraintGraph(std::vector<Constraint_abstr*>& constrs, std::vector<var_ptr>& vars);
 
 		int connected_clusters(std::vector<int>& constr_clust, std::vector<int>& var_clust);
 	private:	

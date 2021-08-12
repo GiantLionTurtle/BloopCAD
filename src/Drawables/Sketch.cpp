@@ -1,7 +1,7 @@
 
 #include "Sketch.hpp"
 
-#include <constraintsSolver/solverState.hpp>
+#include <ConstraintsSolver/SolverState.hpp>
 #include "Sk/SkPoint.hpp"
 #include "Sk/SkLine.hpp"
 #include <actions/common/serial_action.hpp>
@@ -21,7 +21,7 @@ Sketch::Sketch(Geom3d::plane_abstr* base_plane):
 	set_name("Sketch");
 	// create_origin();
 
-	// mSystem.set_solver(constraintSystem::LevenbergMarquardt);
+	// mSystem.set_solver(ConstraintsSystem::LevenbergMarquardt);
 }
 
 void Sketch::init_impl()
@@ -156,7 +156,7 @@ bool Sketch::can_delete(SkDrawable* ent)
 // {
 // 	glm::vec2 low_right(std::max(a.x, b.x), std::min(a.y, b.y)), high_left(std::min(a.x, b.x), std::max(a.y, b.y));
 
-// 	for(size_t i = 0; i < mDrawList.num_geom(); ++i) {
+// 	for(size_t i = 0; i < mDrawList.n_geom(); ++i) {
 // 		auto geom = mDrawList.geom(i);
 // 		bool in_sel = geom->in_selection_range(low_right, high_left, contained);
 // 		if(in_sel && !geom->selected()) {
@@ -174,7 +174,7 @@ bool Sketch::add_constraint(SkConstraint* constr, SkDrawable* immovable_hint)
 	mDrawList.add_constr(constr);
 	mSystem.add_constraint(constr);
 	// constr->set_parent(this);
-	mHandle->update_name(mName + "(" + std::to_string(mSystem.num_constraints()) + ",  " + std::to_string(mSystem.num_variables()) + ")");
+	mHandle->update_name(mName + "(" + std::to_string(mSystem.n_constraints()) + ",  " + std::to_string(mSystem.n_variables()) + ")");
 
 	if(immovable_hint) {
 		// BLOOPBLOOPCHECK
@@ -198,7 +198,7 @@ bool Sketch::toggle_constraint(SkConstraint* constr, bool enable)
 		return false;
 	constr->set_exists(enable);
 	mSystem.toggle_constraint(constr, enable);
-	mHandle->update_name(mName + "(" + std::to_string(mSystem.num_constraints()) + ",  " + std::to_string(mSystem.num_variables()) + ")");
+	mHandle->update_name(mName + "(" + std::to_string(mSystem.n_constraints()) + ",  " + std::to_string(mSystem.n_variables()) + ")");
 
 	if(update_constraints(true, false))
 		return true;
@@ -212,12 +212,12 @@ bool Sketch::update_constraints(bool safeUpdate, bool update_on_solveFail)
 	if(safeUpdate)
 		backup_system();
 	int solve_out = mSystem.solve();
-	if(update_on_solveFail || solve_out == solverState::SUCCESS) {
+	if(update_on_solveFail || solve_out == SolverState::SUCCESS) {
 		set_need_update();
-	} else if(safeUpdate && solve_out != solverState::SUCCESS) {
+	} else if(safeUpdate && solve_out != SolverState::SUCCESS) {
 		revert_system_to_backup();
 	}
-	return solve_out == solverState::SUCCESS;
+	return solve_out == SolverState::SUCCESS;
 }
 
 std::map<var_ptr, float> Sketch::snapshot()

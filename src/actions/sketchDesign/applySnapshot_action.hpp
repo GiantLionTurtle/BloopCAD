@@ -3,7 +3,7 @@
 #define APPLYSNAPSHOT_ACTION_HPP_
 
 #include <actions/action.hpp>
-#include <constraintsSolver/expression.hpp>
+#include <ConstraintsSolver/Expression.hpp>
 
 class applySnapshot_action : public action {
 private:

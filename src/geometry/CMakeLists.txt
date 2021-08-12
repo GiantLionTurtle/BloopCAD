@@ -10,4 +10,4 @@ add_library(geometry ${geometry_source_files})
 target_link_libraries(geometry
   Geom2d
   geometry_3d
-  constraintsSolver)
+  ConstraintsSolver)

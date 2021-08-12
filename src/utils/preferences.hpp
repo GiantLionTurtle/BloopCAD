@@ -56,10 +56,10 @@ public:
 	void add_callback(std::string const& pref, std::function<void(float)> func);
 	void add_callback(std::string const& pref, std::function<void(glm::vec3)> func);
 
-	int num_callback_float(std::string const& pref);
-	int num_callback_long(std::string const& pref);
-	int num_callback_vec3(std::string const& pref);
-	int num_callback(std::string const& pref);
+	int n_callback_float(std::string const& pref);
+	int n_callback_long(std::string const& pref);
+	int n_callback_vec3(std::string const& pref);
+	int n_callback(std::string const& pref);
 
 	/*
 		@function get_long gives a preference value in the long register

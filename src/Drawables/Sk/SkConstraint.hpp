@@ -5,8 +5,8 @@
 #include "SkDrawable.hpp"
 #include "SkSprite.hpp"
 #include <Drawables/Collection.hpp>
-#include <constraintsSolver/constraint.hpp>
-#include <constraintsSolver/expression.hpp>
+#include <ConstraintsSolver/Constraint_abstr.hpp>
+#include <ConstraintsSolver/Expression.hpp>
 #include <utils/DebugUtils.hpp>
 
 #include <array>
@@ -16,7 +16,7 @@ class SkPoint;
 class SkLineCurve;
 // class SkCircle;
 
-class SkConstraint : public SkDrawable, public constraint_abstr {
+class SkConstraint : public SkDrawable, public Constraint_abstr {
 protected:
 	std::vector<equ_ptr> mEqus;
 	std::vector<var_ptr> mVars;
@@ -155,48 +155,48 @@ public:
 class SkLine_length : public SkConstraint {
 private:
 	SkLineCurve* mLine; // Handle to the geometry involved, not used yet but might get handy
-	expression_ptr mLength; // Handle to the length value, migue be useful
+	exp_ptr mLength; // Handle to the length value, migue be useful
 public:
-	SkLine_length(Geom3d::plane_abstr* baseplane_, SkLineCurve* l, expression_ptr length);
+	SkLine_length(Geom3d::plane_abstr* baseplane_, SkLineCurve* l, exp_ptr length);
 };
 class SkPointPoint_horizontalDistance : public SkConstraint {
 private:
 	SkPoint* mP1, *mP2; // Handles to the geometries involved, not used yet but might get handy
-	expression_ptr mDistance; // Handle to the length value, migue be useful
+	exp_ptr mDistance; // Handle to the length value, migue be useful
 public:
 	SkPointPoint_horizontalDistance(Geom3d::plane_abstr* baseplane_, 
-	SkPoint* p1, SkPoint* p2, expression_ptr dist);
+	SkPoint* p1, SkPoint* p2, exp_ptr dist);
 	std::string name() { return "SkPointPoint_horizontalDistance"; }
 };
 class SkPointPoint_verticalDistance : public SkConstraint {
 private:
 	SkPoint* mP1, *mP2; // Handles to the geometries involved, not used yet but might get handy
-	expression_ptr mDistance; // Handle to the length value, migue be useful
+	exp_ptr mDistance; // Handle to the length value, migue be useful
 public:
 	SkPointPoint_verticalDistance(Geom3d::plane_abstr* baseplane_, 
-	SkPoint* p1, SkPoint* p2, expression_ptr dist);
+	SkPoint* p1, SkPoint* p2, exp_ptr dist);
 	std::string name() { return "SkPointPoint_verticalDistance"; }
 };
 class SkPointLine_distance_abstr : public SkConstraint {
 public:
-	SkPointLine_distance_abstr(Geom3d::plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, expression_ptr dist);
+	SkPointLine_distance_abstr(Geom3d::plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist);
 };
 class SkPointLine_distance : public SkPointLine_distance_abstr {
 private:
 	SkPoint* mPoint;
 	SkLineCurve* mLine;
-	expression_ptr mDistance;
+	exp_ptr mDistance;
 public:
-	SkPointLine_distance(Geom3d::plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, expression_ptr dist);
+	SkPointLine_distance(Geom3d::plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist);
 	std::string name() { return "SkPointLine_distance"; }
 };
 // class SkCircleLine_distance : public SkPointLine_distance_abstr {
 // private:
 // 	sketchCircle_ptr mCircle;
 // 	SkLineCurve* mLine;
-// 	expression_ptr mDistance;
+// 	exp_ptr mDistance;
 // public:
-// 	SkCircleLine_distance(Geom3d::plane_abstr* baseplane_, sketchCircle_ptr c, SkLineCurve* l, expression_ptr dist);
+// 	SkCircleLine_distance(Geom3d::plane_abstr* baseplane_, sketchCircle_ptr c, SkLineCurve* l, exp_ptr dist);
 // 	std::string name() { return "SkCircleLine_distance"; }
 // };
 
@@ -221,9 +221,9 @@ public:
 // private:
 // 	sketchCircle_ptr mCircle;
 // 	SkLineCurve* mLine;
-// 	expression_ptr mDistance;
+// 	exp_ptr mDistance;
 // public:
-// 	circleLine_coincidence(Geom3d::plane_abstr* baseplane_, sketchCircle_ptr c, SkLineCurve* l, expression_ptr dist):
+// 	circleLine_coincidence(Geom3d::plane_abstr* baseplane_, sketchCircle_ptr c, SkLineCurve* l, exp_ptr dist):
 // 		SkSprite_constraint<2>({ c->center()->x(), c->center()->y(), l->A()->x(), l->A()->y(), l->B()->x(), l->B()->y()},
 // 		{ abs((l->B()->x()-l->A()->x())*(c->center()->y() - l->A()->y()) - (l->B()->y()-l->A()->y())*(c->center()->x() - 
 // 		l->A()->x())) / sqrt(l->length2()) - c->radius() }, 

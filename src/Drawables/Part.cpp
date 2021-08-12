@@ -89,13 +89,13 @@ void Part::add_sketch(Sketch* sk)
 
 void Part::show_origin()
 {
-	for(int i = 0; i < mDrawList.num_origin(); ++i) {
+	for(int i = 0; i < mDrawList.n_origin(); ++i) {
 		mDrawList.origin(i)->show();
 	}
 }
 void Part::hide_origin()
 {
-	for(int i = 0; i < mDrawList.num_origin(); ++i) {
+	for(int i = 0; i < mDrawList.n_origin(); ++i) {
 		mDrawList.origin(i)->hide();
 	}
 }

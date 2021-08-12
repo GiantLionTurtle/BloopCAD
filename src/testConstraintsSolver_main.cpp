@@ -5,12 +5,12 @@ int main()
 	return 0;
 }
 
-// // #include <constraintsSolver/DR_planner.hpp>
+// // #include <ConstraintsSolver/DR_planner.hpp>
 // #include <utils/DebugUtils.hpp>
 // #include <utils/preferences.hpp>
 // #include <utils/conversionsUtils.hpp>
-// #include <constraintsSolver/constraint.hpp>
-// #include <constraintsSolver/constraintSystem.hpp>
+// #include <ConstraintsSolver/Constraint_abstr.hpp>
+// #include <ConstraintsSolver/ConstraintsSystem.hpp>
 // #include <testFramework_eventsManager.hpp>
 
 // #include "bloop.hpp"
@@ -78,7 +78,7 @@ int main()
 // 	sketchLine_ptr l3 = std::make_shared<sketchLine>(C, D, pl);
 // 	sketchLine_ptr l4 = std::make_shared<sketchLine>(D, A, pl);
 
-// 	constraintSystem system;
+// 	ConstraintsSystem system;
 	
 // 	system.add_constraint(pointPoint_distance::make_coincident(l1->B(), l2->A()));
 // 	system.add_constraint(pointPoint_distance::make_coincident(l2->B(), l3->A()));
@@ -107,7 +107,7 @@ int main()
 // // 	sketchLine_ptr l1 = std::make_shared<sketchLine>(A, B, pl);
 // // 	sketchLine_ptr l2 = std::make_shared<sketchLine>(B, C, pl);
 
-// // 	constraintSystem system;
+// // 	ConstraintsSystem system;
 	
 // // 	// system.add_constraint(SkPointPoint_coincidence::make(l1->B(), l2->A()));
 

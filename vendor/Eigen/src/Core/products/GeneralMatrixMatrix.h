@@ -86,7 +86,7 @@ static void run(Index rows, Index cols, Index depth,
   {
     // this is the parallel version!
     int tid = omp_get_thread_num();
-    int threads = omp_get_num_threads();
+    int threads = omp_get_n_threads();
 
     LhsScalar* blockA = blocking.blockA();
     eigen_internal_assert(blockA!=0);
@@ -214,9 +214,9 @@ struct gemm_functor
     : m_lhs(lhs), m_rhs(rhs), m_dest(dest), m_actualAlpha(actualAlpha), m_blocking(blocking)
   {}
 
-  void initParallelSession(Index num_threads) const
+  void initParallelSession(Index n_threads) const
   {
-    m_blocking.initParallel(m_lhs.rows(), m_rhs.cols(), m_lhs.cols(), num_threads);
+    m_blocking.initParallel(m_lhs.rows(), m_rhs.cols(), m_lhs.cols(), n_threads);
     m_blocking.allocateA();
   }
 
@@ -302,7 +302,7 @@ class gemm_blocking_space<StorageOrder,_LhsScalar,_RhsScalar,MaxRows, MaxCols, M
 
   public:
 
-    gemm_blocking_space(Index /*rows*/, Index /*cols*/, Index /*depth*/, Index /*num_threads*/, bool /*full_rows = false*/)
+    gemm_blocking_space(Index /*rows*/, Index /*cols*/, Index /*depth*/, Index /*n_threads*/, bool /*full_rows = false*/)
     {
       this->m_mc = ActualRows;
       this->m_nc = ActualCols;
@@ -342,7 +342,7 @@ class gemm_blocking_space<StorageOrder,_LhsScalar,_RhsScalar,MaxRows, MaxCols, M
 
   public:
 
-    gemm_blocking_space(Index rows, Index cols, Index depth, Index num_threads, bool l3_blocking)
+    gemm_blocking_space(Index rows, Index cols, Index depth, Index n_threads, bool l3_blocking)
     {
       this->m_mc = Transpose ? cols : rows;
       this->m_nc = Transpose ? rows : cols;
@@ -350,19 +350,19 @@ class gemm_blocking_space<StorageOrder,_LhsScalar,_RhsScalar,MaxRows, MaxCols, M
 
       if(l3_blocking)
       {
-        computeProductBlockingSizes<LhsScalar,RhsScalar,KcFactor>(this->m_kc, this->m_mc, this->m_nc, num_threads);
+        computeProductBlockingSizes<LhsScalar,RhsScalar,KcFactor>(this->m_kc, this->m_mc, this->m_nc, n_threads);
       }
       else  // no l3 blocking
       {
         Index n = this->m_nc;
-        computeProductBlockingSizes<LhsScalar,RhsScalar,KcFactor>(this->m_kc, this->m_mc, n, num_threads);
+        computeProductBlockingSizes<LhsScalar,RhsScalar,KcFactor>(this->m_kc, this->m_mc, n, n_threads);
       }
 
       m_sizeA = this->m_mc * this->m_kc;
       m_sizeB = this->m_kc * this->m_nc;
     }
 
-    void initParallel(Index rows, Index cols, Index depth, Index num_threads)
+    void initParallel(Index rows, Index cols, Index depth, Index n_threads)
     {
       this->m_mc = Transpose ? cols : rows;
       this->m_nc = Transpose ? rows : cols;
@@ -370,7 +370,7 @@ class gemm_blocking_space<StorageOrder,_LhsScalar,_RhsScalar,MaxRows, MaxCols, M
 
       eigen_internal_assert(this->m_blockA==0 && this->m_blockB==0);
       Index m = this->m_mc;
-      computeProductBlockingSizes<LhsScalar,RhsScalar,KcFactor>(this->m_kc, m, this->m_nc, num_threads);
+      computeProductBlockingSizes<LhsScalar,RhsScalar,KcFactor>(this->m_kc, m, this->m_nc, n_threads);
       m_sizeA = this->m_mc * this->m_kc;
       m_sizeB = this->m_kc * this->m_nc;
     }

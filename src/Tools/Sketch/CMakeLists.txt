@@ -17,5 +17,5 @@ add_library(Sketch_tools ${Sketch_tools_source_files})
 target_link_libraries(Sketch_tools
   Tools
   actions
-  constraintsSolver
+  ConstraintsSolver
   )

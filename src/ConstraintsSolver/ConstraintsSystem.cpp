@@ -1,22 +1,23 @@
 
-#include "constraintSystem.hpp"
-#include "solverState.hpp"
+#include "ConstraintsSystem.hpp"
+#include "SolverState.hpp"
 
 #include <utils/DebugUtils.hpp>
 
-constraintSystem::constraintSystem(int verboseLevel):
+ConstraintsSystem::ConstraintsSystem(int verboseLevel):
 	mBrokenDown(false),
-	mAlgorithm(solverState::DogLeg),
+	mSolverType(SolverState::DogLeg),
 	mVerboseLevel(verboseLevel),
-	mNum_activeConstraints(0)
+	mNum_liveConstrs(0),
+	mNum_liveVars(0)
 {
 
 }
-constraintSystem::~constraintSystem()
+ConstraintsSystem::~ConstraintsSystem()
 {
 	clear_subClusters();
 }
-bool constraintSystem::satisfied()
+bool ConstraintsSystem::satisfied()
 {
 	for(auto constr : mConstraints) {
 		if(!constr->satisfied())
@@ -24,45 +25,34 @@ bool constraintSystem::satisfied()
 	}
 	return true;
 }
-void constraintSystem::add_constraint(constraint_abstr* constr) 
+void ConstraintsSystem::add_constraint(Constraint_abstr* constr) 
 {
-	mNum_activeConstraints++;
 	mBrokenDown = false;
 	mConstraints.push_back(constr);
-	// for(size_t i = 0; i < constr->n_vars(); ++i) {
-	// 	var_ptr var = constr->var(i);
-	// 	if(var->is_coef())
-	// 		continue;
-	// 	mConstrToVars[constr].push_back(var);			
-	// 	if(mVarsToConstr.find(var) == mVarsToConstr.end())
-	// 		mVariables.push_back(var);
-	// 	mVarsToConstr[var].push_back(constr);
-	// }
 }
-void constraintSystem::add_variable(var_ptr v)
+void ConstraintsSystem::add_variable(var_ptr v)
 {
 	if(!v)
 		return;
 	// if(std::find(mVariables.begin(), mVariables.end(), v) != mVariables.end())
 		mVariables.push_back(v);
 }
-void constraintSystem::add_variables(std::vector<var_ptr> vars)
+void ConstraintsSystem::add_variables(std::vector<var_ptr> vars)
 {
 	for(auto v : vars)
 		add_variable(v);
 }
 
-void constraintSystem::toggle_constraint(constraint_abstr* constr, bool enable)
+void ConstraintsSystem::toggle_constraint(Constraint_abstr* constr, bool enable)
 {
 	if(std::find(mConstraints.begin(), mConstraints.end(), constr) == mConstraints.end())
 		return;
 
-	mNum_activeConstraints += enable ? 1 : -1;
 	constr->set_exists(enable);
 	mBrokenDown = false;
 }
 
-int constraintSystem::solve()
+int ConstraintsSystem::solve()
 {
 	if(mVerboseLevel) 
 		std::cout<<"Start solve attempt...\n";
@@ -74,21 +64,21 @@ int constraintSystem::solve()
 
 	if(mVerboseLevel)
 		std::cout<<"Solving clusters...";
-	int output = solverState::SUCCESS;
+	int output = SolverState::SUCCESS;
 	for(auto clust : mSubClusters) {
 		output = std::max(output, clust->solve());
 	}
 	if(mVerboseLevel) 
-		std::cout<<"Solve "<<(output == solverState::SUCCESS ? "success" : "fail")<<".\n";
+		std::cout<<"Solve "<<(output == SolverState::SUCCESS ? "success" : "fail")<<".\n";
 
 	return output;
 }
 
-void constraintSystem::breakDown_problem()
+void ConstraintsSystem::breakDown_problem()
 {
 	mBrokenDown = false;
 
-	std::vector<constraint_abstr*> liveConstraints;
+	std::vector<Constraint_abstr*> liveConstraints;
 	std::vector<var_ptr> liveVars;
 
 	for(auto constr : mConstraints) {
@@ -101,12 +91,12 @@ void constraintSystem::breakDown_problem()
 	}
 
 	clear_subClusters();
-	constraintGraph g(liveConstraints, liveVars);
+	ConstraintGraph g(liveConstraints, liveVars);
 
 	std::vector<int> constr_clust(0), var_clust(0);
-	int num_clusters = g.connected_clusters(constr_clust, var_clust);
-	for(int i = 0; i < num_clusters; ++i) {
-		mSubClusters.push_back(new equationsCluster({}, {}, mAlgorithm, 1));
+	int n_clusters = g.connected_clusters(constr_clust, var_clust);
+	for(int i = 0; i < n_clusters; ++i) {
+		mSubClusters.push_back(new EquationsCluster({}, {}, solverType(), 1));
 		mSubClusters.back()->set_id(i);
 	}
 
@@ -133,7 +123,7 @@ void constraintSystem::breakDown_problem()
 	mBrokenDown = true;
 }
 
-void constraintSystem::clear_subClusters()
+void ConstraintsSystem::clear_subClusters()
 {
 	for(int i = 0; i < mSubClusters.size(); ++i) {
 		mSubClusters[i]->clear_substitutions();
@@ -144,7 +134,7 @@ void constraintSystem::clear_subClusters()
 	mSubClusters.clear();
 }
 
-void constraintSystem::varState(std::vector<VarState>& state)
+void ConstraintsSystem::varState(std::vector<VarState>& state)
 {
 	state.resize(mVariables.size());
 	for(int i = 0; i < mVariables.size(); ++i) {
@@ -152,7 +142,7 @@ void constraintSystem::varState(std::vector<VarState>& state)
 			state[i] = VarState(mVariables[i], mVariables[i]->eval());
 	}
 }
-void constraintSystem::varState(std::map<var_ptr, float>& state)
+void ConstraintsSystem::varState(std::map<var_ptr, float>& state)
 {
 	state.clear();
 	for(int i = 0; i < mVariables.size(); ++i) {
@@ -160,7 +150,7 @@ void constraintSystem::varState(std::map<var_ptr, float>& state)
 			state[mVariables[i]] = mVariables[i]->eval();
 	}
 }
-void constraintSystem::varDelta(std::map<var_ptr, float> first, std::vector<VarDualState>& delta)
+void ConstraintsSystem::varDelta(std::map<var_ptr, float> first, std::vector<VarDualState>& delta)
 {
 	delta.clear();
 	for(int i = 0; i < mVariables.size(); ++i) {
@@ -172,19 +162,19 @@ void constraintSystem::varDelta(std::map<var_ptr, float> first, std::vector<VarD
 	}
 }
 
-constraintSystem::constraintGraph::constraintGraph(std::vector<constraint_abstr*>& constrs, std::vector<var_ptr>& vars):
-	mNumConstr(0),
-	mNumVar(0)
+ConstraintsSystem::ConstraintGraph::ConstraintGraph(std::vector<Constraint_abstr*>& constrs, std::vector<var_ptr>& vars):
+	mNum_Constrs(0),
+	mNum_Vars(0)
 {
 	std::map<var_ptr, int> v2i;
 	for(int i = 0; i < constrs.size() + vars.size(); ++i) {
 		if(i < constrs.size() && constrs[i]->exists()) {
 			mVert.push_back({-1, i});
-			mNumConstr++;
+			mNum_Constrs++;
 		} else if(i >= constrs.size() && vars[i-constrs.size()]->exists()) {
 			v2i[vars[i-constrs.size()]] = i;
 			mVert.push_back({-1, i});
-			mNumVar++;
+			mNum_Vars++;
 		}
 	}
 	for(int i = 0; i < constrs.size(); ++i) {
@@ -200,29 +190,29 @@ constraintSystem::constraintGraph::constraintGraph(std::vector<constraint_abstr*
 		}
 	}
 }
-int constraintSystem::constraintGraph::connected_clusters(std::vector<int>& constr_clust, std::vector<int>& var_clust)
+int ConstraintsSystem::ConstraintGraph::connected_clusters(std::vector<int>& constr_clust, std::vector<int>& var_clust)
 {
-	constr_clust.resize(mNumConstr);
-	var_clust.resize(mNumVar);
-	for(flagged_ent vert : mVert) {
+	constr_clust.resize(mNum_Constrs);
+	var_clust.resize(mNum_Vars);
+	for(Flagged_node vert : mVert) {
 		vert.flag = -1;
 	}
 
-	int num_clust = 0;
-	for(int i = 0; i < mNumConstr; ++i) {
+	int n_clust = 0;
+	for(int i = 0; i < mNum_Constrs; ++i) {
 		if(mVert[i].flag == -1) {
-			set_clust(i, num_clust++, constr_clust, var_clust);
+			set_clust(i, n_clust++, constr_clust, var_clust);
 		}
 	}
-	return num_clust;
+	return n_clust;
 }
 
-void constraintSystem::constraintGraph::set_clust(int vert, int clust, std::vector<int>& constr_clust, std::vector<int>& var_clust) 
+void ConstraintsSystem::ConstraintGraph::set_clust(int vert, int clust, std::vector<int>& constr_clust, std::vector<int>& var_clust) 
 {
 	mVert[vert].flag = clust;
 
-	if(vert >= mNumConstr) {
-		var_clust[vert-mNumConstr] = clust;
+	if(vert >= mNum_Constrs) {
+		var_clust[vert-mNum_Constrs] = clust;
 	} else {
 		constr_clust[vert] = clust;
 	}
@@ -231,7 +221,6 @@ void constraintSystem::constraintGraph::set_clust(int vert, int clust, std::vect
 		if(mVert[i].flag == -1) {
 			set_clust(i, clust, constr_clust, var_clust);
 		} else if(mVert[i].flag != clust) {
-			std::cout<<"Reeee\n";
 			break;
 		}
 	}

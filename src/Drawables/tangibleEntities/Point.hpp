@@ -4,7 +4,7 @@
 
 #include <Drawables/Drawable.hpp>
 #include <geometry/geometry_3d/Point_abstr.hpp>
-#include <constraintsSolver/expression.hpp>
+#include <ConstraintsSolver/Expression.hpp>
 
 #include <graphics_utils/VertexArray.hpp>
 #include <graphics_utils/VertexBuffer.hpp>

@@ -5,7 +5,7 @@
 #include "Collection.hpp"
 #include <geometry/geometry_3d/plane_abstr.hpp>
 #include <Drawables/Folder.hpp>
-#include <constraintsSolver/constraintSystem.hpp>
+#include <ConstraintsSolver/ConstraintsSystem.hpp>
 #include "Sk/SkDrawable.hpp"
 #include "Sk/SkGeometry.hpp"
 #include "Sk/SkConstraint.hpp"
@@ -33,13 +33,13 @@ public:
 				to not cause overhead in other parts of the code (checking for nullptr)
 				and to simplify debugging
 	*/
-	size_t size() { return num_geom() + num_constr(); }
+	size_t size() { return n_geom() + n_constr(); }
 	SkDrawable* at(size_t ind)
 	{
-		if(ind < num_geom()) {
+		if(ind < n_geom()) {
 			return mGeometries.at(ind);
 		} else {
-			return mConstraints.at(ind - num_geom());
+			return mConstraints.at(ind - n_geom());
 		}
 	}
 
@@ -50,11 +50,11 @@ public:
 		init_newElems_stat(mConstraints, mInitInd_constr, driven());
 	}
 
-	size_t num_geom() { return mGeometries.size(); }
+	size_t n_geom() { return mGeometries.size(); }
 	SkGeometry* geom(size_t ind) { return mGeometries.at(ind); }
 	void add_geom(SkGeometry* g) { mGeometries.push_back(g); mDriven->set_need_update(); }
 
-	size_t num_constr() { return mConstraints.size(); }
+	size_t n_constr() { return mConstraints.size(); }
 	SkConstraint* constr(size_t ind) { return mConstraints.at(ind); }
 	void add_constr(SkConstraint* c) { mConstraints.push_back(c); mDriven->set_need_update(); }
 };
@@ -69,7 +69,7 @@ private:
 	Geom3d::plane_abstr* mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
 
 	// Folder* mOrigin;
-	constraintSystem mSystem;
+	ConstraintsSystem mSystem;
 	std::vector<VarState> mSystemBackup;
 public:
 	/*
@@ -97,7 +97,7 @@ public:
 	// void add_selectedGeometry(sketchEntity* ent);
 	// void remove_selectedGeometry(sketchEntity* ent);
 	// void clear_selectedGeometries();
-	// size_t num_selectedGeometries() { return mSelectedEntities.size(); }
+	// size_t n_selectedGeometries() { return mSelectedEntities.size(); }
 
 	// BLOOPBLOOPWACK
 	bool can_delete(SkDrawable* ent);

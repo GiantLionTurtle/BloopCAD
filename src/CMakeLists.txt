@@ -6,7 +6,7 @@ add_subdirectory(Drawables)
 add_subdirectory(actions)
 add_subdirectory(Tools)
 add_subdirectory(workspaces)
-add_subdirectory(constraintsSolver)
+add_subdirectory(ConstraintsSolver)
 
 add_executable(BloopCAD
 	document.cpp
@@ -27,14 +27,14 @@ target_link_libraries(BloopCAD
 
 # ******************* tests ************************
 
-# add_executable(constraintsSolverTest
+# add_executable(ConstraintsSolverTest
 # 	testConstraintsSolver_main.cpp
 # 	document.cpp
 # 	eventsManager.cpp
 # 	testFramework_eventsManager.cpp
 # 	bloop.cpp
 # 	)
-# target_link_libraries(constraintsSolverTest
+# target_link_libraries(ConstraintsSolverTest
 # 	vendor
 # 	utils
 # 	graphics_utils

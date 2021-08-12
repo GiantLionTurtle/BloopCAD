@@ -4,7 +4,7 @@
 
 #include "SkGeometry.hpp"
 #include "SkCurve.hpp"
-#include <constraintsSolver/expression.hpp>
+#include <ConstraintsSolver/Expression.hpp>
 #include <geometry/Geom2d/Circle_abstr.hpp>
 
 

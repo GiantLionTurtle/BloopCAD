@@ -2,7 +2,7 @@
 // #ifndef GEOMETRY_ABSTRACT_HPP_
 // #define GEOMETRY_ABSTRACT_HPP_
 
-// #include <constraintsSolver/DR_planner.hpp>
+// #include <ConstraintsSolver/DR_planner.hpp>
 // #include <glm/glm.hpp>
 
 // class geometry_abstract : public cluster {

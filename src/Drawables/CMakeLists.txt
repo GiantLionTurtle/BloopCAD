@@ -14,5 +14,5 @@ add_library(Drawables ${Drawables_source_files})
 target_link_libraries(Drawables
   tangibleEntities
   sk
-  constraintsSolver
+  ConstraintsSolver
   )

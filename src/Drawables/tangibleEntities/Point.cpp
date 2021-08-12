@@ -12,9 +12,9 @@ Point::Point(glm::vec3 const& basePoint):
 	mShader(nullptr)
 {
 	// glm::vec3 pos = basePoint.pos();
-	mX = expression_var::make(basePoint.x);
-	mY = expression_var::make(basePoint.y);
-	mZ = expression_var::make(basePoint.z);
+	mX = ExpVar::make(basePoint.x);
+	mY = ExpVar::make(basePoint.y);
+	mZ = ExpVar::make(basePoint.z);
 
 	mType |= Drawable_types::POINT;
 }

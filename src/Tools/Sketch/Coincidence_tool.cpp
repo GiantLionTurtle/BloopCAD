@@ -47,7 +47,7 @@ void Coincidence_tool::create_constraint(SkConstraint*& constr, SkDrawable*& pri
 	}
 
 	if(is_line(curve)) {
-		// constr = SkPointLine_distance::make(pt, static_cast<sketchLine>(curve), expConst::zero);
+		// constr = SkPointLine_distance::make(pt, static_cast<sketchLine>(curve), ExpConst::zero);
 		priority_ent = curve;
 	} else if(is_curve(curve)) {
 		// constr = pointCircle_distance::make(pt, static_cast<sketchCircle>(curve));

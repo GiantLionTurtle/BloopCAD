@@ -4,7 +4,7 @@
 
 #include "SkGeometry.hpp"
 #include <Drawables/Tangible.hpp>
-#include <constraintsSolver/expression.hpp>
+#include <ConstraintsSolver/Expression.hpp>
 #include <geometry/Geom2d/Point_abstr.hpp>
 
 #include <graphics_utils/VertexArray.hpp>

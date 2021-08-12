@@ -120,8 +120,8 @@ void parallelize_gemm(const Functor& func, Index rows, Index cols, Index depth, 
 
   // if multi-threading is explicitely disabled, not useful, or if we already are in a parallel session,
   // then abort multi-threading
-  // FIXME omp_get_num_threads()>1 only works for openmp, what if the user does not use openmp?
-  if((!Condition) || (threads==1) || (omp_get_num_threads()>1))
+  // FIXME omp_get_n_threads()>1 only works for openmp, what if the user does not use openmp?
+  if((!Condition) || (threads==1) || (omp_get_n_threads()>1))
     return func(0,rows, 0,cols);
 
   Eigen::initParallel();
@@ -132,11 +132,11 @@ void parallelize_gemm(const Functor& func, Index rows, Index cols, Index depth, 
 
   ei_declare_aligned_stack_constructed_variable(GemmParallelInfo<Index>,info,threads,0);
 
-  #pragma omp parallel num_threads(threads)
+  #pragma omp parallel n_threads(threads)
   {
     Index i = omp_get_thread_num();
     // Note that the actual number of threads might be lower than the number of request ones.
-    Index actual_threads = omp_get_num_threads();
+    Index actual_threads = omp_get_n_threads();
 
     Index blockCols = (cols / actual_threads) & ~Index(0x3);
     Index blockRows = (rows / actual_threads);

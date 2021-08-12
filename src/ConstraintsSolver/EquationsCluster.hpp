@@ -2,19 +2,17 @@
 #ifndef EQUATIONSCLUSTER_HPP_
 #define EQUATIONSCLUSTER_HPP_
 
-#include "expression.hpp"
+#include "Expression.hpp"
 
 #include <vector>
 #include <set>
 
 #include <Eigen/Eigen>
 
-class equationsCluster {
+class EquationsCluster {
 private:
 	std::vector<equ_ptr> mEqus;
 	std::set<var_ptr> mVars;
-	// std::map<std::shared_ptr<constraint_abstract>, std::vector<var_ptr>> mConstrToVars;
-	// std::map<var_ptr, std::vector<std::shared_ptr<constraint_abstract>>> mVarsToConstr;
 
 	int mVerboseLevel;
 	int const mMaxIt_LM = 1000, mMaxIt_DL = 1000;
@@ -22,8 +20,8 @@ private:
 
 	int mAlgorithm;
 public:	
-	equationsCluster(std::vector<equ_ptr> equs, std::set<var_ptr> vars, int solver_algo, int verbose = 0);
-	~equationsCluster();	
+	EquationsCluster(std::vector<equ_ptr> equs, std::set<var_ptr> vars, int solver_algo, int verbose = 0);
+	~EquationsCluster();	
 	
 	void init();
 	void add_equ(equ_ptr equ);
@@ -92,8 +90,8 @@ public:
 private:
 	void compute_errors_no_resize(Eigen::VectorXd& errors, int tag = 0);
 	void compute_jacobi_no_resize(Eigen::MatrixXd& jacobi, int tag = 0, bool drivingVars_only = false);
-	int num_taggedEqus(int tag);
-	int num_drivingVars();
+	int n_taggedEqus(int tag);
+	int n_drivingVars();
 };
 
 #endif

@@ -90,7 +90,7 @@ inline void manage_caching_sizes(Action action, std::ptrdiff_t* l1, std::ptrdiff
  * \sa setCpuCacheSizes */
 
 template<typename LhsScalar, typename RhsScalar, int KcFactor, typename Index>
-void evaluateProductBlockingSizesHeuristic(Index& k, Index& m, Index& n, Index num_threads = 1)
+void evaluateProductBlockingSizesHeuristic(Index& k, Index& m, Index& n, Index n_threads = 1)
 {
   typedef gebp_traits<LhsScalar,RhsScalar> Traits;
 
@@ -102,7 +102,7 @@ void evaluateProductBlockingSizesHeuristic(Index& k, Index& m, Index& n, Index n
   std::ptrdiff_t l1, l2, l3;
   manage_caching_sizes(GetAction, &l1, &l2, &l3);
 
-  if (num_threads > 1) {
+  if (n_threads > 1) {
     typedef typename Traits::ResScalar ResScalar;
     enum {
       kdiv = KcFactor * (Traits::mr * sizeof(LhsScalar) + Traits::nr * sizeof(RhsScalar)),
@@ -123,7 +123,7 @@ void evaluateProductBlockingSizesHeuristic(Index& k, Index& m, Index& n, Index n
     }
 
     const Index n_cache = (l2-l1) / (nr * sizeof(RhsScalar) * k);
-    const Index n_per_thread = numext::div_ceil(n, num_threads);
+    const Index n_per_thread = numext::div_ceil(n, n_threads);
     if (n_cache <= n_per_thread) {
       // Don't exceed the capacity of the l2 cache.
       eigen_internal_assert(n_cache >= static_cast<Index>(nr));
@@ -135,8 +135,8 @@ void evaluateProductBlockingSizesHeuristic(Index& k, Index& m, Index& n, Index n
 
     if (l3 > l2) {
       // l3 is shared between all cores, so we'll give each thread its own chunk of l3.
-      const Index m_cache = (l3-l2) / (sizeof(LhsScalar) * k * num_threads);
-      const Index m_per_thread = numext::div_ceil(m, num_threads);
+      const Index m_cache = (l3-l2) / (sizeof(LhsScalar) * k * n_threads);
+      const Index m_per_thread = numext::div_ceil(m, n_threads);
       if(m_cache < m_per_thread && m_cache >= static_cast<Index>(mr)) {
         m = m_cache - (m_cache % mr);
         eigen_internal_assert(m > 0);
@@ -295,17 +295,17 @@ inline bool useSpecificBlockingSizes(Index& k, Index& m, Index& n)
   * \sa setCpuCacheSizes */
 
 template<typename LhsScalar, typename RhsScalar, int KcFactor, typename Index>
-void computeProductBlockingSizes(Index& k, Index& m, Index& n, Index num_threads = 1)
+void computeProductBlockingSizes(Index& k, Index& m, Index& n, Index n_threads = 1)
 {
   if (!useSpecificBlockingSizes(k, m, n)) {
-    evaluateProductBlockingSizesHeuristic<LhsScalar, RhsScalar, KcFactor, Index>(k, m, n, num_threads);
+    evaluateProductBlockingSizesHeuristic<LhsScalar, RhsScalar, KcFactor, Index>(k, m, n, n_threads);
   }
 }
 
 template<typename LhsScalar, typename RhsScalar, typename Index>
-inline void computeProductBlockingSizes(Index& k, Index& m, Index& n, Index num_threads = 1)
+inline void computeProductBlockingSizes(Index& k, Index& m, Index& n, Index n_threads = 1)
 {
-  computeProductBlockingSizes<LhsScalar,RhsScalar,1,Index>(k, m, n, num_threads);
+  computeProductBlockingSizes<LhsScalar,RhsScalar,1,Index>(k, m, n, n_threads);
 }
 
 #ifdef EIGEN_HAS_SINGLE_INSTRUCTION_CJMADD

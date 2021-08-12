@@ -35,15 +35,15 @@ public:
 				to not cause overhead in other parts of the code (checking for nullptr)
 				and to simplify debugging
 	*/
-	size_t size() { return num_sketches() + num_origin(); }
+	size_t size() { return n_sketches() + n_origin(); }
 	Drawable* at(size_t ind)
 	{
-		if(ind < num_sketches()) {
+		if(ind < n_sketches()) {
 			return mSketches.at(ind);
 		} 
-		ind -= num_sketches();
+		ind -= n_sketches();
 
-		if(ind < num_origin()) {
+		if(ind < n_origin()) {
 			return mOrigin.at(ind);
 		}
 
@@ -58,11 +58,11 @@ public:
 		init_newElems_stat(mOrigin, mInitInd_origin, driven());
 	}
 
-	size_t num_sketches() { return mSketches.size(); }
+	size_t n_sketches() { return mSketches.size(); }
 	Sketch* sketch(size_t ind) { return mSketches.at(ind); }
 	void add_sketch(Sketch* g) { mSketches.push_back(g); mDriven->set_need_update(); }
 
-	size_t num_origin() { return mOrigin.size(); }
+	size_t n_origin() { return mOrigin.size(); }
 	Drawable* origin(size_t ind) { return mOrigin.at(ind); }
 	void add_origin(Drawable* d) { mOrigin.push_back(d); mDriven->set_need_update(); }
 };

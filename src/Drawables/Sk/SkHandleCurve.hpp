@@ -92,7 +92,7 @@ public:
 		}
 	}
 
-	size_t num_handles() { return pT::mDrawList.handles().size(); }
+	size_t n_handles() { return pT::mDrawList.handles().size(); }
 	SkPoint* handle(size_t ind) { return pT::mDrawList.handles().at(ind); }
 	Curve* curve() { return pT::mDrawList.curve(); }
 
@@ -149,7 +149,7 @@ public:
 	std::vector<var_ptr> all_vars()
 	{
 		std::vector<var_ptr> vars;
-		for(int i = 0; i < num_handles(); ++i) {
+		for(int i = 0; i < n_handles(); ++i) {
 			auto handle_vars = handle(i)->all_vars();
 			vars.insert(vars.begin(), handle_vars.begin(), handle_vars.end());
 		}
@@ -165,7 +165,7 @@ protected:
 		} 
 		
 		if(!sel || set_handles) {
-			for(size_t i = 0; i < num_handles(); ++i) {
+			for(size_t i = 0; i < n_handles(); ++i) {
 				handle(i)->set_selected(sel, true);
 			}
 		}
@@ -177,7 +177,7 @@ protected:
 		if(curve()->selected()) {
 			curve()->move(start, end, pix_mov);
 		} else {
-			for(size_t i = 0; i < num_handles(); ++i) {
+			for(size_t i = 0; i < n_handles(); ++i) {
 				if(handle(i)->selected())
 					handle(i)->move(start, end, pix_mov);
 			}

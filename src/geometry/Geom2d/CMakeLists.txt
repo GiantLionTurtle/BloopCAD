@@ -8,4 +8,4 @@ set(Geom2d_source_files
 add_library(Geom2d ${Geom2d_source_files})
 
 target_link_libraries(Geom2d
-    constraintsSolver)
+    ConstraintsSolver)

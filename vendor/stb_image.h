@@ -865,7 +865,7 @@ enum
 typedef struct
 {
    int bits_per_channel;
-   int num_channels;
+   int n_channels;
    int channel_order;
 } stbi__result_info;
 
@@ -1085,7 +1085,7 @@ static void *stbi__load_main(stbi__context *s, int *x, int *y, int *comp, int re
    memset(ri, 0, sizeof(*ri)); // make sure it's initialized if we add new fields
    ri->bits_per_channel = 8; // default is 8 so most paths don't have to be changed
    ri->channel_order = STBI_ORDER_RGB; // all current input & output are this, but this is here so we can add BGR order
-   ri->num_channels = 0;
+   ri->n_channels = 0;
 
    #ifndef STBI_NO_JPEG
    if (stbi__jpeg_test(s)) return stbi__jpeg_load(s,x,y,comp,req_comp, ri);
@@ -4065,7 +4065,7 @@ static int stbi__zbuild_huffman(stbi__zhuffman *z, const stbi_uc *sizelist, int 
 typedef struct
 {
    stbi_uc *zbuffer, *zbuffer_end;
-   int num_bits;
+   int n_bits;
    stbi__uint32 code_buffer;
 
    char *zout;
@@ -4089,22 +4089,22 @@ stbi_inline static stbi_uc stbi__zget8(stbi__zbuf *z)
 static void stbi__fill_bits(stbi__zbuf *z)
 {
    do {
-      if (z->code_buffer >= (1U << z->num_bits)) {
+      if (z->code_buffer >= (1U << z->n_bits)) {
         z->zbuffer = z->zbuffer_end;  /* treat this as EOF so we fail. */
         return;
       }
-      z->code_buffer |= (unsigned int) stbi__zget8(z) << z->num_bits;
-      z->num_bits += 8;
-   } while (z->num_bits <= 24);
+      z->code_buffer |= (unsigned int) stbi__zget8(z) << z->n_bits;
+      z->n_bits += 8;
+   } while (z->n_bits <= 24);
 }
 
 stbi_inline static unsigned int stbi__zreceive(stbi__zbuf *z, int n)
 {
    unsigned int k;
-   if (z->num_bits < n) stbi__fill_bits(z);
+   if (z->n_bits < n) stbi__fill_bits(z);
    k = z->code_buffer & ((1 << n) - 1);
    z->code_buffer >>= n;
-   z->num_bits -= n;
+   z->n_bits -= n;
    return k;
 }
 
@@ -4123,14 +4123,14 @@ static int stbi__zhuffman_decode_slowpath(stbi__zbuf *a, stbi__zhuffman *z)
    if (b >= sizeof (z->size)) return -1; // some data was corrupt somewhere!
    if (z->size[b] != s) return -1;  // was originally an assert, but report failure instead.
    a->code_buffer >>= s;
-   a->num_bits -= s;
+   a->n_bits -= s;
    return z->value[b];
 }
 
 stbi_inline static int stbi__zhuffman_decode(stbi__zbuf *a, stbi__zhuffman *z)
 {
    int b,s;
-   if (a->num_bits < 16) {
+   if (a->n_bits < 16) {
       if (stbi__zeof(a)) {
          return -1;   /* report error for unexpected end of data. */
       }
@@ -4140,7 +4140,7 @@ stbi_inline static int stbi__zhuffman_decode(stbi__zbuf *a, stbi__zhuffman *z)
    if (b) {
       s = b >> 9;
       a->code_buffer >>= s;
-      a->num_bits -= s;
+      a->n_bits -= s;
       return b & 511;
    }
    return stbi__zhuffman_decode_slowpath(a, z);
@@ -4278,16 +4278,16 @@ static int stbi__parse_uncompressed_block(stbi__zbuf *a)
 {
    stbi_uc header[4];
    int len,nlen,k;
-   if (a->num_bits & 7)
-      stbi__zreceive(a, a->num_bits & 7); // discard
+   if (a->n_bits & 7)
+      stbi__zreceive(a, a->n_bits & 7); // discard
    // drain the bit-packed data into header
    k = 0;
-   while (a->num_bits > 0) {
+   while (a->n_bits > 0) {
       header[k++] = (stbi_uc) (a->code_buffer & 255); // suppress MSVC run-time check
       a->code_buffer >>= 8;
-      a->num_bits -= 8;
+      a->n_bits -= 8;
    }
-   if (a->num_bits < 0) return stbi__err("zlib corrupt","Corrupt PNG");
+   if (a->n_bits < 0) return stbi__err("zlib corrupt","Corrupt PNG");
    // now fill header the normal way
    while (k < 4)
       header[k++] = stbi__zget8(a);
@@ -4351,7 +4351,7 @@ static int stbi__parse_zlib(stbi__zbuf *a, int parse_header)
    int final, type;
    if (parse_header)
       if (!stbi__parse_zlib_header(a)) return 0;
-   a->num_bits = 0;
+   a->n_bits = 0;
    a->code_buffer = 0;
    do {
       final = stbi__zreceive(a,1);
@@ -6208,7 +6208,7 @@ static void stbi__copyval(int channel,stbi_uc *dest,const stbi_uc *src)
 
 static stbi_uc *stbi__pic_load_core(stbi__context *s,int width,int height,int *comp, stbi_uc *result)
 {
-   int act_comp=0,num_packets=0,y,chained;
+   int act_comp=0,n_packets=0,y,chained;
    stbi__pic_packet packets[10];
 
    // this will (should...) cater for even some bizarre stuff like having data
@@ -6216,10 +6216,10 @@ static stbi_uc *stbi__pic_load_core(stbi__context *s,int width,int height,int *c
    do {
       stbi__pic_packet *packet;
 
-      if (num_packets==sizeof(packets)/sizeof(packets[0]))
+      if (n_packets==sizeof(packets)/sizeof(packets[0]))
          return stbi__errpuc("bad format","too many packets");
 
-      packet = &packets[num_packets++];
+      packet = &packets[n_packets++];
 
       chained = stbi__get8(s);
       packet->size    = stbi__get8(s);
@@ -6237,7 +6237,7 @@ static stbi_uc *stbi__pic_load_core(stbi__context *s,int width,int height,int *c
    for(y=0; y<height; ++y) {
       int packet_idx;
 
-      for(packet_idx=0; packet_idx < num_packets; ++packet_idx) {
+      for(packet_idx=0; packet_idx < n_packets; ++packet_idx) {
          stbi__pic_packet *packet = &packets[packet_idx];
          stbi_uc *dest = result+y*width*4;
 
@@ -6412,10 +6412,10 @@ static int stbi__gif_test(stbi__context *s)
    return r;
 }
 
-static void stbi__gif_parse_colortable(stbi__context *s, stbi_uc pal[256][4], int num_entries, int transp)
+static void stbi__gif_parse_colortable(stbi__context *s, stbi_uc pal[256][4], int n_entries, int transp)
 {
    int i;
-   for (i=0; i < num_entries; ++i) {
+   for (i=0; i < n_entries; ++i) {
       pal[i][2] = stbi__get8(s);
       pal[i][1] = stbi__get8(s);
       pal[i][0] = stbi__get8(s);
@@ -7220,7 +7220,7 @@ static int stbi__psd_is16(stbi__context *s)
 #ifndef STBI_NO_PIC
 static int stbi__pic_info(stbi__context *s, int *x, int *y, int *comp)
 {
-   int act_comp=0,num_packets=0,chained,dummy;
+   int act_comp=0,n_packets=0,chained,dummy;
    stbi__pic_packet packets[10];
 
    if (!x) x = &dummy;
@@ -7250,10 +7250,10 @@ static int stbi__pic_info(stbi__context *s, int *x, int *y, int *comp)
    do {
       stbi__pic_packet *packet;
 
-      if (num_packets==sizeof(packets)/sizeof(packets[0]))
+      if (n_packets==sizeof(packets)/sizeof(packets[0]))
          return 0;
 
-      packet = &packets[num_packets++];
+      packet = &packets[n_packets++];
       chained = stbi__get8(s);
       packet->size    = stbi__get8(s);
       packet->type    = stbi__get8(s);

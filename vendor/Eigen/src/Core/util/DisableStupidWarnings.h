@@ -27,7 +27,7 @@
   //        ICC 12 generates this warning even without any inline keyword, when defining class methods 'inline' i.e. inside of class body
   //        typedef that may be a reference type.
   // 279  - controlling expression is constant
-  //        ICC 12 generates this warning on assert(constant_expression_depending_on_template_params) and frankly this is a legitimate use case.
+  //        ICC 12 generates this warning on assert(constant_Expdepending_on_template_params) and frankly this is a legitimate use case.
   // 1684 - conversion from pointer to same-sized integral type (potential portability problem)
   // 2259 - non-pointer conversion from "Eigen::Index={ptrdiff_t={long}}" to "int" may lose significant bits
   #ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS

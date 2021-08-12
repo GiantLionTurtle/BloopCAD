@@ -1,13 +1,13 @@
 
 #include "SkConstraint.hpp"
 
-#include <constraintsSolver/expression.hpp>
+#include <ConstraintsSolver/Expression.hpp>
 #include "SkPoint.hpp"
 #include "SkLine.hpp"
 
 #include <utils/DebugUtils.hpp>
 #include <Drawables/Sketch.hpp>
-#include <constraintsSolver/constraint.hpp>
+#include <ConstraintsSolver/Constraint_abstr.hpp>
 
 #include <array>
 #include <string>
@@ -99,7 +99,7 @@ SkLine_verticality::SkLine_verticality(Geom3d::plane_abstr* baseplane_, SkLineCu
 	mLine->add_annot(annot(0));
 }
 
-SkLine_length::SkLine_length(Geom3d::plane_abstr* baseplane_, SkLineCurve* l, expression_ptr length):
+SkLine_length::SkLine_length(Geom3d::plane_abstr* baseplane_, SkLineCurve* l, exp_ptr length):
 	SkConstraint(baseplane_, { }, 
 	{ pow(l->ptA()->x() - l->ptB()->x(), 2.0) + pow(l->ptA()->y() - l->ptB()->y(), 2.0) ^= pow(length, 2.0) }),
 	mLine(l),
@@ -115,7 +115,7 @@ SkLine_length::SkLine_length(Geom3d::plane_abstr* baseplane_, SkLineCurve* l, ex
 }
 
 SkPointPoint_horizontalDistance::SkPointPoint_horizontalDistance(Geom3d::plane_abstr* baseplane_, 
-SkPoint* p1, SkPoint* p2, expression_ptr dist):
+SkPoint* p1, SkPoint* p2, exp_ptr dist):
 	SkConstraint(baseplane_, { }, { abs(p1->x() - p2->x()) ^= dist }),
 	mP1(p1),
 	mP2(p2),
@@ -129,7 +129,7 @@ SkPoint* p1, SkPoint* p2, expression_ptr dist):
 }
 
 SkPointPoint_verticalDistance::SkPointPoint_verticalDistance(Geom3d::plane_abstr* baseplane_, 
-SkPoint* p1, SkPoint* p2, expression_ptr dist):
+SkPoint* p1, SkPoint* p2, exp_ptr dist):
 	SkConstraint(baseplane_, { p1->y(), p2->y() }, { abs(p1->y() - p2->y()) ^= dist }),
 	mP1(p1),
 	mP2(p2),
@@ -141,7 +141,7 @@ SkPoint* p1, SkPoint* p2, expression_ptr dist):
 		mVars.push_back(mP2->y());	
 }
 
-SkPointLine_distance_abstr::SkPointLine_distance_abstr(Geom3d::plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, expression_ptr dist):
+SkPointLine_distance_abstr::SkPointLine_distance_abstr(Geom3d::plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist):
 	SkConstraint(baseplane_, { },
 	{ abs((l->ptB()->x()-l->ptA()->x())*(p->y() - l->ptA()->y()) - (l->ptB()->y()-l->ptA()->y())*(p->x() - l->ptA()->x())) / sqrt(l->length2()) ^= dist })
 {
@@ -152,7 +152,7 @@ SkPointLine_distance_abstr::SkPointLine_distance_abstr(Geom3d::plane_abstr* base
 }
 
 
-SkPointLine_distance::SkPointLine_distance(Geom3d::plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, expression_ptr dist):
+SkPointLine_distance::SkPointLine_distance(Geom3d::plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist):
 	SkPointLine_distance_abstr(baseplane_, p, l, dist),
 	mPoint(p),
 	mLine(l),
@@ -161,7 +161,7 @@ SkPointLine_distance::SkPointLine_distance(Geom3d::plane_abstr* baseplane_, SkPo
 
 }
 
-// SkCircleLine_distance::SkCircleLine_distance(Geom3d::plane_abstr* baseplane_, sketchCircle_ptr c, SkLineCurve* l, expression_ptr dist):
+// SkCircleLine_distance::SkCircleLine_distance(Geom3d::plane_abstr* baseplane_, sketchCircle_ptr c, SkLineCurve* l, exp_ptr dist):
 // 	SkPointLine_distance_abstr(baseplane_, c->center(), l, dist + c->radius())
 // {
 
@@ -177,12 +177,12 @@ SkLineLinePerpendicularity::SkLineLinePerpendicularity(Geom3d::plane_abstr* base
 	if(!l2->fixed())
 		mVars.insert(mVars.end(), { l2->ptA()->x(), l2->ptA()->y(), l2->ptB()->x(), l2->ptB()->y() });
 
-	expression_ptr x1 = (l1->ptA()->x()-l1->ptB()->x());
-	expression_ptr y1 = (l1->ptA()->y()-l1->ptB()->y());
-	expression_ptr x2 = (l2->ptA()->x()-l2->ptB()->x());
-	expression_ptr y2 = (l2->ptA()->y()-l2->ptB()->y());
+	exp_ptr x1 = (l1->ptA()->x()-l1->ptB()->x());
+	exp_ptr y1 = (l1->ptA()->y()-l1->ptB()->y());
+	exp_ptr x2 = (l2->ptA()->x()-l2->ptB()->x());
+	exp_ptr y2 = (l2->ptA()->y()-l2->ptB()->y());
 
-	mEqus.push_back(mod(acos(dot(x1, y1, x2, y2) / (sqrt(x1*x1+y1*y1) * sqrt(x2*x2+y2*y2))), 2.0*M_PI) ^= mod(expConst::pi2, 2.0*M_PI));
+	mEqus.push_back(mod(acos(dot(x1, y1, x2, y2) / (sqrt(x1*x1+y1*y1) * sqrt(x2*x2+y2*y2))), 2.0*M_PI) ^= mod(ExpConst::pi2, 2.0*M_PI));
 
 	// https://www.omnicalculator.com/math/angle-between-two-vectors
 

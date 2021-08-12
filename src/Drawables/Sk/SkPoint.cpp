@@ -12,7 +12,7 @@ glm::vec3 SkPoint::kColorHovered = glm::vec3(0.0);
 glm::vec3 SkPoint::kColorSelected = glm::vec3(0.0);
 
 SkPoint::SkPoint(glm::vec2 pos, Geom3d::plane_abstr* pl, bool fixed_):
-    ExpressionPoint<var_ptr>(expression_var::make(pos.x), expression_var::make(pos.y)),
+    ExpressionPoint<var_ptr>(ExpVar::make(pos.x), ExpVar::make(pos.y)),
     SkPrimitiveGeometry(pl, fixed_),
 	mVA(nullptr),
 	mVB(nullptr),

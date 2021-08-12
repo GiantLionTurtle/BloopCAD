@@ -20,7 +20,7 @@ struct circleData {
 
 SkCircleCurve::SkCircleCurve(Geom3d::plane_abstr* pl, bool fixed_):
     SkCurve<std::array<Geom2d::ExpressionPoint<var_ptr>*, 1>, SkCircleCurve>(pl, fixed_),
-	mRadius(std::make_shared<expression_var>(0.0f))
+	mRadius(std::make_shared<ExpVar>(0.0f))
 {
 	set_name("SkCircleCurve");
 	mRadius->add_changeCallBack(this, std::bind(&SkCircleCurve::set_need_update, this));
