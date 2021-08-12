@@ -89,7 +89,7 @@ struct LU_GlobalLU_t {
   IndexVector xusub; // Pointers to the beginning of each column of U in ucol 
   Index   nzumax; // Current max size of ucol
   Index   n; // Number of columns in the matrix  
-  Index   n_expansions; 
+  Index   num_expansions; 
 };
 
 // Values to set for performance

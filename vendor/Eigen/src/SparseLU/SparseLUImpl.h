@@ -32,10 +32,10 @@ class SparseLUImpl
     
   protected:
      template <typename VectorType>
-     Index expand(VectorType& vec, Index& length, Index nbElts, Index keep_prev, Index& n_expansions);
+     Index expand(VectorType& vec, Index& length, Index nbElts, Index keep_prev, Index& num_expansions);
      Index memInit(Index m, Index n, Index annz, Index lwork, Index fillratio, Index panel_size,  GlobalLU_t& glu); 
      template <typename VectorType>
-     Index memXpand(VectorType& vec, Index& maxlen, Index nbElts, MemType memtype, Index& n_expansions);
+     Index memXpand(VectorType& vec, Index& maxlen, Index nbElts, MemType memtype, Index& num_expansions);
      void heap_relax_snode (const Index n, IndexVector& et, const Index relax_columns, IndexVector& descendants, IndexVector& relax_end); 
      void relax_snode (const Index n, IndexVector& et, const Index relax_columns, IndexVector& descendants, IndexVector& relax_end); 
      Index snode_dfs(const Index jcol, const Index kcol,const MatrixType& mat,  IndexVector& xprune, IndexVector& marker, GlobalLU_t& glu); 

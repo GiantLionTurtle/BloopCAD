@@ -999,14 +999,14 @@ struct conservative_resize_like_impl<Derived,OtherDerived,true>
   {
     if (_this.rows() == other.rows() && _this.cols() == other.cols()) return;
 
-    const Index n_new_elements = other.size() - _this.size();
+    const Index num_new_elements = other.size() - _this.size();
 
     const Index new_rows = Derived::RowsAtCompileTime==1 ? 1 : other.rows();
     const Index new_cols = Derived::RowsAtCompileTime==1 ? other.cols() : 1;
     _this.derived().m_storage.conservativeResize(other.size(),new_rows,new_cols);
 
-    if (n_new_elements > 0)
-      _this.tail(n_new_elements) = other.tail(n_new_elements);
+    if (num_new_elements > 0)
+      _this.tail(num_new_elements) = other.tail(num_new_elements);
   }
 };
 

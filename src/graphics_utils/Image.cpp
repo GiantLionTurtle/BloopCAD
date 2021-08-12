@@ -23,7 +23,7 @@ Image::Image(std::string const& filePath):
 
 	// Clean up
 	if(mLocalBuffer)
-		stbi_Image_free(mLocalBuffer);
+		stbi_image_free(mLocalBuffer);
 	unbind();
 }
 Image::~Image()
