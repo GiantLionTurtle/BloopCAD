@@ -56,7 +56,7 @@ bool Circle_tool::manage_button_press(GdkEventButton* event)
 
     // Find where the ray intersectpos_on_plane
     Camera_ptr cam = mEnv->state()->cam; // For ease of writing
-    Geom3d::plane_abstr* pl = target->basePlane();
+    Geom3d::Plane_abstr* pl = target->basePlane();
     glm::vec2 circle_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 
 	if(!mStarted) {

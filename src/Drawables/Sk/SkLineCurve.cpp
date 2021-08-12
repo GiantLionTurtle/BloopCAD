@@ -12,7 +12,7 @@ glm::vec3 SkLineCurve::kColor = glm::vec3(0.0);
 glm::vec3 SkLineCurve::kColorHovered = glm::vec3(0.0);
 glm::vec3 SkLineCurve::kColorSelected = glm::vec3(0.0);
 
-SkLineCurve::SkLineCurve(Geom3d::plane_abstr* pl, bool fixed_):
+SkLineCurve::SkLineCurve(Geom3d::Plane_abstr* pl, bool fixed_):
 	SkCurve<std::array<Geom2d::ExpressionPoint<var_ptr>*, 2>, SkLineCurve>(pl, fixed_)
 {
 	mType |= Drawable_types::AXIS;

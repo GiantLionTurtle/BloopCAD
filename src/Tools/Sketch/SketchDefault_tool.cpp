@@ -66,7 +66,7 @@ bool SketchDefault_tool::manage_button_press(GdkEventButton* event)
 		} else {
 			mEnv->target()->unselect_all();
 
-			Geom3d::plane_abstr* pl = mEnv->target()->basePlane();
+			Geom3d::Plane_abstr* pl = mEnv->target()->basePlane();
 			glm::vec2 pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(screenPos)));
 			mSelectionRect->set_points(pos, pos);
 			mEnv->state()->doc->set_toolPreview(mSelectionRect);
@@ -99,7 +99,7 @@ bool SketchDefault_tool::manage_mouse_move(GdkEventMotion* event)
 	Sketch* sk = mEnv->target();
 	DEBUG_ASSERT(sk, "No valid sketch.");
 
-	Geom3d::plane_abstr* pl = sk->basePlane();
+	Geom3d::Plane_abstr* pl = sk->basePlane();
 	Camera_ptr cam = mEnv->state()->cam;
 	glm::vec2 mousePos(event->x, event->y);
 	glm::vec2 pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(mousePos, false)));

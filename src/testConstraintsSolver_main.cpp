@@ -71,7 +71,7 @@ int main()
 
 // /*
 // 	glm::vec2 A(0.0f, 0.0f), B(0.5f, -1.0f), C(1.0f, 0.0f), D(0.5f, 1.0f);
-// 	Geom3d::plane_abstr* pl = new Geom3d::plane_abstr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+// 	Geom3d::Plane_abstr* pl = new Geom3d::Plane_abstr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 // 	sketchLine_ptr l1 = std::make_shared<sketchLine>(A, B, pl);
 // 	sketchLine_ptr l2 = std::make_shared<sketchLine>(B, C, pl);
@@ -102,7 +102,7 @@ int main()
 // // int main()
 // // {
 // // 	glm::vec2 A(0.0f, -1.0f), B(0.5f, -1.0f), C(1.0f, 0.0f);
-// // 	Geom3d::plane_abstr* pl = new Geom3d::plane_abstr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+// // 	Geom3d::Plane_abstr* pl = new Geom3d::Plane_abstr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 // // 	sketchLine_ptr l1 = std::make_shared<sketchLine>(A, B, pl);
 // // 	sketchLine_ptr l2 = std::make_shared<sketchLine>(B, C, pl);

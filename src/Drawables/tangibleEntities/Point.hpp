@@ -3,7 +3,7 @@
 #define POINT_HPP_
 
 #include <Drawables/Drawable.hpp>
-#include <geometry/geometry_3d/Point_abstr.hpp>
+#include <Geom/Geom3d/Point_abstr.hpp>
 #include <ConstraintsSolver/Expression.hpp>
 
 #include <graphics_utils/VertexArray.hpp>

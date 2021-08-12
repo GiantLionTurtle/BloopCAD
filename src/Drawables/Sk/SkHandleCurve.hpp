@@ -79,7 +79,7 @@ public:
 	using pT = Collection_abstr<Container, true>;
 	using pointIndexer = typename Container::HandlesVec;
 	using Curve = typename Container::cT;
-	SkHandleCurve(pointIndexer handles, Geom3d::plane_abstr* pl, bool fixed_):
+	SkHandleCurve(pointIndexer handles, Geom3d::Plane_abstr* pl, bool fixed_):
 		SkGeometry(pl, fixed_)
 	{
 		pT::mDrawList.set_curve(new Curve(pl, fixed_));

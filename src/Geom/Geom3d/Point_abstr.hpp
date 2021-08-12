@@ -2,13 +2,13 @@
 #ifndef POINT_ABSTR3_HPP_
 #define POINT_ABSTR3_HPP_
 
-#include "geometry_3d_abstr.hpp"
+#include "Geom3d_abstr.hpp"
 
 #include <glm/glm.hpp>
 
 namespace Geom3d {
 
-class Point_abstr : public geometry_3d_abstr {
+class Point_abstr : public Geom3d_abstr {
 public:
 	Point_abstr();
     virtual ~Point_abstr();

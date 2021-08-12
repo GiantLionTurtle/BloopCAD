@@ -3,7 +3,7 @@
 #define SKSPRITE_HPP_
 
 #include "SkDrawable.hpp"
-#include <geometry/Geom2d/Point_abstr.hpp>
+#include <Geom/Geom2d/Point_abstr.hpp>
 #include <ConstraintsSolver/Expression.hpp>
 #include <graphics_utils/Texture.hpp>
 
@@ -29,7 +29,7 @@ private:
 	VertexBuffer* mVB;
 	std::shared_ptr<Shader> mShader;
 public:
-	SkSprite(Geom3d::plane_abstr* basePlane_, glm::vec2 dims, std::string const& texturePath);
+	SkSprite(Geom3d::Plane_abstr* basePlane_, glm::vec2 dims, std::string const& texturePath);
 	~SkSprite();
 	
 	SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);

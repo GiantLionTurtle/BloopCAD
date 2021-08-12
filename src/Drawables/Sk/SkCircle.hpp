@@ -7,7 +7,7 @@
 
 class SkCircle : public SkHandleCurve<SkHandleCurve_FixedIndexer<1, SkCircleCurve>> {
 public:
-	SkCircle(glm::vec2 center_, float radius_, Geom3d::plane_abstr* pl, bool fixed_):
+	SkCircle(glm::vec2 center_, float radius_, Geom3d::Plane_abstr* pl, bool fixed_):
 		SkHandleCurve({ center_ }, pl, fixed_)
 	{
 		set_name("SkLine");

@@ -19,15 +19,15 @@ void Part::init_impl()
 	
 	// Create the 3 planes of the origin
 	auto xy = new Plane(
-		Geom3d::plane_abstr::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+		Geom3d::Plane_abstr::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 	xy->set_name("XY plane");
 	xy->set_parent(this);
 	auto yz = new Plane(
-		Geom3d::plane_abstr::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), true)); // Inverted due to openGL's z axis being kind of backward
+		Geom3d::Plane_abstr::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), true)); // Inverted due to openGL's z axis being kind of backward
 	yz->set_name("YZ plane");
 	yz->set_parent(this);
 	auto zx = new Plane(
-		Geom3d::plane_abstr::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+		Geom3d::Plane_abstr::from_1Point2Vectors(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
 	zx->set_name("ZX plane");
 	zx->set_parent(this);
 
@@ -39,7 +39,7 @@ void Part::init_impl()
 	mDrawList.add_origin(yz);
 	mDrawList.add_origin(zx);
 	mDrawList.add_origin(new Plane(
-		Geom3d::plane_abstr::from_1Point2Vectors(glm::vec3(-3.0f, 0.5f, 0.0f), glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.5f, 0.0f)))); // Temporary test plane
+		Geom3d::Plane_abstr::from_1Point2Vectors(glm::vec3(-3.0f, 0.5f, 0.0f), glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.5f, 0.0f)))); // Temporary test plane
 
 	mDrawList.init_newElems();
 }

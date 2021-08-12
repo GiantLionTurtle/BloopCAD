@@ -3,7 +3,7 @@
 #define SELECTIONRECTANGLE_HPP_
 
 #include "SkDrawable.hpp"
-#include <geometry/geometry_3d/plane_abstr.hpp>
+#include <Geom/Geom3d/Plane_abstr.hpp>
 
 class SkSelRect : public SkDrawable {
 public:
@@ -23,7 +23,7 @@ private:
 	IndexBuffer* mIB;
 	std::shared_ptr<Shader> mShader;
 public:
-	SkSelRect(glm::vec2 start_, glm::vec2 end_, Geom3d::plane_abstr* basePlane_);
+	SkSelRect(glm::vec2 start_, glm::vec2 end_, Geom3d::Plane_abstr* basePlane_);
 	virtual ~SkSelRect() {}
 
 	glm::vec2 start() const { return mStartPt; }

@@ -4,7 +4,7 @@
 
 #include "SkDrawable.hpp"
 
-#include <geometry/Geom2d/Geom2d_abstr.hpp>
+#include <Geom/Geom2d/Geom2d_abstr.hpp>
 #include "SkSprite.hpp"
 
 #include <vector>
@@ -14,7 +14,7 @@ protected:
 	std::vector<SkSprite*> mAnnots;
 	bool mFixed;
 public:
-	SkGeometry(Geom3d::plane_abstr* pl, bool fixed_):
+	SkGeometry(Geom3d::Plane_abstr* pl, bool fixed_):
 		SkDrawable(pl),
 		mFixed(fixed_)
 	{
@@ -71,7 +71,7 @@ protected:
 
 class SkPrimitiveGeometry : public SkGeometry, virtual public Geom2d::Geom2d_abstr {
 public:
-	SkPrimitiveGeometry(Geom3d::plane_abstr* pl, bool fixed_):
+	SkPrimitiveGeometry(Geom3d::Plane_abstr* pl, bool fixed_):
 		SkGeometry(pl, fixed_)
 	{
 

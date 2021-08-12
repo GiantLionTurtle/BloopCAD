@@ -3,7 +3,7 @@
 #define PLANE_HPP_
 
 #include <Drawables/Drawable.hpp>
-#include <geometry/geometry_3d/plane_abstr.hpp>
+#include <Geom/Geom3d/Plane_abstr.hpp>
 
 #include <graphics_utils/VertexArray.hpp>
 #include <graphics_utils/VertexBuffer.hpp>
@@ -18,9 +18,9 @@
 /*
 	@class plane describes a plane drawn on screen
 	@parent : entity
-	@parent : plane_abstract
+	@parent : Plane_abstract
 */
-class Plane : public Drawable, public Geom3d::plane_abstr {
+class Plane : public Drawable, public Geom3d::Plane_abstr {
 private:
 	const glm::vec3 mColorA = glm::vec3(1.0f, 0.35f, 0.90f), 	// Both colors of a plane, depending on the side from which it is observed
 					mColorB = glm::vec3(0.35f, 1.0f, 0.78f); 					// Maybe it should be an option
@@ -39,7 +39,7 @@ public:
 		@param plane_ : 				The underlaying plane abstraction
 		@param label [defaults to ""] : The label of the plane (not supported yet)
 	*/
-	Plane(plane_abstr const& plane_);
+	Plane(Plane_abstr const& plane_);
 	virtual ~Plane() {}
 
 	virtual int selection_rank() { return 10; }

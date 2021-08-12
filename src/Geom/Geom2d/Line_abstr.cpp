@@ -16,7 +16,7 @@ Line_abstr::~Line_abstr()
 	
 }
 
-// XML_element* Line_abstract::to_svg(plane_abstract* drawingPlane, glm::vec2 &min, glm::vec2 &max)
+// XML_element* Line_abstract::to_svg(Plane_abstract* drawingPlane, glm::vec2 &min, glm::vec2 &max)
 // {
 // 	glm::vec2 ptA = drawingPlane->point_3d_to_2d(mPointA->pos_val());
 // 	glm::vec2 ptB = drawingPlane->point_3d_to_2d(mPointB->pos_val());

@@ -6,6 +6,7 @@ set(tangibleEntities_source_files
 add_library(tangibleEntities ${tangibleEntities_source_files})
 
 target_link_libraries(tangibleEntities
-  geometry
+  Geom2d
+  Geom3d
   graphics_utils
   )

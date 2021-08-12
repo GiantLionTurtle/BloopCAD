@@ -18,7 +18,7 @@ struct circleData {
 	glm::vec3 v, w;
 };
 
-SkCircleCurve::SkCircleCurve(Geom3d::plane_abstr* pl, bool fixed_):
+SkCircleCurve::SkCircleCurve(Geom3d::Plane_abstr* pl, bool fixed_):
     SkCurve<std::array<Geom2d::ExpressionPoint<var_ptr>*, 1>, SkCircleCurve>(pl, fixed_),
 	mRadius(std::make_shared<ExpVar>(0.0f))
 {

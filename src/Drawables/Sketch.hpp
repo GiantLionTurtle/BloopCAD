@@ -3,7 +3,7 @@
 #define SKETCH_HPP_
 
 #include "Collection.hpp"
-#include <geometry/geometry_3d/plane_abstr.hpp>
+#include <Geom/Geom3d/Plane_abstr.hpp>
 #include <Drawables/Folder.hpp>
 #include <ConstraintsSolver/ConstraintsSystem.hpp>
 #include "Sk/SkDrawable.hpp"
@@ -66,7 +66,7 @@ public:
 class Sketch : public Collection_abstr<SkIndexer> {
 public:
 private:
-	Geom3d::plane_abstr* mBasePlane; // Plane onto which every geometry is added, maybe it should descend from plane_abstract..
+	Geom3d::Plane_abstr* mBasePlane; // Plane onto which every geometry is added, maybe it should descend from Plane_abstract..
 
 	// Folder* mOrigin;
 	ConstraintsSystem mSystem;
@@ -77,7 +77,7 @@ public:
 
 		@param base_plane : The plane onto which everything is constructed in the sketch
 	*/
-	Sketch(Geom3d::plane_abstr* base_plane);
+	Sketch(Geom3d::Plane_abstr* base_plane);
 
 	void init_impl();
 
@@ -109,7 +109,7 @@ public:
 
 		@return : The base plane of the sketch
 	*/
-	Geom3d::plane_abstr* basePlane() { return mBasePlane; }
+	Geom3d::Plane_abstr* basePlane() { return mBasePlane; }
 
 	// Folder* origin() const { return mOrigin; }
 

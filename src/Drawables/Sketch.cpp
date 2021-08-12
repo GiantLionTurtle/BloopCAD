@@ -14,7 +14,7 @@
 #include <bloop.hpp>
 #include <document.hpp>
 
-Sketch::Sketch(Geom3d::plane_abstr* base_plane):
+Sketch::Sketch(Geom3d::Plane_abstr* base_plane):
 	mBasePlane(base_plane),
 	mSystem(1)
 {

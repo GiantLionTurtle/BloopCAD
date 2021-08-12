@@ -8,7 +8,7 @@
 
 class SkCurve_abstr : public SkPrimitiveGeometry {
 public:
-	SkCurve_abstr(Geom3d::plane_abstr* pl, bool fixed_):
+	SkCurve_abstr(Geom3d::Plane_abstr* pl, bool fixed_):
 		SkPrimitiveGeometry(pl, fixed_)
 	{
 		mType |= CURVE;
@@ -36,7 +36,7 @@ protected:
 	VertexBuffer* mVB;
 	std::shared_ptr<Shader> mShader;
 public:
-	SkCurve(Geom3d::plane_abstr* pl, bool fixed_):
+	SkCurve(Geom3d::Plane_abstr* pl, bool fixed_):
 		SkCurve_abstr(pl, fixed_)
 	{
 

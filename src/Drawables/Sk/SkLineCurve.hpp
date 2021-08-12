@@ -5,7 +5,7 @@
 #include "SkGeometry.hpp"
 #include "SkCurve.hpp"
 #include <ConstraintsSolver/Expression.hpp>
-#include <geometry/Geom2d/Line_abstr.hpp>
+#include <Geom/Geom2d/Line_abstr.hpp>
 
 class SkLineCurve : public Geom2d::Line_abstr, public SkCurve<std::array<Geom2d::ExpressionPoint<var_ptr>*, 2>, SkLineCurve> {
 private:
@@ -14,7 +14,7 @@ private:
 
 	glm::vec3 mVertices[2]; // The vertices describing the rendered line
 public:
-	SkLineCurve(Geom3d::plane_abstr* pl, bool fixed_);
+	SkLineCurve(Geom3d::Plane_abstr* pl, bool fixed_);
 	~SkLineCurve();
 
 	glm::vec2 posA() { return pos(0); }

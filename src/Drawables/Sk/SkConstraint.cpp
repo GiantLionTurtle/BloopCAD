@@ -12,7 +12,7 @@
 #include <array>
 #include <string>
 
-SkConstraint::SkConstraint(Geom3d::plane_abstr* baseplane_, std::vector<var_ptr> vars, std::vector<equ_ptr> equs):
+SkConstraint::SkConstraint(Geom3d::Plane_abstr* baseplane_, std::vector<var_ptr> vars, std::vector<equ_ptr> equs):
 	SkDrawable(baseplane_),
 	mVars(vars),
 	mEqus(equs)
@@ -49,7 +49,7 @@ void SkConstraint::exists_impl(bool ex)
 		equ->set_exists(ex);
 }
 
-SkPointPoint_horizontality::SkPointPoint_horizontality(Geom3d::plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2):
+SkPointPoint_horizontality::SkPointPoint_horizontality(Geom3d::Plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2):
 	SkSprite_constraint<2>(baseplane_, { }, { p1->y() ^= p2->y() },
 	"resources/textures/images/icons/sketch/constraints/horizontality.png"),
 	mP1(p1),
@@ -64,7 +64,7 @@ SkPointPoint_horizontality::SkPointPoint_horizontality(Geom3d::plane_abstr* base
 	mP2->add_annot(annot(1));
 }
 
-SkLine_horizontality::SkLine_horizontality(Geom3d::plane_abstr* baseplane_, SkLineCurve* l):
+SkLine_horizontality::SkLine_horizontality(Geom3d::Plane_abstr* baseplane_, SkLineCurve* l):
 	SkSprite_constraint<1>(baseplane_, { }, { l->ptA()->y() ^= l->ptB()->y() },
 	"resources/textures/images/icons/sketch/constraints/horizontality.png"),
 	mLine(l)
@@ -75,7 +75,7 @@ SkLine_horizontality::SkLine_horizontality(Geom3d::plane_abstr* baseplane_, SkLi
 }
 
 
-SkPointPoint_verticality::SkPointPoint_verticality(Geom3d::plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2):
+SkPointPoint_verticality::SkPointPoint_verticality(Geom3d::Plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2):
 	SkSprite_constraint<2>(baseplane_, { }, { p1->x() ^= p2->x() },
 	"resources/textures/images/icons/sketch/constraints/verticality.png"),
 	mP1(p1),
@@ -89,7 +89,7 @@ SkPointPoint_verticality::SkPointPoint_verticality(Geom3d::plane_abstr* baseplan
 	mP2->add_annot(annot(1));
 }
 
-SkLine_verticality::SkLine_verticality(Geom3d::plane_abstr* baseplane_, SkLineCurve* l):
+SkLine_verticality::SkLine_verticality(Geom3d::Plane_abstr* baseplane_, SkLineCurve* l):
 	SkSprite_constraint<1>(baseplane_, { }, { l->ptA()->x() ^= l->ptB()->x() },
 	"resources/textures/images/icons/sketch/constraints/verticality.png"),
 	mLine(l)
@@ -99,7 +99,7 @@ SkLine_verticality::SkLine_verticality(Geom3d::plane_abstr* baseplane_, SkLineCu
 	mLine->add_annot(annot(0));
 }
 
-SkLine_length::SkLine_length(Geom3d::plane_abstr* baseplane_, SkLineCurve* l, exp_ptr length):
+SkLine_length::SkLine_length(Geom3d::Plane_abstr* baseplane_, SkLineCurve* l, exp_ptr length):
 	SkConstraint(baseplane_, { }, 
 	{ pow(l->ptA()->x() - l->ptB()->x(), 2.0) + pow(l->ptA()->y() - l->ptB()->y(), 2.0) ^= pow(length, 2.0) }),
 	mLine(l),
@@ -114,7 +114,7 @@ SkLine_length::SkLine_length(Geom3d::plane_abstr* baseplane_, SkLineCurve* l, ex
 		mVars.insert(mVars.end(), { l->ptA()->x(), l->ptA()->y(), l->ptB()->x(), l->ptB()->y() });
 }
 
-SkPointPoint_horizontalDistance::SkPointPoint_horizontalDistance(Geom3d::plane_abstr* baseplane_, 
+SkPointPoint_horizontalDistance::SkPointPoint_horizontalDistance(Geom3d::Plane_abstr* baseplane_, 
 SkPoint* p1, SkPoint* p2, exp_ptr dist):
 	SkConstraint(baseplane_, { }, { abs(p1->x() - p2->x()) ^= dist }),
 	mP1(p1),
@@ -128,7 +128,7 @@ SkPoint* p1, SkPoint* p2, exp_ptr dist):
 	
 }
 
-SkPointPoint_verticalDistance::SkPointPoint_verticalDistance(Geom3d::plane_abstr* baseplane_, 
+SkPointPoint_verticalDistance::SkPointPoint_verticalDistance(Geom3d::Plane_abstr* baseplane_, 
 SkPoint* p1, SkPoint* p2, exp_ptr dist):
 	SkConstraint(baseplane_, { p1->y(), p2->y() }, { abs(p1->y() - p2->y()) ^= dist }),
 	mP1(p1),
@@ -141,7 +141,7 @@ SkPoint* p1, SkPoint* p2, exp_ptr dist):
 		mVars.push_back(mP2->y());	
 }
 
-SkPointLine_distance_abstr::SkPointLine_distance_abstr(Geom3d::plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist):
+SkPointLine_distance_abstr::SkPointLine_distance_abstr(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist):
 	SkConstraint(baseplane_, { },
 	{ abs((l->ptB()->x()-l->ptA()->x())*(p->y() - l->ptA()->y()) - (l->ptB()->y()-l->ptA()->y())*(p->x() - l->ptA()->x())) / sqrt(l->length2()) ^= dist })
 {
@@ -152,7 +152,7 @@ SkPointLine_distance_abstr::SkPointLine_distance_abstr(Geom3d::plane_abstr* base
 }
 
 
-SkPointLine_distance::SkPointLine_distance(Geom3d::plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist):
+SkPointLine_distance::SkPointLine_distance(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist):
 	SkPointLine_distance_abstr(baseplane_, p, l, dist),
 	mPoint(p),
 	mLine(l),
@@ -161,13 +161,13 @@ SkPointLine_distance::SkPointLine_distance(Geom3d::plane_abstr* baseplane_, SkPo
 
 }
 
-// SkCircleLine_distance::SkCircleLine_distance(Geom3d::plane_abstr* baseplane_, sketchCircle_ptr c, SkLineCurve* l, exp_ptr dist):
+// SkCircleLine_distance::SkCircleLine_distance(Geom3d::Plane_abstr* baseplane_, sketchCircle_ptr c, SkLineCurve* l, exp_ptr dist):
 // 	SkPointLine_distance_abstr(baseplane_, c->center(), l, dist + c->radius())
 // {
 
 // }
 
-SkLineLinePerpendicularity::SkLineLinePerpendicularity(Geom3d::plane_abstr* baseplane_, SkLineCurve* l1, SkLineCurve* l2):
+SkLineLinePerpendicularity::SkLineLinePerpendicularity(Geom3d::Plane_abstr* baseplane_, SkLineCurve* l1, SkLineCurve* l2):
 	SkSprite_constraint<2>(baseplane_, { }, { }, "resources/textures/images/icons/sketch/constraints/perpendicularity.png"),
 	mLine1(l1),
 	mLine2(l2)
@@ -190,7 +190,7 @@ SkLineLinePerpendicularity::SkLineLinePerpendicularity(Geom3d::plane_abstr* base
 	mLine2->add_annot(annot(1));
 }
 
-SkPointPoint_coincidence::SkPointPoint_coincidence(Geom3d::plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2):
+SkPointPoint_coincidence::SkPointPoint_coincidence(Geom3d::Plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2):
 	SkSprite_constraint<1>(baseplane_, { }, { p1->x() ^= p2->x(), p1->y() ^= p2->y()}, 
 	"resources/textures/images/icons/sketch/constraints/coincidence.png"),
 	mP1(p1),

@@ -10,15 +10,15 @@ namespace Geom3d {
 
 class Point_abstr;
 class Line_abstr;
-class plane_abstr;
+class Plane_abstr;
 using Point_abstr_ptr = std::shared_ptr<Point_abstr>;
 using Line_abstr_ptr = std::shared_ptr<Line_abstr>;
-using plane_abstr_ptr = std::shared_ptr<plane_abstr>;
+using Plane_abstr_ptr = std::shared_ptr<Plane_abstr>;
 
-class geometry_3d_abstr {
+class Geom3d_abstr {
 public:
-	geometry_3d_abstr();
-	virtual ~geometry_3d_abstr();
+	Geom3d_abstr();
+	virtual ~Geom3d_abstr();
 
 	virtual glm::vec3 closest_to_point(glm::vec3 const& pt) = 0;
 	virtual glm::vec3 closest_to_point(Point_abstr const& pt);

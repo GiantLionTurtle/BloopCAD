@@ -11,6 +11,7 @@ SkConstraint.cpp
 add_library(sk ${sk_source_files})
 
 target_link_libraries(sk
-geometry
+Geom2d
+Geom3d
 graphics_utils
 )

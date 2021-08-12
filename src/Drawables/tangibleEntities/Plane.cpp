@@ -4,8 +4,8 @@
 #include <graphics_utils/GLCall.hpp>
 #include <graphics_utils/ShadersPool.hpp>
 
-Plane::Plane(plane_abstr const& plane_):
-	plane_abstr(plane_),
+Plane::Plane(Plane_abstr const& plane_):
+	Plane_abstr(plane_),
 	mVA(nullptr),
 	mVB(nullptr),
 	mShader(nullptr)
