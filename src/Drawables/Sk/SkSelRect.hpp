@@ -39,7 +39,7 @@ public:
 
 	// These should not be called
 	virtual SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return SelectionPoint(); }
-	virtual DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return DraggableSelectionPoint(); }
+	virtual std::unique_ptr<DraggableSelectionPoint> closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return nullptr; }
 protected:	
 	void init_impl();
 	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);

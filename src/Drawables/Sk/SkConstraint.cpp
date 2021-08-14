@@ -4,6 +4,7 @@
 #include <ConstraintsSolver/Expression.hpp>
 #include "SkPoint.hpp"
 #include "SkLine.hpp"
+#include <Drawables/Sketch.hpp>
 
 #include <utils/DebugUtils.hpp>
 #include <Drawables/Sketch.hpp>
@@ -18,28 +19,6 @@ SkConstraint::SkConstraint(Geom3d::Plane_abstr* baseplane_, std::vector<var_ptr>
 	mEqus(equs)
 {
 	set_name("constraint");
-}
-
-double SkConstraint::error(size_t eq) 
-{
-	return mEqus[eq]->eval();
-}
-bool SkConstraint::satisfied() 
-{
-	for(size_t i = 0; i < mEqus.size(); ++i) {
-		if(std::abs(mEqus[i]->eval()) > 1e-12)
-			return false;
-	}
-	return true;
-}
-double SkConstraint::derivative(var_ptr withRespectTo, size_t from_eq)
-{
-	// TODO: would going through the constraint's variables to check if the target
-	// is in the constraint save time? ; output zero if the variable is unknown to this constraint
-	withRespectTo->set_as_var();
-	double der = mEqus[from_eq]->d()->eval();
-	withRespectTo->set_as_coef();
-	return der;
 }
 
 void SkConstraint::exists_impl(bool ex)

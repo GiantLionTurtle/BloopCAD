@@ -36,7 +36,7 @@ void Constraint_tool::finish()
 bool Constraint_tool::manage_button_press(GdkEventButton* event)
 {
 	glm::vec2 screenPos = glm::vec2(event->x, event->y);
-	SkDrawable* ent = mEnv->target()->closest_draggable(screenPos, mEnv->state()->cam.get(), mFilter).ent;
+	SkDrawable* ent = mEnv->target()->closest_draggable(screenPos, mEnv->state()->cam.get(), mFilter)->ent;
 	
 	int ent_state = could_add_geom(ent);
 	if(ent_state > add_states::COULDNT_ADD) {
@@ -57,7 +57,8 @@ bool Constraint_tool::manage_button_press(GdkEventButton* event)
 bool Constraint_tool::manage_mouse_move(GdkEventMotion* event)
 {
 	glm::vec2 screenPos = glm::vec2(event->x, event->y);
-	SkDrawable* ent = mEnv->target()->closest_draggable(screenPos, mEnv->state()->cam.get(), mFilter).ent;
+	auto draggablePt = mEnv->target()->closest_draggable(screenPos, mEnv->state()->cam.get(), mFilter);
+	SkDrawable* ent = draggablePt ? draggablePt->ent : nullptr;
 
 	if(ent != mCurrentHover) {
 		if(mCurrentHover) {

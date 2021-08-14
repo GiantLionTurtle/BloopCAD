@@ -34,7 +34,7 @@ public:
 	
 	SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	// will have to find another way to drag then the geometry drag, I think it would be ridiculous to solve a system for this (the solve would be fast but still)
-	DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
+	std::unique_ptr<DraggableSelectionPoint> closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	int selection_rank() { return 1; }
 	void move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move);
 

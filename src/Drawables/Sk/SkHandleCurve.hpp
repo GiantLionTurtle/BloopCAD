@@ -130,17 +130,18 @@ public:
 		return SelectionPoint();
 
 	}
-	DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+	std::unique_ptr<DraggableSelectionPoint> closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 	{
 		// it is known that the curves come before the points in mDrawList,
 		// because the curve has a lower selection rank, return as soon as 
 		// a selection is valid when iterating in reverse
 		for(int i = pT::mDrawList.size() - 1; i >= 0; --i) {
-			DraggableSelectionPoint selPt = pT::mDrawList.at(i)->closest_2d_draggable(planePos, cam, cursorPos, filter);
-			if(selPt.ent)
+			std::unique_ptr<DraggableSelectionPoint> selPt = 
+				pT::mDrawList.at(i)->closest_2d_draggable(planePos, cam, cursorPos, filter);
+			if(selPt)
 				return selPt;
 		}
-		return DraggableSelectionPoint();
+		return nullptr;
 	}
 	void add_annot(SkSprite* sp) { curve()->add_annot(sp); }
 	void set_annotPos(SkSprite* sp) { curve()->set_annotPos(sp); }

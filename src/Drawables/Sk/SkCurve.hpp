@@ -20,7 +20,7 @@ public:
 	virtual Geom2d::ExpressionPoint<var_ptr>* pt(size_t ind) = 0;
 
 	virtual SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
-	virtual DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
+	virtual std::unique_ptr<DraggableSelectionPoint> closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
 protected:
 	virtual void move_impl(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov) = 0;
 };
@@ -65,14 +65,14 @@ public:
 		}
 		return SelectionPoint();
 	}
-	DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+	std::unique_ptr<DraggableSelectionPoint> closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 	{
 		if(mType & filter) {
 			glm::vec3 worldpos = mBasePlane->to_worldPos(static_cast<Derived*>(this)->closest_to_point(planePos));
 			if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
-				return { this };
+				return std::make_unique<DraggableSelectionPoint>(this);
 		}
-		return DraggableSelectionPoint();
+		return nullptr;
 	}
 protected:
 	void move_impl(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)

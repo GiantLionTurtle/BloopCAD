@@ -39,14 +39,14 @@ SelectionPoint SkPoint::closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cu
 	}
 	return SelectionPoint();
 }
-DraggableSelectionPoint SkPoint::closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+std::unique_ptr<DraggableSelectionPoint> SkPoint::closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 {
 	if(mType & filter) {
 		glm::vec3 worldpos = mBasePlane->to_worldPos(pos());
 		if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
-			return { this };
+			return std::make_unique<DraggableSelectionPoint>(this);
 	}
-	return DraggableSelectionPoint();
+	return nullptr;
 }
 
 void SkPoint::set_annotOffset(SkSprite* sp, int ind)

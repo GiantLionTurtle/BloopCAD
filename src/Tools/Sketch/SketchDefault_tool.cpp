@@ -55,13 +55,14 @@ bool SketchDefault_tool::manage_button_press(GdkEventButton* event)
 	glm::vec2 screenPos = glm::vec2(event->x, event->y);
 	mAllowedToMove = false;
 	if(event->button == 1) {
-		auto clickedPoint = mEnv->target()->closest(screenPos, cam.get(), DRAWABLE);
-		if(clickedPoint.ent) {
+		auto clickedPoint = mEnv->target()->closest_draggable(screenPos, cam.get(), DRAWABLE);
+		auto hovered = clickedPoint ? clickedPoint->ent : nullptr;
+		if(hovered) {
 			mAllowedToMove = true;
-			if(!clickedPoint.ent->selected()) {
+			if(!hovered->selected()) {
 				if(!(event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK))
 					mEnv->target()->unselect_all();
-				clickedPoint.ent->select();
+				hovered->select();
 			}
 		} else {
 			mEnv->target()->unselect_all();
@@ -126,15 +127,16 @@ bool SketchDefault_tool::manage_mouse_move(GdkEventMotion* event)
 	} else {
 		Camera_ptr cam = mEnv->state()->cam;
 		glm::vec2 screenPos = glm::vec2(event->x, event->y);
-		auto hovered = mEnv->target()->closest(screenPos, cam.get(), DRAWABLE);
-		if(hovered.ent != mHoveredEnt) {
+		auto dragPt = mEnv->target()->closest_draggable(screenPos, cam.get(), DRAWABLE);
+		auto hovered = dragPt ? dragPt->ent : nullptr;
+		if(hovered != mHoveredEnt) {
 			if(mHoveredEnt) {
 				mHoveredEnt->set_hover(false);
 			}
-			if(hovered.ent) {
-				hovered.ent->set_hover(true);
+			if(hovered) {
+				hovered->set_hover(true);
 			}
-			mHoveredEnt = hovered.ent;
+			mHoveredEnt = hovered;
 		}
 	}
 	mPrevPos = pos;

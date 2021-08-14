@@ -4,12 +4,14 @@
 
 #include "EquationsCluster.hpp"
 #include "Constraint_abstr.hpp"
+#include "DraggedPoint.hpp"
 
 #include <map>
 #include <set>
 
+
 class ConstraintsSystem {
-private:
+protected:
 	std::vector<Constraint_abstr*> mConstraints;
 	std::vector<var_ptr> mVariables;
 	std::vector<EquationsCluster*> mSubClusters;
@@ -63,7 +65,16 @@ private:
 	private:	
 		void set_clust(int vert, int clust, std::vector<int>& constr_clust, std::vector<int>& var_clust);
 	};
+};
 
+template<size_t nD>
+class DragEnabled_ConstraintsSystem : public ConstraintsSystem {
+public:
+	DragEnabled_ConstraintsSystem(DragSystemHandler* handler, int verboseLevel = 0):
+		ConstraintsSystem(verboseLevel)
+	{
+		mConstraints.push_back(new DraggedPoint<nD>(handler));
+	}
 };
 
 #endif

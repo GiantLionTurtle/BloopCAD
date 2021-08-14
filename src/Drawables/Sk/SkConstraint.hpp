@@ -9,11 +9,14 @@
 #include <ConstraintsSolver/Expression.hpp>
 #include <utils/DebugUtils.hpp>
 
+#include <glm/glm.hpp>
+
 #include <array>
 #include <vector>
 
 class SkPoint;
 class SkLineCurve;
+class Sketch;
 // class SkCircle;
 
 class SkConstraint : public SkDrawable, public Constraint_abstr {
@@ -22,10 +25,6 @@ protected:
 	std::vector<var_ptr> mVars;
 public:
 	SkConstraint(Geom3d::Plane_abstr* baseplane_, std::vector<var_ptr> vars, std::vector<equ_ptr> equs);
-
-	double error(size_t eq);
-	bool satisfied();
-	double derivative(var_ptr withRespectTo, size_t from_eq);
 
 	equ_ptr equ(size_t ind) { return mEqus.at(ind); }
 	/*constexpr*/ size_t n_equs() { return mEqus.size(); }
@@ -81,14 +80,15 @@ public:
 		}
 		return SelectionPoint();
 	}
-	DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+	std::unique_ptr<DraggableSelectionPoint> closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 	{
 		for(int i = 0; i < nA; ++i) {
-			DraggableSelectionPoint selPt = pT::mDrawList.at(i)->closest_2d_draggable(planePos, cam, cursorPos, filter);
-			if(selPt.ent)
+			std::unique_ptr<DraggableSelectionPoint> selPt = 
+				pT::mDrawList.at(i)->closest_2d_draggable(planePos, cam, cursorPos, filter);
+			if(selPt)
 				return selPt;
 		}
-		return DraggableSelectionPoint();
+		return nullptr;
 	}
 
 	SkSprite* annot(size_t ind)
@@ -217,6 +217,7 @@ public:
 	SkPointPoint_coincidence(Geom3d::Plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2);
 	std::string name() { return "SkPointPoint_coincidence"; }
 };
+
 // class circleLine_coincidence : public SkSprite_constraint<2> {
 // private:
 // 	sketchCircle_ptr mCircle;

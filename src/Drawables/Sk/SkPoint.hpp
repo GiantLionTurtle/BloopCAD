@@ -25,7 +25,7 @@ public:
 	~SkPoint();
 
 	SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
-	DraggableSelectionPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
+	std::unique_ptr<DraggableSelectionPoint> closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	int selection_rank() { return 5; }
 	virtual void set_annotPos(SkSprite* sp) { sp->set(pos()); }
 	void set_annotOffset(SkSprite* sp, int ind);
