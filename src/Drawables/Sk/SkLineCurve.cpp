@@ -15,7 +15,6 @@ glm::vec3 SkLineCurve::kColorSelected = glm::vec3(0.0);
 SkLineCurve::SkLineCurve(Geom3d::Plane_abstr* pl, bool fixed_):
 	SkCurve<std::array<ExpVec2<ExpVar>*, 2>, SkLineCurve>(pl, fixed_)
 {
-	asvecExp = *ptA() - *ptB();
 	mType |= Drawable_types::AXIS;
 	set_name("SkLineCurve");
 }
@@ -43,6 +42,7 @@ void SkLineCurve::set_annotOffset(SkSprite* sp, int ind)
 
 void SkLineCurve::init_impl()
 {
+	asvecExp = *ptA() - *ptB();
 	mNeed_update = false;
 	
 	// mLength2 = (pow(mA->x()-mB->x(), 2.0) + pow(mA->y()-mB->y(), 2.0));

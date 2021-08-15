@@ -59,6 +59,13 @@ bool SketchDefault_tool::manage_button_press(GdkEventButton* event)
 		auto hovered = clickedPoint ? clickedPoint.ent : nullptr;
 		if(hovered) {
 			mAllowedToMove = true;
+			int n_sel = mEnv->target()->n_selected();
+			if(n_sel == 0 || (n_sel == 1 && hovered->selected())) {
+					mEnv->target()->dragConstr()->set_equality(clickedPoint.pt);
+			} else {
+				mEnv->target()->dragConstr()->clear(); // TODO: Check if useful
+			}
+
 			if(!hovered->selected()) {
 				if(!(event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK))
 					mEnv->target()->unselect_all();
@@ -81,8 +88,6 @@ bool SketchDefault_tool::manage_button_release(GdkEventButton* event)
 	if(event->button == 1) {
 		mEnv->state()->doc->clear_toolPreview();
 	}
-
-	// mDraggedEnt = nullptr;
 	
 	if(mMoving) {
 		int i = 0;
@@ -90,6 +95,7 @@ bool SketchDefault_tool::manage_button_release(GdkEventButton* event)
 		LOG_WARNING("Implement snapshot with variables");
 	}
 
+	mEnv->target()->dragConstr()->clear();
 	mAllowedToMove = false;
 	mMoving = false;
 	return true;
@@ -111,7 +117,11 @@ bool SketchDefault_tool::manage_mouse_move(GdkEventMotion* event)
 				mMoving = true;
 				mStartSnapshot = mEnv->target()->snapshot();
 			}
-			mEnv->target()->move_selected(mPrevPos, pos, mPrevMousePos - mousePos);
+			if(!mEnv->target()->dragConstr()->valid()) {
+				mEnv->target()->move_selected(mPrevPos, pos, mPrevMousePos - mousePos);
+			} else {
+				mEnv->target()->dragConstr()->dragTo(pos);
+			}
 			bool update_attempt = sk->update_constraints(true, false);
 		} else {
 			mSelectionRect->set_endPoint(pos);

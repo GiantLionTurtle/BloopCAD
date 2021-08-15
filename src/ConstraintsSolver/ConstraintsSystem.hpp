@@ -78,7 +78,7 @@ public:
 		mConstraints.push_back(mDragConstraint);
 	}
 
-	DraggedPoint<nD>* dragConstraint() { return mDragConstraint; }
+	DraggedPoint<nD>* dragConstr() { return mDragConstraint; }
 };
 
 #endif

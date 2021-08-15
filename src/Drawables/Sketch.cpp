@@ -16,12 +16,12 @@
 
 Sketch::Sketch(Geom3d::Plane_abstr* base_plane):
 	mBasePlane(base_plane),
-	mSystem(this, 1)
+	mConstrSystem(this, 1)
 {
 	set_name("Sketch");
 	// create_origin();
 
-	// mSystem.set_solver(ConstraintsSystem::LevenbergMarquardt);
+	// mConstrSystem.set_solver(ConstraintsSystem::LevenbergMarquardt);
 }
 
 void Sketch::init_impl()
@@ -42,7 +42,7 @@ void Sketch::notify(Drawable* who, int msg, bool child)
 	switch(msg) {
 	case DELETED:
 	case RESURRECTED:
-		mSystem.updatedSystem();
+		mConstrSystem.updatedSystem();
 		break;
 	default:
 		break;
@@ -50,7 +50,7 @@ void Sketch::notify(Drawable* who, int msg, bool child)
 }
 void Sketch::dragUpdate()
 {
-	mSystem.updatedSystem();
+	mConstrSystem.updatedSystem();
 	set_need_update();
 }
 
@@ -115,6 +115,15 @@ void Sketch::unselect_all()
 		ch->unselect();
 	}
 }
+size_t Sketch::n_selected()
+{
+	size_t running_sum = 0;
+	for(size_t i = 0; i < mDrawList.size(); ++i) {
+		if(mDrawList.at(i)->selected())
+			running_sum++;
+	}
+	return running_sum;
+}
 
 void Sketch::add_geometry(SkGeometry* geom)
 {
@@ -124,7 +133,7 @@ void Sketch::add_geometry(SkGeometry* geom)
 	}
 	set_need_redraw();
 	if(!geom->fixed())
-		mSystem.add_variables(geom->all_vars());
+		mConstrSystem.add_variables(geom->all_vars());
 	mDrawList.add_geom(geom);	
 }
 
@@ -176,9 +185,9 @@ bool Sketch::add_constraint(SkConstraint* constr, SkDrawable* immovable_hint)
 	if(!constr)
 		return false;
 	mDrawList.add_constr(constr);
-	mSystem.add_constraint(constr);
+	mConstrSystem.add_constraint(constr);
 	// constr->set_parent(this);
-	mHandle->update_name(mName + "(" + std::to_string(mSystem.n_constraints()) + ",  " + std::to_string(mSystem.n_variables()) + ")");
+	mHandle->update_name(mName + "(" + std::to_string(mConstrSystem.n_constraints()) + ",  " + std::to_string(mConstrSystem.n_variables()) + ")");
 
 	if(immovable_hint) {
 		// BLOOPBLOOPCHECK
@@ -201,8 +210,8 @@ bool Sketch::toggle_constraint(SkConstraint* constr, bool enable)
 	if(!constr)
 		return false;
 	constr->set_exists(enable);
-	mSystem.toggle_constraint(constr, enable);
-	mHandle->update_name(mName + "(" + std::to_string(mSystem.n_constraints()) + ",  " + std::to_string(mSystem.n_variables()) + ")");
+	mConstrSystem.toggle_constraint(constr, enable);
+	mHandle->update_name(mName + "(" + std::to_string(mConstrSystem.n_constraints()) + ",  " + std::to_string(mConstrSystem.n_variables()) + ")");
 
 	if(update_constraints(true, false))
 		return true;
@@ -215,7 +224,7 @@ bool Sketch::update_constraints(bool safeUpdate, bool update_on_solveFail)
 {
 	if(safeUpdate)
 		backup_system();
-	int solve_out = mSystem.solve();
+	int solve_out = mConstrSystem.solve();
 	if(update_on_solveFail || solve_out == SolverState::SUCCESS) {
 		set_need_update();
 	} else if(safeUpdate && solve_out != SolverState::SUCCESS) {
@@ -227,13 +236,13 @@ bool Sketch::update_constraints(bool safeUpdate, bool update_on_solveFail)
 std::map<var_ptr, float> Sketch::snapshot()
 {
 	std::map<var_ptr, float> shot;
-	mSystem.varState(shot);
+	mConstrSystem.varState(shot);
 	return shot;
 }
 std::vector<VarDualState> Sketch::deltaSnapshot(std::map<var_ptr, float> first)
 {
 	std::vector<VarDualState> delta;
-	mSystem.varDelta(first, delta);
+	mConstrSystem.varDelta(first, delta);
 	return delta;
 }
 void Sketch::apply_snapshot(std::map<var_ptr, float> shot)
@@ -257,11 +266,11 @@ void Sketch::apply_deltaSnapshot(std::vector<VarDualState> deltaShot, bool first
 
 void Sketch::backup_system()
 {
-	mSystem.varState(mSystemBackup);
+	mConstrSystem.varState(mConstrSystemBackup);
 }
 void Sketch::revert_system_to_backup()
 {
-	apply_snapshot(mSystemBackup);
+	apply_snapshot(mConstrSystemBackup);
 }
 
 void Sketch::invoke_workspace(document* doc)

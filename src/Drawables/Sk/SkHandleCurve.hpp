@@ -147,7 +147,7 @@ public:
 	void set_annotPos(SkSprite* sp) { curve()->set_annotPos(sp); }
 	void set_annotOffset(SkSprite* sp, int ind) { curve()->set_annotOffset(sp, ind); }
 
-	std::vector<var_ptr> all_vars()
+	virtual std::vector<var_ptr> all_vars()
 	{
 		std::vector<var_ptr> vars;
 		for(int i = 0; i < n_handles(); ++i) {

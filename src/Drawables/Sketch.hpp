@@ -69,8 +69,8 @@ private:
 	Geom3d::Plane_abstr* mBasePlane; // Plane onto which every geometry is added, maybe it should descend from Plane_abstract..
 
 	// Folder* mOrigin;
-	DragEnabled_ConstraintsSystem<2> mSystem;
-	std::vector<VarState> mSystemBackup;
+	DragEnabled_ConstraintsSystem<2> mConstrSystem;
+	std::vector<VarState> mConstrSystemBackup;
 public:
 	/*
 		@function sketch creates a sketch
@@ -89,6 +89,7 @@ public:
 	void move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov);
 	std::shared_ptr<serial_action> delete_selected(); 
 	void unselect_all();
+	size_t n_selected();
 
 	void add_geometry(SkGeometry* geom);
 	
@@ -114,6 +115,7 @@ public:
 
 	// Folder* origin() const { return mOrigin; }
 
+	DraggedPoint<2>* dragConstr() { return mConstrSystem.dragConstr(); }
 	bool add_constraint(SkConstraint* constr, SkDrawable* immovable_hint = nullptr);
 	bool toggle_constraint(SkConstraint* constr, bool enable);
 	bool update_constraints(bool safeUpdate, bool update_on_solveFail);

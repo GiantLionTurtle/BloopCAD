@@ -7,6 +7,7 @@
 
 class SkCircle : public SkHandleCurve<SkHandleCurve_FixedIndexer<1, SkCircleCurve>> {
 public:
+	using parentType = SkHandleCurve<SkHandleCurve_FixedIndexer<1, SkCircleCurve>>;
 	SkCircle(glm::vec2 center_, float radius_, Geom3d::Plane_abstr* pl, bool fixed_):
 		SkHandleCurve({ center_ }, pl, fixed_)
 	{
@@ -21,6 +22,13 @@ public:
     var_ptr radius() { return curve()->radius(); }
 	float radius_val() { return radius()->eval(); }
 	void set_radius(float val) { radius()->set(val); }
+
+	std::vector<var_ptr> all_vars()
+	{
+		std::vector<var_ptr> vars = parentType::all_vars();
+		vars.push_back(radius());
+		return vars;
+	}
 
 	int selection_rank() { return 3; }
 };

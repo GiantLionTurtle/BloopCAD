@@ -1,6 +1,6 @@
 
-#ifndef EXPRESSIONVEC_HPP_
-#define EXPRESSIONVEC_HPP_
+#ifndef VEXPRESSIONVEC_HPP_
+#define VEXPRESSIONVEC_HPP_
 
 #include "Expression.hpp"
 
@@ -44,6 +44,7 @@ public:
 	{
 
 	}
+	operator bool() { return x() && y(); }
 	inline std::shared_ptr<eT>& x() { return ExpVec<eT, 2>::comp(0); }
 	inline std::shared_ptr<eT>& y() { return ExpVec<eT, 2>::comp(1); }
 	glm::vec2 pos() { return glm::vec2(x()->eval(), y()->eval()); }
@@ -61,7 +62,7 @@ vecType<Expression> func(vecType<eTi> expVec) \
 	return newExpVec; \
 }
 
-#define ELEMENTWISE_FUNCTOR_EXP_EXP(vecType, func) \
+#define ELEMENTWISE_FUNCTOR_VEXP_VEXP(vecType, func) \
 template<typename eTi1, typename eTi2> \
 vecType<Expression> func(vecType<eTi1> expVec1, vecType<eTi2> expVec2) \
 { \
@@ -72,7 +73,7 @@ vecType<Expression> func(vecType<eTi1> expVec1, vecType<eTi2> expVec2) \
 	return newExpVec; \
 }
 
-#define ELEMENTWISE_FUNCTOR_DBL_EXP(vecType, func) \
+#define ELEMENTWISE_FUNCTOR_DBL_VEXP(vecType, func) \
 template<typename eTi> \
 vecType<Expression> func(double val, vecType<eTi> expVec1) \
 { \
@@ -83,7 +84,7 @@ vecType<Expression> func(double val, vecType<eTi> expVec1) \
 	return newExpVec; \
 }
 
-#define ELEMENTWISE_FUNCTOR_EXP_DBL(vecType, func) \
+#define ELEMENTWISE_FUNCTOR_VEXP_DBL(vecType, func) \
 template<typename eTi1> \
 vecType<Expression> func(vecType<eTi1> expVec1, double val) \
 { \
@@ -95,11 +96,43 @@ vecType<Expression> func(vecType<eTi1> expVec1, double val) \
 }
 
 
+#define ELEMENTWISE_FUNCTOR_DBL_EXP(vecType, func) \
+template<typename eTi1, typename eTi2> \
+vecType<Expression> func(std::shared_ptr<eTi1> exp, vecType<eTi2> expVec1) \
+{ \
+	vecType<Expression> newExpVec; \
+	for(size_t i = 0; i < expVec1.dims(); ++i) { \
+		newExpVec.comp(i) = func(exp, expVec1.comp(i)); \
+	} \
+	return newExpVec; \
+}
 
-ELEMENTWISE_FUNCTOR_EXP_EXP(ExpVec2, operator+);
-ELEMENTWISE_FUNCTOR_EXP_EXP(ExpVec2, operator-);
-ELEMENTWISE_FUNCTOR_EXP_EXP(ExpVec2, operator*);
-ELEMENTWISE_FUNCTOR_EXP_EXP(ExpVec2, operator/);
+#define ELEMENTWISE_FUNCTOR_EXP_DBL(vecType, func) \
+template<typename eTi1, typename eTi2> \
+vecType<Expression> func(vecType<eTi1> expVec1, std::shared_ptr<eTi2> exp) \
+{ \
+	vecType<Expression> newExpVec; \
+	for(size_t i = 0; i < expVec1.dims(); ++i) { \
+		newExpVec.comp(i) = func(expVec1.comp(i), exp); \
+	} \
+	return newExpVec; \
+}
+
+
+
+ELEMENTWISE_FUNCTOR_VEXP_VEXP(ExpVec2, operator+);
+ELEMENTWISE_FUNCTOR_VEXP_VEXP(ExpVec2, operator-);
+ELEMENTWISE_FUNCTOR_VEXP_VEXP(ExpVec2, operator*);
+ELEMENTWISE_FUNCTOR_VEXP_VEXP(ExpVec2, operator/);
+ELEMENTWISE_FUNCTOR_DBL_VEXP(ExpVec2, operator+);
+ELEMENTWISE_FUNCTOR_DBL_VEXP(ExpVec2, operator-);
+ELEMENTWISE_FUNCTOR_DBL_VEXP(ExpVec2, operator*);
+ELEMENTWISE_FUNCTOR_DBL_VEXP(ExpVec2, operator/);
+ELEMENTWISE_FUNCTOR_VEXP_DBL(ExpVec2, operator+);
+ELEMENTWISE_FUNCTOR_VEXP_DBL(ExpVec2, operator-);
+ELEMENTWISE_FUNCTOR_VEXP_DBL(ExpVec2, operator*);
+ELEMENTWISE_FUNCTOR_VEXP_DBL(ExpVec2, operator/);
+
 ELEMENTWISE_FUNCTOR_DBL_EXP(ExpVec2, operator+);
 ELEMENTWISE_FUNCTOR_DBL_EXP(ExpVec2, operator-);
 ELEMENTWISE_FUNCTOR_DBL_EXP(ExpVec2, operator*);
@@ -108,11 +141,13 @@ ELEMENTWISE_FUNCTOR_EXP_DBL(ExpVec2, operator+);
 ELEMENTWISE_FUNCTOR_EXP_DBL(ExpVec2, operator-);
 ELEMENTWISE_FUNCTOR_EXP_DBL(ExpVec2, operator*);
 ELEMENTWISE_FUNCTOR_EXP_DBL(ExpVec2, operator/);
+
+
 ELEMENTWISE_FUNCTOR_SINGLE(ExpVec2, operator+);
 ELEMENTWISE_FUNCTOR_SINGLE(ExpVec2, operator-);
 
-ELEMENTWISE_FUNCTOR_EXP_DBL(ExpVec2, pow);
-ELEMENTWISE_FUNCTOR_EXP_DBL(ExpVec2, mod);
+ELEMENTWISE_FUNCTOR_VEXP_DBL(ExpVec2, pow);
+ELEMENTWISE_FUNCTOR_VEXP_DBL(ExpVec2, mod);
 
 template<typename eT>
 exp_ptr dot(ExpVec2<eT> a, ExpVec2<eT> b)
@@ -120,7 +155,7 @@ exp_ptr dot(ExpVec2<eT> a, ExpVec2<eT> b)
 	return dot(a.x(), a.y(), b.x(), b.y());
 }
 
-ELEMENTWISE_FUNCTOR_EXP_EXP(ExpVec2, pow);
+ELEMENTWISE_FUNCTOR_VEXP_VEXP(ExpVec2, pow);
 ELEMENTWISE_FUNCTOR_SINGLE(ExpVec2, sqrt);
 ELEMENTWISE_FUNCTOR_SINGLE(ExpVec2, sin)
 ELEMENTWISE_FUNCTOR_SINGLE(ExpVec2, asin);

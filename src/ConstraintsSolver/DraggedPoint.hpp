@@ -3,15 +3,15 @@
 #define DRAGGEDPOINT_HPP_
 
 #include "Constraint_abstr.hpp"
+#include "ExpressionVec.hpp"
 
 #include <glm/glm.hpp>
 
 #include <array>
 
 class DragSystemHandler {
+public:
 	virtual void dragUpdate() = 0;
-
-	constexpr size_t size() { return 2; }
 };
 
 template<size_t dims>
@@ -39,7 +39,16 @@ public:
 			mVars[i]->set(*(&pos[0]+i));
 		}
 	}
-	
+	template<typename eT>
+	void set_equality(ExpVec<eT, dims> equality)
+	{
+		mEqus.resize(dims);
+		mPointEmiter->dragUpdate();
+		
+		for(size_t i = 0; i < dims; ++i) {
+			mEqus[i] = mVars[i] ^= equality.comp(i);
+		}
+	}
 	void set_equality(std::array<exp_ptr, dims> equality)
 	{
 		mEqus.resize(dims);
@@ -54,7 +63,11 @@ public:
 		mEqus.clear();
 		mPointEmiter->dragUpdate();
 	}
-
+	bool valid()
+	{
+		return !mEqus.empty();
+	}
+	operator bool() { return valid(); } // !!! Important, can't be used on pointer type
 	equ_ptr equ(size_t ind)
 	{
 		return mEqus[ind];
