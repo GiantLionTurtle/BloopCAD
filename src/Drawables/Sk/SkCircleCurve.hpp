@@ -8,7 +8,7 @@
 #include <Geom/Geom2d/Circle_abstr.hpp>
 
 
-class SkCircleCurve : public Geom2d::Circle_abstr, public SkCurve<std::array<Geom2d::ExpressionPoint<var_ptr>*, 1>, SkCircleCurve> {
+class SkCircleCurve : public Geom2d::Circle_abstr, public SkCurve<std::array<ExpVec2<ExpVar>*, 1>, SkCircleCurve> {
 private:
 	static bool kFisrstInst;
 	static glm::vec3 kColor, kColorHovered, kColorSelected; // Line color
@@ -20,8 +20,10 @@ public:
 
 	glm::vec2 center_pos() { return pos(0); }
     float radius_val() { return mRadius->eval(); }
-	Geom2d::ExpressionPoint<var_ptr>* center() { return pt(0); }
+	ExpVec2<ExpVar>* center() { return pt(0); }
     var_ptr radius() { return mRadius; }
+
+	ExpVec2<Expression> atExp(float t);
 
 	int selection_rank() { return 5; }
 	void set_annotPos(SkSprite* sp) { sp->set(center_pos()); }

@@ -6,15 +6,16 @@
 #include <graphics_utils/GLCall.hpp>
 
 template<>
-float SkCurve<std::array<Geom2d::ExpressionPoint<var_ptr>*, 2>, SkLineCurve>::kSelDist2 = 0.0f;
+float SkCurve<std::array<ExpVec2<ExpVar>*, 2>, SkLineCurve>::kSelDist2 = 0.0f;
 bool SkLineCurve::kFisrstInst = true;
 glm::vec3 SkLineCurve::kColor = glm::vec3(0.0); 
 glm::vec3 SkLineCurve::kColorHovered = glm::vec3(0.0);
 glm::vec3 SkLineCurve::kColorSelected = glm::vec3(0.0);
 
 SkLineCurve::SkLineCurve(Geom3d::Plane_abstr* pl, bool fixed_):
-	SkCurve<std::array<Geom2d::ExpressionPoint<var_ptr>*, 2>, SkLineCurve>(pl, fixed_)
+	SkCurve<std::array<ExpVec2<ExpVar>*, 2>, SkLineCurve>(pl, fixed_)
 {
+	asvecExp = *ptA() - *ptB();
 	mType |= Drawable_types::AXIS;
 	set_name("SkLineCurve");
 }
@@ -22,6 +23,11 @@ SkLineCurve::SkLineCurve(Geom3d::Plane_abstr* pl, bool fixed_):
 SkLineCurve::~SkLineCurve()
 {
 
+}
+
+ExpVec2<Expression> SkLineCurve::atExp(float t)
+{
+	return *ptA() - (double)t * asvecExp;
 }
 
 void SkLineCurve::set_annotOffset(SkSprite* sp, int ind)

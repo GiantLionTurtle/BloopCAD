@@ -54,15 +54,15 @@ void Sketch::dragUpdate()
 	set_need_update();
 }
 
-SelectionPoint Sketch::closest(glm::vec2 cursor, Camera* cam, int filter)
+SelPoint Sketch::closest(glm::vec2 cursor, Camera* cam, int filter)
 {
 	glm::vec2 planepos = mBasePlane->to_planePos(mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor)));
 	int maxpriority = -1;
-	SelectionPoint selPt;
+	SelPoint selPt;
 	for(size_t i = 0; i < mDrawList.size(); ++i) {
 		SkDrawable* ch = mDrawList.at(i);
 		if(ch->visible() && ch->selection_rank() > maxpriority) {
-			SelectionPoint tmpSelPt = ch->closest_2d(planepos, cam, cursor, filter);
+			SelPoint tmpSelPt = ch->closest_2d(planepos, cam, cursor, filter);
 			if(tmpSelPt.ent) {
 				selPt = tmpSelPt;
 				maxpriority = tmpSelPt.ent->selection_rank();
@@ -72,18 +72,18 @@ SelectionPoint Sketch::closest(glm::vec2 cursor, Camera* cam, int filter)
 	return selPt;
 }
 
-std::unique_ptr<DraggableSelectionPoint> Sketch::closest_draggable(glm::vec2 cursor, Camera* cam, int filter)
+SkExpSelPoint Sketch::closest_draggable(glm::vec2 cursor, Camera* cam, int filter)
 {
 	glm::vec2 planepos = mBasePlane->to_planePos(mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor)));
 	int maxpriority = -1;
-	std::unique_ptr<DraggableSelectionPoint> selPt;
+	SkExpSelPoint selPt;
 	for(size_t i = 0; i < mDrawList.size(); ++i) {
 		SkDrawable* ch = mDrawList.at(i);
 		if(ch->visible() && ch->selection_rank() > maxpriority) {
-			std::unique_ptr<DraggableSelectionPoint> tmpSelPt = ch->closest_2d_draggable(planepos, cam, cursor, filter);
+			SkExpSelPoint tmpSelPt = ch->closest_2d_draggable(planepos, cam, cursor, filter);
 			if(tmpSelPt) {
 				selPt = std::move(tmpSelPt);
-				maxpriority = selPt->ent->selection_rank();
+				maxpriority = selPt.ent->selection_rank();
 			}
 		}
 	}

@@ -5,13 +5,14 @@
 #include "SkGeometry.hpp"
 #include <Drawables/Tangible.hpp>
 #include <ConstraintsSolver/Expression.hpp>
+#include <ConstraintsSolver/ExpressionVec.hpp>
 #include <Geom/Geom2d/Point_abstr.hpp>
 
 #include <graphics_utils/VertexArray.hpp>
 #include <graphics_utils/VertexBuffer.hpp>
 #include <graphics_utils/Shader.hpp>
 
-class SkPoint : public Geom2d::ExpressionPoint<var_ptr>, public SkPrimitiveGeometry {
+class SkPoint : public ExpVec2<ExpVar>, public SkPrimitiveGeometry {
 private:
 	static float kSelDist2;
 	static bool kFisrstInst;
@@ -24,8 +25,9 @@ public:
 	SkPoint(glm::vec2 pos, Geom3d::Plane_abstr* pl, bool fixed_);
 	~SkPoint();
 
-	SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
-	std::unique_ptr<DraggableSelectionPoint> closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
+	glm::vec2 pos() { return ExpVec2<ExpVar>::pos(); }
+	SelPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
+	SkExpSelPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	int selection_rank() { return 5; }
 	virtual void set_annotPos(SkSprite* sp) { sp->set(pos()); }
 	void set_annotOffset(SkSprite* sp, int ind);

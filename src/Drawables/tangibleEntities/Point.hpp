@@ -26,7 +26,7 @@ public:
 	virtual ~Point();
 
 	virtual int selection_rank() { return 5; }
-	SelectionPoint closest(glm::vec2 cursor, Camera* cam, int filter);
+	SelPoint closest(glm::vec2 cursor, Camera* cam, int filter);
 
 	virtual void move(glm::vec3 from, glm::vec3 to);
 

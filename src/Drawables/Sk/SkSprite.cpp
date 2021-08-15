@@ -18,7 +18,7 @@ SkSprite::SkSprite(Geom3d::Plane_abstr* basePlane_, glm::vec2 dims, std::string 
     mDimensions(dims),
     mTexturePath(texturePath),
     mPixelOffset(0.0f, 0.0f),
-	mPos(0.0f, 0.0f),
+	mPos({ExpVar::make(0.0f), ExpVar::make(0.0f)}),
     mVA(nullptr),
     mVB(nullptr),
     mShader(nullptr)
@@ -31,7 +31,7 @@ SkSprite::~SkSprite()
 
 }
 
-SelectionPoint SkSprite::closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+SelPoint SkSprite::closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 {
 	if(mType & filter) {
 		glm::vec3 worldPos = mBasePlane->to_worldPos(pos());
@@ -39,17 +39,17 @@ SelectionPoint SkSprite::closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 c
 		if(std::abs(screenPos.x - cursorPos.x) <= mDimensions.x && std::abs(screenPos.y - cursorPos.y) <= mDimensions.y)
 			return { this, glm::distance(cam->pos(), worldPos) };
 	}
-	return SelectionPoint();
+	return SelPoint();
 }
-std::unique_ptr<DraggableSelectionPoint> SkSprite::closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+SkExpSelPoint SkSprite::closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 {
 	if(mType & filter) {
 		glm::vec3 worldPos = mBasePlane->to_worldPos(pos());
 		glm::vec2 screenPos = cam->world_to_screen(worldPos);
 		if(std::abs(screenPos.x - cursorPos.x) <= mDimensions.x && std::abs(screenPos.y - cursorPos.y) <= mDimensions.y)
-			return std::make_unique<DraggableSelectionPoint>(this);
+			return SkExpSelPoint(this, { mPos[0], mPos[1] });
 	}
-	return nullptr;
+	return SkExpSelPoint();
 }
 
 void SkSprite::move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move)
@@ -59,7 +59,8 @@ void SkSprite::move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move)
 
 void SkSprite::set(glm::vec2 pos_)
 {
-	mPos = pos_;
+	mPos[0]->set(pos_.x);
+	mPos[1]->set(pos_.y);
 	set_need_update();
 }
 void SkSprite::set_pixelOffset(glm::vec2 offset)

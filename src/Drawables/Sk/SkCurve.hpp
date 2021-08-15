@@ -4,6 +4,7 @@
 
 #include "SkGeometry.hpp"
 
+
 #include <vector>
 
 class SkCurve_abstr : public SkPrimitiveGeometry {
@@ -14,13 +15,14 @@ public:
 		mType |= CURVE;
 	}
 
-	virtual void set_handle(size_t ind, Geom2d::ExpressionPoint<var_ptr>* pt) = 0;
+	virtual void set_handle(size_t ind, ExpVec2<ExpVar>* pt) = 0;
 
 	virtual glm::vec2 pos(size_t ind) = 0;
-	virtual Geom2d::ExpressionPoint<var_ptr>* pt(size_t ind) = 0;
+	virtual ExpVec2<ExpVar>* pt(size_t ind) = 0;
+	virtual ExpVec2<Expression> atExp(float t) = 0;
 
-	virtual SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
-	virtual std::unique_ptr<DraggableSelectionPoint> closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
+	virtual SelPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
+	virtual SkExpSelPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
 protected:
 	virtual void move_impl(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov) = 0;
 };
@@ -47,32 +49,33 @@ public:
 		delete mVB;
 	}
 
-	void set_handle(size_t ind, Geom2d::ExpressionPoint<var_ptr>* pt) 
+	void set_handle(size_t ind, ExpVec2<ExpVar>* pt) 
 	{
 		mHandles.at(ind) = pt;
 		set_need_update();
 	}
 
 	glm::vec2 pos(size_t ind) { return mHandles.at(ind)->pos(); }
-	Geom2d::ExpressionPoint<var_ptr>* pt(size_t ind) { return mHandles.at(ind); }
+	ExpVec2<ExpVar>* pt(size_t ind) { return mHandles.at(ind); }
 
-	SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+	SelPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 	{
 		if(mType & filter) {
 			glm::vec3 worldpos = mBasePlane->to_worldPos(static_cast<Derived*>(this)->closest_to_point(planePos));
 			if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
 				return { this, glm::distance(cam->pos(), worldpos) };
 		}
-		return SelectionPoint();
+		return SelPoint();
 	}
-	std::unique_ptr<DraggableSelectionPoint> closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+	SkExpSelPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 	{
 		if(mType & filter) {
-			glm::vec3 worldpos = mBasePlane->to_worldPos(static_cast<Derived*>(this)->closest_to_point(planePos));
+			float t = static_cast<Derived*>(this)->closest_to_point_interp(planePos);
+			glm::vec3 worldpos = mBasePlane->to_worldPos(static_cast<Derived*>(this)->at(t));
 			if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
-				return std::make_unique<DraggableSelectionPoint>(this);
+				return SkExpSelPoint(this, atExp(t));
 		}
-		return nullptr;
+		return SkExpSelPoint();
 	}
 protected:
 	void move_impl(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)

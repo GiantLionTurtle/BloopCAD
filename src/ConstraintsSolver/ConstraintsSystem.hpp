@@ -9,7 +9,6 @@
 #include <map>
 #include <set>
 
-
 class ConstraintsSystem {
 protected:
 	std::vector<Constraint_abstr*> mConstraints;
@@ -69,12 +68,17 @@ private:
 
 template<size_t nD>
 class DragEnabled_ConstraintsSystem : public ConstraintsSystem {
+private:
+	DraggedPoint<nD>* mDragConstraint;
 public:
 	DragEnabled_ConstraintsSystem(DragSystemHandler* handler, int verboseLevel = 0):
-		ConstraintsSystem(verboseLevel)
+		ConstraintsSystem(verboseLevel),
+		mDragConstraint(new DraggedPoint<nD>(handler))
 	{
-		mConstraints.push_back(new DraggedPoint<nD>(handler));
+		mConstraints.push_back(mDragConstraint);
 	}
+
+	DraggedPoint<nD>* dragConstraint() { return mDragConstraint; }
 };
 
 #endif

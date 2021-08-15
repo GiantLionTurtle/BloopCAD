@@ -71,24 +71,24 @@ public:
 		}
 	}
 
-	SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+	SelPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 	{
 		for(int i = 0; i < nA; ++i) {
-			SelectionPoint selPt = pT::mDrawList.at(i)->closest_2d(planePos, cam, cursorPos, filter);
+			SelPoint selPt = pT::mDrawList.at(i)->closest_2d(planePos, cam, cursorPos, filter);
 			if(selPt.ent)
 				return selPt;
 		}
-		return SelectionPoint();
+		return SelPoint();
 	}
-	std::unique_ptr<DraggableSelectionPoint> closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+	SkExpSelPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 	{
 		for(int i = 0; i < nA; ++i) {
-			std::unique_ptr<DraggableSelectionPoint> selPt = 
+			SkExpSelPoint selPt = 
 				pT::mDrawList.at(i)->closest_2d_draggable(planePos, cam, cursorPos, filter);
 			if(selPt)
 				return selPt;
 		}
-		return nullptr;
+		return SkExpSelPoint();
 	}
 
 	SkSprite* annot(size_t ind)

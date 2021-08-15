@@ -24,7 +24,8 @@ public:
 
 	virtual bool within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained) = 0;
 
-	virtual glm::vec2 closest_to_point(glm::vec2 const& pt) = 0;
+	virtual float closest_to_point_interp(glm::vec2 const& pt) = 0; // Plugging this function in at(t) should give the same as closest_to_point
+	virtual glm::vec2 closest_to_point(glm::vec2 const& pt) { return at(closest_to_point_interp(pt)); }
 	virtual glm::vec2 closest_to_point(Point_abstr& pt);
 	virtual glm::vec2 closest_to_point(Point_abstr_ptr pt) { return closest_to_point(*pt.get()); }
 

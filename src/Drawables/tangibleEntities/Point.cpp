@@ -24,15 +24,15 @@ Point::~Point()
 	delete mVA;
 }
 
-SelectionPoint Point::closest(glm::vec2 cursor, Camera* cam, int filter)
+SelPoint Point::closest(glm::vec2 cursor, Camera* cam, int filter)
 {
 	if(!(mType & filter))
-		return SelectionPoint();
+		return SelPoint();
 	
 	// NOTE: 50 is arbitrary and should be an option eventually
 	if(glm::distance2(cam->world_to_screen(pos()), cursor) < 50)
-		return SelectionPoint(this, glm::distance(pos(), cam->pos()));
-	return SelectionPoint();
+		return SelPoint(this, glm::distance(pos(), cam->pos()));
+	return SelPoint();
 }
 
 void Point::move(glm::vec3 from, glm::vec3 to) 

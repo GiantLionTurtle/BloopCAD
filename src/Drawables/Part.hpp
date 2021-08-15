@@ -87,7 +87,7 @@ public:
 
 	virtual void set_handle(entityHandle* handle_);
 
-	SelectionPoint closest(glm::vec2 cursor, Camera* cam, int filter);
+	SelPoint closest(glm::vec2 cursor, Camera* cam, int filter);
 
 	void add_sketch(Sketch* sk);
 

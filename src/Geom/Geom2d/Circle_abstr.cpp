@@ -21,7 +21,7 @@ Circle_abstr::~Circle_abstr()
 
 glm::vec2 Circle_abstr::at(float t)
 {
-	float angle = t * (M_PI * 2);
+	float angle = t * (M_PI * 2.0f);
 	return center_pos() + glm::vec2(std::cos(angle), std::sin(angle)) * (float)radius_val();
 }
 bool Circle_abstr::within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
@@ -36,6 +36,13 @@ bool Circle_abstr::within(glm::vec2 top_left, glm::vec2 bottom_right, bool conta
 								// right(a, glm::vec2(a.x, b.y)),
 								left(glm::vec2(top_left.x, bottom_right.y), top_left);
 	return intersects(&up) || intersects(&down) /*|| intersects(&right)*/ || intersects(&left) || within(top_left, bottom_right, true);
+}
+float Circle_abstr::closest_to_point_interp(glm::vec2 const& pt)
+{
+	// Closest point radialy then do inverse of at()
+	glm::vec2 pt_norm = glm::normalize(pt - center_pos());
+	float angle = std::asin(pt_norm.y);
+	return angle / (M_PI * 2.0f);
 }
 glm::vec2 Circle_abstr::closest_to_point(glm::vec2 const& pt)
 {

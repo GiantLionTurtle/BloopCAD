@@ -20,27 +20,12 @@ public:
 	bool within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained);
 	static bool within(glm::vec2 pt, glm::vec2 top_left, glm::vec2 bottom_right);
 
+	float closest_to_point_interp(glm::vec2 const& pt) { return 0.0f; }
 	virtual glm::vec2 closest_to_point(glm::vec2 const& pt) { return pos(); }
 	virtual float dist_to_point(glm::vec2 const& pt);
 	virtual float dist_to_point_2(glm::vec2 const& pt);
 	virtual float dist_to_point_2(Point_abstr& pt) { return dist_to_point_2(pt.pos()); }
 	virtual float dist_to_point_2(Point_abstr_ptr pt) { return dist_to_point_2(pt->pos()); }
-};
-
-template<typename eT>
-class ExpressionPoint : public Geom2d::Point_abstr {
-protected:
-	eT mX, mY;
-public:
-	ExpressionPoint(eT x_, eT y_):
-		mX(x_),
-		mY(y_)
-	{}
-
-	glm::vec2 pos() { return glm::vec2(mX->eval(), mY->eval()); }
-
-	eT x() { return mX; }
-	eT y() { return mY; }
 };
 
 std::ostream& operator<<(std::ostream& os, Point_abstr_ptr p);

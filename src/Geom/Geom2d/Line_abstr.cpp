@@ -71,19 +71,19 @@ bool Line_abstr::within(glm::vec2 top_left, glm::vec2 bottom_right, bool contain
 			|| intersects(top_left, top_right) || intersects(bottom_left, bottom_right)
 			|| intersects(top_left, bottom_left) || intersects(top_right, bottom_right);
 }
-glm::vec2 Line_abstr::closest_to_point(glm::vec2 const& pt)
+float Line_abstr::closest_to_point_interp(glm::vec2 const& pt)
 {
 	float len2 = length2();
 	if(len2 == 0) {
-		return posA();
+		return 0.0f;
 	}
 	float t = glm::dot(as_vec(), posA()-pt) / len2;
 	if(t <= 0) { // First point
-		return posA();
+		return 0.0f;
 	} else if(t >= 1) { // Second point 
-		return posB();
+		return 1.0f;
 	} else {
-		return at(t);
+		return t;
 	}
 }
 float Line_abstr::dist_to_point(glm::vec2 const& pt)

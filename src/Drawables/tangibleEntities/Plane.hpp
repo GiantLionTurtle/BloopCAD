@@ -43,7 +43,7 @@ public:
 	virtual ~Plane() {}
 
 	virtual int selection_rank() { return 10; }
-	SelectionPoint closest(glm::vec2 cursor, Camera* cam, int filter);
+	SelPoint closest(glm::vec2 cursor, Camera* cam, int filter);
 protected:
 	void init_impl();
 	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);

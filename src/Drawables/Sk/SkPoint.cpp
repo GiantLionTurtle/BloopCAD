@@ -12,15 +12,15 @@ glm::vec3 SkPoint::kColorHovered = glm::vec3(0.0);
 glm::vec3 SkPoint::kColorSelected = glm::vec3(0.0);
 
 SkPoint::SkPoint(glm::vec2 pos, Geom3d::Plane_abstr* pl, bool fixed_):
-    ExpressionPoint<var_ptr>(ExpVar::make(pos.x), ExpVar::make(pos.y)),
+    ExpVec2<ExpVar>(ExpVar::make(pos.x), ExpVar::make(pos.y)),
     SkPrimitiveGeometry(pl, fixed_),
 	mVA(nullptr),
 	mVB(nullptr),
 	mShader(nullptr)
 {
 	mType |= Drawable_types::POINT;
-	mX->add_changeCallBack(this, std::bind(&SkPoint::set_need_update, this));
-	mY->add_changeCallBack(this, std::bind(&SkPoint::set_need_update, this));
+	x()->add_changeCallBack(this, std::bind(&SkPoint::set_need_update, this));
+	y()->add_changeCallBack(this, std::bind(&SkPoint::set_need_update, this));
 	set_name("SkPoint");
 }
 
@@ -30,23 +30,23 @@ SkPoint::~SkPoint()
 	delete mVB;
 }
 
-SelectionPoint SkPoint::closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+SelPoint SkPoint::closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 {
 	if(mType & filter) {
 		glm::vec3 worldpos = mBasePlane->to_worldPos(pos());
 		if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
 			return { this, glm::distance(cam->pos(), worldpos) };
 	}
-	return SelectionPoint();
+	return SelPoint();
 }
-std::unique_ptr<DraggableSelectionPoint> SkPoint::closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+SkExpSelPoint SkPoint::closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 {
 	if(mType & filter) {
 		glm::vec3 worldpos = mBasePlane->to_worldPos(pos());
 		if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
-			return std::make_unique<DraggableSelectionPoint>(this);
+			return SkExpSelPoint(this, ExpVec2<Expression>({x(), y()}));
 	}
-	return nullptr;
+	return SkExpSelPoint();
 }
 
 void SkPoint::set_annotOffset(SkSprite* sp, int ind)
@@ -58,13 +58,13 @@ void SkPoint::set_annotOffset(SkSprite* sp, int ind)
 
 void SkPoint::set(glm::vec2 pt)
 {
-	mX->set(pt.x);
-	mY->set(pt.y);
+	x()->set(pt.x);
+	y()->set(pt.y);
 }
 
 std::vector<var_ptr> SkPoint::all_vars()
 {
-	return { mX, mY };
+	return { x(), y() };
 }
 
 void SkPoint::init_impl()

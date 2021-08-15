@@ -38,8 +38,8 @@ public:
 	int selection_rank() { return -1; }
 
 	// These should not be called
-	virtual SelectionPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return SelectionPoint(); }
-	virtual std::unique_ptr<DraggableSelectionPoint> closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return nullptr; }
+	virtual SelPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return SelPoint(); }
+	virtual SkExpSelPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return SkExpSelPoint(); }
 protected:	
 	void init_impl();
 	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);

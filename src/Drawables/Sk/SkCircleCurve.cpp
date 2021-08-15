@@ -6,7 +6,7 @@
 #include <graphics_utils/GLCall.hpp>
 
 template<>
-float SkCurve<std::array<Geom2d::ExpressionPoint<var_ptr>*, 1>, SkCircleCurve>::kSelDist2 = 0.0f;
+float SkCurve<std::array<ExpVec2<ExpVar>*, 1>, SkCircleCurve>::kSelDist2 = 0.0f;
 bool SkCircleCurve::kFisrstInst = true;
 glm::vec3 SkCircleCurve::kColor = glm::vec3(0.0); 
 glm::vec3 SkCircleCurve::kColorHovered = glm::vec3(0.0);
@@ -19,7 +19,7 @@ struct circleData {
 };
 
 SkCircleCurve::SkCircleCurve(Geom3d::Plane_abstr* pl, bool fixed_):
-    SkCurve<std::array<Geom2d::ExpressionPoint<var_ptr>*, 1>, SkCircleCurve>(pl, fixed_),
+    SkCurve<std::array<ExpVec2<ExpVar>*, 1>, SkCircleCurve>(pl, fixed_),
 	mRadius(std::make_shared<ExpVar>(0.0f))
 {
 	set_name("SkCircleCurve");
@@ -29,6 +29,12 @@ SkCircleCurve::SkCircleCurve(Geom3d::Plane_abstr* pl, bool fixed_):
 SkCircleCurve::~SkCircleCurve()
 {
 
+}
+
+ExpVec2<Expression> SkCircleCurve::atExp(float t)
+{
+	float angle = t * (M_PI * 2.0f);
+	return *center() + ExpVec2<Expression>(ExpConst::make(std::cos(angle)), ExpConst::make(std::sin(angle))) * (float)radius_val();
 }
 
 void SkCircleCurve::set_annotOffset(SkSprite* sp, int ind)

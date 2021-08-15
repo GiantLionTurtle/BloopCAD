@@ -48,15 +48,17 @@ enum Drawable_types {
 	CURVE = 64,
 };
 
-struct SelectionPoint {
-	SelectionPoint():
+struct SelPoint {
+	SelPoint():
 		ent(nullptr),
 		dist_to_cam(0.0f)
 	{}
-	SelectionPoint(Drawable* d, float dist):
+	SelPoint(Drawable* d, float dist):
 		ent(d),
 		dist_to_cam(dist)
 	{}
+
+	operator bool() { return ent; }
 
 	Drawable* ent;
 	float dist_to_cam;
@@ -212,7 +214,7 @@ public:
 
 	virtual int selection_rank() { return -1; }
 	virtual int selection_dist() { return 0; } // pixel distance for selection
-	virtual SelectionPoint closest(glm::vec2 cursor, Camera* cam, int filter) { return SelectionPoint(); }
+	virtual SelPoint closest(glm::vec2 cursor, Camera* cam, int filter) { return SelPoint(); }
 	virtual void select_within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained) {}	
 
 	std::string name() const { return mName; }

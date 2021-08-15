@@ -84,8 +84,8 @@ public:
 	void notify(Drawable* who, int msg, bool child);
 	void dragUpdate();
 
-	SelectionPoint closest(glm::vec2 cursor, Camera* cam, int filter);
-	std::unique_ptr<DraggableSelectionPoint> closest_draggable(glm::vec2 cursor, Camera* cam, int filter);
+	SelPoint closest(glm::vec2 cursor, Camera* cam, int filter);
+	SkExpSelPoint closest_draggable(glm::vec2 cursor, Camera* cam, int filter);
 	void move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov);
 	std::shared_ptr<serial_action> delete_selected(); 
 	void unselect_all();
