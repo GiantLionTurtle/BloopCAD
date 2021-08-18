@@ -74,22 +74,26 @@ SkPoint* Line_tool::add_point(glm::vec2 pt)
 		mStarted = true;
 		return mLinePreview->ptA();
 	} else {
+
 		std::shared_ptr<toggleConstraint_action> hingeConstraintAction = nullptr;
+		SkConstraint* constr = nullptr;
 		if(mEndPos) {
 			mEnv->coincidence()->add_geom(mEndPos);
 			mEnv->coincidence()->add_geom(mLinePreview->ptA());
-			SkConstraint* constr = nullptr;
 			SkDrawable* trash = nullptr;
 			mEnv->coincidence()->create_constraint(constr, trash);
-			mEnv->target()->add_constraint(constr, trash);
+			
 			mEnv->coincidence()->clear_geometries();
-			hingeConstraintAction = std::make_shared<toggleConstraint_action>(mEnv->target(), constr, true);
+			hingeConstraintAction = std::make_shared<toggleConstraint_action>(mEnv->target(), constr, true, true);
 		}
+
 		mLinePreview->ptB()->set(pt);
 		mEnv->target()->add_geometry(mLinePreview);
+
 		auto lineAction = std::make_shared<toggleBaseObject_action>(mLinePreview, true);
 		std::shared_ptr<action> compoundAction;
 		if(hingeConstraintAction) {
+			mEnv->target()->add_constraint(constr, nullptr);
 			compoundAction = std::shared_ptr<parallel_action>(new parallel_action({
 				lineAction,
 				hingeConstraintAction

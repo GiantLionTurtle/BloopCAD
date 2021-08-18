@@ -3,7 +3,7 @@
 #define SKETCHDRAWABLE_HPP_
 
 #include <Geom/Geom3d/Plane_abstr.hpp>
-#include <Drawables/Drawable.hpp>
+#include <Drawables/Tangible.hpp>
 #include <ConstraintsSolver/Expression.hpp>
 #include <ConstraintsSolver/ExpressionVec.hpp>
 

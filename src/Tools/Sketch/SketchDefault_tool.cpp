@@ -61,9 +61,9 @@ bool SketchDefault_tool::manage_button_press(GdkEventButton* event)
 			mAllowedToMove = true;
 			int n_sel = mEnv->target()->n_selected();
 			if(n_sel == 0 || (n_sel == 1 && hovered->selected())) {
-					mEnv->target()->dragConstr()->set_equality(clickedPoint.pt);
+					// mEnv->target()->dragConstr()->set_equality(clickedPoint.pt);
 			} else {
-				mEnv->target()->dragConstr()->clear(); // TODO: Check if useful
+				// mEnv->target()->dragConstr()->clear(); // TODO: Check if useful
 			}
 
 			if(!hovered->selected()) {
@@ -117,11 +117,11 @@ bool SketchDefault_tool::manage_mouse_move(GdkEventMotion* event)
 				mMoving = true;
 				mStartSnapshot = mEnv->target()->snapshot();
 			}
-			if(!mEnv->target()->dragConstr()->valid()) {
+			// if(!mEnv->target()->dragConstr()->valid()) {
 				mEnv->target()->move_selected(mPrevPos, pos, mPrevMousePos - mousePos);
-			} else {
-				mEnv->target()->dragConstr()->dragTo(pos);
-			}
+			// } else {
+				// mEnv->target()->dragConstr()->dragTo(pos);
+			// }
 			bool update_attempt = sk->update_constraints(true, false);
 		} else {
 			mSelectionRect->set_endPoint(pos);

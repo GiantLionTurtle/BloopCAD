@@ -50,6 +50,8 @@ public:
 			notify_parent(UPDATED);
 	}
 
+	virtual bool active() const { return true; }
+
 	size_t n_children() { return mDrawList.size(); }
 	Drawable* child(size_t ind) { return mDrawList.at(ind); }
 

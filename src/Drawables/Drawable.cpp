@@ -26,6 +26,8 @@ void Drawable::init()
 }
 void Drawable::draw(Camera_ptr cam, int frame, draw_type type)
 {
+	if(type == draw_type::ACTIVE && !active())
+		return;
 	if(visible() && exists()) {
 		draw_impl(cam, frame, type);
 		mNeed_redraw = false;

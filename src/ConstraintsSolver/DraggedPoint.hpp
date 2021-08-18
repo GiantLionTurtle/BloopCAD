@@ -26,7 +26,7 @@ private:
 public:
 	DraggedPoint(DragSystemHandler* emiter):
 		mPointEmiter(emiter),
-		mExists(true)
+		mExists(false)
 	{
 		for(size_t i = 0; i < dims; ++i) {
 			mVars[i] = ExpVar::make(0.0);	
@@ -42,6 +42,7 @@ public:
 	template<typename eT>
 	void set_equality(ExpVec<eT, dims> equality)
 	{
+		set_exists(true);
 		mEqus.resize(dims);
 		mPointEmiter->dragUpdate();
 		
@@ -51,6 +52,7 @@ public:
 	}
 	void set_equality(std::array<exp_ptr, dims> equality)
 	{
+		set_exists(true);
 		mEqus.resize(dims);
 		mPointEmiter->dragUpdate();
 		
@@ -60,6 +62,7 @@ public:
 	}
 	void clear()
 	{
+		set_exists(false);
 		mEqus.clear();
 		mPointEmiter->dragUpdate();
 	}

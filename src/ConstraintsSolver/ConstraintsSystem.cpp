@@ -6,7 +6,7 @@
 
 ConstraintsSystem::ConstraintsSystem(int verboseLevel):
 	mBrokenDown(false),
-	mSolverType(SolverState::DogLeg),
+	mSolverType(SolverState::LevenbergMarquardt),
 	mVerboseLevel(verboseLevel),
 	mNum_liveConstrs(0),
 	mNum_liveVars(0)
@@ -25,7 +25,7 @@ bool ConstraintsSystem::satisfied()
 	}
 	return true;
 }
-void ConstraintsSystem::add_constraint(Constraint_abstr* constr) 
+void ConstraintsSystem::add_constraint(Constraint_abstr* constr)
 {
 	mBrokenDown = false;
 	mConstraints.push_back(constr);
@@ -63,9 +63,12 @@ int ConstraintsSystem::solve()
 	}
 
 	if(mVerboseLevel)
-		std::cout<<"Solving clusters...";
+		std::cout<<"Solving clusters...\n";
 	int output = SolverState::SUCCESS;
+	int i = 0;
 	for(auto clust : mSubClusters) {
+		if(mVerboseLevel)
+			std::cout<<"Solving cluster "<<i++<<"...\n";
 		output = std::max(output, clust->solve());
 	}
 	if(mVerboseLevel) 
@@ -102,7 +105,7 @@ void ConstraintsSystem::breakDown_problem()
 
 	for (size_t i = 0; i < constr_clust.size(); ++i) {
 		int ind = constr_clust[i];
-		if(ind >= mSubClusters.size())
+		if(ind < 0 || ind >= mSubClusters.size())
 			continue;
 		for(size_t j = 0; j < liveConstraints[i]->n_equs(); ++j) {
 			mSubClusters[ind]->add_equ(liveConstraints[i]->equ(j));
@@ -111,7 +114,7 @@ void ConstraintsSystem::breakDown_problem()
 
 	for (size_t i = 0; i < var_clust.size(); ++i) {
 		int ind = var_clust[i];
-		if(ind >= mSubClusters.size())
+		if(ind < 0 || ind >= mSubClusters.size())
 			continue;
 		mSubClusters[ind]->add_var(liveVars[i]);
 	}
@@ -169,31 +172,44 @@ ConstraintsSystem::ConstraintGraph::ConstraintGraph(std::vector<Constraint_abstr
 	std::map<var_ptr, int> v2i;
 	for(int i = 0; i < constrs.size() + vars.size(); ++i) {
 		if(i < constrs.size() && constrs[i]->exists()) {
-			mVert.push_back({-1, i});
+			mVert.push_back({-1, mNum_Constrs});
 			mNum_Constrs++;
 		} else if(i >= constrs.size() && vars[i-constrs.size()]->exists()) {
-			v2i[vars[i-constrs.size()]] = i;
-			mVert.push_back({-1, i});
+			int vertInd = mNum_Constrs + mNum_Vars;
+			v2i[vars[i-constrs.size()]] = vertInd;
+			mVert.push_back({-1, vertInd});
 			mNum_Vars++;
 		}
 	}
+	int c = 0;
 	for(int i = 0; i < constrs.size(); ++i) {
 		if(!constrs[i]->exists())
 			continue;
+		int v = 0;
 		for(int j = 0; j < constrs[i]->n_vars(); ++j) {
 			var_ptr var = constrs[i]->var(j);
 			if(var->is_coef() || !var->exists())
 				continue;
 			int vind = v2i[var];
-			mVertToVert[i].push_back(vind);
-			mVertToVert[vind].push_back(i);
+			mVertToVert[c].push_back(vind);
+			mVertToVert[vind].push_back(c);
+			v++;
 		}
+		c++; // hehe
 	}
 }
 int ConstraintsSystem::ConstraintGraph::connected_clusters(std::vector<int>& constr_clust, std::vector<int>& var_clust)
 {
 	constr_clust.resize(mNum_Constrs);
 	var_clust.resize(mNum_Vars);
+
+	for(size_t i = 0; i < constr_clust.size(); ++i) {
+		constr_clust[i] = -1;
+	}
+	for(size_t i = 0; i < var_clust.size(); ++i) {
+		var_clust[i] = -1;
+	}
+
 	for(Flagged_node vert : mVert) {
 		vert.flag = -1;
 	}

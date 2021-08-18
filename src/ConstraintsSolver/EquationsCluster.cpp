@@ -256,7 +256,7 @@ int EquationsCluster::solve_LM(double eps1, int tag, bool drivingVars_only)
 	double g_norm;				// Infinity norm of the profuct J.inv * e
 	
 	// Compute and retrieve the initial state of the system
-	retrieve_variables(P);
+	retrieve_variables(P, drivingVars_only);
 	compute_jacobi_no_resize(J, tag, drivingVars_only);
 	compute_errors_no_resize(e, tag);
 	e = -e;

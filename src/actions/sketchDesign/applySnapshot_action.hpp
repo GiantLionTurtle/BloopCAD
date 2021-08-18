@@ -7,8 +7,8 @@
 
 class applySnapshot_action : public action {
 private:
-    std::vector<VarDualState> mDeltas;
-    bool mDone;
+	std::vector<VarDualState> mDeltas;
+	bool mDone;
 public:
 	applySnapshot_action(std::vector<VarDualState> deltas, bool done_at_creation);
 

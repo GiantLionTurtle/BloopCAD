@@ -95,7 +95,7 @@ public:
 	virtual ~Drawable() {}
 
 	void init();
-	void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
+	virtual void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
 	void update(bool force = false);
 
 	void notify_parent(int msg); // BLOOPBLOOPCHECKIFUSED
@@ -182,7 +182,7 @@ public:
 	*/
 	operator bool() const { return exists(); }
 
-	bool active() const;
+	virtual bool active() const;
 
 	/*
 		@function state

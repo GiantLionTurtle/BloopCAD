@@ -91,7 +91,7 @@ void Constraint_tool::add_constraint()
 	mEnv->target()->add_constraint(constr, priority_ent);
 	mEnv->state()->doc->push_action(std::shared_ptr<parallel_action>(new parallel_action({
 		std::make_shared<applySnapshot_action>(mEnv->target()->deltaSnapshot(snp), true),
-		std::make_shared<toggleConstraint_action>(mEnv->target(), constr, true)
+		std::make_shared<toggleConstraint_action>(mEnv->target(), constr, true, true)
 	})));
 	clear_geometries();
 }
