@@ -14,7 +14,7 @@ struct pos_offseted {
 	glm::vec3 pos;
 	glm::vec2 pixelOffset;
 };
-class SkSprite : public SkDrawable {
+class SkSprite : public SkIntDrawable {
 private:
 	static bool kFisrstInst;
 	static glm::vec3 kColorHovered;

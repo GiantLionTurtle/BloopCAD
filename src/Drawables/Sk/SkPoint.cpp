@@ -144,4 +144,5 @@ void SkPoint::update_impl()
 void SkPoint::move_impl(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
 {
 	set(pos() + end - start);
+	// set(end);
 }

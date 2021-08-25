@@ -9,13 +9,13 @@
 
 #include <vector>
 
-class SkGeometry : public SkDrawable {
+class SkGeometry : public SkIntDrawable {
 protected:
 	std::vector<SkSprite*> mAnnots;
 	bool mFixed;
 public:
 	SkGeometry(Geom3d::Plane_abstr* pl, bool fixed_):
-		SkDrawable(pl),
+		SkIntDrawable(pl),
 		mFixed(fixed_)
 	{
 

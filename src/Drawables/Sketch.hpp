@@ -34,7 +34,7 @@ public:
 				and to simplify debugging
 	*/
 	size_t size() { return n_geom() + n_constr(); }
-	SkDrawable* at(size_t ind)
+	SkIntDrawable* at(size_t ind)
 	{
 		if(ind < n_geom()) {
 			return mGeometries.at(ind);

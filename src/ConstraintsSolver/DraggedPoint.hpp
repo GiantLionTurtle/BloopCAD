@@ -93,6 +93,11 @@ public:
 
 	virtual bool exists() const { return mExists; }
     virtual void set_exists(bool exists_) { mExists = exists_; }
+
+	glm::vec2 pos()
+	{
+		return glm::vec2(mVars[0]->eval(), mVars[1]->eval());
+	}
 };
 
 #endif

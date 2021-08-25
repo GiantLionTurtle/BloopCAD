@@ -19,7 +19,7 @@ class SkLineCurve;
 class Sketch;
 // class SkCircle;
 
-class SkConstraint : public SkDrawable, public Constraint_abstr {
+class SkConstraint : public SkIntDrawable, public Constraint_abstr {
 protected:
 	std::vector<equ_ptr> mEqus;
 	std::vector<var_ptr> mVars;

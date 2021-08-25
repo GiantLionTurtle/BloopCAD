@@ -60,7 +60,7 @@ SelPoint Sketch::closest(glm::vec2 cursor, Camera* cam, int filter)
 	int maxpriority = -1;
 	SelPoint selPt;
 	for(size_t i = 0; i < mDrawList.size(); ++i) {
-		SkDrawable* ch = mDrawList.at(i);
+		auto ch = mDrawList.at(i);
 		if(ch->visible() && ch->selection_rank() > maxpriority) {
 			SelPoint tmpSelPt = ch->closest_2d(planepos, cam, cursor, filter);
 			if(tmpSelPt.ent) {
@@ -78,7 +78,7 @@ SkExpSelPoint Sketch::closest_draggable(glm::vec2 cursor, Camera* cam, int filte
 	int maxpriority = -1;
 	SkExpSelPoint selPt;
 	for(size_t i = 0; i < mDrawList.size(); ++i) {
-		SkDrawable* ch = mDrawList.at(i);
+		auto ch = mDrawList.at(i);
 		if(ch->visible() && ch->selection_rank() > maxpriority) {
 			SkExpSelPoint tmpSelPt = ch->closest_2d_draggable(planepos, cam, cursor, filter);
 			if(tmpSelPt) {
@@ -97,6 +97,7 @@ void Sketch::move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
 		if(ch->exists())
 			ch->move_selected(start, end, pix_mov);	
 	}
+	update_constraints(false, true);
 }
 std::shared_ptr<serial_action> Sketch::delete_selected()
 {

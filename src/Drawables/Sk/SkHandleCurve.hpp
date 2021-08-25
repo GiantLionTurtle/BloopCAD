@@ -37,7 +37,7 @@ public:
 
 	}
 	size_t size() { return 1 + mHandles.size(); }
-	SkDrawable* at(size_t ind)
+	SkIntDrawable* at(size_t ind)
 	{
 		if(ind == 0) {
 			return mCurve;

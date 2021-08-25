@@ -7,7 +7,7 @@
 #include <ConstraintsSolver/Expression.hpp>
 #include <ConstraintsSolver/ExpressionVec.hpp>
 
-class SkDrawable;
+class SkIntDrawable;
 
 struct SkExpSelPoint {
 	SkExpSelPoint():
@@ -15,7 +15,7 @@ struct SkExpSelPoint {
 	{
 
 	}
-	SkExpSelPoint(SkDrawable* dr, ExpVec2<Expression> p):
+	SkExpSelPoint(SkIntDrawable* dr, ExpVec2<Expression> p):
 		ent(dr),
 		pt(p)
 	{
@@ -24,7 +24,7 @@ struct SkExpSelPoint {
 
 	operator bool() { return ent; }
 
-	SkDrawable* ent;
+	SkIntDrawable* ent;
 	ExpVec2<Expression> pt;
 };
 
@@ -40,7 +40,16 @@ public:
 
 	Geom3d::Plane_abstr* basePlane() { return mBasePlane; }
 	void set_basePlane(Geom3d::Plane_abstr* pl) { mBasePlane = pl; set_need_update(); }
+};
 
+// interactive drawables
+class SkIntDrawable : public SkDrawable {
+public:
+	SkIntDrawable(Geom3d::Plane_abstr* pl):
+		SkDrawable(pl)
+	{
+		
+	}
 	virtual SelPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
 	virtual SkExpSelPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
 	virtual void move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov) { if(selected()) move(start, end, pix_mov); }

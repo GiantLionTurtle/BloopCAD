@@ -13,7 +13,7 @@ glm::vec3 SkSprite::kColorHovered = glm::vec3(0.0f);
 std::map<std::string, std::shared_ptr<Texture>> SkSprite::kTextures = {};
 
 SkSprite::SkSprite(Geom3d::Plane_abstr* basePlane_, glm::vec2 dims, std::string const& texturePath):
-    SkDrawable(basePlane_),
+    SkIntDrawable(basePlane_),
     mTexture(nullptr),
     mDimensions(dims),
     mTexturePath(texturePath),

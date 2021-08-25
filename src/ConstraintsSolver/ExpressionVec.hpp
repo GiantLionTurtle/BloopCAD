@@ -33,7 +33,7 @@ public:
 };
 
 template<typename eT>
-class ExpVec2 : public ExpVec<eT, 2>, public Geom2d::Point_abstr{
+class ExpVec2 : public ExpVec<eT, 2>, public Geom2d::Point_abstr {
 public:
 	ExpVec2(std::shared_ptr<eT> x_, std::shared_ptr<eT> y_):
 		ExpVec<eT, 2>({ x_, y_ })

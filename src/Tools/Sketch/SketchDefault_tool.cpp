@@ -61,9 +61,9 @@ bool SketchDefault_tool::manage_button_press(GdkEventButton* event)
 			mAllowedToMove = true;
 			int n_sel = mEnv->target()->n_selected();
 			if(n_sel == 0 || (n_sel == 1 && hovered->selected())) {
-					// mEnv->target()->dragConstr()->set_equality(clickedPoint.pt);
+				mEnv->target()->dragConstr()->set_equality(clickedPoint.pt);
 			} else {
-				// mEnv->target()->dragConstr()->clear(); // TODO: Check if useful
+				mEnv->target()->dragConstr()->clear(); // TODO: Check if useful
 			}
 
 			if(!hovered->selected()) {
@@ -117,12 +117,24 @@ bool SketchDefault_tool::manage_mouse_move(GdkEventMotion* event)
 				mMoving = true;
 				mStartSnapshot = mEnv->target()->snapshot();
 			}
-			// if(!mEnv->target()->dragConstr()->valid()) {
-				mEnv->target()->move_selected(mPrevPos, pos, mPrevMousePos - mousePos);
-			// } else {
-				// mEnv->target()->dragConstr()->dragTo(pos);
-			// }
+			auto dragConstr = mEnv->target()->dragConstr();
+			dragConstr->set_exists(false);
+			mEnv->target()->move_selected(mPrevPos, pos, mPrevMousePos - mousePos);
+
+			if(dragConstr->valid()) {
+				dragConstr->dragTo(pos);
+				std::cout<<"Drag diff: "<<glm::to_string(pos)<<",  "<<glm::to_string(dragConstr->pos())<<"\n";
+				std::cout<<"Drag err: "<<dragConstr->error(0)<<",  "<<dragConstr->error(1)<<"\n";
+				if(!dragConstr->satisfied()) {
+					dragConstr->set_exists(true);
+				} else {
+					dragConstr->set_exists(false);
+				} 
+			}
+	
 			bool update_attempt = sk->update_constraints(true, false);
+			if(dragConstr->exists())
+				std::cout<<std::boolalpha<<dragConstr->satisfied()<<"\n";
 		} else {
 			mSelectionRect->set_endPoint(pos);
 			if(event->x > mStartPos.x) {

@@ -14,7 +14,7 @@
 #include <string>
 
 SkConstraint::SkConstraint(Geom3d::Plane_abstr* baseplane_, std::vector<var_ptr> vars, std::vector<equ_ptr> equs):
-	SkDrawable(baseplane_),
+	SkIntDrawable(baseplane_),
 	mVars(vars),
 	mEqus(equs)
 {
