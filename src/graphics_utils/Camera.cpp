@@ -68,6 +68,14 @@ glm::vec2 Camera::world_to_screen(glm::vec3 worldpos) const
 						map(onscreen_ndc.y / onscreen_ndc.w, -1.0f, 1.0f, viewport().y, 0.0f));
 	return onscreen;
 }
+glm::vec3 Camera::screen_to_world(glm::vec2 screen, Geom3d::Plane_abstr* support_pl)
+{
+	return support_pl->line_intersection(pos(), cast_ray(screen));
+}
+glm::vec2 Camera::screen_to_plane(glm::vec2 screen, Geom3d::Plane_abstr* support_pl)
+{
+	return support_pl->to_planePos(screen_to_world(screen, support_pl)); // TODO: is there a direct way to optain this?
+}
 
 glm::vec3 Camera::predictedPos(transform trans) const
 {

@@ -21,15 +21,15 @@ public:
 
 	}
 
-	void move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
+	void move_selected(glm::vec2 delta)
 	{
 		if(!fixed())
-			move_selected_impl(start, end, pix_mov);
+			move_selected_impl(delta);
 	}
-	void move(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov) 
+	void move(glm::vec2 delta) 
 	{
 		if(!fixed())
-			move_impl(start, end, pix_mov);
+			move_impl(delta);
 	}
 
 
@@ -65,8 +65,8 @@ protected:
 		}		
 	}
 
-	virtual void move_selected_impl(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov) { if(selected()) move(start, end, pix_mov); }
-	virtual void move_impl(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov) {}
+	virtual void move_selected_impl(glm::vec2 delta) { if(selected()) move(delta); }
+	virtual void move_impl(glm::vec2 delta) {}
 };
 
 class SkPrimitiveGeometry : public SkGeometry, virtual public Geom2d::Geom2d_abstr {

@@ -24,7 +24,7 @@ public:
 	virtual SelPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
 	virtual SkExpSelPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
 protected:
-	virtual void move_impl(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov) = 0;
+	virtual void move_impl(glm::vec2 delta) = 0;
 };
 
 template<typename Container, typename Derived>
@@ -78,10 +78,10 @@ public:
 		return SkExpSelPoint();
 	}
 protected:
-	void move_impl(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
+	void move_impl(glm::vec2 delta)
 	{
 		for(size_t i = 0; i < mHandles.size(); ++i) {
-			pt(i)->set(pos(i) + end - start);
+			pt(i)->set(pos(i) + delta);
 		}
 	}
 };

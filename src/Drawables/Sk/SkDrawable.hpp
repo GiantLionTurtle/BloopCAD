@@ -52,8 +52,8 @@ public:
 	}
 	virtual SelPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
 	virtual SkExpSelPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
-	virtual void move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov) { if(selected()) move(start, end, pix_mov); }
-	virtual void move(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov) {}
+	virtual void move_selected(glm::vec2 delta) { if(selected()) move(delta); }
+	virtual void move(glm::vec2 delta) {}
 };
 
 #endif

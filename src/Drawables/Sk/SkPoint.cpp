@@ -141,8 +141,7 @@ void SkPoint::update_impl()
 	mVB->unbind();
 }
 
-void SkPoint::move_impl(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
+void SkPoint::move_impl(glm::vec2 delta)
 {
-	set(pos() + end - start);
-	// set(end);
+	set(pos() + delta);
 }

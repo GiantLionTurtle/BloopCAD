@@ -18,7 +18,8 @@ document::document(eventsManager* manager):
 	mUseSelectionBuffer(true),
 	mName("Unamed doc"),
 	mPart(nullptr),
-	mToolPreview(nullptr)
+	mToolPreview(nullptr),
+	mVerboseLevel(0)
 {
 	if(!mEventsManager) {
 		mEventsManager = new stimuli_eventsManager();
@@ -221,7 +222,7 @@ void document::set_parent(bloop* parentBloop)
 
 bool document::update_Camera()
 {
-	if(mCurrentWorkspaceState->cam->require_update()) {
+	if(mCurrentWorkspaceState->cam->need_update()) {
 		mCurrentWorkspaceState->cam->update();
 		mCurrentCamState = mCurrentWorkspaceState->cam->state();
 		return true;
@@ -241,7 +242,8 @@ void document::push_action(std::shared_ptr<action> to_push)
 	}
 
 	if(to_push->do_work(this)) {
-		std::cout<<"Done action\n";
+		if(mVerboseLevel)
+			std::cout<<"Done action\n";
 		mCurrentActionNum++;
 	}
 	// Housekeeping incrementations
@@ -266,12 +268,14 @@ void document::update_actionStack()
 	if(mCurrentActionNum < mActionInd) {
 		if(mActionStack.at(mCurrentActionNum)->do_work(this)) {
 			mCurrentActionNum++;
-			std::cout<<"Done action\n";
+			if(mVerboseLevel)
+				std::cout<<"Done action\n";
 		}
 	} else if(mCurrentActionNum > mActionInd) {
 		if(mActionStack.at(mCurrentActionNum-1)->undo_work(this)) {
 			mCurrentActionNum--;
-			std::cout<<"Undone action\n";
+			if(mVerboseLevel)
+				std::cout<<"Undone action\n";
 		}
 	}
 }

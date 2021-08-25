@@ -5,13 +5,18 @@
 
 class SketchDefault_tool : public tool<sketchDesign> {
 private:   
-	SkSelRect* mSelectionRect;
-	Drawable* /*mDraggedEnt, */mHoveredEnt;
-	bool mAllowedToMove, mMoving;
-	glm::vec2 mPrevPos, mPrevMousePos;
-	glm::vec2 mStartPos;
+	SkSelRect* mSelArea;
+	SkExpSelPoint mDragCandidate;
+	Drawable* mCurrentHover;
 
-	std::map<var_ptr, float> mStartSnapshot;
+	enum modes { NORMAL, DRAGGING, AREASELECT };
+	int mMode;
+
+	std::map<var_ptr, float> mStartSnapshot; // Used to creat move actions
+
+	glm::vec2 mLastCursorPos; // Remember last time a cursor pos was used internally
+	glm::vec2 mLastPlPos;
+	float mAreaSelStartX;
 public:
 	SketchDefault_tool(sketchDesign* env);
 	virtual ~SketchDefault_tool();
@@ -23,6 +28,10 @@ public:
 	bool manage_button_press(GdkEventButton* event);
 	bool manage_button_release(GdkEventButton* event);
 	bool manage_mouse_move(GdkEventMotion* event);
+
+	void update_dragCandidate(glm::vec2 cursorPos);
+	void update_hover(glm::vec2 cursorPos);
+	void areaSelect(glm::vec2 plPos, float cursorX);
 
 	std::string name() { return "sketch design default"; }
 };

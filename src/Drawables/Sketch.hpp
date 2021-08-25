@@ -86,7 +86,7 @@ public:
 
 	SelPoint closest(glm::vec2 cursor, Camera* cam, int filter);
 	SkExpSelPoint closest_draggable(glm::vec2 cursor, Camera* cam, int filter);
-	void move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov);
+	void move_selected(glm::vec2 delta);
 	std::shared_ptr<serial_action> delete_selected(); 
 	void unselect_all();
 	size_t n_selected();

@@ -73,6 +73,8 @@ private:
 	entityView* mSideBar;
 
 	std::string mName;
+
+	int mVerboseLevel;
 public:
 	/*
 		@function document creates an empty and mostly unitialized document 

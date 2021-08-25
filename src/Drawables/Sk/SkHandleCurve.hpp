@@ -172,15 +172,15 @@ protected:
 		}
 	}
 	
-	void move_selected_impl(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
+	void move_selected_impl(glm::vec2 delta)
 	{
 		// All this logic to prevent the curve to move two times (if the curve moves then the points)
 		if(curve()->selected()) {
-			curve()->move(start, end, pix_mov);
+			curve()->move(delta);
 		} else {
 			for(size_t i = 0; i < n_handles(); ++i) {
 				if(handle(i)->selected())
-					handle(i)->move(start, end, pix_mov);
+					handle(i)->move(delta);
 			}
 		}
 	}

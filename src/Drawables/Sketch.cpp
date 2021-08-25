@@ -16,7 +16,7 @@
 
 Sketch::Sketch(Geom3d::Plane_abstr* base_plane):
 	mBasePlane(base_plane),
-	mConstrSystem(this, 1)
+	mConstrSystem(this, 0)
 {
 	set_name("Sketch");
 	// create_origin();
@@ -90,12 +90,12 @@ SkExpSelPoint Sketch::closest_draggable(glm::vec2 cursor, Camera* cam, int filte
 	return selPt;
 }
 
-void Sketch::move_selected(glm::vec2 start, glm::vec2 end, glm::vec2 pix_mov)
+void Sketch::move_selected(glm::vec2 delta)
 {
 	for(size_t i = 0; i < mDrawList.size(); ++i) {
 		auto ch = mDrawList.at(i);
 		if(ch->exists())
-			ch->move_selected(start, end, pix_mov);	
+			ch->move_selected(delta);	
 	}
 	update_constraints(false, true);
 }
@@ -226,9 +226,9 @@ bool Sketch::update_constraints(bool safeUpdate, bool update_on_solveFail)
 	if(safeUpdate)
 		backup_system();
 	int solve_out = mConstrSystem.solve();
-	if(update_on_solveFail || solve_out == SolverState::SUCCESS) {
+	if(update_on_solveFail || solve_out != SolverState::FAILURE) {
 		set_need_update();
-	} else if(safeUpdate && solve_out != SolverState::SUCCESS) {
+	} else if(safeUpdate && solve_out == SolverState::FAILURE) {
 		revert_system_to_backup();
 	}
 	return solve_out == SolverState::SUCCESS;

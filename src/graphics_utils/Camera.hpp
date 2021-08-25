@@ -115,6 +115,8 @@ public:
 	glm::vec3 target() const { return mTarget; }
 
 	glm::vec2 world_to_screen(glm::vec3 worldpos) const;
+	glm::vec3 screen_to_world(glm::vec2 screen, Geom3d::Plane_abstr* support_pl);
+	glm::vec2 screen_to_plane(glm::vec2 screen, Geom3d::Plane_abstr* support_pl);
 
 	/*
 		@function up
@@ -199,7 +201,7 @@ public:
 	*/
 	void copy(Camera_ptr other);
 
-	bool require_update() const { return mRequire_update; }
+	bool need_update() const { return mRequire_update; }
 	void update(bool silent = false);
 
 	/*
