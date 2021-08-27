@@ -15,7 +15,8 @@ std::shared_ptr<ExpConst> ExpConst::pi2(new ExpConst(M_PI_2));
 int Expression::n_exp = 0;
 
 Expression::Expression():
-	mID(n_exp++)
+	mID(n_exp++),
+	mDerivative(nullptr)
 {
 
 }
@@ -23,7 +24,12 @@ Expression::~Expression()
 {
 	
 }
-
+exp_ptr Expression::derivative()
+{
+	if(!mDerivative)
+		mDerivative = generate_derivative();
+	return mDerivative;
+}
 exp_ptr Expression::d()
 {
 	return derivative();
@@ -155,7 +161,7 @@ double ExpConst::eval()
 {
 	return mVal;//mParam->val();
 }
-exp_ptr ExpConst::derivative()
+exp_ptr ExpConst::generate_derivative()
 {
 	return ExpConst::zero;
 }
@@ -175,7 +181,7 @@ double ExpCoeff::eval()
 {
 	return mVal;
 }
-exp_ptr ExpCoeff::derivative()
+exp_ptr ExpCoeff::generate_derivative()
 {
 	return ExpConst::zero;
 }
@@ -295,8 +301,8 @@ double ExpCoeffLength::unit_to_internalFormat(int unit_)
 /* -------------- Variable -------------- */
 ExpVar::ExpVar(double val, bool is_coeficient):
 	mVal(val),
-	mAs_coef(true),
-	mIs_coef(is_coeficient),
+	mAs_coeff(false),
+	mIs_coeff(is_coeficient),
 	mExists(true),
 	mIs_substituted(false),
 	mIs_dragged(false),
@@ -331,36 +337,36 @@ int ExpVar::id()
 {
 	return mIs_substituted ? mSubstituant->id() : mID;
 }
+int ExpVar::weight()
+{
+	return (mIs_coeff ? 2 : 0 + mIs_dragged ? 1 : 0);
+}
 bool ExpVar::is_deriv_zero()
 {
-	return mIs_substituted ? mSubstituant->is_deriv_zero() : (mAs_coef || mIs_coef || mIs_dragged);
+	return (mAs_coeff || weight());
 }
-bool ExpVar::as_coef()
+bool ExpVar::as_coeff()
 {
-	return mIs_substituted ? mSubstituant->as_coef() : (mAs_coef > 0);
+	return mIs_substituted ? mSubstituant->as_coeff() : (mAs_coeff);
 }
-int ExpVar::as_coef_int()
+bool ExpVar::is_coeff()
 {
-	return mIs_substituted ? mSubstituant->as_coef_int() : (mAs_coef);
+	return mIs_substituted ? mSubstituant->is_coeff() : (mIs_coeff);
 }
-bool ExpVar::is_coef()
-{
-	return mIs_substituted ? mSubstituant->is_coef() : (mIs_coef);
-}
-void ExpVar::set_is_coef(bool coef)
+void ExpVar::set_is_coeff(bool coef)
 {
 	if(mIs_substituted) {
-		mSubstituant->set_is_coef(coef);
+		mSubstituant->set_is_coeff(coef);
 	} else {
-		mIs_coef = coef;
+		mIs_coeff = coef;
 	}
 }
-void ExpVar::set_as_coef()
+void ExpVar::set_as_coeff()
 {
 	if(mIs_substituted) {
-		mSubstituant->set_as_coef();
+		mSubstituant->set_as_coeff();
 	} else {
-		mAs_coef++;
+		mAs_coeff = true;
 	}
 }
 void ExpVar::set_as_var()
@@ -368,35 +374,35 @@ void ExpVar::set_as_var()
 	if(mIs_substituted) {
 		mSubstituant->set_as_var();
 	} else {
-		mAs_coef--;
+		mAs_coeff = false;
 	}
 }
-void ExpVar::reset_to_coef()
-{
-	if(mIs_substituted) {
-		mSubstituant->reset_to_coef();
-	} else {
-		mAs_coef = 1;
-	}
-}
-void ExpVar::reset_to_var()
-{
-	if(mIs_substituted) {
-		mSubstituant->reset_to_var();
-	} else {
-		mAs_coef = 0;
-	}
-}
-
 void ExpVar::set(double val)
 {
-	if(mIs_substituted) {
-		mSubstituant->set(val);
-	} else {
-		if(!is_coef())
+	// if(mIs_substituted) {
+		// mSubstituant->set(val);
+	// } else {
+		if(!is_coeff())
 			mVal = val;
-	}
+	// }
 	callback();
+}
+void ExpVar::drag(double val)
+{
+	// if(mIs_substituted) {
+	// 	mSubstituant->drag(val);
+	// } else {
+		set(val);
+		set_dragged(true);
+	// }
+}
+bool ExpVar::dragged()
+{
+	return mIs_substituted ? mSubstituant->dragged() : mIs_dragged;
+}
+void ExpVar::set_dragged(bool dr)
+{
+	mIs_dragged = dr;
 }
 
 bool ExpVar::exists() const
@@ -420,7 +426,7 @@ void ExpVar::clear_substitution()
 {
 	if(mSubstituant) {
 		mVal = mSubstituant->mVal;
-		mAs_coef = mSubstituant->mAs_coef;
+		mAs_coeff = mSubstituant->mAs_coeff;
 	}
 	mIs_substituted = false;
 }
@@ -460,7 +466,7 @@ double ExpPlus::eval()
 {
 	return mOperand->eval();
 }
-exp_ptr ExpPlus::derivative()
+exp_ptr ExpPlus::generate_derivative()
 {
 	return mOperand->derivative();
 }
@@ -482,7 +488,7 @@ double ExpMinus::eval()
 {
 	return -mOperand->eval();
 }
-exp_ptr ExpMinus::derivative()
+exp_ptr ExpMinus::generate_derivative()
 {
 	return -mOperand->derivative();
 }
@@ -504,7 +510,7 @@ double ExpSin::eval()
 {
 	return std::sin(mOperand->eval());
 }
-exp_ptr ExpSin::derivative()
+exp_ptr ExpSin::generate_derivative()
 {
 	return cos(mOperand) * mOperand->derivative();
 }
@@ -525,7 +531,7 @@ double ExpAsin::eval()
 {
 	return std::asin(mOperand->eval());
 }
-exp_ptr ExpAsin::derivative()
+exp_ptr ExpAsin::generate_derivative()
 {
 	return ExpConst::one / sqrt(ExpConst::one - pow(mOperand, 2)) * mOperand->derivative();
 }
@@ -546,7 +552,7 @@ double ExpCsc::eval()
 {
 	return 1.0f / std::sin(mOperand->eval());
 }
-exp_ptr ExpCsc::derivative()
+exp_ptr ExpCsc::generate_derivative()
 {
 	return -cot(mOperand) * csc(mOperand) * mOperand->derivative();
 }
@@ -568,7 +574,7 @@ double ExpCos::eval()
 {
 	return std::cos(mOperand->eval());
 }
-exp_ptr ExpCos::derivative()
+exp_ptr ExpCos::generate_derivative()
 {
 	return -sin(mOperand) * mOperand->derivative();
 }
@@ -589,7 +595,7 @@ double ExpAcos::eval()
 {
 	return std::acos(mOperand->eval());
 }
-exp_ptr ExpAcos::derivative()
+exp_ptr ExpAcos::generate_derivative()
 {
 	return -(ExpConst::one / sqrt(ExpConst::one - pow(mOperand, 2.0f))) * mOperand->derivative();
 }
@@ -610,7 +616,7 @@ double ExpSec::eval()
 {
 	return 1.0f / std::cos(mOperand->eval());
 }
-exp_ptr ExpSec::derivative()
+exp_ptr ExpSec::generate_derivative()
 {
 	return -sec(mOperand) * tan(mOperand) * mOperand->derivative();
 }
@@ -632,7 +638,7 @@ double ExpTan::eval()
 {
 	return std::tan(mOperand->eval());
 }
-exp_ptr ExpTan::derivative()
+exp_ptr ExpTan::generate_derivative()
 {
 	return pow(sec(mOperand), 2.0f) * mOperand->derivative();
 }
@@ -653,7 +659,7 @@ double ExpAtan2::eval()
 {
 	return std::atan2(mLeft->eval(), mRight->eval());
 }
-exp_ptr ExpAtan2::derivative()
+exp_ptr ExpAtan2::generate_derivative()
 {
 	return mRight / (pow(mLeft, 2.0f) + pow(mRight, 2.0f)) * mLeft->derivative() * mRight->derivative();
 }
@@ -674,7 +680,7 @@ double ExpCot::eval()
 {
 	return 1.0f / std::tan(mOperand->eval());
 }
-exp_ptr ExpCot::derivative()
+exp_ptr ExpCot::generate_derivative()
 {
 	return -pow(csc(mOperand), 2.0f) * mOperand->derivative();
 }
@@ -695,7 +701,7 @@ double ExpAbs::eval()
 {
 	return std::abs(mOperand->eval());
 }
-exp_ptr ExpAbs::derivative()
+exp_ptr ExpAbs::generate_derivative()
 {
 	if(mOperand->eval() > 0) 
 		return mOperand->derivative();
@@ -719,7 +725,7 @@ double ExpMod::eval()
 {
 	return std::fmod(mOperand->eval(), mMod);
 }
-exp_ptr ExpMod::derivative()
+exp_ptr ExpMod::generate_derivative()
 {
 	return mOperand->derivative(); // reeeeeeeeeeeeee
 }
@@ -741,7 +747,7 @@ double ExpAdd::eval()
 {
 	return mLeft->eval() + mRight->eval();
 }
-exp_ptr ExpAdd::derivative()
+exp_ptr ExpAdd::generate_derivative()
 {
 	return mLeft->derivative() + mRight->derivative();
 }
@@ -763,7 +769,7 @@ double ExpSubstr::eval()
 {
 	return mLeft->eval() - mRight->eval();
 }
-exp_ptr ExpSubstr::derivative()
+exp_ptr ExpSubstr::generate_derivative()
 {
 	return mLeft->derivative() - mRight->derivative();
 }
@@ -792,7 +798,7 @@ double ExpMult::eval()
 {
 	return mLeft->eval() * mRight->eval();
 }
-exp_ptr ExpMult::derivative()
+exp_ptr ExpMult::generate_derivative()
 {
 	return mLeft->derivative() * mRight + mLeft * mRight->derivative();
 }
@@ -817,7 +823,7 @@ double ExpDiv::eval()
 		right_val = 1.0f;
 	return mLeft->eval() / right_val;
 }
-exp_ptr ExpDiv::derivative()
+exp_ptr ExpDiv::generate_derivative()
 {
 	return (mLeft->derivative() * mRight - mLeft * mRight->derivative()) / pow(mRight, 2.0);
 }
@@ -839,7 +845,7 @@ double ExpPow::eval()
 {
 	return std::pow(mLeft->eval(), mRight->eval());
 }
-exp_ptr ExpPow::derivative()
+exp_ptr ExpPow::generate_derivative()
 {
 	return mRight * pow(mLeft, mRight->eval() - 1.0) * mLeft->derivative();
 }
@@ -862,7 +868,7 @@ exp_ptr ExpEqu::derivative(var_ptr with_respect_to)
 {
 	with_respect_to->set_as_var();
 	auto deriv = ExpSubstr::derivative();
-	with_respect_to->set_as_coef();
+	with_respect_to->set_as_coeff();
 	return deriv;
 }
 

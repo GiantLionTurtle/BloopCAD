@@ -22,13 +22,17 @@ public:
 protected:
 	int mID;
 	static int n_exp;
+	exp_ptr mDerivative; 	// Pointer to derivative of expression, 
+							// only calculated on demand to avoid recursive derivative calculations
 public:
 	Expression();
 	virtual ~Expression();
 
 	virtual double eval() = 0;
-	virtual exp_ptr derivative() = 0;
+	virtual exp_ptr derivative();
 	exp_ptr d();
+	virtual exp_ptr generate_derivative() = 0;
+
 
 	virtual std::string to_string() = 0;
 	virtual int id() { return mID; }
@@ -92,7 +96,7 @@ public:
 	static exp_ptr make(double val);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -105,7 +109,7 @@ public:
 	ExpCoeff();
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 
@@ -147,8 +151,8 @@ protected:
 class ExpVar : public Expression, public baseObject {
 private:
 	double mVal;
-	int mAs_coef;
-	bool mIs_coef;
+	bool mAs_coeff;
+	bool mIs_coeff;
 	bool mExists;
 	// TODO: do this for Expressions in general??
 	bool mIs_substituted, mIs_dragged;
@@ -159,7 +163,8 @@ public:
 	ExpVar(double val, bool is_Coeff = false);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	exp_ptr derivative();
+	virtual exp_ptr generate_derivative() { return nullptr; }
 
 	virtual std::string to_string();
 
@@ -167,19 +172,10 @@ public:
 
 	int id();
 
-	bool is_deriv_zero();
-
-	bool as_coef();
-	int as_coef_int();
-	bool is_coef();
-    void set_is_coef(bool coef);
-
-	void set_as_coef();
-	void set_as_var();
-	void reset_to_coef();
-	void reset_to_var();
-
 	void set(double val);
+	void drag(double val);
+	bool dragged();
+	void set_dragged(bool dr);
 
 	bool exists() const;
 	void set_exists(bool ex);
@@ -188,8 +184,15 @@ public:
 	void clear_substitution();
 	void substitute(var_ptr sub);
 
-	bool dragged() { return mIs_dragged; }
-	void set_dragged(bool dr) { mIs_dragged = dr; }
+	int weight();
+	bool is_deriv_zero();
+
+	bool as_coeff();
+	bool is_coeff();
+    void set_is_coeff(bool coef);
+
+	void set_as_coeff();
+	void set_as_var();
 
 	void callback();
 	void add_changeCallBack(void* owner, std::function<void(void)> func);
@@ -232,7 +235,7 @@ public:
 	ExpPlus(exp_ptr operand);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -242,7 +245,7 @@ public:
 	ExpMinus(exp_ptr operand);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -252,7 +255,7 @@ public:
 	ExpSin(exp_ptr operand);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -261,7 +264,7 @@ public:
 	ExpAsin(exp_ptr operand);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -270,7 +273,7 @@ public:
 	ExpCsc(exp_ptr operand);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -281,7 +284,7 @@ public:
 	ExpCos(exp_ptr operand);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -290,7 +293,7 @@ public:
 	ExpAcos(exp_ptr operand);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -299,7 +302,7 @@ public:
 	ExpSec(exp_ptr operand);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -309,7 +312,7 @@ public:
 	ExpTan(exp_ptr operand);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -318,7 +321,7 @@ public:
 	ExpAtan2(exp_ptr left, exp_ptr right);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -327,7 +330,7 @@ public:
 	ExpCot(exp_ptr operand);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -336,7 +339,7 @@ public:
 	ExpAbs(exp_ptr operand);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -349,7 +352,7 @@ public:
 	ExpMod(exp_ptr operand, double modulo);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -359,7 +362,7 @@ public:
 	ExpAdd(exp_ptr left, exp_ptr right);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -369,7 +372,7 @@ public:
 	ExpSubstr(exp_ptr left, exp_ptr right);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 
@@ -382,7 +385,7 @@ public:
 	ExpMult(exp_ptr left, exp_ptr right);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -392,7 +395,7 @@ public:
 	ExpDiv(exp_ptr numerator, exp_ptr denominator);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
@@ -402,7 +405,7 @@ public:
 	ExpPow(exp_ptr base, exp_ptr power);
 
 	virtual double eval();
-	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
 };
