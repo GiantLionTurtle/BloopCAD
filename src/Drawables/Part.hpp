@@ -4,8 +4,6 @@
 
 #include "Collection.hpp"
 #include "Folder.hpp"
-#include "tangibleEntities/Plane.hpp"
-#include "tangibleEntities/Point.hpp"
 #include "Sketch.hpp"
 
 #include <gtkmm.h>

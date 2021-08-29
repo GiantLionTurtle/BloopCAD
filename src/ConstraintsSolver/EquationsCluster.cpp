@@ -1,5 +1,6 @@
 
 #include "EquationsCluster.hpp"
+#include "Expression.hpp"
 #include "SolverState.hpp"
 #include <utils/DebugUtils.hpp>
 
@@ -52,10 +53,10 @@ bool EquationsCluster::satisfied()
 
 int EquationsCluster::solve()
 {
-	int output = SolverState::FAILURE;
+	mLastOutput = SolverState::FAILURE;
 
-	clear_tags();
 	clear_substitutions();
+	clear_tags();
 	substitutions();
 
 	int single_tag = 1;
@@ -63,60 +64,32 @@ int EquationsCluster::solve()
 		auto var = equ->get_single_var();
 		if(var) {
 			equ->set_tag(single_tag);
-			output = solve_numeric(mAlgorithm, single_tag, true);
-			if(output != SolverState::SUCCESS) {
+			mLastOutput = solve_numeric(mAlgorithm, single_tag, true);
+			if(mLastOutput != SolverState::SUCCESS) {
 				if(mVerboseLevel > 1)
 					std::cout<<"Failed early at single tag = "<<single_tag<<"\n";
-				output = SolverState::FAILURE;
-				return output;
+				mLastOutput = SolverState::FAILURE;
+				return mLastOutput;
 			}
 			single_tag++;
 		}
 	}
+	apply_substitutions();
 	if(mVerboseLevel)
 		std::cout<<"Solved "<<single_tag-1<<" equations alone\n";
-
-	bool had_fixed_vars = false; // TODO: is this diminution thing still relevant?
-	std::vector<int> diminutions(mVars.size(), 0);
-	int n_diminutions = 0;
-
-	do {
-		output = solve_numeric(mAlgorithm, 0, true);
-		
-		if(output == SolverState::SUCCESS)
-			break;
-			
-		had_fixed_vars = false;
-		int i = 0;
-		for(auto var : mVars) {
-			if(var->as_coef_int() > 1) {
-				had_fixed_vars = true;
-				var->set_as_var();
-				diminutions[i++]++;
-			}
-		}
-		n_diminutions++;
-	} while(had_fixed_vars);
-
-	for(int i = 0; i < n_diminutions; ++i) {
-		for(auto var : mVars) {
-			if(diminutions[i]) {
-				diminutions[i]--;
-				var->set_as_coef();
-			}
-		}
-	}
-	return output;
+	
+	mLastOutput = solve_numeric(mAlgorithm, 0, true);	
+	return mLastOutput;
 }
 
-int EquationsCluster::solve_numeric(int algo, int tag, bool drivingVars_only)
+int EquationsCluster::solve_numeric(int algo, int tag, bool activeVars_only)
 {
 	switch(mAlgorithm) {
 		case SolverState::DogLeg:
-			return solve_DL(1e-14, tag, drivingVars_only);
+			return solve_DL(1e-14, tag, activeVars_only);
 			break;
 		case SolverState::LevenbergMarquardt:
-			return solve_LM(1e-24, tag, drivingVars_only);
+			return solve_LM(1e-24, tag, activeVars_only);
 			break;
 		default:
 			std::cout<<"Unknown solver "<<mAlgorithm<<"\n";
@@ -134,8 +107,10 @@ void EquationsCluster::substitutions()
 
 			if(mVars.find(a) == mVars.end() || mVars.find(b) == mVars.end())
 				continue;
-
-			if(a->dragged()) {
+			if(a->weight() == b->weight() && a->weight() != 0) {
+				std::cout<<"FUUUUUUUCK\n";
+			}
+			if(a->weight() > b->weight()) {
 				b->substitute(a);
 			} else {
 				a->substitute(b);
@@ -157,19 +132,19 @@ void EquationsCluster::compute_errors_no_resize(Eigen::VectorXd& errors, int tag
 			errors(e++) = equ->eval();
 	}
 }
-void EquationsCluster::compute_jacobi(Eigen::MatrixXd& jacobi, int tag, bool drivingVars_only)
+void EquationsCluster::compute_jacobi(Eigen::MatrixXd& jacobi, int tag, bool activeVars_only)
 {
-	jacobi.resize(n_taggedEqus(tag), drivingVars_only ? n_drivingVars() : mVars.size());
-	compute_jacobi_no_resize(jacobi, tag, drivingVars_only);
+	jacobi.resize(n_taggedEqus(tag), activeVars_only ? n_activeVars() : mVars.size());
+	compute_jacobi_no_resize(jacobi, tag, activeVars_only);
 }
-void EquationsCluster::compute_jacobi_no_resize(Eigen::MatrixXd& jacobi, int tag, bool drivingVars_only)
+void EquationsCluster::compute_jacobi_no_resize(Eigen::MatrixXd& jacobi, int tag, bool activeVars_only)
 {
 	int e = 0, v = 0;
 	for(auto equ : mEqus) {
 		if(equ->tag() != tag) 
 			continue;
 		for(auto var : mVars) {
-			if(!drivingVars_only || !var->is_substituted()) {
+			if(!activeVars_only || !active(var)) {
 				jacobi(e, v++) = equ->derivative(var)->eval();
 			}
 		}
@@ -186,39 +161,43 @@ int EquationsCluster::n_taggedEqus(int tag)
 	}
 	return n_equs_tagged;
 }
-int EquationsCluster::n_drivingVars()
+int EquationsCluster::n_activeVars()
 {
-	int n_vars_driving = 0;
+	int n_vars_active = 0;
 	for(auto var : mVars) {
-		if(!var->is_substituted())
-			n_vars_driving++;
+		if(!active(var))
+			n_vars_active++;
 	}
-	return n_vars_driving;
+	return n_vars_active;
+}
+bool EquationsCluster::active(var_ptr var)
+{
+	return !var->dragged() && !!var->is_substituted();
 }
 
-void EquationsCluster::incr_variables(Eigen::VectorXd const& delta, bool drivingVars_only) 
+void EquationsCluster::incr_variables(Eigen::VectorXd const& delta, bool activeVars_only) 
 {
 	int v = 0;
 	for(auto var : mVars) {
-		if(!drivingVars_only || !var->is_substituted())
+		if(!activeVars_only || !active(var))
 			var->set(var->eval() + delta(v++));
 	}
 }
 
-void EquationsCluster::set_variables(Eigen::VectorXd const& values, bool drivingVars_only)
+void EquationsCluster::set_variables(Eigen::VectorXd const& values, bool activeVars_only)
 {
 	int v = 0;
 	for(auto var : mVars) {
-		if(!drivingVars_only || !var->is_substituted())
+		if(!activeVars_only || !active(var))
 			var->set(values(v++));
 	}
 }
 
-void EquationsCluster::retrieve_variables(Eigen::VectorXd& container, bool drivingVars_only) 
+void EquationsCluster::retrieve_variables(Eigen::VectorXd& container, bool activeVars_only) 
 {
 	int v = 0;
 	for(auto var : mVars) {
-		if(!drivingVars_only || !var->is_substituted())
+		if(!activeVars_only || !active(var))
 			container(v++) = var->eval();
 	}
 }
@@ -235,10 +214,16 @@ void EquationsCluster::clear_substitutions()
 		var->clear_substitution();
 	}
 }
-
-int EquationsCluster::solve_LM(double eps1, int tag, bool drivingVars_only)
+void EquationsCluster::apply_substitutions()
 {
-	int n_vars = drivingVars_only ? n_drivingVars() : mVars.size();		// Number of variables in the system
+	for(auto var : mVars) {
+		var->apply_substitution();
+	}	
+}
+
+int EquationsCluster::solve_LM(double eps1, int tag, bool activeVars_only)
+{
+	int n_vars = activeVars_only ? n_activeVars() : mVars.size();		// Number of variables in the system
 	int n_equs = n_taggedEqus(tag);	// Number of equations in the system
 	if(mVerboseLevel > 1)
 		std::cout<<"Num tagged: "<<n_equs<<"\n";
@@ -256,8 +241,8 @@ int EquationsCluster::solve_LM(double eps1, int tag, bool drivingVars_only)
 	double g_norm;				// Infinity norm of the profuct J.inv * e
 	
 	// Compute and retrieve the initial state of the system
-	retrieve_variables(P, drivingVars_only);
-	compute_jacobi_no_resize(J, tag, drivingVars_only);
+	retrieve_variables(P, activeVars_only);
+	compute_jacobi_no_resize(J, tag, activeVars_only);
 	compute_errors_no_resize(e, tag);
 	e = -e;
 	e_norm = e.squaredNorm();
@@ -306,7 +291,7 @@ int EquationsCluster::solve_LM(double eps1, int tag, bool drivingVars_only)
 
 				// Assign new values to the candidate values and compute error
 				P_new = P + dP;
-				set_variables(P_new, drivingVars_only);
+				set_variables(P_new, activeVars_only);
 				compute_errors_no_resize(e_new, tag);
 				e_new = -e_new;
 				e_new_norm = e_new.squaredNorm();
@@ -315,7 +300,7 @@ int EquationsCluster::solve_LM(double eps1, int tag, bool drivingVars_only)
 				if(rho > 0.0) {
 					// Compute & retrieve new state
 					P = P_new;
-					compute_jacobi_no_resize(J, tag, drivingVars_only);
+					compute_jacobi_no_resize(J, tag, activeVars_only);
 					A = J.transpose() * J;
 					A_diag = A.diagonal();
 					e = e_new;
@@ -342,7 +327,7 @@ int EquationsCluster::solve_LM(double eps1, int tag, bool drivingVars_only)
 		}
 	}
 
-	set_variables(P, drivingVars_only); // TODO: is this assignment really necessary?
+	set_variables(P, activeVars_only); // TODO: is this assignment really necessary?
 	if(mVerboseLevel) {
 		switch(output) {
 		case SolverState::SUCCESS:
@@ -357,9 +342,9 @@ int EquationsCluster::solve_LM(double eps1, int tag, bool drivingVars_only)
 	return output;
 }
 
-int EquationsCluster::solve_DL(double eps, int tag, bool drivingVars_only)
+int EquationsCluster::solve_DL(double eps, int tag, bool activeVars_only)
 {
-	int n_vars = drivingVars_only ? n_drivingVars() : mVars.size();		// Number of variables in the system
+	int n_vars = activeVars_only ? n_activeVars() : mVars.size();		// Number of variables in the system
 	int n_equs = n_taggedEqus(tag);	// Number of equations in the system
 	if(mVerboseLevel > 1)
 		std::cout<<"Num tagged: "<<n_equs<<"\n";
@@ -376,9 +361,9 @@ int EquationsCluster::solve_DL(double eps, int tag, bool drivingVars_only)
 	double eps3 = eps;
 	
 	// Compute and retrieve the initial state of the system
-	retrieve_variables(X, drivingVars_only);
+	retrieve_variables(X, activeVars_only);
 	X_init = X;
-	compute_jacobi_no_resize(J, tag, drivingVars_only);
+	compute_jacobi_no_resize(J, tag, activeVars_only);
 	compute_errors_no_resize(e, tag);
 
 	g = J.transpose() * e;
@@ -414,14 +399,14 @@ int EquationsCluster::solve_DL(double eps, int tag, bool drivingVars_only)
 		}
 
 		X_new = X + h_dl;
-		set_variables(X_new, drivingVars_only);
+		set_variables(X_new, activeVars_only);
 		compute_errors_no_resize(e_new, tag);
 
 		double rho = (e.squaredNorm() / 2.0 - e_new.squaredNorm() / 2.0) / ((e.squaredNorm() / 2.0) - ((e + J * h_dl).squaredNorm() / 2.0));
 		if(rho > 0) {
 			X = X_new;
 			e = e_new;
-			compute_jacobi_no_resize(J, tag, drivingVars_only);
+			compute_jacobi_no_resize(J, tag, activeVars_only);
 			g = J.transpose() * e;
 			output = (e.lpNorm<Eigen::Infinity>() <= eps3 || g.lpNorm<Eigen::Infinity>() <= eps1) ? SolverState::SUCCESS : SolverState::RUNNING;
 		}
@@ -434,7 +419,7 @@ int EquationsCluster::solve_DL(double eps, int tag, bool drivingVars_only)
 	}
 
 	if(output != SolverState::SUCCESS) {
-		set_variables(X_init, drivingVars_only);
+		set_variables(X_init, activeVars_only);
 	}
 
 	if(mVerboseLevel) {

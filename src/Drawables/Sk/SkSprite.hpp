@@ -4,7 +4,7 @@
 
 #include "SkDrawable.hpp"
 #include <Geom/Geom2d/Point_abstr.hpp>
-#include <ConstraintsSolver/Expression.hpp>
+#include <ConstraintsSolver/Expression_forward.hpp>
 #include <graphics_utils/Texture.hpp>
 
 #include <map>

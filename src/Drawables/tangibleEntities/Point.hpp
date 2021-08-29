@@ -32,9 +32,6 @@ public:
 
 	glm::vec3 pos() const;
 	void set(glm::vec3 const& p);
-
-	virtual void set_constant();
-	virtual void set_tmpConstant(bool const_);
 protected:
 	void init_impl();
 	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);

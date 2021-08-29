@@ -48,7 +48,7 @@ public:
 	inline std::shared_ptr<eT>& x() { return ExpVec<eT, 2>::comp(0); }
 	inline std::shared_ptr<eT>& y() { return ExpVec<eT, 2>::comp(1); }
 	glm::vec2 pos() { return glm::vec2(x()->eval(), y()->eval()); }
-	void set(glm::vec2 p) {}
+	virtual void set(glm::vec2 p) {}
 };
 
 #define ELEMENTWISE_FUNCTOR_SINGLE(vecType, func) \

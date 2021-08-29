@@ -48,17 +48,6 @@ void Point::set(glm::vec3 const& p)
 {
 
 }
-void Point::set_constant()
-{
-	mX->set_is_coef(true);
-	mY->set_is_coef(true);
-}
-void Point::set_tmpConstant(bool const_)
-{
-	mX->set_as_coef();
-	mY->set_as_coef();
-}
-
 
 void Point::init_impl()
 {

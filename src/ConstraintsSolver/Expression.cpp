@@ -34,15 +34,6 @@ exp_ptr Expression::d()
 {
 	return derivative();
 }
-var_ptr Expression::get_single_var()
-{
-	int state = 0;
-	var_ptr var = get_only_var_impl(state);
-	if(state) {
-		return nullptr;
-	}
-	return var;
-}
 
 unaryExpression::unaryExpression():
 	mOperand(nullptr)
@@ -55,22 +46,6 @@ unaryExpression::unaryExpression(exp_ptr operand):
 
 }
 
-void unaryExpression::print_all_vars()
-{
-	if(mOperand->is_var()) {
-		std::cout<<"["<<mID<<"] "<<mOperand->id()<<"\n";
-	} else {
-		mOperand->print_all_vars();
-	}
-}
-var_ptr unaryExpression::get_only_var_impl(int& state)
-{
-	if(state)
-		return nullptr;
-	if(mOperand->is_var())
-		return std::static_pointer_cast<ExpVar>(mOperand);
-	return mOperand->get_only_var_impl(state);
-}
 void unaryExpression::add_changeCallBack(void* owner, std::function<void(void)> func)
 {
 	mOperand->add_changeCallBack(owner, func);
@@ -93,46 +68,6 @@ binaryExpression::binaryExpression(exp_ptr left, exp_ptr right):
 
 }
 
-void binaryExpression::print_all_vars() 
-{
-	if(mLeft->is_var()) {
-		std::cout<<"["<<mID<<"] "<<mLeft->id()<<"\n"; 
-	} else {
-		mLeft->print_all_vars();
-	}
-	if(mRight->is_var()) {
-		std::cout<<"["<<mID<<"] "<<mRight->id()<<"\n"; 
-	} else {
-		mRight->print_all_vars();
-	}
-}
-var_ptr binaryExpression::get_only_var_impl(int& state)
-{
-	if(state)
-		return nullptr;
-	var_ptr l(nullptr), r(nullptr);
-	if(mLeft->is_var()) {
-		l = std::static_pointer_cast<ExpVar>(mLeft);
-	} else {
-		l = mLeft->get_only_var_impl(state);
-	}
-	if(mRight->is_var()) {
-		r = std::static_pointer_cast<ExpVar>(mRight);
-	} else {
-		r = mRight->get_only_var_impl(state);
-	}
-	
-	if(l != nullptr && r == nullptr) {
-		return l;
-	} else if(l == nullptr && r != nullptr) {
-		return r;
-	} else if(l != nullptr && r != nullptr) {
-		if(l->id() == r->id())
-			return l; // either
-		state = 1;
-	}
-	return nullptr;
-}
 void binaryExpression::add_changeCallBack(void* owner, std::function<void(void)> func)
 {
 	mLeft->add_changeCallBack(owner, func);
@@ -335,7 +270,7 @@ var_ptr ExpVar::make(double val, bool is_coeficient)
 }
 int ExpVar::id()
 {
-	return mIs_substituted ? mSubstituant->id() : mID;
+	return mID;
 }
 int ExpVar::weight()
 {
@@ -411,11 +346,7 @@ bool ExpVar::exists() const
 }
 void ExpVar::set_exists(bool ex)
 {
-	if(mIs_substituted) { // is it necessary, I don't remember
-		mSubstituant->set_exists(ex);
-	} else {
-		mExists = ex;
-	}
+	mExists = ex;
 }
 
 bool ExpVar::is_substituted()
@@ -424,15 +355,19 @@ bool ExpVar::is_substituted()
 }
 void ExpVar::clear_substitution()
 {
-	if(mSubstituant) {
-		mVal = mSubstituant->mVal;
-		mAs_coeff = mSubstituant->mAs_coeff;
-	}
 	mIs_substituted = false;
+	mSubstituant = nullptr;
+}
+void ExpVar::apply_substitution()
+{
+	if(mIs_substituted) {
+		mVal = mSubstituant->eval();
+	}
 }
 void ExpVar::substitute(var_ptr sub)
 {
-	// sub->clear_substitution();
+	if(sub->is_substituted() && sub->mSubstituant.get() == this)
+		sub->clear_substitution();
 	mSubstituant = sub;
 	mIs_substituted = true;
 	callback();
@@ -450,6 +385,17 @@ void ExpVar::add_changeCallBack(void* owner, std::function<void(void)> func)
 void ExpVar::delete_callBack(void* owner)
 {
 	mChangeCallbacks.erase(owner);
+}
+
+var_ptr ExpVar::driving(var_ptr a, var_ptr b)
+{
+	// if a is replaced by b, than b is driving, and conversly
+	if(a->is_substituted() && a->mSubstituant == b) {
+		return b;
+	} else if(b->is_substituted() && b->mSubstituant == a) {
+		return a;
+	}
+	return nullptr;
 }
 
 /* -------------- End variable -------------- */
@@ -774,12 +720,6 @@ exp_ptr ExpSubstr::generate_derivative()
 	return mLeft->derivative() - mRight->derivative();
 }
 
-void ExpSubstr::get_substitution_vars(var_ptr& a, var_ptr& b)
-{
-	a = std::static_pointer_cast<ExpVar>(mLeft);
-	b = std::static_pointer_cast<ExpVar>(mRight);
-}
-
 std::string ExpSubstr::to_string()
 {
 	return "(" + mLeft->to_string() + " - " + mRight->to_string() + ")";
@@ -870,6 +810,32 @@ exp_ptr ExpEqu::derivative(var_ptr with_respect_to)
 	auto deriv = ExpSubstr::derivative();
 	with_respect_to->set_as_coeff();
 	return deriv;
+}
+
+void ExpEqu::get_substitution_vars(var_ptr& a, var_ptr& b)
+{
+	a = std::static_pointer_cast<ExpVar>(mLeft);
+	b = std::static_pointer_cast<ExpVar>(mRight);
+}
+
+var_ptr ExpEqu::get_single_var()
+{
+	var_ptr l(nullptr), r(nullptr);
+	if(mLeft->is_var()) {
+		l = std::static_pointer_cast<ExpVar>(mLeft);
+	}
+	if(mRight->is_var()) {
+		r = std::static_pointer_cast<ExpVar>(mRight);
+	}
+		
+	if(l != nullptr && r == nullptr) {
+		return l;
+	} else if(l == nullptr && r != nullptr) {
+		return r;
+	} else if(l != nullptr && r != nullptr) {
+		return ExpVar::driving(l, r);
+	}
+	return nullptr;
 }
 
 std::string ExpEqu::to_string()

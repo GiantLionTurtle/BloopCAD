@@ -16,7 +16,8 @@
 
 Sketch::Sketch(Geom3d::Plane_abstr* base_plane):
 	mBasePlane(base_plane),
-	mConstrSystem(this, 0)
+	mConstrSystem(this, 1),
+	mSolve_allowed(true)
 {
 	set_name("Sketch");
 	// create_origin();
@@ -223,6 +224,8 @@ bool Sketch::toggle_constraint(SkConstraint* constr, bool enable)
 
 bool Sketch::update_constraints(bool safeUpdate, bool update_on_solveFail)
 {
+	if(!mSolve_allowed)
+		return true;
 	if(safeUpdate)
 		backup_system();
 	int solve_out = mConstrSystem.solve();

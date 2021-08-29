@@ -1,6 +1,8 @@
 
 #include "SkCircleCurve.hpp"
 
+#include <ConstraintsSolver/Expression.hpp>
+
 #include <graphics_utils/ShadersPool.hpp>
 #include <utils/preferences.hpp>
 #include <graphics_utils/GLCall.hpp>

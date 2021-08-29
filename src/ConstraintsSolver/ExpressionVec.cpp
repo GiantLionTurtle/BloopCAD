@@ -4,6 +4,6 @@
 template<>
 void ExpVec2<ExpVar>::set(glm::vec2 p)
 {
-    x()->set(p.x);
-    y()->set(p.y);
+	x()->drag(p.x);
+	y()->drag(p.y);
 }

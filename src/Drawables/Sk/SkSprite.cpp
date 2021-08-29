@@ -7,6 +7,7 @@
 #include <utils/DebugUtils.hpp>
 #include <utils/mathUtils.hpp>
 #include <utils/preferences.hpp>
+#include <ConstraintsSolver/Expression.hpp>
 
 bool SkSprite::kFisrstInst = true;
 glm::vec3 SkSprite::kColorHovered = glm::vec3(0.0f);

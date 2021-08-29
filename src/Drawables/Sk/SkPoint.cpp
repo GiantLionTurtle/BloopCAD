@@ -58,8 +58,8 @@ void SkPoint::set_annotOffset(SkSprite* sp, int ind)
 
 void SkPoint::set(glm::vec2 pt)
 {
-	x()->set(pt.x);
-	y()->set(pt.y);
+	x()->drag(pt.x);
+	y()->drag(pt.y);
 }
 
 std::vector<var_ptr> SkPoint::all_vars()

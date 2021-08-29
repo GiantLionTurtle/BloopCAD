@@ -35,6 +35,10 @@ void SketchDefault_tool::init()
 
 bool SketchDefault_tool::manage_key_press(GdkEventKey* event)
 {
+	if(event->keyval == GDK_KEY_e || event->keyval == GDK_KEY_E) {
+		mEnv->target()->toggle_solve();
+		std::cout<<"Toggled solver to "<<std::boolalpha<<mEnv->target()->solve_allowed()<<"\n";
+	}
 	if(event->keyval == GDK_KEY_Escape) {
 		mEnv->target()->unselect_all();
 		return false;
@@ -65,6 +69,8 @@ bool SketchDefault_tool::manage_button_press(GdkEventButton* event)
 	
 	if(mDragCandidate.ent) {
 		mLastPlPos = plPos;
+		if(!(event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK) && !mDragCandidate.ent->selected())
+			mEnv->target()->unselect_all();
 		mDragCandidate.ent->select();
 	} else {
 		mEnv->target()->unselect_all();
@@ -101,10 +107,6 @@ bool SketchDefault_tool::manage_mouse_move(GdkEventMotion* event)
 	glm::vec2 plPos = mEnv->state()->cam->screen_to_plane(cursorPos, mEnv->target()->basePlane());
 	update_hover(cursorPos);
 
-	if(mMode == modes::NORMAL && event->state & GDK_BUTTON1_MASK && mDragCandidate.ent) {
-		mStartSnapshot = sk->snapshot();
-		mMode = modes::DRAGGING;
-	}
 
 	if(mMode == modes::DRAGGING) {
 		// Move drawables
@@ -113,11 +115,14 @@ bool SketchDefault_tool::manage_mouse_move(GdkEventMotion* event)
 		// } else {
 			sk->move_selected(plPos - mLastPlPos);
 		// }
-		mLastPlPos = plPos;
 		sk->update_constraints(true, false);
 	} else if(mMode == modes::AREASELECT) {
 		areaSelect(plPos, cursorPos.x);
+	} else if(mMode == modes::NORMAL && event->state & GDK_BUTTON1_MASK && mDragCandidate.ent) {
+		mStartSnapshot = sk->snapshot();
+		mMode = modes::DRAGGING;
 	}
+	mLastPlPos = plPos;
 
 	return true;
 }

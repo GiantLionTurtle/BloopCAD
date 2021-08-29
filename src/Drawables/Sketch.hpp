@@ -71,6 +71,8 @@ private:
 	// Folder* mOrigin;
 	DragEnabled_ConstraintsSystem<2> mConstrSystem;
 	std::vector<VarState> mConstrSystemBackup;
+
+	bool mSolve_allowed; // THIS IS FOR DEBUG IT SHOULD GO AWAY
 public:
 	/*
 		@function sketch creates a sketch
@@ -129,6 +131,9 @@ public:
 	void revert_system_to_backup();
 
 	virtual void invoke_workspace(document* doc);
+
+	void toggle_solve() { mSolve_allowed = !mSolve_allowed; }
+	bool solve_allowed() { return mSolve_allowed; }
 };
 
 #endif

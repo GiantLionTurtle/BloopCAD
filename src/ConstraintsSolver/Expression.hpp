@@ -2,6 +2,8 @@
 #ifndef EXPRESSION_HPP_
 #define EXPRESSION_HPP_
 
+#include "Expression_forward.hpp"
+
 #include <baseObject.hpp>
 
 #include <memory>
@@ -9,13 +11,6 @@
 #include <vector>
 #include <functional>
 #include <map>
-
-class Expression;
-class ExpVar;
-class ExpEqu;
-using exp_ptr = std::shared_ptr<Expression>; // TODO: change to exp_ptr
-using var_ptr = std::shared_ptr<ExpVar>;
-using equ_ptr = std::shared_ptr<ExpEqu>;
 
 class Expression {
 public:
@@ -33,21 +28,14 @@ public:
 	exp_ptr d();
 	virtual exp_ptr generate_derivative() = 0;
 
-
 	virtual std::string to_string() = 0;
 	virtual int id() { return mID; }
 
 	virtual bool is_var() { return false; }
-	virtual bool can_substitute() { return false; }
-	virtual void get_substitution_vars(var_ptr& a, var_ptr& b) {}
-	var_ptr get_single_var();
-	virtual void print_all_vars() {}
 
 	// Not a 100% sure the callback thingy is the right way to go, might change later
 	virtual void add_changeCallBack(void* owner, std::function<void(void)> func) {}
 	virtual void delete_callBack(void* owner) {}
-
-	virtual var_ptr get_only_var_impl(int& state) { return nullptr; }
 };
 
 class unaryExpression : public Expression {
@@ -57,12 +45,8 @@ public:
 	unaryExpression();
 	unaryExpression(exp_ptr operand);
 
-	void print_all_vars();
-
 	void add_changeCallBack(void* owner, std::function<void(void)> func);
 	void delete_callBack(void* owner);
-
-	var_ptr get_only_var_impl(int& state);
 };
 
 class binaryExpression : public Expression {
@@ -72,12 +56,8 @@ public:
 	binaryExpression();
 	binaryExpression(exp_ptr left, exp_ptr right);
 	
-	void print_all_vars();
-
 	void add_changeCallBack(void* owner, std::function<void(void)> func);
 	void delete_callBack(void* owner);	
-
-	var_ptr get_only_var_impl(int& state);
 };
 
 class ExpConst : public Expression {
@@ -182,6 +162,7 @@ public:
 
 	bool is_substituted();
 	void clear_substitution();
+	void apply_substitution();
 	void substitute(var_ptr sub);
 
 	int weight();
@@ -199,6 +180,7 @@ public:
 	void delete_callBack(void* owner);
 
 	bool is_var() { return true; }
+	static var_ptr driving(var_ptr a, var_ptr b);
 };
 
 struct VarState {
@@ -375,9 +357,6 @@ public:
 	virtual exp_ptr generate_derivative();
 
 	virtual std::string to_string();
-
-	virtual bool can_substitute() { return mLeft->is_var() && mRight->is_var(); }
-	virtual void get_substitution_vars(var_ptr& a, var_ptr& b);
 };
 
 class ExpMult : public binaryExpression {
@@ -418,6 +397,9 @@ public:
 
 	virtual exp_ptr derivative(var_ptr with_respect_to);
 
+	bool can_substitute() { return mLeft->is_var() && mRight->is_var(); }
+	void get_substitution_vars(var_ptr& a, var_ptr& b);
+	var_ptr get_single_var();
 	void set_tag(int t) { mTag = t; }
 	int tag() { return mTag; }
 

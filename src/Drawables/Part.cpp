@@ -4,6 +4,7 @@
 #include "entityView.hpp"
 #include <utils/DebugUtils.hpp>
 #include "tangibleEntities/Point.hpp"
+#include "tangibleEntities/Plane.hpp"
 
 Part::Part():
 	Drawable()

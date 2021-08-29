@@ -6,7 +6,7 @@
 
 ConstraintsSystem::ConstraintsSystem(int verboseLevel):
 	mBrokenDown(false),
-	mSolverType(SolverState::LevenbergMarquardt),
+	mSolverType(SolverState::DogLeg),
 	mVerboseLevel(verboseLevel),
 	mNum_liveConstrs(0),
 	mNum_liveVars(0)
@@ -65,12 +65,33 @@ int ConstraintsSystem::solve()
 	if(mVerboseLevel)
 		std::cout<<"Solving clusters...\n";
 	int output = SolverState::SUCCESS;
-	int i = 0;
-	for(auto clust : mSubClusters) {
+
+	for(int i = 0; i < mSubClusters.size(); ++i) {
+		auto clust = mSubClusters[i];
 		if(mVerboseLevel)
-			std::cout<<"Solving cluster "<<i++<<"...\n";
+			std::cout<<"Solving cluster "<<i<<"...\n";
 		output = std::max(output, clust->solve());
 	}
+
+	bool had_dragged = false;
+	for(auto var : mVariables) {
+		if(!had_dragged && var->dragged())
+			had_dragged = true;
+		var->set_dragged(false);
+	}
+
+	if(output == SolverState::FAILURE && had_dragged) {
+		output = SolverState::SUCCESS;
+		for(int i = 0; i < mSubClusters.size(); ++i) {
+			auto clust = mSubClusters[i];
+			if(clust->output() == SolverState::SUCCESS)
+				continue;
+			if(mVerboseLevel)
+				std::cout<<"Solving cluster "<<i<<" on second pass...\n";
+			output = std::max(output, clust->solve());
+		}
+	}
+
 	if(mVerboseLevel) 
 		std::cout<<"Solve "<<(output == SolverState::SUCCESS ? "success" : "fail")<<".\n";
 
@@ -129,8 +150,8 @@ void ConstraintsSystem::breakDown_problem()
 void ConstraintsSystem::clear_subClusters()
 {
 	for(int i = 0; i < mSubClusters.size(); ++i) {
-		mSubClusters[i]->clear_substitutions();
-		mSubClusters[i]->clear_tags();
+		// mSubClusters[i]->clear_substitutions();
+		// mSubClusters[i]->clear_tags();
 		delete mSubClusters[i];
 		mSubClusters[i] = nullptr;
 	}
@@ -188,7 +209,7 @@ ConstraintsSystem::ConstraintGraph::ConstraintGraph(std::vector<Constraint_abstr
 		int v = 0;
 		for(int j = 0; j < constrs[i]->n_vars(); ++j) {
 			var_ptr var = constrs[i]->var(j);
-			if(var->is_coef() || !var->exists())
+			if(var->is_coeff() || !var->exists())
 				continue;
 			int vind = v2i[var];
 			mVertToVert[c].push_back(vind);

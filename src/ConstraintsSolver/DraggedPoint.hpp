@@ -36,6 +36,7 @@ public:
 	void dragTo(glm::vec<dims, float, glm::defaultp> pos)
 	{
 		for(size_t i = 0; i < dims; ++i) {
+			// TODO: change to drag()??
 			mVars[i]->set(*(&pos[0]+i));
 		}
 	}
