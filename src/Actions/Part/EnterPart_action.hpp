@@ -2,17 +2,17 @@
 #ifndef ENTERPARTDESIGN_ACTION_HPP_
 #define ENTERPARTHDESIGN_ACTION_HPP_
 
-#include <actions/common/switchWorkspace_action.hpp>
+#include <Actions/Common/SwitchWorkspace_action.hpp>
 #include <Drawables/Part.hpp>
 
 #include <memory>
 
-class enterPartDesign_action : public switchWorkspace_action {
+class EnterPart_action : public SwitchWorkspace_action {
 private:
 	Part* mTarget;
 	Drawable* mInitialTarget;
 public:
-	enterPartDesign_action(bool set_Camera = false);
+	EnterPart_action(bool set_Camera = false);
 
 	/*
 		@function do_work switches to desired workspace if it exists

@@ -10,7 +10,6 @@ add_library(Tools ${Tools_source_files})
 
 target_link_libraries(Tools
   Drawables
-  actions
   Navigation3d_tools
   Part_tools
   Sketch_tools

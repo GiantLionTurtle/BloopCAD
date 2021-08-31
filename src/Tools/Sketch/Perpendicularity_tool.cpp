@@ -2,7 +2,7 @@
 #include "Perpendicularity_tool.hpp"
 
 #include <Drawables/Sk/SkLine.hpp>
-#include <actions/sketchDesign/toggleConstraint_action.hpp>
+#include <Actions/Sketch/ToggleConstraint_action.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 

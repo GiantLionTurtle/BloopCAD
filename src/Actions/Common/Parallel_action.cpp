@@ -1,14 +1,14 @@
 
-#include "parallel_action.hpp"
+#include "Parallel_action.hpp"
 #include <algorithm>
 
-parallel_action::parallel_action(std::vector<std::shared_ptr<action>> actions):
+Parallel_action::Parallel_action(std::vector<Action_ptr> actions):
 	mActions(actions),
 	mActions_done(actions.size(), false)
 {
 
 }
-parallel_action::parallel_action():
+Parallel_action::Parallel_action():
 	mActions({}),
 	mActions_done({})
 {
@@ -16,7 +16,7 @@ parallel_action::parallel_action():
 }
 
 
-bool parallel_action::do_work(document* caller)
+bool Parallel_action::do_work(document* caller)
 {
 	int n_pendingActions = 0;
 	for(int i = 0; i < mActions.size() && i < mActions_done.size(); ++i) {
@@ -30,7 +30,7 @@ bool parallel_action::do_work(document* caller)
 	}
 	return n_pendingActions == 0;
 }
-bool parallel_action::undo_work(document* caller)
+bool Parallel_action::undo_work(document* caller)
 {
 	int n_pendingActions = 0;
 	for(int i = mActions.size(); i >= 0; --i) {
@@ -45,7 +45,7 @@ bool parallel_action::undo_work(document* caller)
 	return n_pendingActions == 0;
 }
 
-void parallel_action::add_action(std::shared_ptr<action> anAction)
+void Parallel_action::add_action(Action_ptr anAction)
 {
 	mActions.push_back(anAction);
 	mActions_done.push_back(false);

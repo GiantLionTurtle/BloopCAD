@@ -3,7 +3,7 @@
 
 #include <Drawables/Sk/SkLine.hpp>
 #include <workspaces/workspace.hpp>
-#include <actions/sketchDesign/toggleConstraint_action.hpp>
+#include <Actions/Sketch/ToggleConstraint_action.hpp>
 #include <document.hpp>
 
 Verticality_tool::Verticality_tool(sketchDesign* env):

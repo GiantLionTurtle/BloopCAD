@@ -4,11 +4,11 @@
 #include <document.hpp>
 #include <Drawables/Sketch.hpp>
 #include <Drawables/tangibleEntities/Plane.hpp>
-#include <actions/common/toggleBaseObject_action.hpp>
-#include <actions/sketchDesign/enterSketchDesign_action.hpp>
-#include <actions/partDesign/quitPartDesign_action.hpp>
-#include <actions/common/serial_action.hpp>
-#include <actions/common/moveCamera_action.hpp>
+#include <Actions/Common/ToggleBaseObject_action.hpp>
+#include <Actions/Sketch/EnterSketch_action.hpp>
+#include <Actions/Part/QuitPartDesign_action.hpp>
+#include <Actions/Common/Serial_action.hpp>
+#include <Actions/Common/MoveCamera_action.hpp>
 
 StartSketch_tool::StartSketch_tool(partDesign* env):
 	SimpleSelector_tool(env)
@@ -56,10 +56,10 @@ void StartSketch_tool::start_sketch(Geom3d::Plane_abstr* sketchPlane, CameraStat
 	// mEnv->state()->doc->make_glContext_current();
 	mCurrentSketch = new Sketch(sketchPlane);
 	mEnv->target()->add_sketch(mCurrentSketch);
-	mEnv->state()->doc->push_action(std::shared_ptr<serial_action>(new serial_action({
-		std::shared_ptr<action>(new toggleBaseObject_action(mCurrentSketch, true)),
-		std::shared_ptr<action>(new enterSketchDesign_action(mCurrentSketch, true)),
-		std::shared_ptr<action>(new quitPartDesign_action()),
-		moveCamera_action::create_from_facingPlane(sketchPlane, 8.0, camState_, nullptr)
+	mEnv->state()->doc->push_action(std::shared_ptr<Serial_action>(new Serial_action({
+		Action_ptr(new ToggleBaseObject_action(mCurrentSketch, true)),
+		Action_ptr(new EnterSketch_action(mCurrentSketch, true)),
+		Action_ptr(new QuitPartDesign_action()),
+		MoveCamera_action::create_from_facingPlane(sketchPlane, 8.0, camState_, nullptr)
 	})));
 }

@@ -2,7 +2,7 @@
 #ifndef PARALLEL_ACTION_HPP_
 #define PARALLEL_ACTION_HPP_
 
-#include <actions/action.hpp>
+#include <Actions/Action.hpp>
 #include <Drawables/Drawable.hpp>
 
 #include <glm/glm.hpp>
@@ -10,18 +10,18 @@
 #include <memory>
 #include <vector>
 
-class parallel_action : public action {
+class Parallel_action : public Action {
 private:
-	std::vector<std::shared_ptr<action>> mActions;
+	std::vector<Action_ptr> mActions;
     std::vector<bool> mActions_done;
 public:
-	parallel_action(std::vector<std::shared_ptr<action>> actions);
-	parallel_action();
+	Parallel_action(std::vector<Action_ptr> actions);
+	Parallel_action();
 
 	virtual bool do_work(document* caller);
 	virtual bool undo_work(document* caller);
 
-	void add_action(std::shared_ptr<action> anAction);
+	void add_action(Action_ptr anAction);
 
 	int size() const { return mActions.size(); }
 };

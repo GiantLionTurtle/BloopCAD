@@ -230,7 +230,7 @@ bool document::update_Camera()
 	return false;
 }
 
-void document::push_action(std::shared_ptr<action> to_push)
+void document::push_action(Action_ptr to_push)
 {
 	if(mActionInd != mActionStackSize) {
 		mActionStackSize = mActionInd; // If an action is pushed while the index is in the past, it starts from there and erases the stuff going after

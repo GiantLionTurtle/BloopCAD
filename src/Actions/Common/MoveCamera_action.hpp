@@ -2,12 +2,12 @@
 #ifndef MOVECAMERA_ACTION_HPP_
 #define MOVECAMERA_ACTION_HPP_
 
-#include <actions/action.hpp>
+#include <Actions/Action.hpp>
 #include <graphics_utils/Camera.hpp>
 #include <utils/animatable.hpp>
 #include <Geom/Geom3d/Plane_abstr.hpp>
 
-class moveCamera_action : public action {
+class MoveCamera_action : public Action {
 private:
 	Camera_ptr mCamera;
 	CameraState mInitState, mTargetState;
@@ -18,11 +18,11 @@ private:
 	glm::vec3 mFinalOrientation;
 	long mDuration;
 public:
-	moveCamera_action(Camera_ptr cam, CameraState target, long duration_ms);
+	MoveCamera_action(Camera_ptr cam, CameraState target, long duration_ms);
 
-	static std::shared_ptr<action> create_from_facingPlane(	Geom3d::Plane_abstr* toFace, float dist_to_plane, 
+	static Action_ptr create_from_facingPlane(	Geom3d::Plane_abstr* toFace, float dist_to_plane, 
 															CameraState const& camSt, Camera_ptr cam);
-	static std::shared_ptr<action> create_from_facingPlane(Geom3d::Plane_abstr* toFace, float dist_to_plane, Camera_ptr cam);
+	static Action_ptr create_from_facingPlane(Geom3d::Plane_abstr* toFace, float dist_to_plane, Camera_ptr cam);
 
 	virtual bool do_work(document* caller);
 	virtual bool undo_work(document* caller);

@@ -1,9 +1,9 @@
 
 #include "Constraint_tool.hpp"
 
-#include <actions/common/parallel_action.hpp>
-#include <actions/sketchDesign/toggleConstraint_action.hpp>
-#include <actions/sketchDesign/applySnapshot_action.hpp>
+#include <Actions/Common/Parallel_action.hpp>
+#include <Actions/Sketch/ToggleConstraint_action.hpp>
+#include <Actions/Sketch/ApplySnapshot_action.hpp>
 #include <document.hpp>
 
 Constraint_tool::Constraint_tool(sketchDesign* env, int filter):
@@ -89,9 +89,9 @@ void Constraint_tool::add_constraint()
 
 	std::map<var_ptr, float> snp = mEnv->target()->snapshot();
 	mEnv->target()->add_constraint(constr, priority_ent);
-	mEnv->state()->doc->push_action(std::shared_ptr<parallel_action>(new parallel_action({
-		std::make_shared<applySnapshot_action>(mEnv->target()->deltaSnapshot(snp), true),
-		std::make_shared<toggleConstraint_action>(mEnv->target(), constr, true, true)
+	mEnv->state()->doc->push_action(std::shared_ptr<Parallel_action>(new Parallel_action({
+		std::make_shared<ApplySnapshot_action>(mEnv->target()->deltaSnapshot(snp), true),
+		std::make_shared<ToggleConstraint_action>(mEnv->target(), constr, true, true)
 	})));
 	clear_geometries();
 }

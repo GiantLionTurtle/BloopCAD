@@ -3,7 +3,7 @@ add_subdirectory(utils)
 add_subdirectory(graphics_utils)
 add_subdirectory(Geom)
 add_subdirectory(Drawables)
-add_subdirectory(actions)
+add_subdirectory(Actions)
 add_subdirectory(Tools)
 add_subdirectory(workspaces)
 add_subdirectory(ConstraintsSolver)
@@ -19,7 +19,6 @@ target_link_libraries(BloopCAD
 	utils
 	graphics_utils
 	Drawables
-	actions
 	Tools
 	workspaces
 	${GTKMM_LIBRARIES}

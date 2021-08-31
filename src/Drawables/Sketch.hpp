@@ -9,7 +9,7 @@
 #include "Sk/SkDrawable.hpp"
 #include "Sk/SkGeometry.hpp"
 #include "Sk/SkConstraint.hpp"
-#include <actions/common/serial_action.hpp>
+#include <Actions/Common/Serial_action.hpp>
 
 #include <memory>
 #include <vector>
@@ -89,7 +89,7 @@ public:
 	SelPoint closest(glm::vec2 cursor, Camera* cam, int filter);
 	SkExpSelPoint closest_draggable(glm::vec2 cursor, Camera* cam, int filter);
 	void move_selected(glm::vec2 delta);
-	std::shared_ptr<serial_action> delete_selected(); 
+	std::shared_ptr<Serial_action> delete_selected(); 
 	void unselect_all();
 	size_t n_selected();
 

@@ -1,5 +1,5 @@
 
-#include "moveCamera_action.hpp"
+#include "MoveCamera_action.hpp"
 
 #include <utils/mathUtils.hpp>
 #include <utils/DebugUtils.hpp>
@@ -8,7 +8,7 @@
 
 #include <glm/gtx/vector_angle.hpp>
 
-moveCamera_action::moveCamera_action(Camera_ptr cam, CameraState target, long duration_ms):
+MoveCamera_action::MoveCamera_action(Camera_ptr cam, CameraState target, long duration_ms):
 	mCamera(cam),
 	mTargetState({target.pos, glm::normalize(target.right), glm::normalize(target.up)}),
 	mStarted(false),
@@ -20,23 +20,23 @@ moveCamera_action::moveCamera_action(Camera_ptr cam, CameraState target, long du
 
 }
 
-std::shared_ptr<action> moveCamera_action::create_from_facingPlane(	Geom3d::Plane_abstr* toFace, float dist_to_plane, 
+Action_ptr MoveCamera_action::create_from_facingPlane(	Geom3d::Plane_abstr* toFace, float dist_to_plane, 
 																				CameraState const& camSt, Camera_ptr cam)
 {
 	glm::vec3 right_plane, up_plane; // The v & w vectors that will be used for the sketch's plane
 	Camera::get_alignedPlaneVectors(camSt, toFace, right_plane, up_plane, true);
 
 	CameraState targetCamState = {  toFace->origin() + glm::normalize(glm::cross(right_plane, up_plane)) * dist_to_plane, right_plane, up_plane };
-	return std::shared_ptr<action>(new moveCamera_action(cam, 
+	return Action_ptr(new MoveCamera_action(cam, 
 	targetCamState, 
 	preferences::get_instance().get_long("camtrans")));
 }
-std::shared_ptr<action> moveCamera_action::create_from_facingPlane(Geom3d::Plane_abstr* toFace, float dist_to_plane, Camera_ptr cam)
+Action_ptr MoveCamera_action::create_from_facingPlane(Geom3d::Plane_abstr* toFace, float dist_to_plane, Camera_ptr cam)
 {
 	return create_from_facingPlane(toFace, dist_to_plane, cam->state(), cam);
 }
 
-bool moveCamera_action::do_work(document* caller)
+bool MoveCamera_action::do_work(document* caller)
 {
 	if(!mStarted) {
 		if(!mCamera) {
@@ -49,7 +49,7 @@ bool moveCamera_action::do_work(document* caller)
 
 	return move_Camera();
 }
-bool moveCamera_action::undo_work(document* caller)
+bool MoveCamera_action::undo_work(document* caller)
 {
 	if(!mStarted) {
 		if(!mCamera) {
@@ -62,7 +62,7 @@ bool moveCamera_action::undo_work(document* caller)
 	return move_Camera();
 }
 
-bool moveCamera_action::move_Camera()
+bool MoveCamera_action::move_Camera()
 {
 	mRotation.update();
 	mTranslation.update();
@@ -77,7 +77,7 @@ bool moveCamera_action::move_Camera()
 	return false;
 }
 
-void moveCamera_action::compute_animatables(CameraState const& state)
+void MoveCamera_action::compute_animatables(CameraState const& state)
 {
 	float angle_x, angle_y;
 	CameraState currState = mCamera->state();

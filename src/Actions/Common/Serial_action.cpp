@@ -1,13 +1,13 @@
 
-#include "serial_action.hpp"
+#include "Serial_action.hpp"
 
-serial_action::serial_action(std::vector<std::shared_ptr<action>> actions):
+Serial_action::Serial_action(std::vector<Action_ptr> actions):
 	mActions(actions),
 	mCurrentInd(0)
 {
 
 }
-serial_action::serial_action():
+Serial_action::Serial_action():
 	mActions({}),
 	mCurrentInd(0)
 {
@@ -15,14 +15,14 @@ serial_action::serial_action():
 }
 
 
-bool serial_action::do_work(document* caller)
+bool Serial_action::do_work(document* caller)
 {
 	if(mCurrentInd >= 0 && mCurrentInd < mActions.size() && mActions[mCurrentInd]->do_work(caller)) {
 		mCurrentInd++;
 	}
 	return mCurrentInd >= mActions.size();
 }
-bool serial_action::undo_work(document* caller)
+bool Serial_action::undo_work(document* caller)
 {
 	if(mCurrentInd > 0 && mCurrentInd <= mActions.size() && mActions[mCurrentInd-1]->undo_work(caller)) {
 		mCurrentInd--;
@@ -30,7 +30,7 @@ bool serial_action::undo_work(document* caller)
 	return mCurrentInd <= 0;
 }
 
-void serial_action::add_action(std::shared_ptr<action> anAction)
+void Serial_action::add_action(Action_ptr anAction)
 {
 	mActions.push_back(anAction);
 }

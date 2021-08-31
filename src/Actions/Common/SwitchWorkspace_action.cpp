@@ -1,16 +1,16 @@
 
-#include "switchWorkspace_action.hpp"
+#include "SwitchWorkspace_action.hpp"
 #include <utils/DebugUtils.hpp>
 #include <document.hpp>
 
-switchWorkspace_action::switchWorkspace_action(int workspaceName, bool set_Camera):
+SwitchWorkspace_action::SwitchWorkspace_action(int workspaceName, bool set_Camera):
 	mTargetWorkspaceName(workspaceName),
 	mSet_Camera(set_Camera)
 {
 
 }
 
-bool switchWorkspace_action::do_work(document* caller)
+bool SwitchWorkspace_action::do_work(document* caller)
 {
 	if(caller) {
 		if(caller->state()) {
@@ -33,13 +33,13 @@ bool switchWorkspace_action::do_work(document* caller)
 		caller->state()->cam->copy(tmpCam);
 	return true;
 }
-bool switchWorkspace_action::undo_work(document* caller)
+bool SwitchWorkspace_action::undo_work(document* caller)
 {
 	switch_workspace(caller, mInitWorkspaceName);
 	return true;
 }
 
-void switchWorkspace_action::switch_workspace(document* caller, int name)
+void SwitchWorkspace_action::switch_workspace(document* caller, int name)
 {
 	if(mValid) {
 		workspace_ptr space = caller->set_workspace(name);

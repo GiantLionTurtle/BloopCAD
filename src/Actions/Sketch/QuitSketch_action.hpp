@@ -1,19 +1,16 @@
 
-#ifndef ENTERSKETCHDESIGN_ACTION_HPP_
-#define ENTERSKETCHDESIGN_ACTION_HPP_
+#ifndef QUITSKETCHDESIGN_ACTION_HPP_
+#define QUITSKETCHDESIGN_ACTION_HPP_
 
-#include <actions/common/switchWorkspace_action.hpp>
+#include <Actions/Action.hpp>
 #include <Drawables/Sketch.hpp>
 #include <Drawables/tangibleEntities/Plane.hpp>
 
 #include <memory>
 
-class enterSketchDesign_action : public switchWorkspace_action {
-private:
-	Sketch* mTarget;
-	Drawable* mInitialTarget;
+class QuitSketch_action : public Action {
 public:
-	enterSketchDesign_action(Sketch* target, bool set_Camera = false);
+	QuitSketch_action(Sketch* target);
 
 	/*
 		@function do_work switches to desired workspace if it exists

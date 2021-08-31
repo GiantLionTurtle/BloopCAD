@@ -1,14 +1,14 @@
 
-#include "quitPartDesign_action.hpp"
+#include "QuitPartDesign_action.hpp"
 #include <document.hpp>
 
-quitPartDesign_action::quitPartDesign_action():
+QuitPartDesign_action::QuitPartDesign_action():
 	mTarget(nullptr)
 {
 
 }
 
-bool quitPartDesign_action::do_work(document* caller)
+bool QuitPartDesign_action::do_work(document* caller)
 {
 	mTarget = caller->target();
 	if(mTarget) {
@@ -17,7 +17,7 @@ bool quitPartDesign_action::do_work(document* caller)
 	return true;
 }
 
-bool quitPartDesign_action::undo_work(document* caller)
+bool QuitPartDesign_action::undo_work(document* caller)
 {
 	if(mTarget && !mTarget->has_volume()) {
 		mTarget->show_origin();

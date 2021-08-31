@@ -3,9 +3,9 @@
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <Drawables/Sketch.hpp>
-#include <actions/common/toggleBaseObject_action.hpp>
-#include <actions/sketchDesign/toggleConstraint_action.hpp>
-#include <actions/common/parallel_action.hpp>
+#include <Actions/Common/ToggleBaseObject_action.hpp>
+#include <Actions/Sketch/ToggleConstraint_action.hpp>
+#include <Actions/Common/Parallel_action.hpp>
 #include <Tools/Sketch/Coincidence_tool.hpp>
 
 #include <glm/gtx/quaternion.hpp>
@@ -75,7 +75,7 @@ SkPoint* Line_tool::add_point(glm::vec2 pt)
 		return mLinePreview->ptA();
 	} else {
 
-		std::shared_ptr<toggleConstraint_action> hingeConstraintAction = nullptr;
+		std::shared_ptr<ToggleConstraint_action> hingeConstraintAction = nullptr;
 		SkConstraint* constr = nullptr;
 		if(mEndPos) {
 			mEnv->coincidence()->add_geom(mEndPos);
@@ -84,17 +84,17 @@ SkPoint* Line_tool::add_point(glm::vec2 pt)
 			mEnv->coincidence()->create_constraint(constr, trash);
 			
 			mEnv->coincidence()->clear_geometries();
-			hingeConstraintAction = std::make_shared<toggleConstraint_action>(mEnv->target(), constr, true, true);
+			hingeConstraintAction = std::make_shared<ToggleConstraint_action>(mEnv->target(), constr, true, true);
 		}
 
 		mLinePreview->ptB()->set(pt);
 		mEnv->target()->add_geometry(mLinePreview);
 
-		auto lineAction = std::make_shared<toggleBaseObject_action>(mLinePreview, true);
-		std::shared_ptr<action> compoundAction;
+		auto lineAction = std::make_shared<ToggleBaseObject_action>(mLinePreview, true);
+		Action_ptr compoundAction;
 		if(hingeConstraintAction) {
 			mEnv->target()->add_constraint(constr, nullptr);
-			compoundAction = std::shared_ptr<parallel_action>(new parallel_action({
+			compoundAction = std::shared_ptr<Parallel_action>(new Parallel_action({
 				lineAction,
 				hingeConstraintAction
 				}));

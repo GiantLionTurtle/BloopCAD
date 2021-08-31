@@ -6,11 +6,11 @@
 #include <utils/DebugUtils.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
-#include <actions/common/moveCamera_action.hpp>
-#include <actions/common/switchWorkspace_action.hpp>
-#include <actions/common/toggleBaseObject_action.hpp>
-#include <actions/common/serial_action.hpp>
-#include <actions/sketchDesign/applySnapshot_action.hpp>
+#include <Actions/Common/MoveCamera_action.hpp>
+#include <Actions/Common/SwitchWorkspace_action.hpp>
+#include <Actions/Common/ToggleBaseObject_action.hpp>
+#include <Actions/Common/Serial_action.hpp>
+#include <Actions/Sketch/ApplySnapshot_action.hpp>
 
 #include <iostream>
 
@@ -91,7 +91,7 @@ bool SketchDefault_tool::manage_button_release(GdkEventButton* event)
 	if(mMode == modes::NORMAL && !mDragCandidate.ent) {
 		mEnv->target()->unselect_all(); // Clear selection if the user clicks an empty space
 	} else if(mMode == modes::DRAGGING) {
-		mEnv->state()->doc->push_action(std::make_shared<applySnapshot_action>(mEnv->target()->deltaSnapshot(mStartSnapshot), true));
+		mEnv->state()->doc->push_action(std::make_shared<ApplySnapshot_action>(mEnv->target()->deltaSnapshot(mStartSnapshot), true));
 		mEnv->target()->dragConstr()->clear();
 	} else if(mMode == modes::AREASELECT) {
 		mEnv->state()->doc->clear_toolPreview(); // Clear the selection rectangle

@@ -6,7 +6,7 @@
 #include <workspaces/workspace.hpp>
 #include <Tools/Tool.hpp>
 #include <graphics_utils/FrameBuffer.hpp>
-#include <actions/action.hpp>
+#include <Actions/Action.hpp>
 #include <Drawables/Part.hpp>
 #include <graphics_utils/Camera.hpp>
 #include <Drawables/entityView.hpp>
@@ -59,7 +59,7 @@ private:
 	workspaceState_ptr mPartState;
 	workspaceState_ptr mCurrentWorkspaceState; // The workspace state for the current workspace working on the document
 
-	std::vector<std::shared_ptr<action>> mActionStack; // The stack of actions done in the document
+	std::vector<Action_ptr> mActionStack; // The stack of actions done in the document
 	int mActionInd, mCurrentActionNum, mActionStackSize; // Metrics for the action stack
 
 	glm::vec3 mBackgroundColor; // The rendering background color
@@ -169,7 +169,7 @@ public:
 
 		@param to_push : The action to push
 	*/
-	void push_action(std::shared_ptr<action> to_push);
+	void push_action(Action_ptr to_push);
 	/*
 		@function advance_action_index moves in toward the present in the actions timeline
 		if it current position is in the past, it executes all actions it passes

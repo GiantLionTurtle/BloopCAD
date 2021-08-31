@@ -2,16 +2,16 @@
 #ifndef QUITPARTDESIGN_ACTION_HPP_
 #define QUITPARTDESIGN_ACTION_HPP_
 
-#include <actions/action.hpp>
+#include <Actions/Action.hpp>
 #include <Drawables/Part.hpp>
 
 #include <memory>
 
-class quitPartDesign_action : public action {
+class QuitPartDesign_action : public Action {
 private:
 	Part* mTarget;
 public:
-	quitPartDesign_action();
+	QuitPartDesign_action();
 
 	/*
 		@function do_work switches to desired workspace if it exists

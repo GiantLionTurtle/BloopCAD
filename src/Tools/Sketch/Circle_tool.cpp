@@ -3,7 +3,7 @@
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <Drawables/Sketch.hpp>
-#include <actions/common/toggleBaseObject_action.hpp>
+#include <Actions/Common/ToggleBaseObject_action.hpp>
 #include <utils/mathUtils.hpp>
 
 Circle_tool::Circle_tool(sketchDesign* env):
@@ -66,7 +66,7 @@ bool Circle_tool::manage_button_press(GdkEventButton* event)
         mStarted = true;
 	} else {
 		target->add_geometry(mCirclePreview);
-		mEnv->state()->doc->push_action(std::make_shared<toggleBaseObject_action>(mCirclePreview, true)); // Doc is passed to activate glContext
+		mEnv->state()->doc->push_action(std::make_shared<ToggleBaseObject_action>(mCirclePreview, true)); // Doc is passed to activate glContext
         mCirclePreview->set_radius(glm::length(circle_pos - mCirclePreview->center_pos()));
         mStarted = false;
 	}

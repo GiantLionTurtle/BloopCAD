@@ -4,11 +4,15 @@
 #include <ConstraintsSolver/SolverState.hpp>
 #include "Sk/SkPoint.hpp"
 #include "Sk/SkLine.hpp"
-#include <actions/common/serial_action.hpp>
-#include <actions/common/moveCamera_action.hpp>
-#include <actions/sketchDesign/enterSketchDesign_action.hpp>
-#include <actions/partDesign/quitPartDesign_action.hpp>
-#include <actions/common/toggleBaseObject_action.hpp>
+
+#include <Actions/Common/Serial_action.hpp>
+#include <Actions/Common/MoveCamera_action.hpp>
+#include <Actions/Sketch/EnterSketch_action.hpp>
+#include <Actions/Part/QuitPartDesign_action.hpp>
+#include <Actions/Common/ToggleBaseObject_action.hpp>
+
+
+
 #include <utils/DebugUtils.hpp>
 #include <utils/mathUtils.hpp>
 #include <bloop.hpp>
@@ -100,13 +104,13 @@ void Sketch::move_selected(glm::vec2 delta)
 	}
 	update_constraints(false, true);
 }
-std::shared_ptr<serial_action> Sketch::delete_selected()
+std::shared_ptr<Serial_action> Sketch::delete_selected()
 {
-	auto act = std::make_shared<serial_action>();
+	auto act = std::make_shared<Serial_action>();
 	for(size_t i = 0; i < mDrawList.size(); ++i) {
 		auto ch = mDrawList.at(i);
 		if(ch->selected() && ch->exists())
-			act->add_action(std::make_shared<toggleBaseObject_action>(ch, false));
+			act->add_action(std::make_shared<ToggleBaseObject_action>(ch, false));
 	}
 	return act;
 }
@@ -279,9 +283,9 @@ void Sketch::revert_system_to_backup()
 
 void Sketch::invoke_workspace(document* doc)
 {
-	doc->push_action(std::shared_ptr<serial_action>(new serial_action({
-		std::shared_ptr<action>(new enterSketchDesign_action(this, true)),
-		std::shared_ptr<action>(new quitPartDesign_action()),
-		moveCamera_action::create_from_facingPlane(basePlane(), 8.0, doc->state()->cam->state(), nullptr)
+	doc->push_action(std::shared_ptr<Serial_action>(new Serial_action({
+		Action_ptr(new EnterSketch_action(this, true)),
+		Action_ptr(new QuitPartDesign_action()),
+		MoveCamera_action::create_from_facingPlane(basePlane(), 8.0, doc->state()->cam->state(), nullptr)
 	})));
 }

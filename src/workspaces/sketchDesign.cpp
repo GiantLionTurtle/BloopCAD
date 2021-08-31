@@ -3,10 +3,10 @@
 
 #include <utils/preferences.hpp>
 #include <utils/mathUtils.hpp>
-#include <actions/partDesign/enterPartDesign_action.hpp>
-#include <actions/sketchDesign/quitSketchDesign_action.hpp>
-#include <actions/common/moveCamera_action.hpp>
-#include <actions/common/serial_action.hpp>
+#include <Actions/Part/EnterPart_action.hpp>
+#include <Actions/Sketch/QuitSketch_action.hpp>
+#include <Actions/Common/MoveCamera_action.hpp>
+#include <Actions/Common/Serial_action.hpp>
 #include <Tools/Sketch/Line_tool.hpp>
 #include <Tools/Sketch/Point_tool.hpp>
 #include <Tools/Sketch/Circle_tool.hpp>
@@ -294,9 +294,9 @@ void sketchDesign::to_svg()
 
 void sketchDesign::finish()
 {
-	mState->doc->push_action(std::shared_ptr<action>(new serial_action({
-		std::shared_ptr<action>(new quitSketchDesign_action(target())),
-		std::shared_ptr<action>(new enterPartDesign_action(true)),
-		std::shared_ptr<action>(new moveCamera_action(nullptr, mState->startCamState, preferences::get_instance().get_long("camtrans")))
+	mState->doc->push_action(Action_ptr(new Serial_action({
+		Action_ptr(new QuitSketch_action(target())),
+		Action_ptr(new EnterPart_action(true)),
+		Action_ptr(new MoveCamera_action(nullptr, mState->startCamState, preferences::get_instance().get_long("camtrans")))
 	})));
 }

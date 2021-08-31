@@ -2,16 +2,21 @@
 #ifndef ACTION_HPP_
 #define ACTION_HPP_
 
+#include <memory>
+
 class document;
+class Action;
+
+using Action_ptr = std::shared_ptr<Action>;
 
 /*
 	@class action describes an action performed in a document
 	it describes the back and forth between an action and it's opposite
 */
-class action {
+class Action {
 public:
-	action() {}
-	virtual ~action() {}
+	Action() {}
+	virtual ~Action() {}
 
 	/*
 		@function do_work performs the action, it can be summoned as many times as needed

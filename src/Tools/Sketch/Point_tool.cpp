@@ -3,7 +3,7 @@
 
 #include <document.hpp>
 #include <Drawables/Sketch.hpp>
-#include <actions/common/toggleBaseObject_action.hpp>
+#include <Actions/Common/ToggleBaseObject_action.hpp>
 
 Point_tool::Point_tool(sketchDesign* env):
 	tool(env)
@@ -31,6 +31,6 @@ bool Point_tool::manage_button_press(GdkEventButton* event)
 	// mEnv->state()->doc->make_glContext_current();
 	mCurrentPoint = new SkPoint(point_pos, pl, false);
 	target->add_geometry(mCurrentPoint);
-	mEnv->state()->doc->push_action(std::make_shared<toggleBaseObject_action>(mCurrentPoint, true));
+	mEnv->state()->doc->push_action(std::make_shared<ToggleBaseObject_action>(mCurrentPoint, true));
 	return true;
 }
