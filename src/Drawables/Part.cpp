@@ -60,14 +60,16 @@ void Part::set_handle(entityHandle* handle_)
 SelPoint Part::closest(glm::vec2 cursor, Camera* cam, int filter)
 {
 	int maxpriority = -1;
+	float minDist = std::numeric_limits<float>::max();
 	SelPoint selPt;
 	for(size_t i = 0; i < mDrawList.size(); ++i) {
 		Drawable* ch = mDrawList.at(i);
-		if(ch->visible() && ch->selection_rank() > maxpriority) {
+		if(ch->visible() && ch->selection_rank() >= maxpriority) {
 			SelPoint tmpSelPt = ch->closest(cursor, cam, filter);
-			if(tmpSelPt.ent) {
+			if(tmpSelPt.ent && tmpSelPt.dist_to_cam < minDist) {
 				selPt = tmpSelPt;
 				maxpriority = tmpSelPt.ent->selection_rank();
+				minDist = tmpSelPt.dist_to_cam;
 			}
 		}
 	}
