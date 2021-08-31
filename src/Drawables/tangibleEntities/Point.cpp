@@ -2,8 +2,8 @@
 #include "Point.hpp"
 
 #include <Geom/Geom3d/Plane_abstr.hpp>
-#include <graphics_utils/GLCall.hpp>
-#include <graphics_utils/ShadersPool.hpp>
+#include <Graphics_utils/GLCall.hpp>
+#include <Graphics_utils/ShadersPool.hpp>
 #include <utils/mathUtils.hpp>
 
 Point::Point(glm::vec3 const& basePoint):

@@ -7,11 +7,11 @@ TexturesPool& TexturesPool::get_instance()
 	return pool;
 }
 
-void TexturesPool::add(std::string const& name, std::shared_ptr<Texture> texture)
+void TexturesPool::add(std::string const& name, Texture* texture)
 {
 	mTextures[name] = texture;
 }
-std::shared_ptr<Texture> TexturesPool::get(std::string const& name) 
+Texture* TexturesPool::get(std::string const& name) 
 {
 	if(mTextures.find(name) != mTextures.end()) {
 		return mTextures.at(name);
@@ -22,4 +22,10 @@ std::shared_ptr<Texture> TexturesPool::get(std::string const& name)
 TexturesPool::TexturesPool()
 {
 
+}
+TexturesPool::~TexturesPool()
+{
+	for(auto it = mTextures.begin(); it != mTextures.end(); ++it) {
+		delete it->second;
+	}
 }

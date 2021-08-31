@@ -9,7 +9,7 @@ protected:
 	std::shared_ptr<VertexBuffer> 	mVB; // The vertex buffer to contain the vertices on the gpu
 	std::shared_ptr<VertexArray> 	mVA; // The vertex array to contain the attributes on the gpu
 	std::shared_ptr<IndexBuffer>    mIB; // The index buffer to contain vertex handles on the gpu
-	std::shared_ptr<Shader> 		mShader; // Shader to draw the entity
+	Shader* 		mShader; // Shader to draw the entity
 	bool mRequire_VBUpdate;
 public:
 	tangibleEntity(): 

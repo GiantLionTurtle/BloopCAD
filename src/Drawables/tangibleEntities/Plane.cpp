@@ -1,8 +1,8 @@
 
 #include "Plane.hpp"
 
-#include <graphics_utils/GLCall.hpp>
-#include <graphics_utils/ShadersPool.hpp>
+#include <Graphics_utils/GLCall.hpp>
+#include <Graphics_utils/ShadersPool.hpp>
 
 Plane::Plane(Plane_abstr const& plane_):
 	Plane_abstr(plane_),

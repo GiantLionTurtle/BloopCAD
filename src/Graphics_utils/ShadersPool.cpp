@@ -7,11 +7,11 @@ ShadersPool& ShadersPool::get_instance()
 	return pool;
 }
 
-void ShadersPool::add(std::string const& name, std::shared_ptr<Shader> Shader_)
+void ShadersPool::add(std::string const& name, Shader* Shader_)
 {
 	mShaders[name] = Shader_;
 }
-std::shared_ptr<Shader> ShadersPool::get(std::string const& name) 
+Shader* ShadersPool::get(std::string const& name) 
 {
 	if(mShaders.find(name) != mShaders.end()) {
 		return mShaders.at(name);
@@ -22,4 +22,10 @@ std::shared_ptr<Shader> ShadersPool::get(std::string const& name)
 ShadersPool::ShadersPool()
 {
 
+}
+ShadersPool::~ShadersPool()
+{
+	for(auto it = mShaders.begin(); it != mShaders.end(); ++it) {
+		delete it->second;
+	}
 }

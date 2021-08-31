@@ -5,9 +5,9 @@
 #include <Drawables/Drawable.hpp>
 #include <Geom/Geom3d/Plane_abstr.hpp>
 
-#include <graphics_utils/VertexArray.hpp>
-#include <graphics_utils/VertexBuffer.hpp>
-#include <graphics_utils/Shader.hpp>
+#include <Graphics_utils/VertexArray.hpp>
+#include <Graphics_utils/VertexBuffer.hpp>
+#include <Graphics_utils/Shader.hpp>
 
 #include <glm/glm.hpp>
 
@@ -31,7 +31,7 @@ private:
 	VertexArray* mVA;
 	VertexBuffer* mVB;
 	IndexBuffer* mIB;
-	std::shared_ptr<Shader> mShader;
+	Shader* mShader;
 public:
 	/*
 		@function plane creates a plane 

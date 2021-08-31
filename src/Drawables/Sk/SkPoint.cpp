@@ -1,9 +1,9 @@
 
 #include "SkPoint.hpp"
 
-#include <graphics_utils/ShadersPool.hpp>
+#include <Graphics_utils/ShadersPool.hpp>
 #include <utils/preferences.hpp>
-#include <graphics_utils/GLCall.hpp>
+#include <Graphics_utils/GLCall.hpp>
 
 float SkPoint::kSelDist2 = 0.0f;
 bool SkPoint::kFisrstInst = true;

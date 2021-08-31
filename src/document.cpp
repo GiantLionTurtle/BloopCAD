@@ -3,7 +3,7 @@
 
 #include <utils/preferences.hpp>
 #include "bloop.hpp"
-#include "graphics_utils/GLCall.hpp"
+#include "Graphics_utils/GLCall.hpp"
 
 document::document(eventsManager* manager):
 	mParentBloop(),

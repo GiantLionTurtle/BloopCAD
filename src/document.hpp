@@ -5,10 +5,10 @@
 #include <forward_bloop.hpp>
 #include <workspaces/workspace.hpp>
 #include <Tools/Tool.hpp>
-#include <graphics_utils/FrameBuffer.hpp>
+#include <Graphics_utils/FrameBuffer.hpp>
 #include <Actions/Action.hpp>
 #include <Drawables/Part.hpp>
-#include <graphics_utils/Camera.hpp>
+#include <Graphics_utils/Camera.hpp>
 #include <Drawables/entityView.hpp>
 #include "eventsManager.hpp"
 

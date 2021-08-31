@@ -13,5 +13,5 @@ add_library(sk ${sk_source_files})
 target_link_libraries(sk
 Geom2d
 Geom3d
-graphics_utils
+Graphics_utils
 )

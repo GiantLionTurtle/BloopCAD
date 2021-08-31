@@ -101,7 +101,7 @@ public:
 
 		@return : A shared pointer to the created Shader
 	*/
-	static std::shared_ptr<Shader> fromFiles_ptr(std::string const& vertexShaderFilePath, std::string const& fragmentShaderFilePath);
+	static Shader* fromFiles_ptr(std::string const& vertexShaderFilePath, std::string const& fragmentShaderFilePath);
 	/*
 		@function fromFiles creates a Shader from any (valid) amount of identified sources
 
@@ -109,7 +109,7 @@ public:
 
 		@return : A shared pointer to the created Shader
 	*/
-	static std::shared_ptr<Shader> fromFiles_ptr(std::vector<ShaderSource> ShaderPaths);
+	static Shader* fromFiles_ptr(std::vector<ShaderSource> ShaderPaths);
 	/*
 		@function fromFile_ptr creates a Shader from one file containing paths to other files
 		it currently only support the vertex-fragment pipeline, because it has never been used
@@ -118,7 +118,7 @@ public:
 
 		@return : A shared pointer to the created Shader
 	*/
-	static std::shared_ptr<Shader> fromFile_ptr(std::string const& resourceFilePath);
+	static Shader* fromFile_ptr(std::string const& resourceFilePath);
 
 	/*
 		@function bind activates the Shader in openGL, so that it can be used

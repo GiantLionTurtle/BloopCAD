@@ -87,7 +87,7 @@ Shader Shader::fromFile(std::string const& resourceFilePath)
 	return Shader();
 }
 
-std::shared_ptr<Shader> Shader::fromFiles_ptr(std::string const& vertexShaderFilePath, std::string const& fragmentShaderFilePath)
+Shader* Shader::fromFiles_ptr(std::string const& vertexShaderFilePath, std::string const& fragmentShaderFilePath)
 {
 	// Aquire the source code, might be a bit redundant, from the non-ptr version, but I am uncertain of how to reuse the code
 	// Maybe create the Shader normaly and use it's id to create the pointer while ensuring that the destructor doesn't deallocate the handle?
@@ -95,14 +95,14 @@ std::shared_ptr<Shader> Shader::fromFiles_ptr(std::string const& vertexShaderFil
 	std::string fragmentShaderSource  = readFromFile(fragmentShaderFilePath);
 
 	// Create the Shader
-	return std::shared_ptr<Shader>(new Shader(createShader(vertexShaderSource, fragmentShaderSource)));
+	return new Shader(createShader(vertexShaderSource, fragmentShaderSource));
 }
-std::shared_ptr<Shader> Shader::fromFiles_ptr(std::vector<ShaderSource> ShaderPaths)
+Shader* Shader::fromFiles_ptr(std::vector<ShaderSource> ShaderPaths)
 {
 	// Prety much the same as the non-ptr version...
 	if(ShaderPaths.size() < 2 || ShaderPaths.size() > 5) {
 		LOG_WARNING("Invalid number of paths in Shader::fromFiles, empty Shader returned");
-		return std::shared_ptr<Shader>(nullptr);
+		return nullptr;
 	}
 
 	// Just as wack with the path => source thing
@@ -111,13 +111,13 @@ std::shared_ptr<Shader> Shader::fromFiles_ptr(std::vector<ShaderSource> ShaderPa
 	}
 
 	// Create the Shader
-	return std::shared_ptr<Shader>(new Shader(createShader(ShaderPaths)));
+	return new Shader(createShader(ShaderPaths));
 }
-std::shared_ptr<Shader> Shader::fromFile_ptr(std::string const& resourceFilePath)
+Shader* Shader::fromFile_ptr(std::string const& resourceFilePath)
 {
 	std::ifstream stream(resourceFilePath);
 	if(!stream) // Ensure that the file exist, in the ptr version, it has the luxury of returning nullptr
-		return std::shared_ptr<Shader>(nullptr);
+		return nullptr;
 
 	// Putting each line as a path
 	int i = 0;
@@ -142,7 +142,7 @@ std::shared_ptr<Shader> Shader::fromFile_ptr(std::string const& resourceFilePath
 	}
 
 	// Return nullptr if file is invalid	
-	return std::shared_ptr<Shader>(nullptr);
+	return nullptr;
 }
 
 void Shader::bind() const

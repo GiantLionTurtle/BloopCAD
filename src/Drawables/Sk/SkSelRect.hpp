@@ -21,7 +21,7 @@ private:
 	VertexArray* mVA;
 	VertexBuffer* mVB;
 	IndexBuffer* mIB;
-	std::shared_ptr<Shader> mShader;
+	Shader* mShader;
 public:
 	SkSelRect(glm::vec2 start_, glm::vec2 end_, Geom3d::Plane_abstr* basePlane_);
 	virtual ~SkSelRect() {}

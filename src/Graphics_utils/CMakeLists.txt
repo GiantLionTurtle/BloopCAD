@@ -1,4 +1,4 @@
-set(graphics_utils_source_files
+set(Graphics_utils_source_files
   GLCall.cpp
   Shader.cpp
   ShadersPool.cpp
@@ -12,8 +12,8 @@ set(graphics_utils_source_files
   Image.cpp
   TexturesPool.cpp)
 
-add_library(graphics_utils ${graphics_utils_source_files})
+add_library(Graphics_utils ${Graphics_utils_source_files})
 
-target_link_libraries(graphics_utils
+target_link_libraries(Graphics_utils
     vendor
     utils)

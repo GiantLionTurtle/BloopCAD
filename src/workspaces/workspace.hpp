@@ -3,9 +3,9 @@
 #define WORKSPACE_HPP_
 
 #include <forward_bloop.hpp>
-#include <graphics_utils/Camera.hpp>
+#include <Graphics_utils/Camera.hpp>
 #include <Tools/Tool.hpp>
-#include <graphics_utils/FrameBuffer.hpp>
+#include <Graphics_utils/FrameBuffer.hpp>
 #include <Drawables/Drawable.hpp>
 #include <Tools/Tools_forward.hpp>
 

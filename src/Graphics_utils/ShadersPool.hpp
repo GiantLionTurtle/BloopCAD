@@ -10,16 +10,17 @@
 
 class ShadersPool {
 private:
-	std::map<std::string, std::shared_ptr<Shader>> mShaders;
+	std::map<std::string, Shader*> mShaders;
 public:
 	ShadersPool(ShadersPool const&) = delete; // As it is a singleton, the copy constructor is deleted
 
 	static ShadersPool& get_instance();
 
-	void add(std::string const& name, std::shared_ptr<Shader> Shader_);
-	std::shared_ptr<Shader> get(std::string const& name);
+	void add(std::string const& name, Shader* Shader_);
+	Shader* get(std::string const& name);
 private:
 	ShadersPool();
+	~ShadersPool();
 };
 
 #endif

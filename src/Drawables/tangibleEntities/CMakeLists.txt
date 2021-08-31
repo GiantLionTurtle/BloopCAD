@@ -8,5 +8,5 @@ add_library(tangibleEntities ${tangibleEntities_source_files})
 target_link_libraries(tangibleEntities
   Geom2d
   Geom3d
-  graphics_utils
+  Graphics_utils
   )

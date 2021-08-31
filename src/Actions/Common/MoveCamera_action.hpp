@@ -3,7 +3,7 @@
 #define MOVECAMERA_ACTION_HPP_
 
 #include <Actions/Action.hpp>
-#include <graphics_utils/Camera.hpp>
+#include <Graphics_utils/Camera.hpp>
 #include <utils/animatable.hpp>
 #include <Geom/Geom3d/Plane_abstr.hpp>
 

@@ -2,12 +2,12 @@
 #ifndef ENTITY_HPP_
 #define ENTITY_HPP_
 
-#include <graphics_utils/VertexBuffer.hpp>
-#include <graphics_utils/VertexBufferLayout.hpp>
-#include <graphics_utils/VertexArray.hpp>
-#include <graphics_utils/IndexBuffer.hpp>
-#include <graphics_utils/Shader.hpp>
-#include <graphics_utils/Camera.hpp>
+#include <Graphics_utils/VertexBuffer.hpp>
+#include <Graphics_utils/VertexBufferLayout.hpp>
+#include <Graphics_utils/VertexArray.hpp>
+#include <Graphics_utils/IndexBuffer.hpp>
+#include <Graphics_utils/Shader.hpp>
+#include <Graphics_utils/Camera.hpp>
 #include <baseObject.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>

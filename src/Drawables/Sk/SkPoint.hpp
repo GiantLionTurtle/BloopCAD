@@ -8,9 +8,9 @@
 #include <ConstraintsSolver/ExpressionVec.hpp>
 #include <Geom/Geom2d/Point_abstr.hpp>
 
-#include <graphics_utils/VertexArray.hpp>
-#include <graphics_utils/VertexBuffer.hpp>
-#include <graphics_utils/Shader.hpp>
+#include <Graphics_utils/VertexArray.hpp>
+#include <Graphics_utils/VertexBuffer.hpp>
+#include <Graphics_utils/Shader.hpp>
 
 class SkPoint : public ExpVec2<ExpVar>, public SkPrimitiveGeometry {
 private:
@@ -20,7 +20,7 @@ private:
 
 	VertexArray* mVA;
 	VertexBuffer* mVB;
-	std::shared_ptr<Shader> mShader;
+	Shader* mShader;
 public:
 	SkPoint(glm::vec2 pos, Geom3d::Plane_abstr* pl, bool fixed_);
 	~SkPoint();

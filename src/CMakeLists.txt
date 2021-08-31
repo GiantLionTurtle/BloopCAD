@@ -1,6 +1,6 @@
 
 add_subdirectory(utils)
-add_subdirectory(graphics_utils)
+add_subdirectory(Graphics_utils)
 add_subdirectory(Geom)
 add_subdirectory(Drawables)
 add_subdirectory(Actions)
@@ -17,7 +17,7 @@ add_executable(BloopCAD
 target_link_libraries(BloopCAD
 	vendor
 	utils
-	graphics_utils
+	Graphics_utils
 	Drawables
 	Tools
 	workspaces
@@ -36,7 +36,7 @@ target_link_libraries(BloopCAD
 # target_link_libraries(ConstraintsSolverTest
 # 	vendor
 # 	utils
-# 	graphics_utils
+# 	Graphics_utils
 # 	Drawables
 # 	actions
 # 	tools

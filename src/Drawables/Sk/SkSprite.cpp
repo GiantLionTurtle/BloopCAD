@@ -1,9 +1,10 @@
 
 #include "SkSprite.hpp"
 
-#include <graphics_utils/Image.hpp>
-#include <graphics_utils/ShadersPool.hpp>
-#include <graphics_utils/GLCall.hpp>
+#include <Graphics_utils/Image.hpp>
+#include <Graphics_utils/ShadersPool.hpp>
+#include <Graphics_utils/TexturesPool.hpp>
+#include <Graphics_utils/GLCall.hpp>
 #include <utils/DebugUtils.hpp>
 #include <utils/mathUtils.hpp>
 #include <utils/preferences.hpp>
@@ -11,7 +12,6 @@
 
 bool SkSprite::kFisrstInst = true;
 glm::vec3 SkSprite::kColorHovered = glm::vec3(0.0f);
-std::map<std::string, std::shared_ptr<Texture>> SkSprite::kTextures = {};
 
 SkSprite::SkSprite(Geom3d::Plane_abstr* basePlane_, glm::vec2 dims, std::string const& texturePath):
     SkIntDrawable(basePlane_),
@@ -72,13 +72,12 @@ void SkSprite::set_pixelOffset(glm::vec2 offset)
 
 void SkSprite::init_impl()
 {
-	if(kTextures.find(mTexturePath) == kTextures.end()) {
-		mTexture = std::make_shared<Image>(mTexturePath);
-		kTextures[mTexturePath] = mTexture;
-	} else {
-		mTexture = kTextures[mTexturePath];
+	mTexture = TexturesPool::get_instance().get(mTexturePath);
+	if(!mTexture) {
+		mTexture = new Image(mTexturePath);
+		TexturesPool::get_instance().add(mTexturePath, mTexture);
 	}
-
+	
 	mNeed_update = false;
 	mVA = new VertexArray();
 	VertexBufferLayout layout;

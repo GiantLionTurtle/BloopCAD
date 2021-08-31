@@ -5,7 +5,7 @@
 #include "SkDrawable.hpp"
 #include <Geom/Geom2d/Point_abstr.hpp>
 #include <ConstraintsSolver/Expression_forward.hpp>
-#include <graphics_utils/Texture.hpp>
+#include <Graphics_utils/Texture.hpp>
 
 #include <map>
 #include <string>
@@ -18,10 +18,9 @@ class SkSprite : public SkIntDrawable {
 private:
 	static bool kFisrstInst;
 	static glm::vec3 kColorHovered;
-	static std::map<std::string, std::shared_ptr<Texture>> kTextures; // map of textures to avoid reloading the same sprite multiple times
 
 	std::string mTexturePath;
-	std::shared_ptr<Texture> mTexture;
+	Texture* mTexture;
 	glm::vec2 mDimensions;
 	glm::vec2 mPixelOffset;   // A sprite has a position in the world as well
 									// as a screen offset that stays constant regardless of zoom
@@ -29,7 +28,7 @@ private:
 	std::array<var_ptr, 2> mPos;
 	VertexArray* mVA;
 	VertexBuffer* mVB;
-	std::shared_ptr<Shader> mShader;
+	Shader* mShader;
 public:
 	SkSprite(Geom3d::Plane_abstr* basePlane_, glm::vec2 dims, std::string const& texturePath);
 	~SkSprite();

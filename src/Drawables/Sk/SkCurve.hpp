@@ -36,7 +36,7 @@ protected:
 
 	VertexArray* mVA;
 	VertexBuffer* mVB;
-	std::shared_ptr<Shader> mShader;
+	Shader* mShader;
 public:
 	SkCurve(Geom3d::Plane_abstr* pl, bool fixed_):
 		SkCurve_abstr(pl, fixed_)

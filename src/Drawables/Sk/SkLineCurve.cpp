@@ -1,9 +1,9 @@
 
 #include "SkLineCurve.hpp"
 
-#include <graphics_utils/ShadersPool.hpp>
+#include <Graphics_utils/ShadersPool.hpp>
 #include <utils/preferences.hpp>
-#include <graphics_utils/GLCall.hpp>
+#include <Graphics_utils/GLCall.hpp>
 
 template<>
 float SkCurve<std::array<ExpVec2<ExpVar>*, 2>, SkLineCurve>::kSelDist2 = 0.0f;
