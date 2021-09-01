@@ -53,9 +53,9 @@ public:
 
 #define ELEMENTWISE_FUNCTOR_SINGLE(vecType, func) \
 template<typename eTi> \
-vecType<Expression> func(vecType<eTi> expVec) \
+vecType<Expression_abstr> func(vecType<eTi> expVec) \
 { \
-	vecType<Expression> newExpVec; \
+	vecType<Expression_abstr> newExpVec; \
 	for(size_t i = 0; i < expVec.dims(); ++i) { \
 		newExpVec.comp(i) = func(expVec.comp(i)); \
 	} \
@@ -64,9 +64,9 @@ vecType<Expression> func(vecType<eTi> expVec) \
 
 #define ELEMENTWISE_FUNCTOR_VEXP_VEXP(vecType, func) \
 template<typename eTi1, typename eTi2> \
-vecType<Expression> func(vecType<eTi1> expVec1, vecType<eTi2> expVec2) \
+vecType<Expression_abstr> func(vecType<eTi1> expVec1, vecType<eTi2> expVec2) \
 { \
-	vecType<Expression> newExpVec; \
+	vecType<Expression_abstr> newExpVec; \
 	for(size_t i = 0; i < expVec1.dims(); ++i) { \
 		newExpVec.comp(i) = func(expVec1.comp(i), expVec2.comp(i)); \
 	} \
@@ -75,9 +75,9 @@ vecType<Expression> func(vecType<eTi1> expVec1, vecType<eTi2> expVec2) \
 
 #define ELEMENTWISE_FUNCTOR_DBL_VEXP(vecType, func) \
 template<typename eTi> \
-vecType<Expression> func(double val, vecType<eTi> expVec1) \
+vecType<Expression_abstr> func(double val, vecType<eTi> expVec1) \
 { \
-	vecType<Expression> newExpVec; \
+	vecType<Expression_abstr> newExpVec; \
 	for(size_t i = 0; i < expVec1.dims(); ++i) { \
 		newExpVec.comp(i) = func(val, expVec1.comp(i)); \
 	} \
@@ -86,9 +86,9 @@ vecType<Expression> func(double val, vecType<eTi> expVec1) \
 
 #define ELEMENTWISE_FUNCTOR_VEXP_DBL(vecType, func) \
 template<typename eTi1> \
-vecType<Expression> func(vecType<eTi1> expVec1, double val) \
+vecType<Expression_abstr> func(vecType<eTi1> expVec1, double val) \
 { \
-	vecType<Expression> newExpVec; \
+	vecType<Expression_abstr> newExpVec; \
 	for(size_t i = 0; i < expVec1.dims(); ++i) { \
 		newExpVec.comp(i) = func(expVec1.comp(i), val); \
 	} \
@@ -98,9 +98,9 @@ vecType<Expression> func(vecType<eTi1> expVec1, double val) \
 
 #define ELEMENTWISE_FUNCTOR_DBL_EXP(vecType, func) \
 template<typename eTi1, typename eTi2> \
-vecType<Expression> func(std::shared_ptr<eTi1> exp, vecType<eTi2> expVec1) \
+vecType<Expression_abstr> func(std::shared_ptr<eTi1> exp, vecType<eTi2> expVec1) \
 { \
-	vecType<Expression> newExpVec; \
+	vecType<Expression_abstr> newExpVec; \
 	for(size_t i = 0; i < expVec1.dims(); ++i) { \
 		newExpVec.comp(i) = func(exp, expVec1.comp(i)); \
 	} \
@@ -109,9 +109,9 @@ vecType<Expression> func(std::shared_ptr<eTi1> exp, vecType<eTi2> expVec1) \
 
 #define ELEMENTWISE_FUNCTOR_EXP_DBL(vecType, func) \
 template<typename eTi1, typename eTi2> \
-vecType<Expression> func(vecType<eTi1> expVec1, std::shared_ptr<eTi2> exp) \
+vecType<Expression_abstr> func(vecType<eTi1> expVec1, std::shared_ptr<eTi2> exp) \
 { \
-	vecType<Expression> newExpVec; \
+	vecType<Expression_abstr> newExpVec; \
 	for(size_t i = 0; i < expVec1.dims(); ++i) { \
 		newExpVec.comp(i) = func(expVec1.comp(i), exp); \
 	} \

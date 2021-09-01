@@ -6,7 +6,7 @@
 
 ConstraintsSystem::ConstraintsSystem(int verboseLevel):
 	mBrokenDown(false),
-	mSolverType(SolverState::DogLeg),
+	mSolverType(SolverState::LevenbergMarquardt),
 	mVerboseLevel(verboseLevel),
 	mNum_liveConstrs(0),
 	mNum_liveVars(0)
@@ -120,7 +120,7 @@ void ConstraintsSystem::breakDown_problem()
 	std::vector<int> constr_clust(0), var_clust(0);
 	int n_clusters = g.connected_clusters(constr_clust, var_clust);
 	for(int i = 0; i < n_clusters; ++i) {
-		mSubClusters.push_back(new EquationsCluster({}, {}, solverType(), 1));
+		mSubClusters.push_back(new EquationsCluster({}, {}, solverType(), 2));
 		mSubClusters.back()->set_id(i);
 	}
 

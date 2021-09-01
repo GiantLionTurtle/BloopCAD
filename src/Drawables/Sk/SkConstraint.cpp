@@ -151,7 +151,7 @@ SkLineLinePerpendicularity::SkLineLinePerpendicularity(Geom3d::Plane_abstr* base
 	mLine1(l1),
 	mLine2(l2)
 {
-	if(!l1->fixed())
+	if(!l1->fixed()) {}
 		mVars.insert(mVars.end(), { l1->ptA()->x(), l1->ptA()->y(), l1->ptB()->x(), l1->ptB()->y() });
 	if(!l2->fixed())
 		mVars.insert(mVars.end(), { l2->ptA()->x(), l2->ptA()->y(), l2->ptB()->x(), l2->ptB()->y() });

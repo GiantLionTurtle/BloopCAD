@@ -23,7 +23,7 @@ public:
 	ExpVec2<ExpVar>* center() { return pt(0); }
     var_ptr radius() { return mRadius; }
 
-	ExpVec2<Expression> atExp(float t);
+	ExpVec2<Expression_abstr> atExp(float t);
 
 	int selection_rank() { return 5; }
 	void set_annotPos(SkSprite* sp) { sp->set(center_pos()); }

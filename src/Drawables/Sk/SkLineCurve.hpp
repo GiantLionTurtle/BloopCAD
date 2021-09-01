@@ -13,7 +13,7 @@ private:
 	static glm::vec3 kColor, kColorHovered, kColorSelected; // Line color
 
 	glm::vec3 mVertices[2]; // The vertices describing the rendered line
-	ExpVec2<Expression> asvecExp;
+	ExpVec2<Expression_abstr> asvecExp;
 public:
 	SkLineCurve(Geom3d::Plane_abstr* pl, bool fixed_);
 	~SkLineCurve();
@@ -22,7 +22,7 @@ public:
 	glm::vec2 posB() { return pos(1); }
 	ExpVec2<ExpVar>* ptA() { return pt(0); }
 	ExpVec2<ExpVar>* ptB() { return pt(1); }
-	ExpVec2<Expression> atExp(float t);
+	ExpVec2<Expression_abstr> atExp(float t);
 
 	int selection_rank() { return 3; }
 	void set_annotPos(SkSprite* sp) { sp->set((posA() + posB()) / 2.0f); }

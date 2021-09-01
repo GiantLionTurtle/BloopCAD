@@ -33,10 +33,10 @@ SkCircleCurve::~SkCircleCurve()
 
 }
 
-ExpVec2<Expression> SkCircleCurve::atExp(float t)
+ExpVec2<Expression_abstr> SkCircleCurve::atExp(float t)
 {
 	float angle = t * (M_PI * 2.0f);
-	return (radius() * ExpVec2<Expression>(ExpConst::make(std::cos(angle)), ExpConst::make(std::sin(angle)))) + *center();
+	return (radius() * ExpVec2<Expression_abstr>(ExpConst::make(std::cos(angle)), ExpConst::make(std::sin(angle)))) + *center();
 }
 
 void SkCircleCurve::set_annotOffset(SkSprite* sp, int ind)

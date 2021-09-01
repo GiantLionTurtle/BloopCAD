@@ -12,21 +12,17 @@
 #include <functional>
 #include <map>
 
-class Expression {
-public:
-protected:
-	int mID;
+class Expression_abstr {
+private:
 	static int n_exp;
-	exp_ptr mDerivative; 	// Pointer to derivative of expression, 
-							// only calculated on demand to avoid recursive derivative calculations
+	int mID;
 public:
-	Expression();
-	virtual ~Expression();
+	Expression_abstr();
+	virtual ~Expression_abstr();
 
 	virtual double eval() = 0;
-	virtual exp_ptr derivative();
+	virtual exp_ptr derivative() = 0;
 	exp_ptr d();
-	virtual exp_ptr generate_derivative() = 0;
 
 	virtual std::string to_string() = 0;
 	virtual int id() { return mID; }
@@ -36,6 +32,20 @@ public:
 	// Not a 100% sure the callback thingy is the right way to go, might change later
 	virtual void add_changeCallBack(void* owner, std::function<void(void)> func) {}
 	virtual void delete_callBack(void* owner) {}
+};
+
+class Expression : public Expression_abstr {
+public:
+protected:
+	exp_ptr mDerivative; 	// Pointer to derivative of expression, 
+							// only calculated on demand to avoid recursive derivative calculations
+public:
+	Expression();
+	virtual ~Expression();
+
+	virtual double eval() = 0;
+	virtual exp_ptr derivative();
+	virtual exp_ptr generate_derivative() = 0;
 };
 
 class unaryExpression : public Expression {
@@ -128,15 +138,29 @@ protected:
 	virtual double unit_to_internalFormat(int unit_);
 };
 
-class ExpVar : public Expression, public baseObject {
+class ExpVarDerivative : public Expression {
+private:
+	ExpVar* mVar;
+public:
+	ExpVarDerivative(ExpVar* var);
+
+	virtual double eval();
+	virtual exp_ptr generate_derivative();
+
+	virtual std::string to_string() { return "[var derivative]"; }
+};
+
+class ExpVar : public Expression_abstr, public baseObject {
 private:
 	double mVal;
+	bool mExists;
 	bool mAs_coeff;
 	bool mIs_coeff;
-	bool mExists;
+	bool mIs_dragged;
 	// TODO: do this for Expressions in general??
-	bool mIs_substituted, mIs_dragged;
+	bool mIs_substituted;
 	var_ptr mSubstituant;
+	std::shared_ptr<ExpVarDerivative> mDerivative;
 	std::function<void(void)> mCallbackFunc;
 	std::map<void*, std::function<void(void)>> mChangeCallbacks;
 public:
@@ -144,13 +168,10 @@ public:
 
 	virtual double eval();
 	exp_ptr derivative();
-	virtual exp_ptr generate_derivative() { return nullptr; }
 
 	virtual std::string to_string();
 
 	static var_ptr make(double val, bool is_coeficient = false);
-
-	int id();
 
 	void set(double val);
 	void drag(double val);
@@ -170,7 +191,7 @@ public:
 
 	bool as_coeff();
 	bool is_coeff();
-    void set_is_coeff(bool coef);
+	void set_is_coeff(bool coef);
 
 	void set_as_coeff();
 	void set_as_var();
@@ -395,7 +416,7 @@ private:
 public:
 	ExpEqu(exp_ptr left, exp_ptr right);
 
-	virtual exp_ptr derivative(var_ptr with_respect_to);
+	double derivative_eval(var_ptr with_respect_to);
 
 	bool can_substitute() { return mLeft->is_var() && mRight->is_var(); }
 	void get_substitution_vars(var_ptr& a, var_ptr& b);

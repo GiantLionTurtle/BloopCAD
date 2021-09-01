@@ -15,7 +15,7 @@ struct SkExpSelPoint {
 	{
 
 	}
-	SkExpSelPoint(SkIntDrawable* dr, ExpVec2<Expression> p):
+	SkExpSelPoint(SkIntDrawable* dr, ExpVec2<Expression_abstr> p):
 		ent(dr),
 		pt(p)
 	{
@@ -25,7 +25,7 @@ struct SkExpSelPoint {
 	operator bool() { return ent; }
 
 	SkIntDrawable* ent;
-	ExpVec2<Expression> pt;
+	ExpVec2<Expression_abstr> pt;
 };
 
 class SkDrawable : virtual public Drawable {

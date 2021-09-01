@@ -32,7 +32,7 @@ void Perpendicularity_tool::create_constraint(SkConstraint*& constr, SkDrawable*
 		LOG_WARNING("Attempting to add incomplete constraint.");
 		return;
 	}
-	LOG_WARNING("nfksjnfew");
+
 	constr = new SkLineLinePerpendicularity(mEnv->target()->basePlane(), 
 		static_cast<SkLineCurve*>(mEntA), static_cast<SkLineCurve*>(mEntB));
 	priority_ent = nullptr;

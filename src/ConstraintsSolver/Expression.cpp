@@ -5,17 +5,32 @@
 #include <algorithm>
 #include <iostream>
 
-std::shared_ptr<ExpConst> ExpConst::zero(new ExpConst(0.0f));
-std::shared_ptr<ExpConst> ExpConst::one(new ExpConst(1.0f));
-std::shared_ptr<ExpConst> ExpConst::two(new ExpConst(2.0f));
+std::shared_ptr<ExpConst> ExpConst::zero(new ExpConst(0.0));
+std::shared_ptr<ExpConst> ExpConst::one(new ExpConst(1.0));
+std::shared_ptr<ExpConst> ExpConst::two(new ExpConst(2.0));
 std::shared_ptr<ExpConst> ExpConst::e(new ExpConst(M_E));
 std::shared_ptr<ExpConst> ExpConst::pi(new ExpConst(M_PI));
 std::shared_ptr<ExpConst> ExpConst::pi2(new ExpConst(M_PI_2));
 
-int Expression::n_exp = 0;
+int Expression_abstr::n_exp = 0;
+
+Expression_abstr::Expression_abstr():
+	mID(n_exp++)
+{
+
+}
+Expression_abstr::~Expression_abstr()
+{
+
+}
+
+exp_ptr Expression_abstr::d()
+{
+	return derivative();
+}
+
 
 Expression::Expression():
-	mID(n_exp++),
 	mDerivative(nullptr)
 {
 
@@ -29,10 +44,6 @@ exp_ptr Expression::derivative()
 	if(!mDerivative)
 		mDerivative = generate_derivative();
 	return mDerivative;
-}
-exp_ptr Expression::d()
-{
-	return derivative();
 }
 
 unaryExpression::unaryExpression():
@@ -84,7 +95,7 @@ void binaryExpression::delete_callBack(void* owner)
 /* -------------- Const -------------- */
 ExpConst::ExpConst(double val)
 {
-	mVal = val;//= var_ptr(new variable("", val));
+	mVal = val;
 }
 
 exp_ptr ExpConst::make(double val)
@@ -94,7 +105,7 @@ exp_ptr ExpConst::make(double val)
 
 double ExpConst::eval()
 {
-	return mVal;//mParam->val();
+	return mVal;
 }
 exp_ptr ExpConst::generate_derivative()
 {
@@ -234,16 +245,35 @@ double ExpCoeffLength::unit_to_internalFormat(int unit_)
 /* -------------- End coefficient length -------------- */
 
 /* -------------- Variable -------------- */
-ExpVar::ExpVar(double val, bool is_coeficient):
-	mVal(val),
-	mAs_coeff(false),
-	mIs_coeff(is_coeficient),
-	mExists(true),
-	mIs_substituted(false),
-	mIs_dragged(false),
-	mSubstituant(nullptr)
+ExpVarDerivative::ExpVarDerivative(ExpVar* var):
+	mVar(var)
 {
 
+}
+
+double ExpVarDerivative::eval()
+{
+	if(mVar->is_deriv_zero())
+		return 0.0f;
+	return 1.0;
+}
+exp_ptr ExpVarDerivative::generate_derivative()
+{
+	return ExpConst::zero;
+}
+
+
+ExpVar::ExpVar(double val, bool is_coeficient):
+	mVal(val),
+	mExists(true),
+	mIs_coeff(is_coeficient),
+	mAs_coeff(true),
+	mIs_substituted(false),
+	mIs_dragged(false),
+	mSubstituant(nullptr),
+	mDerivative(std::make_shared<ExpVarDerivative>(this))
+{
+	
 }
 
 double ExpVar::eval()
@@ -255,9 +285,10 @@ exp_ptr ExpVar::derivative()
 	// TODO should it be in this order??
 	if(mIs_substituted)
 		return mSubstituant->derivative();
-	if(is_deriv_zero())
-		return ExpConst::zero;
-	return ExpConst::one;
+	// if(is_deriv_zero())
+	// 	return ExpConst::zero;
+	// // return ExpConst::one;
+	return mDerivative;
 }
 
 std::string ExpVar::to_string()
@@ -268,10 +299,7 @@ var_ptr ExpVar::make(double val, bool is_coeficient)
 {
 	return var_ptr(new ExpVar(val, is_coeficient));
 }
-int ExpVar::id()
-{
-	return mID;
-}
+
 int ExpVar::weight()
 {
 	return (mIs_coeff ? 2 : 0 + mIs_dragged ? 1 : 0);
@@ -314,22 +342,14 @@ void ExpVar::set_as_var()
 }
 void ExpVar::set(double val)
 {
-	// if(mIs_substituted) {
-		// mSubstituant->set(val);
-	// } else {
-		if(!is_coeff())
-			mVal = val;
-	// }
+	if(!is_coeff())
+		mVal = val;
 	callback();
 }
 void ExpVar::drag(double val)
 {
-	// if(mIs_substituted) {
-	// 	mSubstituant->drag(val);
-	// } else {
-		set(val);
-		set_dragged(true);
-	// }
+	set(val);
+	set_dragged(true);
 }
 bool ExpVar::dragged()
 {
@@ -804,10 +824,10 @@ ExpEqu::ExpEqu(exp_ptr left, exp_ptr right):
 
 }
 
-exp_ptr ExpEqu::derivative(var_ptr with_respect_to)
+double ExpEqu::derivative_eval(var_ptr with_respect_to)
 {
 	with_respect_to->set_as_var();
-	auto deriv = ExpSubstr::derivative();
+	double deriv = derivative()->eval();
 	with_respect_to->set_as_coeff();
 	return deriv;
 }

@@ -44,7 +44,7 @@ SkExpSelPoint SkPoint::closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm
 	if(mType & filter) {
 		glm::vec3 worldpos = mBasePlane->to_worldPos(pos());
 		if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
-			return SkExpSelPoint(this, ExpVec2<Expression>({x(), y()}));
+			return SkExpSelPoint(this, ExpVec2<Expression_abstr>({x(), y()}));
 	}
 	return SkExpSelPoint();
 }

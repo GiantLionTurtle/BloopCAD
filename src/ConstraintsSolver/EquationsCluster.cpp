@@ -145,7 +145,8 @@ void EquationsCluster::compute_jacobi_no_resize(Eigen::MatrixXd& jacobi, int tag
 			continue;
 		for(auto var : mVars) {
 			if(!activeVars_only || !active(var)) {
-				jacobi(e, v++) = equ->derivative(var)->eval();
+				double val = equ->derivative_eval(var);
+				jacobi(e, v++) = val;
 			}
 		}
 		e++;

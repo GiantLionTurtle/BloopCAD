@@ -19,7 +19,7 @@ public:
 
 	virtual glm::vec2 pos(size_t ind) = 0;
 	virtual ExpVec2<ExpVar>* pt(size_t ind) = 0;
-	virtual ExpVec2<Expression> atExp(float t) = 0;
+	virtual ExpVec2<Expression_abstr> atExp(float t) = 0;
 
 	virtual SelPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
 	virtual SkExpSelPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;

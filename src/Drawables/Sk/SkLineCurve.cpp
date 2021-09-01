@@ -24,7 +24,7 @@ SkLineCurve::~SkLineCurve()
 
 }
 
-ExpVec2<Expression> SkLineCurve::atExp(float t)
+ExpVec2<Expression_abstr> SkLineCurve::atExp(float t)
 {
 	return *ptA() - (double)t * asvecExp;
 }
