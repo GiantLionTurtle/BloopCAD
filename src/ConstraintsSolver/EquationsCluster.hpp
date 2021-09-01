@@ -14,13 +14,12 @@ private:
 	std::vector<equ_ptr> mEqus;
 	std::set<var_ptr> mVars;
 
-	int mVerboseLevel;
 	int const mMaxIt_LM = 1000, mMaxIt_DL = 1000;
 	int mId;
 
 	int mAlgorithm, mLastOutput;
 public:	
-	EquationsCluster(std::vector<equ_ptr> equs, std::set<var_ptr> vars, int solver_algo, int verbose = 0);
+	EquationsCluster(std::vector<equ_ptr> equs, std::set<var_ptr> vars, int solver_algo);
 	~EquationsCluster();	
 	
 	void init();

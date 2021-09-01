@@ -6,10 +6,9 @@
 
 #include <iostream>
 
-EquationsCluster::EquationsCluster(std::vector<equ_ptr> equs, std::set<var_ptr> vars, int solver_algo, int verbose):
+EquationsCluster::EquationsCluster(std::vector<equ_ptr> equs, std::set<var_ptr> vars, int solver_algo):
 	mEqus(equs),
 	mVars(vars),
-	mVerboseLevel(verbose),
 	mId(0),
 	mAlgorithm(solver_algo)
 {
@@ -66,8 +65,7 @@ int EquationsCluster::solve()
 			equ->set_tag(single_tag);
 			mLastOutput = solve_numeric(mAlgorithm, single_tag, true);
 			if(mLastOutput != SolverState::SUCCESS) {
-				if(mVerboseLevel > 1)
-					std::cout<<"Failed early at single tag = "<<single_tag<<"\n";
+				verbose(VERBOSE_INNERSTEPS, "Failed early at single tag "<<single_tag);
 				mLastOutput = SolverState::FAILURE;
 				return mLastOutput;
 			}
@@ -75,8 +73,7 @@ int EquationsCluster::solve()
 		}
 	}
 	apply_substitutions();
-	if(mVerboseLevel)
-		std::cout<<"Solved "<<single_tag-1<<" equations alone\n";
+	verbose(VERBOSE_INNERSTEPS, "Solved "<<single_tag-1<<(single_tag < 2 ? "equation" : "equations")<<" alone");
 	
 	mLastOutput = solve_numeric(mAlgorithm, 0, true);	
 	return mLastOutput;
@@ -92,7 +89,7 @@ int EquationsCluster::solve_numeric(int algo, int tag, bool activeVars_only)
 			return solve_LM(1e-24, tag, activeVars_only);
 			break;
 		default:
-			std::cout<<"Unknown solver "<<mAlgorithm<<"\n";
+			LOG_WARNING("Unknown solver " + std::to_string(mAlgorithm));
 			return SolverState::FAILURE;
 			break;
 	}
@@ -107,9 +104,7 @@ void EquationsCluster::substitutions()
 
 			if(mVars.find(a) == mVars.end() || mVars.find(b) == mVars.end())
 				continue;
-			if(a->weight() == b->weight() && a->weight() != 0) {
-				std::cout<<"FUUUUUUUCK\n";
-			}
+
 			if(a->weight() > b->weight()) {
 				b->substitute(a);
 			} else {
@@ -224,10 +219,10 @@ void EquationsCluster::apply_substitutions()
 
 int EquationsCluster::solve_LM(double eps1, int tag, bool activeVars_only)
 {
+	verbose(VERBOSE_STEPS, "LM solver...");
 	int n_vars = activeVars_only ? n_activeVars() : mVars.size();		// Number of variables in the system
 	int n_equs = n_taggedEqus(tag);	// Number of equations in the system
-	if(mVerboseLevel > 1)
-		std::cout<<"Num tagged: "<<n_equs<<"\n";
+	verbose(VERBOSE_INNERSTEPS, "Num tagged: "<<n_equs);
 	if(n_equs == 0)
 		return SolverState::SUCCESS;
 	Eigen::VectorXd P(n_vars), dP(n_vars), P_new(n_vars), 	// Variables values, attempt change in variables and candidate variables values
@@ -329,26 +324,25 @@ int EquationsCluster::solve_LM(double eps1, int tag, bool activeVars_only)
 	}
 
 	set_variables(P, activeVars_only); // TODO: is this assignment really necessary?
-	if(mVerboseLevel) {
-		switch(output) {
-		case SolverState::SUCCESS:
-			std::cout<<"LM solver faithful, succeeded in "<<k<<" iterations, finished with a squared error of "<<e_norm<<"\n";
-			break;
-		//case solveOutput::SolverState::FAILURE:
-		default:
-			std::cout<<"LM solver faithful, failed in "<<k<<" iterations, finished with a squared error of "<<e_norm<<"\n";
-			break;
-		}
+	switch(output) {
+	case SolverState::SUCCESS:
+		verbose(VERBOSE_STEPS, "Succeeded in "<<k<<" iterations ; squared error of "<<e_norm);
+		break;
+	//case solveOutput::SolverState::FAILURE:
+	default:
+		verbose(VERBOSE_STEPS, "Failed in "<<k<<" iterations ; squared error of "<<e_norm);
+		break;
 	}
 	return output;
 }
 
 int EquationsCluster::solve_DL(double eps, int tag, bool activeVars_only)
 {
+	verbose(VERBOSE_STEPS, "DL solver...");
 	int n_vars = activeVars_only ? n_activeVars() : mVars.size();		// Number of variables in the system
 	int n_equs = n_taggedEqus(tag);	// Number of equations in the system
-	if(mVerboseLevel > 1)
-		std::cout<<"Num tagged: "<<n_equs<<"\n";
+	verbose(VERBOSE_INNERSTEPS,	"Num tagged: "<<n_equs);
+	
 	if(n_equs == 0)
 		return SolverState::SUCCESS;
 	Eigen::VectorXd X(n_vars), X_new(n_vars), X_init(n_vars),
@@ -423,16 +417,14 @@ int EquationsCluster::solve_DL(double eps, int tag, bool activeVars_only)
 		set_variables(X_init, activeVars_only);
 	}
 
-	if(mVerboseLevel) {
-		switch(output) {
-		case SolverState::SUCCESS:
-			std::cout<<"DL solver, success. n: "<<k<<"; e: "<<e.squaredNorm()<<"; ID = "<<id()<<"\n";
-			break;
-		case SolverState::FAILURE:
-		default:
-			std::cout<<"DL solver, fail. n: "<<k<<"; e: "<<e.squaredNorm()<<"; ID = "<<id()<<"\n";
-			break;
-		}
+	switch(output) {
+	case SolverState::SUCCESS:
+		verbose(VERBOSE_STEPS, "Succeeded in "<<k<<" steps ; squared error of "<<e.squaredNorm());
+		break;
+	case SolverState::FAILURE:
+	default:
+		verbose(VERBOSE_STEPS, "Failed in "<<k<<" steps ; squared error of "<<e.squaredNorm());
+		break;
 	}
 	return output;
 }

@@ -4,10 +4,9 @@
 
 #include <utils/DebugUtils.hpp>
 
-ConstraintsSystem::ConstraintsSystem(int verboseLevel):
+ConstraintsSystem::ConstraintsSystem():
 	mBrokenDown(false),
 	mSolverType(SolverState::LevenbergMarquardt),
-	mVerboseLevel(verboseLevel),
 	mNum_liveConstrs(0),
 	mNum_liveVars(0)
 {
@@ -54,22 +53,18 @@ void ConstraintsSystem::toggle_constraint(Constraint_abstr* constr, bool enable)
 
 int ConstraintsSystem::solve()
 {
-	if(mVerboseLevel) 
-		std::cout<<"Start solve attempt...\n";
+	verbose(VERBOSE_STEPS, "Start solve attempt...");
 	if(!mBrokenDown) {
-		if(mVerboseLevel) 
-			std::cout<<"Breaking down problem...\n";
+		verbose(VERBOSE_STEPS, "Breaking down problem...");
 		breakDown_problem();
 	}
 
-	if(mVerboseLevel)
-		std::cout<<"Solving clusters...\n";
+	verbose(VERBOSE_STEPS, "Solving clusters...");
 	int output = SolverState::SUCCESS;
 
 	for(int i = 0; i < mSubClusters.size(); ++i) {
 		auto clust = mSubClusters[i];
-		if(mVerboseLevel)
-			std::cout<<"Solving cluster "<<i<<"...\n";
+		verbose(VERBOSE_STEPS, "Solving cluster #"<<i<<"...");
 		output = std::max(output, clust->solve());
 	}
 
@@ -86,15 +81,12 @@ int ConstraintsSystem::solve()
 			auto clust = mSubClusters[i];
 			if(clust->output() == SolverState::SUCCESS)
 				continue;
-			if(mVerboseLevel)
-				std::cout<<"Solving cluster "<<i<<" on second pass...\n";
+			verbose(VERBOSE_STEPS, "Solving cluster #"<<i<<" on second pass...");
 			output = std::max(output, clust->solve());
 		}
 	}
 
-	if(mVerboseLevel) 
-		std::cout<<"Solve "<<(output == SolverState::SUCCESS ? "success" : "fail")<<".\n";
-
+	verbose(VERBOSE_STEPS, "Solve "<<(output == SolverState::SUCCESS ? "success" : "fail"));
 	return output;
 }
 
@@ -120,7 +112,7 @@ void ConstraintsSystem::breakDown_problem()
 	std::vector<int> constr_clust(0), var_clust(0);
 	int n_clusters = g.connected_clusters(constr_clust, var_clust);
 	for(int i = 0; i < n_clusters; ++i) {
-		mSubClusters.push_back(new EquationsCluster({}, {}, solverType(), 2));
+		mSubClusters.push_back(new EquationsCluster({}, {}, solverType()));
 		mSubClusters.back()->set_id(i);
 	}
 

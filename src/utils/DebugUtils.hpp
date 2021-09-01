@@ -1,9 +1,28 @@
-#ifndef ERRORLOGGER_HPP_
-#define ERRORLOGGER_HPP_
+#ifndef DEBUGUTILS_HPP_
+#define DEBUGUTILS_HPP_
 
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
+
+#define VERBOSE_WARNINGS 1
+#define VERBOSE_CONFIGS 2
+#define VERBOSE_STEPS 3
+#define VERBOSE_INNERSTEPS 4
+
+// #define DISABLE_VERBOSE
+#define VERBOSE_LEVEL VERBOSE_WARNINGS
+
+#ifndef DISABLE_VERBOSE
+#define VERBOSE_INTERNAL(level, msg, comp) \
+	if(level <= comp) \
+		std::cout<<msg<<std::endl;
+#else
+#define VERBOSE_INTERNAL(level, msg, comp)
+#endif
+
+#define verbose(level, msg) VERBOSE_INTERNAL(level, msg, VERBOSE_LEVEL)
 
 /*
 	@class ErrorLogger logs messages in stream and or console streams
@@ -96,7 +115,7 @@ private:
 #define LOG_ERROR_CHOOSER(nothing, msg, exitCode, option, ...) option
 
 #define LOG_ERROR(...)				LOG_ERROR_CHOOSER(, ##__VA_ARGS__, LOG_ERROR_CODE(__VA_ARGS__), LOG_ERROR_EXIT_FAILURE(__VA_ARGS__), LOG_ERROR_EMPTY(__VA_ARGS__));
-#define LOG_WARNING(msg) 			ErrorLogger::get_instance().log("WARNING", __FILE__, __FUNCTION__, __LINE__, msg)
+#define LOG_WARNING(msg) 			if(VERBOSE_LEVEL >= VERBOSE_WARNINGS) ErrorLogger::get_instance().log("WARNING", __FILE__, __FUNCTION__, __LINE__, msg)
 #define BLOOP_MARKER				ErrorLogger::get_instance().log("MARKER", __FILE__, __FUNCTION__, __LINE__, "")
 
 // #define RELEASE_MODE

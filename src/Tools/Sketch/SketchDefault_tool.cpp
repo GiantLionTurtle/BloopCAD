@@ -37,7 +37,8 @@ bool SketchDefault_tool::manage_key_press(GdkEventKey* event)
 {
 	if(event->keyval == GDK_KEY_e || event->keyval == GDK_KEY_E) {
 		mEnv->target()->toggle_solve();
-		std::cout<<"Toggled solver to "<<std::boolalpha<<mEnv->target()->solve_allowed()<<"\n";
+		
+		verbose(VERBOSE_INNERSTEPS, "Toggled solver to "<<std::boolalpha<<mEnv->target()->solve_allowed());
 	}
 	if(event->keyval == GDK_KEY_Escape) {
 		mEnv->target()->unselect_all();

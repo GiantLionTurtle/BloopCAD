@@ -65,8 +65,8 @@ void document::do_realize()
 		GLCall(const GLubyte *renderer_type = glGetString(GL_RENDERER));
 		GLCall(const GLubyte *version = glGetString(GL_VERSION));
 		if(renderer_type && version) {
-				std::cout << "Realizing GL context" << "\n\t" << renderer_type << "\n\t" << version << std::endl;
-				std::cout << "Dimensions: " << get_width() << " x " << get_height() << std::endl;
+			verbose(VERBOSE_CONFIGS, "Realizing GL context" << "\n\t" << renderer_type << "\n\t" << version);
+			verbose(VERBOSE_CONFIGS, "Dimensions: " << get_width() << " x " << get_height());
 		}
 
 		// Set up opengl
@@ -242,8 +242,7 @@ void document::push_action(Action_ptr to_push)
 	}
 
 	if(to_push->do_work(this)) {
-		if(mVerboseLevel)
-			std::cout<<"Done action\n";
+		verbose(VERBOSE_STEPS, "Done action");
 		mCurrentActionNum++;
 	}
 	// Housekeeping incrementations
@@ -268,14 +267,12 @@ void document::update_actionStack()
 	if(mCurrentActionNum < mActionInd) {
 		if(mActionStack.at(mCurrentActionNum)->do_work(this)) {
 			mCurrentActionNum++;
-			if(mVerboseLevel)
-				std::cout<<"Done action\n";
+			verbose(VERBOSE_STEPS, "Done action");
 		}
 	} else if(mCurrentActionNum > mActionInd) {
 		if(mActionStack.at(mCurrentActionNum-1)->undo_work(this)) {
 			mCurrentActionNum--;
-			if(mVerboseLevel)
-				std::cout<<"Undone action\n";
+			verbose(VERBOSE_STEPS, "Undone action");
 		}
 	}
 }

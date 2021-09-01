@@ -18,9 +18,8 @@ protected:
 	bool mBrokenDown;
 	int mSolverType;
 	int mNum_liveConstrs, mNum_liveVars;
-	int mVerboseLevel;
 public:
-	ConstraintsSystem(int verboseLevel = 0);
+	ConstraintsSystem();
 	~ConstraintsSystem();
 
 	bool satisfied();
@@ -71,8 +70,8 @@ class DragEnabled_ConstraintsSystem : public ConstraintsSystem {
 private:
 	DraggedPoint<nD>* mDragConstraint;
 public:
-	DragEnabled_ConstraintsSystem(DragSystemHandler* handler, int verboseLevel = 0):
-		ConstraintsSystem(verboseLevel),
+	DragEnabled_ConstraintsSystem(DragSystemHandler* handler):
+		ConstraintsSystem(),
 		mDragConstraint(new DraggedPoint<nD>(handler))
 	{
 		mConstraints.push_back(mDragConstraint);

@@ -20,7 +20,7 @@
 
 Sketch::Sketch(Geom3d::Plane_abstr* base_plane):
 	mBasePlane(base_plane),
-	mConstrSystem(this, 1),
+	mConstrSystem(this),
 	mSolve_allowed(true)
 {
 	set_name("Sketch");
