@@ -1,6 +1,8 @@
 
 #include "Expression.hpp"
 
+#include <utils/DebugUtils.hpp>
+
 #include <cmath>
 #include <algorithm>
 #include <iostream>
@@ -867,51 +869,125 @@ std::string ExpEqu::to_string()
 
 exp_ptr operator+(exp_ptr left, exp_ptr right)
 {
+#ifdef SIMPLIFY_EXP_AT_OPERATOR
+	if(left == ExpConst::zero) {
+		return right;
+	} else if(right == ExpConst::zero) {
+		return left;
+	}
+#endif
 	return exp_ptr(new ExpAdd(left, right));
 }
 exp_ptr operator-(exp_ptr left, exp_ptr right)
 {
+#ifdef SIMPLIFY_EXP_AT_OPERATOR
+	if(left == ExpConst::zero) {
+		return -right;
+	} else if(right == ExpConst::zero) {
+		return left;
+	}
+#endif
 	return exp_ptr(new ExpSubstr(left, right));
 }
 exp_ptr operator*(exp_ptr left, exp_ptr right)
 {
+#ifdef SIMPLIFY_EXP_AT_OPERATOR
+	if(left == ExpConst::zero || right == ExpConst::zero) {
+		return ExpConst::zero;
+	} else if(left == ExpConst::one) {
+		return right;
+	} else if(right == ExpConst::one) {
+		return left;
+	}
+#endif
 	return exp_ptr(new ExpMult(left, right));
 }
 exp_ptr operator/(exp_ptr left, exp_ptr right)
 {
+#ifdef SIMPLIFY_EXP_AT_OPERATOR
+	if(left == ExpConst::zero) {
+		return ExpConst::zero;
+	} else if(right == ExpConst::zero) {
+		LOG_ERROR("Division by zero.");
+	} else if(right == ExpConst::one) {
+		return left;
+	}
+#endif
 	return exp_ptr(new ExpDiv(left, right));
 }
 
 exp_ptr operator+(double left, exp_ptr right)
 {
+#ifdef SIMPLIFY_EXP_AT_OPERATOR
+	if(left == 0.0)
+		return right;
+#endif
 	return ExpConst::make(left) + right;
 }
 exp_ptr operator-(double left, exp_ptr right)
 {
+#ifdef SIMPLIFY_EXP_AT_OPERATOR
+	if(left == 0.0)
+		return -right;
+#endif
 	return ExpConst::make(left) - right;
 }
 exp_ptr operator*(double left, exp_ptr right)
 {
+#ifdef SIMPLIFY_EXP_AT_OPERATOR
+	if(left == 0.0) {
+		return ExpConst::zero;
+	} else if(left == 1.0) {
+		return right;
+	}
+#endif
 	return ExpConst::make(left) * right;
 }
 exp_ptr operator/(double left, exp_ptr right)
 {
+	if(left == 0.0) {
+		return ExpConst::zero;
+	}
 	return ExpConst::make(left) / right;
 }
 exp_ptr operator+(exp_ptr left, double right)
 {
+#ifdef SIMPLIFY_EXP_AT_OPERATOR
+	if(right == 0.0) {
+		return left;
+	}
+#endif
 	return left + ExpConst::make(right);
 }
 exp_ptr operator-(exp_ptr left, double right)
 {
+#ifdef SIMPLIFY_EXP_AT_OPERATOR
+	if(right == 0.0) {
+		return left;
+	}
+#endif
 	return left - ExpConst::make(right);
 }
 exp_ptr operator*(exp_ptr left, double right)
 {
+#ifdef SIMPLIFY_EXP_AT_OPERATOR
+	if(right == 0.0) {
+		return ExpConst::zero;
+	} else if(right == 1.0) {
+		return left;
+	}
+#endif
 	return left * ExpConst::make(right);
 }
 exp_ptr operator/(exp_ptr left, double right)
 {
+#ifdef SIMPLIFY_EXP_AT_OPERATOR
+	if(right == 0.0) {
+		LOG_ERROR("Division by 0.");
+	} else if(right == 1.0) {
+		return left;
+	}
+#endif
 	return left / ExpConst::make(right);
 }
 
