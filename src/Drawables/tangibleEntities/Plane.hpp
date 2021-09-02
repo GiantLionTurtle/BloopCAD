@@ -40,7 +40,7 @@ public:
 		@param label [defaults to ""] : The label of the plane (not supported yet)
 	*/
 	Plane(Plane_abstr const& plane_);
-	virtual ~Plane() {}
+	virtual ~Plane();
 
 	virtual int selection_rank() { return 10; }
 	SelPoint closest(glm::vec2 cursor, Camera* cam, int filter);

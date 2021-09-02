@@ -1,5 +1,7 @@
 
 #include "Line_tool.hpp"
+
+#include <utils/Expunge.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <Drawables/Sketch.hpp>
@@ -7,8 +9,6 @@
 #include <Actions/Sketch/ToggleConstraint_action.hpp>
 #include <Actions/Common/Parallel_action.hpp>
 #include <Tools/Sketch/Coincidence_tool.hpp>
-
-#include <glm/gtx/quaternion.hpp>
 
 Line_tool::Line_tool(sketchDesign* env):
 	tool(env),
@@ -23,12 +23,15 @@ void Line_tool::init()
 {
 	DEBUG_ASSERT(mEnv->state(), "No valid state.");
 	mLastAdded = nullptr;
+	mLinePreview = nullptr;
 	mStarted = false; // Bring flag down
 	mEndPos = nullptr;
 }
 void Line_tool::finish()
 {
 	mEnv->state()->doc->clear_toolPreview();
+	expunge(mLinePreview); // Should not be non-nullptr, but it might change eventually..
+	mLastAdded = nullptr;
 }
 
 bool Line_tool::manage_key_press(GdkEventKey* event)
@@ -106,6 +109,8 @@ SkPoint* Line_tool::add_point(glm::vec2 pt)
 
 		mEndPos = mLinePreview->ptB();
 		mLastAdded = mLinePreview;
+		mLinePreview = nullptr;
+
 		mLinePreview = new SkLine(pt, pt, mEnv->target()->basePlane(), false);
 		mEnv->state()->doc->set_toolPreview(mLinePreview);
 		return mEndPos;

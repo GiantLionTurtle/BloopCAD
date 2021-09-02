@@ -32,6 +32,7 @@ public:
 		@param parent : 	The parent window of the workspace	
 	*/
 	partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
+	~partDesign();
 
 	void set_target(Part* prt) { mTarget = prt; }
 	Part* target() { return mTarget; }

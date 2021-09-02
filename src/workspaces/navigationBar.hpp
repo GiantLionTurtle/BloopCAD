@@ -24,7 +24,7 @@ public:
 		@param builder : 	The gtk widget builder that creates widgets from xml files
 	*/
 	navigationBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder);
-
+	~navigationBar();
 	/*
 		@function set_workspace tells the navigation bar in which worspace it is currently being used
 

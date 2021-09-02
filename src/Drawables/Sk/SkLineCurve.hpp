@@ -16,7 +16,7 @@ private:
 	ExpVec2<Expression_abstr> asvecExp;
 public:
 	SkLineCurve(Geom3d::Plane_abstr* pl, bool fixed_);
-	~SkLineCurve();
+	virtual ~SkLineCurve();
 
 	glm::vec2 posA() { return pos(0); }
 	glm::vec2 posB() { return pos(1); }

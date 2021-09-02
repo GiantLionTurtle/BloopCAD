@@ -4,6 +4,8 @@
 
 #include "Drawable.hpp"
 
+#include <utils/Expunge.hpp>
+
 #include <vector>
 #include <array>
 

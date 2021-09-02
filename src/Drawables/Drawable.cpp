@@ -3,6 +3,7 @@
 
 #include "entityView.hpp"
 #include <utils/DebugUtils.hpp>
+#include <utils/Expunge.hpp>
 
 Drawable::Drawable(): 
 	mState(BLOOP_ENTITY_EXISTS_FLAG),
@@ -16,7 +17,10 @@ Drawable::Drawable():
 {
 	mType |= Drawable_types::DRAWABLE;
 }
-
+Drawable::~Drawable()
+{
+	expunge(mHandle);
+}
 void Drawable::init()
 {
 	if(need_init()) {

@@ -1,6 +1,7 @@
 
 #include "SketchDefault_tool.hpp"
 
+#include <utils/Expunge.hpp>
 #include <document.hpp>
 #include <Drawables/Sketch.hpp>
 #include <utils/DebugUtils.hpp>
@@ -24,7 +25,7 @@ SketchDefault_tool::SketchDefault_tool(sketchDesign* env):
 }
 SketchDefault_tool::~SketchDefault_tool()
 {
-	delete mSelArea;
+	expunge(mSelArea);
 }
 
 void SketchDefault_tool::init()

@@ -1,5 +1,7 @@
 
 #include "home.hpp"
+
+#include <utils/Expunge.hpp>
 #include <bloop.hpp>
 
 home::home(bloop* parent) :
@@ -40,6 +42,13 @@ home::home(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
 		std::get<0>(mButtons.at("open"))->signal_clicked().connect(sigc::mem_fun(*this, &home::open_file));
 	} else {
 		LOG_ERROR("Could not build sketch workspace.");
+	}
+}
+home::~home()
+{
+	for(auto it = mButtons.begin(); it != mButtons.end(); ++it) {
+		expunge(it->second.first);
+		expunge(it->second.second);
 	}
 }
 

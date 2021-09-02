@@ -1,6 +1,7 @@
 
 #include "Plane.hpp"
 
+#include <utils/Expunge.hpp>
 #include <Graphics_utils/GLCall.hpp>
 #include <Graphics_utils/ShadersPool.hpp>
 
@@ -11,6 +12,12 @@ Plane::Plane(Plane_abstr const& plane_):
 	mShader(nullptr)
 {
 	mType |= Drawable_types::PLANE;
+}
+Plane::~Plane()
+{
+	expunge(mVA);
+	expunge(mVB);
+	expunge(mIB);
 }
 
 SelPoint Plane::closest(glm::vec2 cursor, Camera* cam, int filter)

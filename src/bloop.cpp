@@ -2,6 +2,19 @@
 #include "bloop.hpp"
 #include <utils/DebugUtils.hpp>
 
+tabButton::tabButton(std::string const& label_) 
+{
+	mLabel = Gtk::Label(label_);
+	mCloseButton = Gtk::Button("x");
+	mCloseButton.set_relief(Gtk::ReliefStyle::RELIEF_NONE); // Make the button blend in
+
+	pack_start(mLabel);
+	pack_start(mCloseButton);
+
+	show_all();
+}
+
+
 statusBar::statusBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder):
 	Gtk::Box(cobject)
 {

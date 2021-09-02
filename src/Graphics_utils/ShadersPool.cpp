@@ -1,6 +1,8 @@
 
 #include "ShadersPool.hpp"
 
+#include <utils/Expunge.hpp>
+
 ShadersPool& ShadersPool::get_instance()
 {
 	static ShadersPool pool;
@@ -26,6 +28,6 @@ ShadersPool::ShadersPool()
 ShadersPool::~ShadersPool()
 {
 	for(auto it = mShaders.begin(); it != mShaders.end(); ++it) {
-		delete it->second;
+		expunge(it->second);
 	}
 }

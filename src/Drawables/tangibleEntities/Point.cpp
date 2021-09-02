@@ -1,6 +1,7 @@
 
 #include "Point.hpp"
 
+#include <utils/Expunge.hpp>
 #include <Geom/Geom3d/Plane_abstr.hpp>
 #include <Graphics_utils/GLCall.hpp>
 #include <Graphics_utils/ShadersPool.hpp>
@@ -20,8 +21,8 @@ Point::Point(glm::vec3 const& basePoint):
 }
 Point::~Point()
 {
-	delete mVB;
-	delete mVA;
+	expunge(mVB);
+	expunge(mVA);
 }
 
 SelPoint Point::closest(glm::vec2 cursor, Camera* cam, int filter)

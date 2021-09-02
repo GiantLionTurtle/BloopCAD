@@ -1,6 +1,7 @@
 
 #include "sketchDesign.hpp"
 
+#include <utils/Expunge.hpp>
 #include <utils/preferences.hpp>
 #include <utils/mathUtils.hpp>
 #include <Actions/Part/EnterPart_action.hpp>
@@ -149,6 +150,13 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 	} else {
 		LOG_ERROR("Could not build sketch workspace.");
 	}	
+}
+sketchDesign::~sketchDesign()
+{
+	for(auto it = mButtons.begin(); it != mButtons.end(); ++it) {
+		expunge(it->second.first);
+		expunge(it->second.second);
+	}
 }
 
 bool sketchDesign::set_tool(int name)

@@ -2,6 +2,7 @@
 #include "ConstraintsSystem.hpp"
 #include "SolverState.hpp"
 
+#include <utils/Expunge.hpp>
 #include <utils/DebugUtils.hpp>
 
 ConstraintsSystem::ConstraintsSystem():
@@ -144,8 +145,7 @@ void ConstraintsSystem::clear_subClusters()
 	for(int i = 0; i < mSubClusters.size(); ++i) {
 		// mSubClusters[i]->clear_substitutions();
 		// mSubClusters[i]->clear_tags();
-		delete mSubClusters[i];
-		mSubClusters[i] = nullptr;
+		expunge(mSubClusters[i]);
 	}
 	mSubClusters.clear();
 }

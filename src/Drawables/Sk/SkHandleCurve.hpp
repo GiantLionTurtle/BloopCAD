@@ -91,6 +91,7 @@ public:
 			pT::mDrawList.curve()->set_handle(i, newPt);
 		}
 	}
+	virtual ~SkHandleCurve() {}
 
 	size_t n_handles() { return pT::mDrawList.handles().size(); }
 	SkPoint* handle(size_t ind) { return pT::mDrawList.handles().at(ind); }

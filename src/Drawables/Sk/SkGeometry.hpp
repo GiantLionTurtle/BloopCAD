@@ -20,6 +20,7 @@ public:
 	{
 
 	}
+	virtual ~SkGeometry() {}
 
 	void move_selected(glm::vec2 delta)
 	{
@@ -76,6 +77,7 @@ public:
 	{
 
 	}
+	virtual ~SkPrimitiveGeometry() {}
 
 	void select_within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
 	{

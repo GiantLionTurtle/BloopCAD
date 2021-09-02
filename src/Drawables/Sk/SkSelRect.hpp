@@ -24,7 +24,7 @@ private:
 	Shader* mShader;
 public:
 	SkSelRect(glm::vec2 start_, glm::vec2 end_, Geom3d::Plane_abstr* basePlane_);
-	virtual ~SkSelRect() {}
+	virtual ~SkSelRect();
 
 	glm::vec2 start() const { return mStartPt; }
 	void set_startPoint(glm::vec2 pt);

@@ -1,5 +1,7 @@
 
 #include "Circle_tool.hpp"
+
+#include <utils/Expunge.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <Drawables/Sketch.hpp>
@@ -23,6 +25,7 @@ void Circle_tool::finish()
 {
 	DEBUG_ASSERT(mEnv->state(), "No valid state.");
 	mEnv->state()->doc->clear_toolPreview();
+	expunge(mCirclePreview);
 }
 
 bool Circle_tool::manage_key_press(GdkEventKey* event)
@@ -69,6 +72,7 @@ bool Circle_tool::manage_button_press(GdkEventButton* event)
 		mEnv->state()->doc->push_action(std::make_shared<ToggleBaseObject_action>(mCirclePreview, true)); // Doc is passed to activate glContext
         mCirclePreview->set_radius(glm::length(circle_pos - mCirclePreview->center_pos()));
         mStarted = false;
+		mCirclePreview = nullptr;
 	}
 	return true;
 }

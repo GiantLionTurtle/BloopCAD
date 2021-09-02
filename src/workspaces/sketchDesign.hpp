@@ -43,6 +43,7 @@ public:
 		@param parent : 	The parent window of the workspace	
 	*/
 	sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
+	~sketchDesign();
 
 	void set_target(Sketch* sk) { mTarget = sk; }
 	Sketch* target() { return mTarget; }

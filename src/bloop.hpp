@@ -22,38 +22,28 @@
 */
 class tabButton : public Gtk::Box {
 private:
-	Gtk::Label* mLabel; // The label set by the document/the window
-	Gtk::Button* mCloseButton; // The close button, it is a 'x' character
+	Gtk::Label mLabel; // The label set by the document/the window
+	Gtk::Button mCloseButton; // The close button, it is a 'x' character
 public:
 	/*
 		@function tabButton creates a tab object
 
 		@param label_ : The label on the tab
 	*/
-	tabButton(std::string const& label_) 
-	{
-		mLabel = new Gtk::Label(label_);
-		mCloseButton = new Gtk::Button("x");
-		mCloseButton->set_relief(Gtk::ReliefStyle::RELIEF_NONE); // Make the button blend in
-
-		pack_start(*mLabel);
-		pack_start(*mCloseButton);
-
-		show_all();
-	}
+	tabButton(std::string const& label_);
 
 	/*
 		@function set_label sets the displayed label on the tab
 
 		@param label_ : The label to be set
 	*/
-	void set_label(std::string const& label_) { mLabel->set_text(label_); }
+	void set_label(std::string const& label_) { mLabel.set_text(label_); }
 	/*
 		@function label 
 
 		@return : The tab's text label
 	*/
-	std::string label() { return mLabel->get_text(); }
+	std::string label() { return mLabel.get_text(); }
 };
 
 class statusBar : public Gtk::Box {

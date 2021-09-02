@@ -1,6 +1,8 @@
 
 #include "TexturesPool.hpp"
 
+#include <utils/Expunge.hpp>
+
 TexturesPool& TexturesPool::get_instance()
 {
 	static TexturesPool pool;
@@ -26,6 +28,6 @@ TexturesPool::TexturesPool()
 TexturesPool::~TexturesPool()
 {
 	for(auto it = mTextures.begin(); it != mTextures.end(); ++it) {
-		delete it->second;
+		expunge(it->second);
 	}
 }

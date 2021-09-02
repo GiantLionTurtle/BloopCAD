@@ -12,6 +12,7 @@ public:
 	{
 		set_name("SkLine");
 	}
+	virtual ~SkLine() {}
 
 
 	SkPoint* ptA() { return handle(0); }

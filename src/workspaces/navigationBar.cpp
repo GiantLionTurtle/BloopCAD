@@ -1,6 +1,7 @@
 
 #include "navigationBar.hpp"
 
+#include <utils/Expunge.hpp>
 #include <Tools/Tools_forward.hpp>
 
 navigationBar::navigationBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder) :
@@ -35,6 +36,20 @@ navigationBar::navigationBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder>
 	mSelectorButton->signal_clicked().connect(sigc::mem_fun(*this, &navigationBar::notify_selector));
 
 	show_all(); // Ensures that nothing is hidden within gtk
+}
+navigationBar::~navigationBar()
+{
+	expunge(mOrbitIcon);
+	expunge(mOrbitButton);
+	
+	expunge(mPanIcon);
+	expunge(mPanButton);
+
+	expunge(mZoomIcon);
+	expunge(mZoomButton);
+
+	expunge(mSelectorIcon);
+	expunge(mSelectorButton);
 }
 
 void navigationBar::set_workspace(workspace_ptr aWorkspace)

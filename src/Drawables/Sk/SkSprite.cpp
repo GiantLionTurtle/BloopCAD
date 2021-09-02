@@ -1,6 +1,7 @@
 
 #include "SkSprite.hpp"
 
+#include <utils/Expunge.hpp>
 #include <Graphics_utils/Image.hpp>
 #include <Graphics_utils/ShadersPool.hpp>
 #include <Graphics_utils/TexturesPool.hpp>
@@ -29,7 +30,9 @@ SkSprite::SkSprite(Geom3d::Plane_abstr* basePlane_, glm::vec2 dims, std::string 
 }
 SkSprite::~SkSprite()
 {
-
+	expunge(mVA);
+	expunge(mVB);
+	// Shader and texture are managed by their pools
 }
 
 SelPoint SkSprite::closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)

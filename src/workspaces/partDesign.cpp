@@ -1,6 +1,7 @@
 
 #include "partDesign.hpp"
 
+#include <utils/Expunge.hpp>
 #include <bloop.hpp>
 #include <Tools/Part/PartDefault_tool.hpp>
 #include <Tools/Part/StartSketch_tool.hpp>
@@ -52,6 +53,13 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 		std::get<0>(mButtons.at("extrusion"))->		signal_clicked().connect(sigc::mem_fun(*this, &partDesign::begin_extrusion));
 	} else {
 		LOG_ERROR("Could not build part design workspace.");
+	}
+}
+partDesign::~partDesign()
+{
+	for(auto it = mButtons.begin(); it != mButtons.end(); ++it) {
+		expunge(it->second.first);
+		expunge(it->second.second);
 	}
 }
 

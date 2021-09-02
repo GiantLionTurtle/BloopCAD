@@ -30,7 +30,7 @@ public:
 		@param parent : 	The window which it is part of
 	*/
 	home(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
-
+	~home();
 	/*
 		@function new_file will eventually create a file
 	*/

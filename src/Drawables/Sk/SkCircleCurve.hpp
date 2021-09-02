@@ -16,7 +16,7 @@ private:
     var_ptr mRadius;
 public:
 	SkCircleCurve(Geom3d::Plane_abstr* pl, bool fixed_);
-	~SkCircleCurve();
+	virtual ~SkCircleCurve();
 
 	glm::vec2 center_pos() { return pos(0); }
     float radius_val() { return mRadius->eval(); }

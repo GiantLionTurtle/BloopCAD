@@ -1,6 +1,7 @@
 
 #include "entityView.hpp"
 
+#include <utils/Expunge.hpp>
 #include <document.hpp>
 
 entityHandle::entityHandle(Drawable* ent, entityView* view, entityHandle* parent):
@@ -222,7 +223,7 @@ entityView::entityView(document* doc):
 entityView::~entityView()
 {
 	for(int i = 0; i < mHandles.size(); ++i) {
-		delete mHandles[i];
+		expunge(mHandles[i]);
 	}
 }
 

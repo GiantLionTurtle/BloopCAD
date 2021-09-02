@@ -1,6 +1,7 @@
 
 #include "document.hpp"
 
+#include <utils/Expunge.hpp>
 #include <utils/preferences.hpp>
 #include "bloop.hpp"
 #include "Graphics_utils/GLCall.hpp"
@@ -47,7 +48,9 @@ document::document(eventsManager* manager):
 }
 document::~document()
 {
-	delete mEventsManager;
+	expunge(mEventsManager);
+	expunge(mSideBar);
+	expunge(mPart);
 }
 
 void document::make_glContext_current()

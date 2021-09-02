@@ -92,7 +92,7 @@ public:
 		* Does exist
 	*/
 	Drawable();
-	virtual ~Drawable() {}
+	virtual ~Drawable();
 
 	void init();
 	virtual void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
