@@ -1,9 +1,9 @@
 
 #include "SkPoint.hpp"
 
-#include <utils/Expunge.hpp>
+#include <Utils/Expunge.hpp>
 #include <Graphics_utils/ShadersPool.hpp>
-#include <utils/preferences.hpp>
+#include <Utils/Preferences.hpp>
 #include <Graphics_utils/GLCall.hpp>
 
 float SkPoint::kSelDist2 = 0.0f;
@@ -90,17 +90,17 @@ void SkPoint::init_impl()
 		ShadersPool::get_instance().add("point", mShader);
 	}
 	if(kFisrstInst) {
-		kSelDist2 = preferences::get_instance().get_float("seldistpoint2");
-		preferences::get_instance().add_callback("seldistpoint2", 
+		kSelDist2 = Preferences::get_instance().get_float("seldistpoint2");
+		Preferences::get_instance().add_callback("seldistpoint2", 
 			std::function<void(float)>([this](float val) { kSelDist2 = val; }));
-		kColor = preferences::get_instance().get_vec3("sketchEntityColor");
-		preferences::get_instance().add_callback("sketchEntityColor", 
+		kColor = Preferences::get_instance().get_vec3("sketchEntityColor");
+		Preferences::get_instance().add_callback("sketchEntityColor", 
 			std::function<void(glm::vec3)>([this](glm::vec3 val) { kColor = val; }));
-		kColorHovered = preferences::get_instance().get_vec3("sketchEntityColorHovered");
-		preferences::get_instance().add_callback("sketchEntityColorHovered", 
+		kColorHovered = Preferences::get_instance().get_vec3("sketchEntityColorHovered");
+		Preferences::get_instance().add_callback("sketchEntityColorHovered", 
 			std::function<void(glm::vec3)>([this](glm::vec3 val) { kColorHovered = val; }));
-		kColorSelected = preferences::get_instance().get_vec3("sketchEntityColorSelected");
-		preferences::get_instance().add_callback("sketchEntityColorSelected", 
+		kColorSelected = Preferences::get_instance().get_vec3("sketchEntityColorSelected");
+		Preferences::get_instance().add_callback("sketchEntityColorSelected", 
 			std::function<void(glm::vec3)>([this](glm::vec3 val) { kColorSelected = val; }));
 
 		kFisrstInst = false;

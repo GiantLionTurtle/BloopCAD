@@ -6,9 +6,9 @@ int main()
 }
 
 // // #include <ConstraintsSolver/DR_planner.hpp>
-// #include <utils/DebugUtils.hpp>
-// #include <utils/preferences.hpp>
-// #include <utils/conversionsUtils.hpp>
+// #include <Utils/Debug_util.hpp>
+// #include <Utils/Preferences.hpp>
+// #include <Utils/Conversions_util.hpp>
 // #include <ConstraintsSolver/Constraint_abstr.hpp>
 // #include <ConstraintsSolver/ConstraintsSystem.hpp>
 // #include <testFramework_eventsManager.hpp>
@@ -33,7 +33,7 @@ int main()
 // int main(int argc, char *argv[])
 // {
 // 	ErrorLogger::get_instance().init(); // Init the error logger singleton
-// 	preferences::get_instance().load_from_file("resources/configs/configs.xml"); // Init the preferences service singleton
+// 	Preferences::get_instance().load_from_file("resources/configs/configs.xml"); // Init the Preferences service singleton
 
 // 	auto app = Gtk::Application::create(argc, argv, ""); // Create an application 
 // 	auto refBuilder = Gtk::Builder::create(); // Gtk builder

@@ -4,7 +4,7 @@
 
 #include "SkGeometry.hpp"
 
-#include <utils/Expunge.hpp>
+#include <Utils/Expunge.hpp>
 
 #include <vector>
 

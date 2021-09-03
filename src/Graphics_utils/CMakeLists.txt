@@ -16,4 +16,4 @@ add_library(Graphics_utils ${Graphics_utils_source_files})
 
 target_link_libraries(Graphics_utils
     vendor
-    utils)
+    Utils)

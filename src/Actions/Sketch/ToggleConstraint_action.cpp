@@ -1,6 +1,6 @@
 
 #include "ToggleConstraint_action.hpp"
-#include <utils/DebugUtils.hpp>
+#include <Utils/Debug_util.hpp>
 #include <document.hpp>
 
 ToggleConstraint_action::ToggleConstraint_action(Sketch* parent_sketch, SkConstraint* constr, bool toggle_to, bool done_at_creation):

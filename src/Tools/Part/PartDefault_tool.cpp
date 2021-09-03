@@ -1,7 +1,7 @@
 
 #include "PartDefault_tool.hpp"
 
-#include <utils/DebugUtils.hpp>
+#include <Utils/Debug_util.hpp>
 #include <document.hpp>
 
 PartDefault_tool::PartDefault_tool(partDesign* env):

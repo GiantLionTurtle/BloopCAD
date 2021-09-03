@@ -2,7 +2,7 @@
 #ifndef PREFERENCES_HPP_
 #define PREFERENCES_HPP_
 
-#include <utils/DebugUtils.hpp>
+#include <Utils/Debug_util.hpp>
 
 #include <glm/glm.hpp>
 
@@ -16,25 +16,25 @@ template<typename eT>
 using parameter_list = std::map<std::string, std::pair<eT, std::vector<std::function<void(eT)>>>>;
 
 /*
-	@class preferences is the one go for customization, it is accessible everywhere in the program and
-	it currently supports 3 types of preferences ; long, float and vec3
+	@class Preferences is the one go for customization, it is accessible everywhere in the program and
+	it currently supports 3 types of Preferences ; long, float and vec3
 
 	@note : This class is a singletong
 */
-class preferences {
+class Preferences {
 private:
-	parameter_list<long> mPrefs_long; 		// Long preferences
-	parameter_list<float> mPrefs_float; 	// Float preferences
-	parameter_list<glm::vec3> mPrefs_vec3;	// Vec3 preferences
+	parameter_list<long> mPrefs_long; 		// Long Preferences
+	parameter_list<float> mPrefs_float; 	// Float Preferences
+	parameter_list<glm::vec3> mPrefs_vec3;	// Vec3 Preferences
 public:
-	preferences(preferences const&) = delete; // As it is a singleton, the copy constructor is deleted
+	Preferences(Preferences const&) = delete; // As it is a singleton, the copy constructor is deleted
 
 	/*
 		@function get_instance gives access to the singleton instance
 
 		@return : The singleton instance
 	*/
-	static preferences& get_instance();
+	static Preferences& get_instance();
 
 	/*
 		@function set sets a named preference or creates it if it doesn't exist
@@ -87,11 +87,11 @@ public:
 	glm::vec3 get_vec3(std::string const& pref);
 
 	/*
-		@function load_from_file loads a set of preferences from an xml file
+		@function load_from_file loads a set of Preferences from an xml file
 
-		@param filePath : The path to the xml file containing preferences
+		@param filePath : The path to the xml file containing Preferences
 
-		@note : The preferences must be children of a node called "configs", have a type attribute
+		@note : The Preferences must be children of a node called "configs", have a type attribute
 		and have their value as content. Vec3 are represented as values separeted by semicolons.
 		Something like this:
 
@@ -104,15 +104,15 @@ public:
 	void load_from_file(std::string const& filePath);
 
 	/*
-		@function clear removes all preferences and callbacks
+		@function clear removes all Preferences and callbacks
 	*/
 	void clear();
 private:
 	/*
-		@function preferences creates the preferences object, it is private so that
+		@function Preferences creates the Preferences object, it is private so that
 		only one object can be created and accessed 
 	*/
-	preferences();
+	Preferences();
 
 	/*
 		@function add_callback_to_map adds a callback to a preference in a specified registery, 

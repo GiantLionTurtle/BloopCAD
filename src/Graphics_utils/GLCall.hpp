@@ -2,7 +2,7 @@
 #ifndef GLCALL_HPP_
 #define GLCALL_HPP_
 
-#include <utils/DebugUtils.hpp>
+#include <Utils/Debug_util.hpp>
 
 #include <epoxy/gl.h>
 

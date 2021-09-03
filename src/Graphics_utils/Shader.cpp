@@ -1,7 +1,7 @@
 
 #include "Shader.hpp"
 #include "GLCall.hpp"
-#include <utils/fileUtils.hpp>
+#include <Utils/File_util.hpp>
 
 #include <fstream>
 #include <filesystem>

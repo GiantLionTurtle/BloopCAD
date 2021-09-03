@@ -13,8 +13,8 @@
 
 
 
-#include <utils/DebugUtils.hpp>
-#include <utils/mathUtils.hpp>
+#include <Utils/Debug_util.hpp>
+#include <Utils/Maths_util.hpp>
 #include <bloop.hpp>
 #include <document.hpp>
 

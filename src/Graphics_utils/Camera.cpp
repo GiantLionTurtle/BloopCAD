@@ -1,7 +1,7 @@
 
 #include "Camera.hpp"
-#include <utils/DebugUtils.hpp>
-#include <utils/mathUtils.hpp>
+#include <Utils/Debug_util.hpp>
+#include <Utils/Maths_util.hpp>
 
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>

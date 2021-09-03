@@ -2,8 +2,8 @@
 #ifndef CAMERA_HPP_
 #define CAMERA_HPP_
 
-#include <utils/animatable.hpp>
-#include <utils/DebugUtils.hpp>
+#include <Utils/Animatable.hpp>
+#include <Utils/Debug_util.hpp>
 
 #include <Geom/Geom3d/Plane_abstr.hpp>
 

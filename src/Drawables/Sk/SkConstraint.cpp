@@ -6,7 +6,7 @@
 #include "SkLine.hpp"
 #include <Drawables/Sketch.hpp>
 
-#include <utils/DebugUtils.hpp>
+#include <Utils/Debug_util.hpp>
 #include <Drawables/Sketch.hpp>
 #include <ConstraintsSolver/Constraint_abstr.hpp>
 

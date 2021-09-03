@@ -1,7 +1,7 @@
 
 #include "ShadersPool.hpp"
 
-#include <utils/Expunge.hpp>
+#include <Utils/Expunge.hpp>
 
 ShadersPool& ShadersPool::get_instance()
 {

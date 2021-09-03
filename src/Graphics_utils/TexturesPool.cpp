@@ -1,7 +1,7 @@
 
 #include "TexturesPool.hpp"
 
-#include <utils/Expunge.hpp>
+#include <Utils/Expunge.hpp>
 
 TexturesPool& TexturesPool::get_instance()
 {

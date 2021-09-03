@@ -1,7 +1,7 @@
 
 #include "Plane.hpp"
 
-#include <utils/Expunge.hpp>
+#include <Utils/Expunge.hpp>
 #include <Graphics_utils/GLCall.hpp>
 #include <Graphics_utils/ShadersPool.hpp>
 

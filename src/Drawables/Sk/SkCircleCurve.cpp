@@ -4,7 +4,7 @@
 #include <ConstraintsSolver/Expression.hpp>
 
 #include <Graphics_utils/ShadersPool.hpp>
-#include <utils/preferences.hpp>
+#include <Utils/Preferences.hpp>
 #include <Graphics_utils/GLCall.hpp>
 
 template<>
@@ -74,14 +74,14 @@ void SkCircleCurve::init_impl()
 		ShadersPool::get_instance().add("circle", mShader);
 	}
 	if(kFisrstInst) {
-		kSelDist2 = preferences::get_instance().get_float("seldistcurve2");
-		preferences::get_instance().add_callback("seldistcurve2", std::function<void(float)>([this](float val) { kSelDist2 = val; }));
-		kColor = preferences::get_instance().get_vec3("sketchEntityColor");
-		preferences::get_instance().add_callback("sketchEntityColor", std::function<void(glm::vec3)>([this](glm::vec3 val) { kColor = val; }));
-		kColorHovered = preferences::get_instance().get_vec3("sketchEntityColorHovered");
-		preferences::get_instance().add_callback("sketchEntityColorHovered", std::function<void(glm::vec3)>([this](glm::vec3 val) { kColorHovered = val; }));
-		kColorSelected = preferences::get_instance().get_vec3("sketchEntityColorSelected");
-		preferences::get_instance().add_callback("sketchEntityColorSelected", std::function<void(glm::vec3)>([this](glm::vec3 val) { kColorSelected = val; }));
+		kSelDist2 = Preferences::get_instance().get_float("seldistcurve2");
+		Preferences::get_instance().add_callback("seldistcurve2", std::function<void(float)>([this](float val) { kSelDist2 = val; }));
+		kColor = Preferences::get_instance().get_vec3("sketchEntityColor");
+		Preferences::get_instance().add_callback("sketchEntityColor", std::function<void(glm::vec3)>([this](glm::vec3 val) { kColor = val; }));
+		kColorHovered = Preferences::get_instance().get_vec3("sketchEntityColorHovered");
+		Preferences::get_instance().add_callback("sketchEntityColorHovered", std::function<void(glm::vec3)>([this](glm::vec3 val) { kColorHovered = val; }));
+		kColorSelected = Preferences::get_instance().get_vec3("sketchEntityColorSelected");
+		Preferences::get_instance().add_callback("sketchEntityColorSelected", std::function<void(glm::vec3)>([this](glm::vec3 val) { kColorSelected = val; }));
 
 		kFisrstInst = false;
 	}

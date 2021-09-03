@@ -1,11 +1,11 @@
 
 #include "Point.hpp"
 
-#include <utils/Expunge.hpp>
+#include <Utils/Expunge.hpp>
 #include <Geom/Geom3d/Plane_abstr.hpp>
 #include <Graphics_utils/GLCall.hpp>
 #include <Graphics_utils/ShadersPool.hpp>
-#include <utils/mathUtils.hpp>
+#include <Utils/Maths_util.hpp>
 
 Point::Point(glm::vec3 const& basePoint):
 	mVB(nullptr),

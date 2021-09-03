@@ -2,8 +2,8 @@
 #include "Drawable.hpp"
 
 #include "entityView.hpp"
-#include <utils/DebugUtils.hpp>
-#include <utils/Expunge.hpp>
+#include <Utils/Debug_util.hpp>
+#include <Utils/Expunge.hpp>
 
 Drawable::Drawable(): 
 	mState(BLOOP_ENTITY_EXISTS_FLAG),

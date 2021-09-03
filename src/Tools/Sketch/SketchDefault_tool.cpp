@@ -1,10 +1,10 @@
 
 #include "SketchDefault_tool.hpp"
 
-#include <utils/Expunge.hpp>
+#include <Utils/Expunge.hpp>
 #include <document.hpp>
 #include <Drawables/Sketch.hpp>
-#include <utils/DebugUtils.hpp>
+#include <Utils/Debug_util.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <Actions/Common/MoveCamera_action.hpp>

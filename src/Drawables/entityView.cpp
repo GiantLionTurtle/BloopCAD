@@ -1,7 +1,7 @@
 
 #include "entityView.hpp"
 
-#include <utils/Expunge.hpp>
+#include <Utils/Expunge.hpp>
 #include <document.hpp>
 
 entityHandle::entityHandle(Drawable* ent, entityView* view, entityHandle* parent):

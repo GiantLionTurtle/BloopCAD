@@ -1,6 +1,6 @@
 
 #include "SwitchWorkspace_action.hpp"
-#include <utils/DebugUtils.hpp>
+#include <Utils/Debug_util.hpp>
 #include <document.hpp>
 
 SwitchWorkspace_action::SwitchWorkspace_action(int workspaceName, bool set_Camera):

@@ -1,8 +1,8 @@
 
 #include "document.hpp"
 
-#include <utils/Expunge.hpp>
-#include <utils/preferences.hpp>
+#include <Utils/Expunge.hpp>
+#include <Utils/Preferences.hpp>
 #include "bloop.hpp"
 #include "Graphics_utils/GLCall.hpp"
 
@@ -42,8 +42,8 @@ document::document(eventsManager* manager):
 	mSketchState->workspaceName = bloop::workspace_types::SKETCH;
 
 	// Now any part of the program can change the background color hehehe
-	mBackgroundColor = preferences::get_instance().get_vec3("background");
-	preferences::get_instance().add_callback("background", [this](glm::vec3 color) { mBackgroundColor = color; });
+	mBackgroundColor = Preferences::get_instance().get_vec3("background");
+	Preferences::get_instance().add_callback("background", [this](glm::vec3 color) { mBackgroundColor = color; });
 	mSideBar = new entityView(this);
 }
 document::~document()

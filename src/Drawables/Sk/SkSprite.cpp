@@ -1,14 +1,14 @@
 
 #include "SkSprite.hpp"
 
-#include <utils/Expunge.hpp>
+#include <Utils/Expunge.hpp>
 #include <Graphics_utils/Image.hpp>
 #include <Graphics_utils/ShadersPool.hpp>
 #include <Graphics_utils/TexturesPool.hpp>
 #include <Graphics_utils/GLCall.hpp>
-#include <utils/DebugUtils.hpp>
-#include <utils/mathUtils.hpp>
-#include <utils/preferences.hpp>
+#include <Utils/Debug_util.hpp>
+#include <Utils/Maths_util.hpp>
+#include <Utils/Preferences.hpp>
 #include <ConstraintsSolver/Expression.hpp>
 
 bool SkSprite::kFisrstInst = true;
@@ -102,8 +102,8 @@ void SkSprite::init_impl()
 		ShadersPool::get_instance().add("fixedSizeTexturedQuad", mShader);
 	}
 	if(kFisrstInst) {
-		kColorHovered = preferences::get_instance().get_vec3("sketchEntityColorHovered");
-		preferences::get_instance().add_callback("sketchEntityColorHovered", 
+		kColorHovered = Preferences::get_instance().get_vec3("sketchEntityColorHovered");
+		Preferences::get_instance().add_callback("sketchEntityColorHovered", 
 		std::function<void(glm::vec3)>([this](glm::vec3 val) { kColorHovered = val; }));
 		kFisrstInst = false;
 	}

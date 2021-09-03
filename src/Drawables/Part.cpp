@@ -2,7 +2,7 @@
 #include "Part.hpp"
 
 #include "entityView.hpp"
-#include <utils/DebugUtils.hpp>
+#include <Utils/Debug_util.hpp>
 #include "tangibleEntities/Point.hpp"
 #include "tangibleEntities/Plane.hpp"
 

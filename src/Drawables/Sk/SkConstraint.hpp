@@ -7,7 +7,7 @@
 #include <Drawables/Collection.hpp>
 #include <ConstraintsSolver/Constraint_abstr.hpp>
 #include <ConstraintsSolver/Expression.hpp>
-#include <utils/DebugUtils.hpp>
+#include <Utils/Debug_util.hpp>
 
 #include <glm/glm.hpp>
 

@@ -2,8 +2,8 @@
 #include "ConstraintsSystem.hpp"
 #include "SolverState.hpp"
 
-#include <utils/Expunge.hpp>
-#include <utils/DebugUtils.hpp>
+#include <Utils/Expunge.hpp>
+#include <Utils/Debug_util.hpp>
 
 ConstraintsSystem::ConstraintsSystem():
 	mBrokenDown(false),

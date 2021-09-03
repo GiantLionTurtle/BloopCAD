@@ -1,7 +1,7 @@
 
 #include "partDesign.hpp"
 
-#include <utils/Expunge.hpp>
+#include <Utils/Expunge.hpp>
 #include <bloop.hpp>
 #include <Tools/Part/PartDefault_tool.hpp>
 #include <Tools/Part/StartSketch_tool.hpp>

@@ -1,9 +1,9 @@
 
 #include "MoveCamera_action.hpp"
 
-#include <utils/mathUtils.hpp>
-#include <utils/DebugUtils.hpp>
-#include <utils/preferences.hpp>
+#include <Utils/Maths_util.hpp>
+#include <Utils/Debug_util.hpp>
+#include <Utils/Preferences.hpp>
 #include <document.hpp>
 
 #include <glm/gtx/vector_angle.hpp>
@@ -29,7 +29,7 @@ Action_ptr MoveCamera_action::create_from_facingPlane(	Geom3d::Plane_abstr* toFa
 	CameraState targetCamState = {  toFace->origin() + glm::normalize(glm::cross(right_plane, up_plane)) * dist_to_plane, right_plane, up_plane };
 	return Action_ptr(new MoveCamera_action(cam, 
 	targetCamState, 
-	preferences::get_instance().get_long("camtrans")));
+	Preferences::get_instance().get_long("camtrans")));
 }
 Action_ptr MoveCamera_action::create_from_facingPlane(Geom3d::Plane_abstr* toFace, float dist_to_plane, Camera_ptr cam)
 {
@@ -43,7 +43,7 @@ bool MoveCamera_action::do_work(document* caller)
 			mCamera = caller->state()->cam;
 		}
 		mInitState = mCamera->state();
-		compute_animatables(mTargetState);
+		compute_Animatables(mTargetState);
 		mStarted = true;
 	}
 
@@ -55,7 +55,7 @@ bool MoveCamera_action::undo_work(document* caller)
 		if(!mCamera) {
 			mCamera = caller->state()->cam;
 		}
-		compute_animatables(mInitState);
+		compute_Animatables(mInitState);
 		mStarted = true;
 	}
 
@@ -77,7 +77,7 @@ bool MoveCamera_action::move_Camera()
 	return false;
 }
 
-void MoveCamera_action::compute_animatables(CameraState const& state)
+void MoveCamera_action::compute_Animatables(CameraState const& state)
 {
 	float angle_x, angle_y;
 	CameraState currState = mCamera->state();

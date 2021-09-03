@@ -1,7 +1,7 @@
 
 #include "Line_tool.hpp"
 
-#include <utils/Expunge.hpp>
+#include <Utils/Expunge.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <Drawables/Sketch.hpp>

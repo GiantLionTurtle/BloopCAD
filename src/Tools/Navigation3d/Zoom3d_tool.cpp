@@ -2,7 +2,7 @@
 #include "Zoom3d_tool.hpp"
 
 #include <workspaces/workspace.hpp>
-#include <utils/mathUtils.hpp>
+#include <Utils/Maths_util.hpp>
 #include <Geom/Geom3d/Plane_abstr.hpp>
 
 Zoom3d_tool::Zoom3d_tool(workspace* env): 

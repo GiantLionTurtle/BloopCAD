@@ -2,7 +2,7 @@
 #include "EquationsCluster.hpp"
 #include "Expression.hpp"
 #include "SolverState.hpp"
-#include <utils/DebugUtils.hpp>
+#include <Utils/Debug_util.hpp>
 
 #include <iostream>
 

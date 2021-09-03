@@ -9,12 +9,12 @@
 #include <chrono>
 
 /*
-	@class animatable describes a way to animate a variable over time, currently, it only does linear animations
+	@class Animatable describes a way to animate a variable over time, currently, it only does linear animations
 
 	@note : It will likely will be reworked to have a nicer API and access in general
 */
 template<typename eT>
-class animatable {
+class Animatable {
 private:
 	eT mVal; // Actual stored value
 	eT mInitVal, mTargetVal; // Value at the start and the end of the animation
@@ -23,11 +23,11 @@ private:
 	bool mAnimationEnded; // If the animation is done
 public:
 	/*
-		@function animatable creates an animatable object with an init value
+		@function Animatable creates an Animatable object with an init value
 
 		@param val : The initial value of the variable
 	*/
-	animatable(eT val):
+	Animatable(eT val):
 		mVal(val),
 		mAnimationEnded(true)
 	{}
@@ -157,10 +157,10 @@ private:
 };
 
 /*
-	@function animatable is a specialization of the update_internal method for quaternions
+	@function Animatable is a specialization of the update_internal method for quaternions
 
 	@param amount : Where on the lerp should the value be
 */
-template<> void animatable<glm::quat>::update_internal(float amount);
+template<> void Animatable<glm::quat>::update_internal(float amount);
 
 #endif

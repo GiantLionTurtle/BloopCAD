@@ -2,7 +2,7 @@
 #ifndef SVGENTITY_HPP_
 #define SVGENTITY_HPP_
 
-#include <utils/xmlParser.hpp>
+#include <Utils/XMLParser.hpp>
 #include <Geom/Geom3d/Plane_abstr.hpp>
 
 class svgEntity {

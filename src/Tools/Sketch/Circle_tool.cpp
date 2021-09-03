@@ -1,12 +1,12 @@
 
 #include "Circle_tool.hpp"
 
-#include <utils/Expunge.hpp>
+#include <Utils/Expunge.hpp>
 #include <workspaces/workspace.hpp>
 #include <document.hpp>
 #include <Drawables/Sketch.hpp>
 #include <Actions/Common/ToggleBaseObject_action.hpp>
-#include <utils/mathUtils.hpp>
+#include <Utils/Maths_util.hpp>
 
 Circle_tool::Circle_tool(sketchDesign* env):
 	tool(env),

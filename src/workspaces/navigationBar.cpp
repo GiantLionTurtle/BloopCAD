@@ -1,7 +1,7 @@
 
 #include "navigationBar.hpp"
 
-#include <utils/Expunge.hpp>
+#include <Utils/Expunge.hpp>
 #include <Tools/Tools_forward.hpp>
 
 navigationBar::navigationBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder) :

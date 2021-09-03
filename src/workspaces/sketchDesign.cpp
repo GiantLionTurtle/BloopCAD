@@ -1,9 +1,9 @@
 
 #include "sketchDesign.hpp"
 
-#include <utils/Expunge.hpp>
-#include <utils/preferences.hpp>
-#include <utils/mathUtils.hpp>
+#include <Utils/Expunge.hpp>
+#include <Utils/Preferences.hpp>
+#include <Utils/Maths_util.hpp>
 #include <Actions/Part/EnterPart_action.hpp>
 #include <Actions/Sketch/QuitSketch_action.hpp>
 #include <Actions/Common/MoveCamera_action.hpp>
@@ -18,7 +18,7 @@
 #include <Tools/Sketch/SketchDefault_tool.hpp>
 #include <Tools/Sketch/Pan2d_tool.hpp>
 #include <Tools/Sketch/Zoom2d_tool.hpp>
-#include <utils/xmlParser.hpp>
+#include <Utils/XMLParser.hpp>
 #include <Drawables/svgEntity.hpp>
 #include <bloop.hpp>
 
@@ -305,6 +305,6 @@ void sketchDesign::finish()
 	mState->doc->push_action(Action_ptr(new Serial_action({
 		Action_ptr(new QuitSketch_action(target())),
 		Action_ptr(new EnterPart_action(true)),
-		Action_ptr(new MoveCamera_action(nullptr, mState->startCamState, preferences::get_instance().get_long("camtrans")))
+		Action_ptr(new MoveCamera_action(nullptr, mState->startCamState, Preferences::get_instance().get_long("camtrans")))
 	})));
 }

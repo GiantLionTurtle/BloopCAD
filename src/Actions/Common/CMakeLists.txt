@@ -11,6 +11,6 @@ set(Common_actions_source_files
 add_library(Common_actions ${Common_actions_source_files})
 
 target_link_libraries(Common_actions
-  utils
+  Utils
   Drawables
   )

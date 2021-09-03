@@ -4,7 +4,7 @@
 
 #include <Actions/Action.hpp>
 #include <Graphics_utils/Camera.hpp>
-#include <utils/animatable.hpp>
+#include <Utils/Animatable.hpp>
 #include <Geom/Geom3d/Plane_abstr.hpp>
 
 class MoveCamera_action : public Action {
@@ -12,9 +12,9 @@ private:
 	Camera_ptr mCamera;
 	CameraState mInitState, mTargetState;
 	bool mStarted;
-	animatable<glm::quat> mRotation;
-	animatable<glm::vec3> mTranslation;
-	animatable<glm::vec3> mScale;
+	Animatable<glm::quat> mRotation;
+	Animatable<glm::vec3> mTranslation;
+	Animatable<glm::vec3> mScale;
 	glm::vec3 mFinalOrientation;
 	long mDuration;
 public:
@@ -28,7 +28,7 @@ public:
 	virtual bool undo_work(document* caller);
 private:
 	bool move_Camera();
-	void compute_animatables(CameraState const& state);
+	void compute_Animatables(CameraState const& state);
 };
 
 #endif
