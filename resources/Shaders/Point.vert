@@ -1,4 +1,8 @@
 
+/*
+    This shader transforms 3d coordinate to screen coordinate
+*/
+
 #version 330
 
 layout(location = 0) in vec3 vertexPosition;

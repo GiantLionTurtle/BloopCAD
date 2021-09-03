@@ -61,9 +61,9 @@ void SkLineCurve::init_impl()
 	mShader = ShadersPool::get_instance().get("line");
 	if(!mShader) {
 		mShader = Shader::fromFiles_ptr({
-		{"resources/shaders/lineShader.vert", GL_VERTEX_SHADER},
-		{"resources/shaders/lineShader.geom", GL_GEOMETRY_SHADER}, 
-		{"resources/shaders/lineShader.frag", GL_FRAGMENT_SHADER}}); // Geometry Shader is needed because line is expanded on the gpu
+		{"resources/Shaders/Point.vert", GL_VERTEX_SHADER},
+		{"resources/Shaders/Line.geom", GL_GEOMETRY_SHADER}, 
+		{"resources/Shaders/Line.frag", GL_FRAGMENT_SHADER}}); // Geometry Shader is needed because line is expanded on the gpu
 		ShadersPool::get_instance().add("line", mShader);
 	}
 	if(kFisrstInst) {

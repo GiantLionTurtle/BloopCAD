@@ -1,3 +1,8 @@
+
+/*
+	This shader draws a singular point of the specified radius on the geometry (usualy a quad)
+*/
+
 #version 330
 
 out vec4 fragColor;

@@ -64,7 +64,7 @@ void SkSelRect::init_impl()
 	// Create the Shaders
 	mShader = ShadersPool::get_instance().get("plane");
 	if(!mShader) {
-		mShader = Shader::fromFiles_ptr("resources/shaders/planeShader.vert", "resources/shaders/planeShader.frag");
+		mShader = Shader::fromFiles_ptr("resources/Shaders/Point.vert", "resources/Shaders/PlainColor.frag");
 		ShadersPool::get_instance().add("plane", mShader);
 	}
 }

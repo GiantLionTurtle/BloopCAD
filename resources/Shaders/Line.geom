@@ -1,4 +1,8 @@
 
+/*
+	This shader transforms a two point line segement into a triangle strip to render it at a specified width
+*/
+
 #version 330 core
 layout (lines) in;
 layout (triangle_strip, max_vertices = 4) out;

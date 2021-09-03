@@ -1,6 +1,10 @@
 
 // Shader adapted from https://web.engr.oregonstate.edu/~mjb/cs519/Handouts/tessellation.1pp.pdf
 
+/*
+    This shader determines the tesselation level of a circle
+*/
+
 #version 400
 
 uniform float u_Scale;

@@ -96,9 +96,9 @@ void SkSprite::init_impl()
 	mShader = ShadersPool::get_instance().get("fixedSizeTexturedQuad");
 	if(!mShader) {
 		mShader = Shader::fromFiles_ptr({
-		{"resources/shaders/offsetPointShader.vert", GL_VERTEX_SHADER},
-		{"resources/shaders/fixedSizeQuad.geom", GL_GEOMETRY_SHADER}, 
-		{"resources/shaders/annotationShader.frag", GL_FRAGMENT_SHADER}}); // Geometry Shader is needed because point is expanded on the gpu
+		{"resources/Shaders/OffsetPoint.vert", GL_VERTEX_SHADER},
+		{"resources/Shaders/QuadExpand.geom", GL_GEOMETRY_SHADER}, 
+		{"resources/Shaders/TextureBacklit.frag", GL_FRAGMENT_SHADER}}); // Geometry Shader is needed because point is expanded on the gpu
 		ShadersPool::get_instance().add("fixedSizeTexturedQuad", mShader);
 	}
 	if(kFisrstInst) {

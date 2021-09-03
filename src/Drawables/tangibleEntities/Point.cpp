@@ -64,9 +64,9 @@ void Point::init_impl()
 	mShader = ShadersPool::get_instance().get("point");
 	if(!mShader) {
 		mShader = Shader::fromFiles_ptr({
-		{"resources/shaders/pointShader.vert", GL_VERTEX_SHADER},
-		{"resources/shaders/pointShader.geom", GL_GEOMETRY_SHADER}, 
-		{"resources/shaders/pointShader.frag", GL_FRAGMENT_SHADER}}); // Geometry Shader is needed because point is expanded on the gpu
+		{"resources/Shaders/Point.vert", GL_VERTEX_SHADER},
+		{"resources/Shaders/SquareExpand.geom", GL_GEOMETRY_SHADER}, 
+		{"resources/Shaders/Point.frag", GL_FRAGMENT_SHADER}}); // Geometry Shader is needed because point is expanded on the gpu
 		ShadersPool::get_instance().add("point", mShader);
 	}
 	set_name("point");

@@ -1,4 +1,8 @@
 
+/*
+    This shader transfers points from 3d to screen space with a specified pixel offset
+*/
+
 #version 330
 
 layout(location = 0) in vec3 vertexPosition;

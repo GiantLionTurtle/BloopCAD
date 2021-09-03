@@ -1,3 +1,8 @@
+
+/*
+    This shader draws a texture with a background color on the geometry
+*/
+
 #version 330
 
 out vec4 fragColor;

@@ -1,3 +1,8 @@
+
+/*
+    This shader draws a text texture
+*/
+
 #version 330
 
 out vec4 fragColor;

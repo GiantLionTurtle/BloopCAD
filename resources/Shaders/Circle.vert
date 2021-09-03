@@ -1,4 +1,8 @@
 
+/*
+    This shader is a normal point shader that also passes along useful circle data
+*/
+
 #version 330
 
 layout(location = 0) in vec3 center;
