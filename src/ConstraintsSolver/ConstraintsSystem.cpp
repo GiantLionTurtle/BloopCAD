@@ -9,13 +9,14 @@ ConstraintsSystem::ConstraintsSystem():
 	mBrokenDown(false),
 	mSolverType(SolverState::LevenbergMarquardt),
 	mNum_liveConstrs(0),
-	mNum_liveVars(0)
+	mNum_liveVars(0),
+	mNum_liveClusters(0)
 {
 
 }
 ConstraintsSystem::~ConstraintsSystem()
 {
-	clear_subClusters();
+	clear_clusters();
 }
 bool ConstraintsSystem::satisfied()
 {
@@ -63,8 +64,8 @@ int ConstraintsSystem::solve()
 	verbose(VERBOSE_STEPS, "Solving clusters...");
 	int output = SolverState::SUCCESS;
 
-	for(int i = 0; i < mSubClusters.size(); ++i) {
-		auto clust = mSubClusters[i];
+	for(int i = 0; i < mNum_liveClusters; ++i) {
+		auto clust = mClusters[i];
 		verbose(VERBOSE_STEPS, "Solving cluster #"<<i<<"...");
 		output = std::max(output, clust->solve());
 	}
@@ -78,8 +79,8 @@ int ConstraintsSystem::solve()
 
 	if(output == SolverState::FAILURE && had_dragged) {
 		output = SolverState::SUCCESS;
-		for(int i = 0; i < mSubClusters.size(); ++i) {
-			auto clust = mSubClusters[i];
+		for(int i = 0; i < mNum_liveClusters; ++i) {
+			auto clust = mClusters[i];
 			if(clust->output() == SolverState::SUCCESS)
 				continue;
 			verbose(VERBOSE_STEPS, "Solving cluster #"<<i<<" on second pass...");
@@ -93,8 +94,6 @@ int ConstraintsSystem::solve()
 
 void ConstraintsSystem::breakDown_problem()
 {
-	mBrokenDown = false;
-
 	std::vector<Constraint_abstr*> liveConstraints;
 	std::vector<var_ptr> liveVars;
 
@@ -107,47 +106,53 @@ void ConstraintsSystem::breakDown_problem()
 			liveVars.push_back(var);
 	}
 
-	clear_subClusters();
+	// clear_clusters();
 	ConstraintGraph g(liveConstraints, liveVars);
 
 	std::vector<int> constr_clust(0), var_clust(0);
-	int n_clusters = g.connected_clusters(constr_clust, var_clust);
-	for(int i = 0; i < n_clusters; ++i) {
-		mSubClusters.push_back(new EquationsCluster({}, {}, solverType()));
-		mSubClusters.back()->set_id(i);
+	mNum_liveClusters = g.connected_clusters(constr_clust, var_clust);
+
+	// Create new clusters as needed
+	for(int i = mClusters.size(); i < mNum_liveClusters; ++i) {
+		mClusters.push_back(new EquationsCluster({}, {}, solverType()));
+	}
+
+	// It is simpler to clear and readd variables and equation then
+	// to try and track change to do chirurgical editing, it might
+	// be a future project
+	for(int i = 0; i < mNum_liveClusters; ++i) {
+		mClusters[i]->set_id(i);
+		mClusters[i]->clear();
+		mClusters[i]->set_solver(solverType()); //Not useful at the moment but it might be an option to switch solver on the fly
 	}
 
 	for (size_t i = 0; i < constr_clust.size(); ++i) {
 		int ind = constr_clust[i];
-		if(ind < 0 || ind >= mSubClusters.size())
+		if(ind < 0 || ind >= mClusters.size())
 			continue;
 		for(size_t j = 0; j < liveConstraints[i]->n_equs(); ++j) {
-			mSubClusters[ind]->add_equ(liveConstraints[i]->equ(j));
+			mClusters[ind]->add_equ(liveConstraints[i]->equ(j));
 		}
 	}
 
 	for (size_t i = 0; i < var_clust.size(); ++i) {
 		int ind = var_clust[i];
-		if(ind < 0 || ind >= mSubClusters.size())
+		if(ind < 0 || ind >= mClusters.size())
 			continue;
-		mSubClusters[ind]->add_var(liveVars[i]);
-	}
-
-	for(size_t i = 0; i < mSubClusters.size(); ++i) {
-		mSubClusters[i]->init();
+		mClusters[ind]->add_var(liveVars[i]);
 	}
 
 	mBrokenDown = true;
 }
 
-void ConstraintsSystem::clear_subClusters()
+void ConstraintsSystem::clear_clusters()
 {
-	for(int i = 0; i < mSubClusters.size(); ++i) {
-		// mSubClusters[i]->clear_substitutions();
-		// mSubClusters[i]->clear_tags();
-		expunge(mSubClusters[i]);
+	for(int i = 0; i < mClusters.size(); ++i) {
+		// mClusters[i]->clear_substitutions();
+		// mClusters[i]->clear_tags();
+		expunge(mClusters[i]);
 	}
-	mSubClusters.clear();
+	mClusters.clear();
 }
 
 void ConstraintsSystem::varState(std::vector<VarState>& state)

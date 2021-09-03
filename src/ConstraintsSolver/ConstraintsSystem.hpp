@@ -13,11 +13,13 @@ class ConstraintsSystem {
 protected:
 	std::vector<Constraint_abstr*> mConstraints;
 	std::vector<var_ptr> mVariables;
-	std::vector<EquationsCluster*> mSubClusters;
+	std::vector<EquationsCluster*> mClusters;
 
 	bool mBrokenDown;
 	int mSolverType;
 	int mNum_liveConstrs, mNum_liveVars;
+	int mNum_liveClusters; 	// Number of clusters that are used to solve the system, 
+							// the clusters used are garanteed to be at the begining of the vector
 public:
 	ConstraintsSystem();
 	~ConstraintsSystem();
@@ -34,7 +36,7 @@ public:
 	int solverType() { return mSolverType; }
 	void set_solverType(int type) { mSolverType = type; }
 
-	void clear_subClusters();
+	void clear_clusters();
 
 	var_ptr var(size_t ind) { return mVariables[ind]; }
 	void varState(std::vector<VarState>& state);

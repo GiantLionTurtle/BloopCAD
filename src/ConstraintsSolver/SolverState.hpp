@@ -4,7 +4,7 @@
 
 struct SolverState {
     enum solveOutput { RUNNING, SUCCESS, FAILURE, INVALID };
-	enum algorithm { DogLeg, LevenbergMarquardt };
+	enum algorithm { None, DogLeg, LevenbergMarquardt };
  
 };
 

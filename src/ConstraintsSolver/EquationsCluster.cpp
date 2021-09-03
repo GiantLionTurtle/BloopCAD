@@ -19,11 +19,6 @@ EquationsCluster::~EquationsCluster()
 
 }
 
-void EquationsCluster::init()
-{
-
-}
-
 void EquationsCluster::add_equ(equ_ptr equ)
 {
 	if(!equ) {
@@ -198,6 +193,14 @@ void EquationsCluster::retrieve_variables(Eigen::VectorXd& container, bool activ
 	}
 }
 
+void EquationsCluster::clear()
+{
+	mEqus.clear();
+	mVars.clear();
+	mId = 0;
+	mLastOutput = SolverState::solveOutput::INVALID;
+	mAlgorithm = SolverState::algorithm::None;
+}
 void EquationsCluster::clear_tags()
 {
 	for(auto equ : mEqus) {

@@ -21,8 +21,7 @@ private:
 public:	
 	EquationsCluster(std::vector<equ_ptr> equs, std::set<var_ptr> vars, int solver_algo);
 	~EquationsCluster();	
-	
-	void init();
+
 	void add_equ(equ_ptr equ);
 	void add_var(var_ptr var);
 
@@ -82,6 +81,7 @@ public:
 	*/
 	void retrieve_variables(Eigen::VectorXd& container, bool activeVars_only = false);
 
+	void clear();
 	void clear_tags();
 	void clear_substitutions();
 	void apply_substitutions();
