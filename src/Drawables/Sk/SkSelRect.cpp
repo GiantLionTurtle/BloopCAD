@@ -68,7 +68,7 @@ void SkSelRect::init_impl()
 		ShadersPool::get_instance().add("plane", mShader);
 	}
 }
-void SkSelRect::draw_impl(Camera_ptr cam, int frame, draw_type type)
+void SkSelRect::draw_impl(Camera* cam, int frame, draw_type type)
 {
 	mShader->bind();
 	glm::vec3 color;

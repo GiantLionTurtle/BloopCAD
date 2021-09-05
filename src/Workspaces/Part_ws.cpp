@@ -1,5 +1,5 @@
 
-#include "partDesign.hpp"
+#include "Part_ws.hpp"
 
 #include <Utils/Expunge.hpp>
 #include <bloop.hpp>
@@ -9,17 +9,13 @@
 
 #include <memory>
 
-partDesign::partDesign(bloop* parent) :
-	workspace(parent)
-{}
-
-partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
-	workspace("partDesign_upperBar", builder, parent) // Create base workspace with ui upper bar
+Part_ws::Part_ws(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
+	Workspace_abstr("Part_ws_upperBar", builder, parent) // Create base workspace with ui upper bar
 {
 	// Creat all the tools used in this workspace
-	mPartDefault_tool = std::make_shared<PartDefault_tool>(this);
-	mStartSketch_tool 		= std::make_shared<StartSketch_tool>(this);
-	mPan3d_tool				= std::make_shared<Pan3d_tool>(this);
+	mPartDefault_tool 		= new PartDefault_tool(this);
+	mStartSketch_tool 		= new StartSketch_tool(this);
+	mPan3d_tool				= new Pan3d_tool(this);
 	mDefaultTool = mPartDefault_tool;
 
 	// Initialize all buttons as 2 nullptr
@@ -49,23 +45,27 @@ partDesign::partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent)
 		std::get<0>(mButtons.at("extrusion"))->		set_image(*std::get<1>(mButtons.at("extrusion")));
 
 		// Set all the buttons' callback
-		std::get<0>(mButtons.at("startSketch"))->	signal_clicked().connect(sigc::mem_fun(*this, &partDesign::begin_startSketch));
-		std::get<0>(mButtons.at("extrusion"))->		signal_clicked().connect(sigc::mem_fun(*this, &partDesign::begin_extrusion));
+		std::get<0>(mButtons.at("startSketch"))->	signal_clicked().connect(sigc::mem_fun(*this, &Part_ws::begin_startSketch));
+		std::get<0>(mButtons.at("extrusion"))->		signal_clicked().connect(sigc::mem_fun(*this, &Part_ws::begin_extrusion));
 	} else {
-		LOG_ERROR("Could not build part design workspace.");
+		LOG_ERROR("Could not build part design Workspace_abstr.");
 	}
 }
-partDesign::~partDesign()
+Part_ws::~Part_ws()
 {
+	expunge(mPartDefault_tool);
+	expunge(mStartSketch_tool);
+	mDefaultTool = nullptr;
+
 	for(auto it = mButtons.begin(); it != mButtons.end(); ++it) {
 		expunge(it->second.first);
 		expunge(it->second.second);
 	}
 }
 
-bool partDesign::set_tool(int name)
+bool Part_ws::set_tool(int name)
 {
-	Tool_abstract_ptr to_set = nullptr;
+	Tool_abstract* to_set = nullptr;
 	switch(name) {
 	case TOOLIDS::TOOLID_PARTDESIGNDEFAULT:
 		to_set = mPartDefault_tool;
@@ -77,13 +77,13 @@ bool partDesign::set_tool(int name)
 		to_set = mPan3d_tool;
 		break;
 	default:
-		return workspace::set_tool(name);
+		return Workspace_abstr::set_tool(name);
 	}
-	workspace::set_tool(to_set);
+	Workspace_abstr::set_tool(to_set);
 	return true;
 }
 
-bool partDesign::manage_key_press(GdkEventKey* event)
+bool Part_ws::manage_key_press(GdkEventKey* event)
 {
 	switch(event->keyval) {
 	case GDK_KEY_S:
@@ -91,16 +91,16 @@ bool partDesign::manage_key_press(GdkEventKey* event)
 		begin_startSketch();
 		break;
 	default:
-		return workspace::manage_key_press(event);
+		return Workspace_abstr::manage_key_press(event);
 	}
 	return true;
 }
 
-void partDesign::begin_startSketch()
+void Part_ws::begin_startSketch()
 {
 	set_tool(TOOLID_STARTSKECTH);
 }
-void partDesign::begin_extrusion()
+void Part_ws::begin_extrusion()
 {
 	LOG_WARNING("Extrusion not implemented yet");
 }

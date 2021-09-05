@@ -5,10 +5,10 @@
 #include <Drawables/Sketch.hpp>
 #include <Actions/Common/ToggleBaseObject_action.hpp>
 
-Point_tool::Point_tool(sketchDesign* env):
+Point_tool::Point_tool(Sketch_ws* env):
 	tool(env)
 {
-	DEBUG_ASSERT(mEnv, "No valid workspace.");
+	DEBUG_ASSERT(mEnv, "No valid Workspace_abstr.");
 }
 
 void Point_tool::init()
@@ -24,7 +24,7 @@ bool Point_tool::manage_button_press(GdkEventButton* event)
 	DEBUG_ASSERT(target, "No valid target.");
 
 	// Find where the ray intersectpos_on_plane
-	Camera_ptr cam = mEnv->state()->cam; // For ease of writing
+	Camera* cam = mEnv->state()->cam; // For ease of writing
 	Geom3d::Plane_abstr* pl = target->basePlane();
 	glm::vec2 point_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 

@@ -8,7 +8,7 @@
 	@class Zoom3d_tool describe the tool used to zoom the model
 	@parent : Tool_abstract
 */
-class Zoom3d_tool : public tool<workspace> {
+class Zoom3d_tool : public tool<Workspace_abstr> {
 private:
 	glm::vec2 prevPos; // Helper previous position of mouse, on last update
 	glm::vec2 zoomStart; // Position of the mouse when the zoom start (with mouse move zoom)
@@ -19,7 +19,7 @@ public:
 
 		@param env : The workspace owning the tool
 	*/
-	Zoom3d_tool(workspace* env);
+	Zoom3d_tool(Workspace_abstr* env);
 	
 	/*
 		@function finish is an override to clean up after the tool stops being used (but not destroyed)

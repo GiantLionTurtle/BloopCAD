@@ -28,7 +28,7 @@ void Drawable::init()
 		mInited = true;
 	}
 }
-void Drawable::draw(Camera_ptr cam, int frame, draw_type type)
+void Drawable::draw(Camera* cam, int frame, draw_type type)
 {
 	if(type == draw_type::ACTIVE && !active())
 		return;

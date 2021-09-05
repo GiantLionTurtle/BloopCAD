@@ -95,7 +95,7 @@ public:
 	virtual ~Drawable();
 
 	void init();
-	virtual void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
+	virtual void draw(Camera* cam, int frame, draw_type type = draw_type::ALL);
 	void update(bool force = false);
 
 	void notify_parent(int msg); // BLOOPBLOOPCHECKIFUSED
@@ -242,7 +242,7 @@ public:
 protected:
 
 	virtual void init_impl() {}
-	virtual void draw_impl(Camera_ptr cam, int frame, draw_type type) {}
+	virtual void draw_impl(Camera* cam, int frame, draw_type type) {}
 	virtual void update_impl() {}
 
 	virtual void select_impl(bool sel) {}

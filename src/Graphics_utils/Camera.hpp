@@ -38,9 +38,6 @@ std::ostream& operator<<(std::ostream &os, CameraState const& st);
 bool operator !=(CameraState const& st1, CameraState const& st2);
 bool operator ==(CameraState const& st1, CameraState const& st2);
 
-class Camera;
-using Camera_ptr = std::shared_ptr<Camera>;
-
 class Camera {
 protected:
 	glm::vec3 mInternalPos, mInternalTarget; // Position of the Camera and the position it is looking at
@@ -199,7 +196,7 @@ public:
 	/*
 		@function set sets the Camera to have the same everything as another Camera
 	*/
-	void copy(Camera_ptr other);
+	void copy(Camera* other);
 
 	bool need_update() const { return mRequire_update; }
 	void update(bool silent = false);

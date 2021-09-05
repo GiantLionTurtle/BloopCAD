@@ -9,7 +9,7 @@
 
 class MoveCamera_action : public Action {
 private:
-	Camera_ptr mCamera;
+	Camera* mCamera;
 	CameraState mInitState, mTargetState;
 	bool mStarted;
 	Animatable<glm::quat> mRotation;
@@ -18,11 +18,11 @@ private:
 	glm::vec3 mFinalOrientation;
 	long mDuration;
 public:
-	MoveCamera_action(Camera_ptr cam, CameraState target, long duration_ms);
+	MoveCamera_action(Camera* cam, CameraState target, long duration_ms);
 
 	static Action_ptr create_from_facingPlane(	Geom3d::Plane_abstr* toFace, float dist_to_plane, 
-															CameraState const& camSt, Camera_ptr cam);
-	static Action_ptr create_from_facingPlane(Geom3d::Plane_abstr* toFace, float dist_to_plane, Camera_ptr cam);
+															CameraState const& camSt, Camera* cam);
+	static Action_ptr create_from_facingPlane(Geom3d::Plane_abstr* toFace, float dist_to_plane, Camera* cam);
 
 	virtual bool do_work(document* caller);
 	virtual bool undo_work(document* caller);

@@ -72,7 +72,7 @@ void Point::init_impl()
 	set_name("point");
 }
 
-void Point::draw_impl(Camera_ptr cam, int frame, draw_type type)
+void Point::draw_impl(Camera* cam, int frame, draw_type type)
 {
 	mShader->bind();
 	glm::vec4 color = glm::vec4(mColor, 1.0f);

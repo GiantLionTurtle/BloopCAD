@@ -5,8 +5,7 @@
 
 EnterPart_action::EnterPart_action(bool set_Camera):
 	SwitchWorkspace_action(bloop::PART, set_Camera),
-	mTarget(nullptr),
-	mInitialTarget(nullptr)
+	mTarget(nullptr)
 {
 
 }
@@ -18,8 +17,6 @@ bool EnterPart_action::do_work(document* caller)
 	if(mTarget && !mTarget->has_volume()) {
 		mTarget->show_origin();
 	}
-	mInitialTarget = caller->state()->target;
-	caller->state()->target = mTarget;
 	return true;
 }
 
@@ -29,6 +26,5 @@ bool EnterPart_action::undo_work(document* caller)
 	if(mTarget) {
 		mTarget->hide_origin();
 	}
-	caller->state()->target = mInitialTarget;
 	return true;
 }

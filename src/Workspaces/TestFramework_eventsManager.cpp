@@ -1,5 +1,5 @@
 
-#include "testFramework_eventsManager.hpp"
+#include "TestFramework_eventsManager.hpp"
 
 #include <bloop.hpp>
 #include <document.hpp>
@@ -10,7 +10,7 @@
 #include <Tools/Sketch/Horizontality_tool.hpp>
 #include <Tools/Sketch/Perpendicularity_tool.hpp>
 
-test_eventsManager::test_eventsManager():
+Test_EventsManager::Test_EventsManager():
 	mTestStep(-1),
 	mTestStepDone(0),
 	mLastAction(std::chrono::steady_clock::now())
@@ -18,7 +18,7 @@ test_eventsManager::test_eventsManager():
 
 }
 
-bool test_eventsManager::manage_key_press(GdkEventKey* event)
+bool Test_EventsManager::manage_key_press(GdkEventKey* event)
 {
 	if(event->keyval == GDK_KEY_o) {
 		mTestStep++;
@@ -26,13 +26,13 @@ bool test_eventsManager::manage_key_press(GdkEventKey* event)
 	return true;
 }
 
-bool test_eventsManager::manage_tick(const Glib::RefPtr<Gdk::FrameClock>& frame_clock)
+bool Test_EventsManager::manage_tick(const Glib::RefPtr<Gdk::FrameClock>& frame_clock)
 {
 	do_test();
-	return stimuli_eventsManager::manage_tick(frame_clock);
+	return stimuli_EventsManager::manage_tick(frame_clock);
 }
 
-void test_eventsManager::do_test()
+void Test_EventsManager::do_test()
 {
 	if(mTestStep >= mTestStepDone) {
 		document_ptr doc = mBloopWindow->currentDocument();

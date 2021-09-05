@@ -1,5 +1,5 @@
 
-#include "sketchDesign.hpp"
+#include "Sketch_ws.hpp"
 
 #include <Utils/Expunge.hpp>
 #include <Utils/Preferences.hpp>
@@ -22,26 +22,20 @@
 #include <Drawables/svgEntity.hpp>
 #include <bloop.hpp>
 
-sketchDesign::sketchDesign(bloop* parent) :
-	workspace(parent)
-{
-	
-}
-
-sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
-	workspace("sketchDesign_upperBar", builder, parent) // Create base workspace with upper bar
+Sketch_ws::Sketch_ws(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
+	Workspace_abstr("Sketch_ws_upperBar", builder, parent) // Create base workspace with upper bar
 {	
 	// Create all the tools used in this workspace
-	mPan3d_tool 					= std::make_shared<Pan2d_tool>(this);
-	mZoom3d_tool					= std::make_shared<Zoom2d_tool>(this);
-	mSketchDefault_tool 			= std::make_shared<SketchDefault_tool>(this);
-	mPoint_tool 					= std::make_shared<Point_tool>(this);
-	mLine_tool 						= std::make_shared<Line_tool>(this);
-	mCircle_tool 					= std::make_shared<Circle_tool>(this);
-	mCoincidence_tool 				= std::make_shared<Coincidence_tool>(this);
-	mVerticality_tool 				= std::make_shared<Verticality_tool>(this);
-	mHorizontality_tool 			= std::make_shared<Horizontality_tool>(this);
-	mPerpendiculatiry_tool 			= std::make_shared<Perpendicularity_tool>(this);
+	mPan3d_tool 					= new Pan2d_tool(this);
+	mZoom3d_tool					= new Zoom2d_tool(this);
+	mSketchDefault_tool 			= new SketchDefault_tool(this);
+	mPoint_tool 					= new Point_tool(this);
+	mLine_tool 						= new Line_tool(this);
+	mCircle_tool 					= new Circle_tool(this);
+	mCoincidence_tool 				= new Coincidence_tool(this);
+	mVerticality_tool 				= new Verticality_tool(this);
+	mHorizontality_tool 			= new Horizontality_tool(this);
+	mPerpendiculatiry_tool 			= new Perpendicularity_tool(this);
 	mDefaultTool = mSketchDefault_tool;
 
 	// Initialize all buttons as 2 nullptr
@@ -121,20 +115,20 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 
 
 		// Set all the buttons' callback
-		std::get<0>(mButtons.at("line"))->			signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::begin_line));
-		std::get<0>(mButtons.at("point"))->			signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::begin_point));
-		std::get<0>(mButtons.at("rectangle"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::begin_rectangle));
-		std::get<0>(mButtons.at("circle"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::begin_circle));
-		std::get<0>(mButtons.at("polygon"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::begin_polygon));
-		std::get<0>(mButtons.at("threePointsArc"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::begin_threePointsArc));
+		std::get<0>(mButtons.at("line"))->			signal_clicked().connect(sigc::mem_fun(*this, &Sketch_ws::begin_line));
+		std::get<0>(mButtons.at("point"))->			signal_clicked().connect(sigc::mem_fun(*this, &Sketch_ws::begin_point));
+		std::get<0>(mButtons.at("rectangle"))->		signal_clicked().connect(sigc::mem_fun(*this, &Sketch_ws::begin_rectangle));
+		std::get<0>(mButtons.at("circle"))->		signal_clicked().connect(sigc::mem_fun(*this, &Sketch_ws::begin_circle));
+		std::get<0>(mButtons.at("polygon"))->		signal_clicked().connect(sigc::mem_fun(*this, &Sketch_ws::begin_polygon));
+		std::get<0>(mButtons.at("threePointsArc"))->signal_clicked().connect(sigc::mem_fun(*this, &Sketch_ws::begin_threePointsArc));
 
-		std::get<0>(mButtons.at("dimension"))->			signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::begin_dimension));
-		std::get<0>(mButtons.at("verticality"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::begin_verticality));
-		std::get<0>(mButtons.at("horizontality"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::begin_horizontality));
-		std::get<0>(mButtons.at("perpendicularity"))->	signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::begin_perpendicularity));
-		std::get<0>(mButtons.at("parallelism"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::begin_parallelism));
-		std::get<0>(mButtons.at("coincidence"))->		signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::begin_coincidence));
-		std::get<0>(mButtons.at("equality"))->			signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::begin_equality));
+		std::get<0>(mButtons.at("dimension"))->			signal_clicked().connect(sigc::mem_fun(*this, &Sketch_ws::begin_dimension));
+		std::get<0>(mButtons.at("verticality"))->		signal_clicked().connect(sigc::mem_fun(*this, &Sketch_ws::begin_verticality));
+		std::get<0>(mButtons.at("horizontality"))->		signal_clicked().connect(sigc::mem_fun(*this, &Sketch_ws::begin_horizontality));
+		std::get<0>(mButtons.at("perpendicularity"))->	signal_clicked().connect(sigc::mem_fun(*this, &Sketch_ws::begin_perpendicularity));
+		std::get<0>(mButtons.at("parallelism"))->		signal_clicked().connect(sigc::mem_fun(*this, &Sketch_ws::begin_parallelism));
+		std::get<0>(mButtons.at("coincidence"))->		signal_clicked().connect(sigc::mem_fun(*this, &Sketch_ws::begin_coincidence));
+		std::get<0>(mButtons.at("equality"))->			signal_clicked().connect(sigc::mem_fun(*this, &Sketch_ws::begin_equality));
 
 		std::get<0>(mButtons.at("verticality"))->		set_tooltip_text("verticality");
 		std::get<0>(mButtons.at("horizontality"))->		set_tooltip_text("horizontality");
@@ -143,25 +137,37 @@ sketchDesign::sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* par
 		std::get<0>(mButtons.at("coincidence"))->		set_tooltip_text("coincidence");
 		std::get<0>(mButtons.at("equality"))->			set_tooltip_text("equality");
 
-		std::get<0>(mButtons.at("to_svg"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::to_svg));
+		std::get<0>(mButtons.at("to_svg"))->signal_clicked().connect(sigc::mem_fun(*this, &Sketch_ws::to_svg));
 
-		std::get<0>(mButtons.at("sketchFinish"))->signal_clicked().connect(sigc::mem_fun(*this, &sketchDesign::finish));
+		std::get<0>(mButtons.at("sketchFinish"))->signal_clicked().connect(sigc::mem_fun(*this, &Sketch_ws::finish));
 
 	} else {
-		LOG_ERROR("Could not build sketch workspace.");
+		LOG_ERROR("Could not build sketch Workspace_abstr.");
 	}	
 }
-sketchDesign::~sketchDesign()
+Sketch_ws::~Sketch_ws()
 {
+	expunge(mPan3d_tool);
+	expunge(mZoom3d_tool);
+	expunge(mSketchDefault_tool);
+	expunge(mPoint_tool);
+	expunge(mLine_tool);
+	expunge(mCircle_tool);
+	expunge(mCoincidence_tool);
+	expunge(mVerticality_tool);
+	expunge(mHorizontality_tool);
+	expunge(mPerpendiculatiry_tool);
+	mDefaultTool = nullptr;
+
 	for(auto it = mButtons.begin(); it != mButtons.end(); ++it) {
 		expunge(it->second.first);
 		expunge(it->second.second);
 	}
 }
 
-bool sketchDesign::set_tool(int name)
+bool Sketch_ws::set_tool(int name)
 {
-	Tool_abstract_ptr to_set = nullptr;
+	Tool_abstract* to_set = nullptr;
 	switch(name) {
 	case TOOLIDS::TOOLID_SKETCHDESIGNDEFAULT:
 		to_set = mSketchDefault_tool;
@@ -194,13 +200,13 @@ bool sketchDesign::set_tool(int name)
 		to_set = mZoom3d_tool;
 		break;
 	default:
-		return workspace::set_tool(name);
+		return Workspace_abstr::set_tool(name);
 	}
-	workspace::set_tool(to_set);
+	Workspace_abstr::set_tool(to_set);
 	return true;
 }
 
-bool sketchDesign::manage_key_press(GdkEventKey* event)
+bool Sketch_ws::manage_key_press(GdkEventKey* event)
 {
 	switch(event->keyval) {
 	case GDK_KEY_L:
@@ -212,69 +218,69 @@ bool sketchDesign::manage_key_press(GdkEventKey* event)
 		begin_coincidence();
 		break;
 	default:
-		return workspace::manage_key_press(event);
+		return Workspace_abstr::manage_key_press(event);
 	}
 	return true;
 }
-bool sketchDesign::manage_mouse_scroll(GdkEventScroll* event)
+bool Sketch_ws::manage_mouse_scroll(GdkEventScroll* event)
 {
 	return mZoom3d_tool->manage_scroll(event);
 }
-void sketchDesign::begin_line()
+void Sketch_ws::begin_line()
 {
 	set_tool(TOOLIDS::TOOLID_LINE);
 }
-void sketchDesign::begin_point()
+void Sketch_ws::begin_point()
 {
 	set_tool(TOOLIDS::TOOLID_POINT);
 }
-void sketchDesign::begin_rectangle()
+void Sketch_ws::begin_rectangle()
 {
 	LOG_WARNING("This tool is not available yet.");
 }
-void sketchDesign::begin_polygon()
+void Sketch_ws::begin_polygon()
 {
 	LOG_WARNING("This tool is not available yet.");
 }
-void sketchDesign::begin_circle()
+void Sketch_ws::begin_circle()
 {
 	set_tool(TOOLIDS::TOOLID_CIRCLE);
 }
-void sketchDesign::begin_threePointsArc()
+void Sketch_ws::begin_threePointsArc()
 {
 	LOG_WARNING("This tool is not available yet.");
 }
 
-void sketchDesign::begin_dimension()
+void Sketch_ws::begin_dimension()
 {
 	LOG_WARNING("This tool is not available yet.");
 }
-void sketchDesign::begin_verticality()
+void Sketch_ws::begin_verticality()
 {
 	set_tool(TOOLIDS::TOOLID_VERTICALITY);
 }
-void sketchDesign::begin_horizontality()
+void Sketch_ws::begin_horizontality()
 {
 	set_tool(TOOLIDS::TOOLID_HORIZONTALITY);
 }
-void sketchDesign::begin_perpendicularity()
+void Sketch_ws::begin_perpendicularity()
 {
 	set_tool(TOOLIDS::TOOLID_PERPENDICULARITY);
 }
-void sketchDesign::begin_parallelism()
+void Sketch_ws::begin_parallelism()
 {
 	LOG_WARNING("This tool is not available yet.");
 }
-void sketchDesign::begin_coincidence()
+void Sketch_ws::begin_coincidence()
 {
 	set_tool(TOOLIDS::TOOLID_COINCIDENCE);
 }
-void sketchDesign::begin_equality()
+void Sketch_ws::begin_equality()
 {
 	LOG_WARNING("This tool is not available yet.");
 }
 
-void sketchDesign::to_svg()
+void Sketch_ws::to_svg()
 {
 	// XML_document svgDoc;
 	// XML_declaration* dec = new XML_declaration;
@@ -300,7 +306,7 @@ void sketchDesign::to_svg()
 	// svgDoc.save("output.svg");
 }
 
-void sketchDesign::finish()
+void Sketch_ws::finish()
 {
 	mState->doc->push_action(Action_ptr(new Serial_action({
 		Action_ptr(new QuitSketch_action(target())),

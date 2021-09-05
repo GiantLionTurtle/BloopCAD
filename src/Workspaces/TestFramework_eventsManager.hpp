@@ -2,19 +2,19 @@
 #ifndef TESTFRAMEWORK_EVENTSMANAGER_HPP_
 #define TESTFRAMEWORK_EVENTSMANAGER_HPP_
 
-#include "eventsManager.hpp"
+#include "EventsManager.hpp"
 
 #include <Drawables/Sk/SkLine.hpp>
 #include <Drawables/Sk/SkPoint.hpp>
 
-class test_eventsManager : public stimuli_eventsManager {
+class Test_EventsManager : public stimuli_EventsManager {
 private:
 	int mTestStep, mTestStepDone;
 	SkPoint* mPoints[5];
 	SkLine* mLines[4];
 	std::chrono::steady_clock::time_point mLastAction;
 public:
-	test_eventsManager();
+	Test_EventsManager();
 
 	bool manage_key_press(GdkEventKey* event);
 

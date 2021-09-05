@@ -46,7 +46,7 @@ public:
 	SelPoint closest(glm::vec2 cursor, Camera* cam, int filter);
 protected:
 	void init_impl();
-	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
+	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL);
 	void update_impl();
 	
 	void init_buffers();

@@ -6,7 +6,7 @@
 
 class Verticality_tool : public Constraint_tool {
 public:
-	Verticality_tool(sketchDesign* env);
+	Verticality_tool(Sketch_ws* env);
 
 	std::string name() { return "Verticality_tool"; }
 // protected:

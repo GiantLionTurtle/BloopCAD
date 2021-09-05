@@ -13,7 +13,7 @@ class Tangible : virtual public Drawable {
 public:
 	Tangible();
 
-	// void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
+	// void draw(Camera* cam, int frame, draw_type type = draw_type::ALL);
 };
 
 #endif

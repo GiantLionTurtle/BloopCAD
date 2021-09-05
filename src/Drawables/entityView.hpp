@@ -3,7 +3,7 @@
 #define ENTITYVIEW_HPP_
 
 #include "Drawable.hpp"
-#include <workspaces/workspace.hpp>
+#include <Workspaces/Workspace_abstr.hpp>
 
 #include <gtkmm.h>
 
@@ -58,7 +58,7 @@ public:
 
 class entityView : public Gtk::Box {
 private:
-	workspaceState_ptr mCurrentWorkspaceState;
+	WorkspaceState* mCurrentWorkspaceState;
 
 	entityHandle mRootHandle;
 	std::vector<entityHandle*> mHandles;
@@ -72,8 +72,8 @@ public:
 	entityHandle& root() { return mRootHandle; };
 	document* doc() { return mDoc; }
 
-	workspaceState_ptr state() const { return mCurrentWorkspaceState; }
-	void set_workspaceState(workspaceState_ptr workspaceState_) { mCurrentWorkspaceState = workspaceState_; };
+	WorkspaceState* state() const { return mCurrentWorkspaceState; }
+	void set_WorkspaceState(WorkspaceState* WorkspaceState_) { mCurrentWorkspaceState = WorkspaceState_; };
 };
 
 #endif

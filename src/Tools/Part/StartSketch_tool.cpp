@@ -10,7 +10,7 @@
 #include <Actions/Common/Serial_action.hpp>
 #include <Actions/Common/MoveCamera_action.hpp>
 
-StartSketch_tool::StartSketch_tool(partDesign* env):
+StartSketch_tool::StartSketch_tool(Part_ws* env):
 	SimpleSelector_tool(env)
 {
 	load_icon("resources/textures/images/icons/partDesign/cursors/startSketch_cursor.png");

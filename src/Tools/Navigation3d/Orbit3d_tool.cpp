@@ -1,11 +1,11 @@
 
 #include "Orbit3d_tool.hpp"
 
-#include <workspaces/workspace.hpp>
+#include <Workspaces/Workspace_abstr.hpp>
 
 #include <glm/glm.hpp>
 
-Orbit3d_tool::Orbit3d_tool(workspace* env):
+Orbit3d_tool::Orbit3d_tool(Workspace_abstr* env):
 	tool(env, Gdk::Cursor::create(Gdk::CROSSHAIR)), // CROSSHAIR is the closest cursor if it can't load the icon
 	is_moving(false)
 {
@@ -34,7 +34,7 @@ bool Orbit3d_tool::manage_mouse_move(GdkEventMotion* event)
 		glm::vec2 pos(event->x, -event->y);
 		if(is_moving) {
 			glm::vec2 abs_mov = (pos-prevPos) * 0.005f; // Arbitrary scaling of the movement
-			std::shared_ptr<Camera> cam = mEnv->state()->cam; // Convenience temporary
+			Camera* cam = mEnv->state()->cam; // Convenience temporary
 			cam->set_orientation(cam->orientation() + glm::vec3(
 				-abs_mov.y, 
 				(cam->flipped() ? -abs_mov.x : abs_mov.x), // When flipped, the rotation around the y axis is flipped for usage consistency

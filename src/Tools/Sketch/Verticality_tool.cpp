@@ -2,11 +2,11 @@
 #include "Verticality_tool.hpp"
 
 #include <Drawables/Sk/SkLine.hpp>
-#include <workspaces/workspace.hpp>
+#include <Workspaces/Workspace_abstr.hpp>
 #include <Actions/Sketch/ToggleConstraint_action.hpp>
 #include <document.hpp>
 
-Verticality_tool::Verticality_tool(sketchDesign* env):
+Verticality_tool::Verticality_tool(Sketch_ws* env):
 	Constraint_tool(env)
 {
 	load_icon("resources/textures/images/icons/sketch/cursors/verticality_cursor.png");

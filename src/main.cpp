@@ -4,7 +4,7 @@
 #include <Utils/Conversions_util.hpp>
 
 #include "bloop.hpp"
-#include "workspaces/partDesign.hpp"
+#include "Workspaces/Part_ws.hpp"
 
 #include <gtkmm.h>
 #include <fontconfig/fontconfig.h>

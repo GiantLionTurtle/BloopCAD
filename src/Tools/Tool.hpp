@@ -10,10 +10,7 @@
 
 #include <memory>
 
-class workspace; // Forward declaration necesary for pointer
-
-class Tool_abstract;
-using Tool_abstract_ptr = std::shared_ptr<Tool_abstract>;
+class Workspace_abstr; // Forward declaration necesary for pointer declaration
 
 /*
 	@struct compositeCursor describes a cursor that has both an Image and a cursor type
@@ -109,7 +106,7 @@ public:
 template<typename wst>
 class tool : public Tool_abstract {
 protected:
-	static_assert(std::is_base_of<workspace, wst>::value, "Workspace type must derive from workspace");
+	static_assert(std::is_base_of<Workspace_abstr, wst>::value, "Workspace type must derive from Workspace_abstr");
     wst* mEnv;
 public:
     tool(wst* env): mEnv(env) {}

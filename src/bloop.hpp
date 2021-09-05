@@ -5,11 +5,11 @@
 #include "forward_bloop.hpp"
 #include "document.hpp"
 #include <Tools/Tool.hpp>
-#include <workspaces/workspace.hpp>
-#include <workspaces/navigationBar.hpp>
-#include "workspaces/partDesign.hpp"
-#include "workspaces/sketchDesign.hpp"
-#include "workspaces/home.hpp"
+#include <Workspaces/Workspace_abstr.hpp>
+#include <Workspaces/NavigationBar.hpp>
+#include "Workspaces/Part_ws.hpp"
+#include "Workspaces/Sketch_ws.hpp"
+#include "Workspaces/Home_ws.hpp"
 
 #include <gtkmm.h>
 #include <string>
@@ -71,18 +71,18 @@ private:
 	std::vector<std::tuple<tabButton, Gtk::Overlay, document_ptr>> mDocuments; // All the document with their tab and overlay over which they render
 	document_ptr mCurrentDocument; // The current document object
 
-	// std::map<std::string, workspace_ptr> mWorkspaces; // All the existing workspaces indexed by name
-	std::shared_ptr<sketchDesign> mSketchWorkspace;
-	std::shared_ptr<partDesign> mPartDesignWorkspace;
-	std::shared_ptr<home> mHomeWorkspace;
-	workspace_ptr mCurrentWorkspace; // The currently used workspace
+	// std::map<std::string, Workspace_abstr*> mWorkspaces; // All the existing Workspaces indexed by name
+	Sketch_ws* mSketchWorkspace;
+	Part_ws* mPartDesignWorkspace;
+	Home_ws* mHomeWorkspace;
+	Workspace_abstr* mCurrentWorkspace; // The currently used workspace
 
 	Glib::RefPtr<Gdk::Cursor> mCursor; // The current cursor
-	Gtk::Image* mHomePage, *mIcon; // Program icon and home page Image (the latter will not be a thing)
+	Gtk::Image* mHomePage, *mIcon; // Program icon and Home_ws page Image (the latter will not be a thing)
 	Gtk::Notebook* mDocumentIndexer; // The widget containing the document rendering
-	Gtk::Stack* mUI_upperBar, *mSideBar; // A stack of all the workspaces upper bars and all the documents' side bars
-	Gtk::Overlay* mHome; // The home screen overlay (I guess that it could go with the document's)
-	navigationBar* mNavigationBar; // The side navigation bar
+	Gtk::Stack* mUI_upperBar, *mSideBar; // A stack of all the Workspaces upper bars and all the documents' side bars
+	Gtk::Overlay* mHome; // The Home_ws screen overlay (I guess that it could go with the document's)
+	NavigationBar* mNavigationBar; // The side navigation bar
 	statusBar* mStatusBar;
 
 	glm::vec2 scroll_deltas; // kinda dirty but it's a workaround for a bug in gtk3
@@ -100,7 +100,7 @@ public:
 		@param builder : The gtk builder that has loaded an xml file for design
 	*/
 	bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder);
-
+	~bloop();
 	/*
 		@function currentDocument 
 
@@ -114,10 +114,10 @@ public:
 
 		@return the currently used workspace
 	*/
-	workspace_ptr currentWorkspace() { return mCurrentWorkspace; }
-	std::shared_ptr<sketchDesign> sketchWorkspace() { return mSketchWorkspace; }
-	std::shared_ptr<partDesign> partWorkspace() { return mPartDesignWorkspace; }
-	std::shared_ptr<home> homeWorkspace() { return mHomeWorkspace; }
+	Workspace_abstr* currentWorkspace() { return mCurrentWorkspace; }
+	Sketch_ws* sketchWorkspace() { return mSketchWorkspace; }
+	Part_ws* partWorkspace() { return mPartDesignWorkspace; }
+	Home_ws* Home_wsWorkspace() { return mHomeWorkspace; }
 
 	/*
 		@function set_workspace sets the currently used workspace with a named workspace
@@ -127,8 +127,8 @@ public:
 
 		@return : The set workspace or nullptr
 	*/
-	workspace_ptr set_workspace(int name, workspaceState_ptr state);
-	workspace_ptr set_workspace(workspace_ptr wrkspc, workspaceState_ptr state);
+	Workspace_abstr* set_workspace(int name, WorkspaceState* state);
+	Workspace_abstr* set_workspace(Workspace_abstr* wrkspc, WorkspaceState* state);
 	void notify_set_tool(std::string const& name);
 
 	void set_sideBar(Gtk::Widget* to_show);

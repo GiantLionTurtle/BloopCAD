@@ -11,7 +11,6 @@
 class EnterSketch_action : public SwitchWorkspace_action {
 private:
 	Sketch* mTarget;
-	Drawable* mInitialTarget;
 public:
 	EnterSketch_action(Sketch* target, bool set_Camera = false);
 

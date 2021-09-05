@@ -31,7 +31,7 @@ public:
 	{
 		mDrawList.init_newElems();
 	}
-	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL)
+	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL)
 	{
 		for(size_t i = 0; i < n_children(); ++i) {
 			auto ch = child(i);

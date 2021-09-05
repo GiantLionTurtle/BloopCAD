@@ -6,7 +6,7 @@
 
 class Coincidence_tool : public Constraint_tool {
 public:
-	Coincidence_tool(sketchDesign* env);
+	Coincidence_tool(Sketch_ws* env);
 
 	std::string name() { return "coincidence"; }
 // protected:

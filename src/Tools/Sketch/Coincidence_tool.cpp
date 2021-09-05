@@ -7,7 +7,7 @@
 #include <document.hpp>
 
 
-Coincidence_tool::Coincidence_tool(sketchDesign* env):
+Coincidence_tool::Coincidence_tool(Sketch_ws* env):
 	Constraint_tool(env, CURVE | POINT | SKDRAWABLE)
 {
 	load_icon("resources/textures/images/icons/sketch/cursors/coincidence_cursor.png");

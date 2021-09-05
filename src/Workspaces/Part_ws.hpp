@@ -2,37 +2,29 @@
 #ifndef PARTDESIGN_HPP_
 #define PARTDESIGN_HPP_
 
-#include "workspace.hpp"
+#include "Workspace_abstr.hpp"
 #include <Drawables/Part.hpp>
 
 #include <string>
 
-class partDesign : public workspace {
+class Part_ws : public Workspace_abstr {
 private:
-	std::shared_ptr<Pan3d_tool> mPan3d_tool;
-	std::shared_ptr<PartDefault_tool> mPartDefault_tool;
-	std::shared_ptr<StartSketch_tool> mStartSketch_tool;
+	Pan3d_tool* mPan3d_tool;
+	PartDefault_tool* mPartDefault_tool;
+	StartSketch_tool* mStartSketch_tool;
 
 	std::map<std::string, std::pair<Gtk::Button*, Gtk::Image*>> mButtons; // Buttons with names and icons
 
 	Part* mTarget;
 public:
 	/*
-		@function partDesign creates an empty workspace
-
-		@param parent : The parent window of the workspace
-
-		@note : Not recommended since it won't have buttons
-	*/
-	partDesign(bloop* parent);
-	/*
-		@function partDesign creates an empty workspace
+		@function Part_ws creates an empty workspace
 
 		@param builder : 	The gtk builder that has all the info from an xml file
 		@param parent : 	The parent window of the workspace	
 	*/
-	partDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
-	~partDesign();
+	Part_ws(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
+	~Part_ws();
 
 	void set_target(Part* prt) { mTarget = prt; }
 	Part* target() { return mTarget; }
@@ -41,9 +33,9 @@ public:
 
 	bool manage_key_press(GdkEventKey* event);
 
-	std::shared_ptr<Pan3d_tool> pan() { return mPan3d_tool; }
-	std::shared_ptr<PartDefault_tool> partDesignDefault() { return mPartDefault_tool; }
-	std::shared_ptr<StartSketch_tool> startSketch() { return mStartSketch_tool; }
+	Pan3d_tool* pan() { return mPan3d_tool; }
+	PartDefault_tool* default_tool() { return mPartDefault_tool; }
+	StartSketch_tool* startSketch() { return mStartSketch_tool; }
 
 	/*
 		@function startSketch invokes the startSketch tool

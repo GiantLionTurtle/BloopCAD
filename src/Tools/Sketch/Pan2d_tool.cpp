@@ -1,10 +1,11 @@
 
 #include "Pan2d_tool.hpp"
 
-#include <workspaces/sketchDesign.hpp>
+#include <Utils/Expunge.hpp>
+#include <Workspaces/Sketch_ws.hpp>
 #include <document.hpp>
 
-Pan2d_tool::Pan2d_tool(sketchDesign* env):
+Pan2d_tool::Pan2d_tool(Sketch_ws* env):
 	tool(env, Gdk::Cursor::create(Gdk::IRON_CROSS)), // Iron cross is the closest to the icon
 	mProxyCam(nullptr)
 {
@@ -17,18 +18,22 @@ Pan2d_tool::Pan2d_tool(sketchDesign* env):
 		LOG_WARNING("Glib::PixbufError: " + ex.what());
 	}
 }
+Pan2d_tool::~Pan2d_tool()
+{
+	expunge(mProxyCam);
+}
 
 void Pan2d_tool::init()
 {
 	if(!mProxyCam)
-		mProxyCam = std::make_shared<Camera>();
+		mProxyCam = new Camera();
 }
 
 bool Pan2d_tool::manage_button_press(GdkEventButton* event)
 {
 	if(!event->state & GDK_BUTTON1_MASK)
 		return true;
-    Camera_ptr cam = mEnv->state()->cam;
+    Camera* cam = mEnv->state()->cam;
 	mProxyCam->copy(cam);
 	mProxyCam->update();
 	mDragStart = mEnv->target()->basePlane()->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false));
@@ -47,7 +52,7 @@ bool Pan2d_tool::manage_mouse_move(GdkEventMotion* event)
 {
 	if(mEnv->state() && event->state & GDK_BUTTON1_MASK) {
 		if(is_moving) {
-			Camera_ptr cam = mEnv->state()->cam;
+			Camera* cam = mEnv->state()->cam;
 			glm::vec3 pointedPos = mEnv->target()->basePlane()->line_intersection(mProxyCam->pos(), mProxyCam->cast_ray(glm::vec2(event->x, event->y), false));
 			glm::vec3 mov = pointedPos - mDragStart;
 			cam->set_translation(mTranStart + mov * mProxyCam->fscale()); // Move the model (no need to get fancy, it moves according to the "real position of the Camera")

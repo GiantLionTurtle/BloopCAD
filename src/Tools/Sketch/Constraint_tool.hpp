@@ -2,17 +2,17 @@
 #ifndef CONSTRAINT_TOOL_HPP_
 #define CONSTRAINT_TOOL_HPP_
 
-#include <workspaces/sketchDesign.hpp>
+#include <Workspaces/Sketch_ws.hpp>
 #include <Tools/Tool.hpp>
 
-class Constraint_tool : public tool<sketchDesign> {
+class Constraint_tool : public tool<Sketch_ws> {
 public:
 	enum add_states { COULDNT_ADD, COULD_ADD, WOULD_BE_COMPLETE };
 protected:
 	SkDrawable* mEntA, *mEntB, *mCurrentHover;
 	int mFilter;
 public:
-	Constraint_tool(sketchDesign* env, int filter = Drawable_types::DRAWABLE);
+	Constraint_tool(Sketch_ws* env, int filter = Drawable_types::DRAWABLE);
 
 	virtual void init();
 	virtual void finish();

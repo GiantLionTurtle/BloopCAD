@@ -2,22 +2,23 @@
 #ifndef PAN2D_TOOL_HPP_
 #define PAN2D_TOOL_HPP_
 
-#include <workspaces/sketchDesign.hpp>
+#include <Workspaces/Sketch_ws.hpp>
 #include <Tools/Tool.hpp>
 
-class Pan2d_tool : public tool<sketchDesign> {
+class Pan2d_tool : public tool<Sketch_ws> {
 private:
 	glm::vec3 mTranStart, mDragStart; // Helper record of the position of the mouse on the previous update
 	glm::vec3 mPl_right, mPl_up;
 	bool is_moving; // If the mouse is currently moving
-	Camera_ptr mProxyCam; // Virtual Camera used to calculate the pan offset
+	Camera* mProxyCam; // Virtual Camera used to calculate the pan offset
 public:
 	/*
 		@function Pan3d_tool creates an Pan3d_tool object
 
 		@param env : The workspace owning the tool
 	*/
-	Pan2d_tool(sketchDesign* env);
+	Pan2d_tool(Sketch_ws* env);
+	~Pan2d_tool();
 
 	virtual void init();
 

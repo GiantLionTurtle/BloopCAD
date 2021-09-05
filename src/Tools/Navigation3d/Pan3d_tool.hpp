@@ -4,7 +4,7 @@
 
 #include <Tools/Tool.hpp>
 
-class Pan3d_tool : public tool<workspace> {
+class Pan3d_tool : public tool<Workspace_abstr> {
 private:
 	glm::vec2 prevPos; // Helper record of the position of the mouse on the previous update
 	bool is_moving; // If the mouse is currently moving
@@ -14,7 +14,7 @@ public:
 
 		@param env : The workspace owning the tool
 	*/
-	Pan3d_tool(workspace* env);
+	Pan3d_tool(Workspace_abstr* env);
 
 
 	virtual bool manage_button_press(GdkEventButton* event);

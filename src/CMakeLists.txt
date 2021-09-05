@@ -5,12 +5,11 @@ add_subdirectory(Geom)
 add_subdirectory(Drawables)
 add_subdirectory(Actions)
 add_subdirectory(Tools)
-add_subdirectory(workspaces)
+add_subdirectory(Workspaces)
 add_subdirectory(ConstraintsSolver)
 
 add_executable(BloopCAD
 	document.cpp
-	eventsManager.cpp
 	bloop.cpp
 	main.cpp)
 
@@ -20,7 +19,7 @@ target_link_libraries(BloopCAD
 	Graphics_utils
 	Drawables
 	Tools
-	workspaces
+	Workspaces
 	${GTKMM_LIBRARIES}
 	${CMAKE_DL_LIBS} epoxy)
 
@@ -29,8 +28,8 @@ target_link_libraries(BloopCAD
 # add_executable(ConstraintsSolverTest
 # 	testConstraintsSolver_main.cpp
 # 	document.cpp
-# 	eventsManager.cpp
-# 	testFramework_eventsManager.cpp
+# 	EventsManager.cpp
+# 	testFramework_EventsManager.cpp
 # 	bloop.cpp
 # 	)
 # target_link_libraries(ConstraintsSolverTest
@@ -40,6 +39,6 @@ target_link_libraries(BloopCAD
 # 	Drawables
 # 	actions
 # 	tools
-# 	workspaces
+# 	Workspaces
 # 	${GTKMM_LIBRARIES}
 # 	${CMAKE_DL_LIBS} epoxy)

@@ -1,29 +1,28 @@
 
-#include "workspace.hpp"
+#include "Workspace_abstr.hpp"
 #include <Utils/Debug_util.hpp>
 #include <bloop.hpp>
 #include <Tools/Navigation3d/Navigation3d.hpp>
 
-workspace::workspace(bloop* parent) :
-	mParentBloop(parent),
-	mDefaultTool(nullptr)
-{
 
-}
-
-workspace::workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
+Workspace_abstr::Workspace_abstr(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
 	mParentBloop(parent),
-	mState(new workspaceState),
+	mState(nullptr),
 	mDefaultTool(nullptr)
 {
 	// Create the upper bar with the builder
 	builder->get_widget(upperBarID, mUpperBar);
 
-	// Create navigation/selection tools that are fairly common amongst workspaces
-	mOrbit3d_tool	= std::make_shared<Orbit3d_tool>(this);
+	// Create navigation/selection tools that are fairly common amongst Workspaces
+	mOrbit3d_tool	= new Orbit3d_tool(this);
+}
+Workspace_abstr::~Workspace_abstr()
+{
+	expunge(mOrbit3d_tool);
+	expunge(mUpperBar);
 }
 
-bool workspace::manage_key_press(GdkEventKey* event)
+bool Workspace_abstr::manage_key_press(GdkEventKey* event)
 {
 	if(event->state & GDK_CONTROL_MASK && mState && mState->doc) {
 		if(event->keyval == GDK_KEY_z) {
@@ -43,14 +42,14 @@ bool workspace::manage_key_press(GdkEventKey* event)
 	}
 	return true;
 }
-bool workspace::manage_key_release(GdkEventKey* event)
+bool Workspace_abstr::manage_key_release(GdkEventKey* event)
 {
 	if(mState && mState->currentTool) {
 		return mState->currentTool->manage_key_release(event); // Just pass the event deeper
 	}
 	return true;
 }
-bool workspace::manage_mouse_move(GdkEventMotion* event)
+bool Workspace_abstr::manage_mouse_move(GdkEventMotion* event)
 {
 	if(event->state & GDK_BUTTON2_MASK) { // Override the current tool and update the orbit
 		set_toolCursor(mOrbit3d_tool);
@@ -63,14 +62,14 @@ bool workspace::manage_mouse_move(GdkEventMotion* event)
 	return true;
 }
 
-bool workspace::manage_button_press(GdkEventButton* event)
+bool Workspace_abstr::manage_button_press(GdkEventButton* event)
 {
 	if(mState && mState->currentTool) {
 		return mState->currentTool->manage_button_press(event); // Just pass the event deeper
 	}
 	return true;
 }
-bool workspace::manage_button_release(GdkEventButton* event)
+bool Workspace_abstr::manage_button_release(GdkEventButton* event)
 {
 	if(event->state & GDK_BUTTON2_MASK) { // Clean up the orbit override
 		mOrbit3d_tool->finish();
@@ -82,9 +81,9 @@ bool workspace::manage_button_release(GdkEventButton* event)
 	return true;
 }
 
-bool workspace::set_tool(int name) 
+bool Workspace_abstr::set_tool(int name) 
 {
-	Tool_abstract_ptr to_set = nullptr;
+	Tool_abstract* to_set = nullptr;
 	switch(name) {
 	case TOOLIDS::TOOLID_ORBIT:
 		to_set = mOrbit3d_tool;
@@ -96,7 +95,7 @@ bool workspace::set_tool(int name)
 	return true;
 }
 
-void workspace::set_tool(Tool_abstract_ptr tool_)
+void Workspace_abstr::set_tool(Tool_abstract* tool_)
 {
 	if(!tool_) {
 		LOG_WARNING("Attempting to set null tool.");
@@ -111,16 +110,12 @@ void workspace::set_tool(Tool_abstract_ptr tool_)
 	set_toolCursor(mState->currentTool);
 	mParentBloop->notify_set_tool(tool_->name());
 }
-void workspace::set_toolCursor(Tool_abstract_ptr tool_)
+void Workspace_abstr::set_toolCursor(Tool_abstract* tool_)
 {
 	mParentBloop->set_cursor(tool_->cursor());
 }
 
-void workspace::set_state(workspaceState_ptr state_) 
+void Workspace_abstr::set_state(WorkspaceState* state_) 
 { 
-	if(mState) {
-		mState = state_;
-	} else {
-		LOG_WARNING("No state available.");
-	}
+	mState = state_;
 }

@@ -8,7 +8,7 @@
 
 #include <glm/gtx/vector_angle.hpp>
 
-MoveCamera_action::MoveCamera_action(Camera_ptr cam, CameraState target, long duration_ms):
+MoveCamera_action::MoveCamera_action(Camera* cam, CameraState target, long duration_ms):
 	mCamera(cam),
 	mTargetState({target.pos, glm::normalize(target.right), glm::normalize(target.up)}),
 	mStarted(false),
@@ -21,7 +21,7 @@ MoveCamera_action::MoveCamera_action(Camera_ptr cam, CameraState target, long du
 }
 
 Action_ptr MoveCamera_action::create_from_facingPlane(	Geom3d::Plane_abstr* toFace, float dist_to_plane, 
-																				CameraState const& camSt, Camera_ptr cam)
+																				CameraState const& camSt, Camera* cam)
 {
 	glm::vec3 right_plane, up_plane; // The v & w vectors that will be used for the sketch's plane
 	Camera::get_alignedPlaneVectors(camSt, toFace, right_plane, up_plane, true);
@@ -31,7 +31,7 @@ Action_ptr MoveCamera_action::create_from_facingPlane(	Geom3d::Plane_abstr* toFa
 	targetCamState, 
 	Preferences::get_instance().get_long("camtrans")));
 }
-Action_ptr MoveCamera_action::create_from_facingPlane(Geom3d::Plane_abstr* toFace, float dist_to_plane, Camera_ptr cam)
+Action_ptr MoveCamera_action::create_from_facingPlane(Geom3d::Plane_abstr* toFace, float dist_to_plane, Camera* cam)
 {
 	return create_from_facingPlane(toFace, dist_to_plane, cam->state(), cam);
 }

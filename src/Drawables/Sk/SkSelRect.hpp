@@ -42,7 +42,7 @@ public:
 	virtual SkExpSelPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return SkExpSelPoint(); }
 protected:	
 	void init_impl();
-	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
+	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL);
 	void update_impl();
 
 	void init_buffers();

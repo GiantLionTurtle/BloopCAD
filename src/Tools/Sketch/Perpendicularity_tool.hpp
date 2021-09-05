@@ -6,7 +6,7 @@
 
 class Perpendicularity_tool : public Constraint_tool {
 public:
-	Perpendicularity_tool(sketchDesign* env);
+	Perpendicularity_tool(Sketch_ws* env);
 
 	std::string name() { return "perpendicularity"; }
 // protected:

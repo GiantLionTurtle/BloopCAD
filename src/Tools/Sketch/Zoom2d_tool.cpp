@@ -4,7 +4,7 @@
 #include <document.hpp>
 #include <Geom/Geom3d/Plane_abstr.hpp>
 
-Zoom2d_tool::Zoom2d_tool(sketchDesign* env): 
+Zoom2d_tool::Zoom2d_tool(Sketch_ws* env): 
 	tool(env)
 {
 	// Attempt to load the cursor icon
@@ -29,7 +29,7 @@ bool Zoom2d_tool::manage_button_press(GdkEventButton* event)
 {
 	if(event->button == 1) {
 		mIsZooming = true;
-		Camera_ptr cam = mEnv->state()->cam;
+		Camera* cam = mEnv->state()->cam;
 		Geom3d::Plane_abstr* pl = mEnv->target()->basePlane();
 		glm::vec2 screen_pos(event->x, event->y);
 		mZoomStart_world = pl->line_intersection(cam->pos(), cam->cast_ray(screen_pos));
@@ -55,7 +55,7 @@ bool Zoom2d_tool::manage_mouse_move(GdkEventMotion* event)
 
 bool Zoom2d_tool::manage_scroll(GdkEventScroll* event)
 {
-	Camera_ptr cam = mEnv->state()->cam;
+	Camera* cam = mEnv->state()->cam;
 	Geom3d::Plane_abstr* pl = mEnv->target()->basePlane();
 	glm::vec2 screen_pos(event->x, event->y);
 	zoom(pl->line_intersection(cam->pos(), cam->cast_ray(screen_pos)), -0.015f * event->delta_y); // Delta is scaled arbitrarly, zooming around scroll origin
@@ -65,7 +65,7 @@ bool Zoom2d_tool::manage_scroll(GdkEventScroll* event)
 void Zoom2d_tool::zoom(glm::vec3 world_origin, float amount)
 {
 	// The goal of this function is to scale the model and translate it so that the scale origin appears fixed
-	Camera_ptr cam = mEnv->state()->cam;
+	Camera* cam = mEnv->state()->cam;
 	float scale = 1.0f + amount;
 	float delta_scale = cam->fscale() * scale - cam->fscale();
 	

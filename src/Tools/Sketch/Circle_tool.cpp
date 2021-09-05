@@ -2,17 +2,17 @@
 #include "Circle_tool.hpp"
 
 #include <Utils/Expunge.hpp>
-#include <workspaces/workspace.hpp>
+#include <Workspaces/Workspace_abstr.hpp>
 #include <document.hpp>
 #include <Drawables/Sketch.hpp>
 #include <Actions/Common/ToggleBaseObject_action.hpp>
 #include <Utils/Maths_util.hpp>
 
-Circle_tool::Circle_tool(sketchDesign* env):
+Circle_tool::Circle_tool(Sketch_ws* env):
 	tool(env),
 	mCirclePreview(nullptr)
 {
-	DEBUG_ASSERT(mEnv, "No valid workspace.");
+	DEBUG_ASSERT(mEnv, "No valid Workspace_abstr.");
 }
 
 void Circle_tool::init()
@@ -41,7 +41,7 @@ bool Circle_tool::manage_key_press(GdkEventKey* event)
 bool Circle_tool::manage_mouse_move(GdkEventMotion* event)
 {
 	if(mStarted) {
-		Camera_ptr cam = mEnv->state()->cam; // For ease of writing
+		Camera* cam = mEnv->state()->cam; // For ease of writing
 		glm::vec2 circle_pos = mCirclePreview->basePlane()->to_planePos(
             mCirclePreview->basePlane()->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
         mCirclePreview->set_radius(glm::length(circle_pos - mCirclePreview->center_pos()));
@@ -58,7 +58,7 @@ bool Circle_tool::manage_button_press(GdkEventButton* event)
 	DEBUG_ASSERT(target, "No valid target.");
 
     // Find where the ray intersectpos_on_plane
-    Camera_ptr cam = mEnv->state()->cam; // For ease of writing
+    Camera* cam = mEnv->state()->cam; // For ease of writing
     Geom3d::Plane_abstr* pl = target->basePlane();
     glm::vec2 circle_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 

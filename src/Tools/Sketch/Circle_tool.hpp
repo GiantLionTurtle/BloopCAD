@@ -5,16 +5,16 @@
 #include <Tools/Tool.hpp>
 
 #include <Drawables/Sk/SkCircle.hpp>
-#include <workspaces/sketchDesign.hpp>
+#include <Workspaces/Sketch_ws.hpp>
 
 #include <glm/glm.hpp>
 
-class Circle_tool : public tool<sketchDesign> {
+class Circle_tool : public tool<Sketch_ws> {
 private:
 	SkCircle* mCirclePreview;
 	bool mStarted; // Whether or not the drawing of the circle has started
 public:
-	Circle_tool(sketchDesign* env);
+	Circle_tool(Sketch_ws* env);
 
 	/*
 		@function init makes sure the started flag is down

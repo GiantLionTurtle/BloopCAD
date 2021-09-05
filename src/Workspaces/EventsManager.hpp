@@ -8,11 +8,11 @@
 
 #include <chrono>
 
-class eventsManager {
+class EventsManager {
 protected:
 	bloop* mBloopWindow;
 public:
-	eventsManager();
+	EventsManager();
 
 	void set_bloop(bloop* blp) { mBloopWindow = blp; }
 
@@ -62,11 +62,11 @@ public:
 	virtual bool manage_tick(const Glib::RefPtr<Gdk::FrameClock>& frame_clock) = 0;
 };
 
-class stimuli_eventsManager : public eventsManager {
+class stimuli_EventsManager : public EventsManager {
 private:
 
 public:
-	stimuli_eventsManager();
+	stimuli_EventsManager();
 
 	virtual bool manage_key_press(GdkEventKey* event);
 	virtual bool manage_key_release(GdkEventKey* event);

@@ -6,14 +6,14 @@
 #include <Actions/Sketch/ApplySnapshot_action.hpp>
 #include <document.hpp>
 
-Constraint_tool::Constraint_tool(sketchDesign* env, int filter):
-	tool<sketchDesign>(env),
+Constraint_tool::Constraint_tool(Sketch_ws* env, int filter):
+	tool<Sketch_ws>(env),
 	mEntA(nullptr),
 	mEntB(nullptr),
 	mCurrentHover(nullptr),
 	mFilter(filter)
 {
-	DEBUG_ASSERT(mEnv, "No valid workspace.");
+	DEBUG_ASSERT(mEnv, "No valid Workspace_abstr.");
 }
 
 void Constraint_tool::init()
@@ -36,7 +36,7 @@ void Constraint_tool::finish()
 bool Constraint_tool::manage_button_press(GdkEventButton* event)
 {
 	glm::vec2 screenPos = glm::vec2(event->x, event->y);
-	SkDrawable* ent = mEnv->target()->closest_draggable(screenPos, mEnv->state()->cam.get(), mFilter).ent;
+	SkDrawable* ent = mEnv->target()->closest_draggable(screenPos, mEnv->state()->cam, mFilter).ent;
 	
 	int ent_state = could_add_geom(ent);
 	if(ent_state > add_states::COULDNT_ADD) {
@@ -57,7 +57,7 @@ bool Constraint_tool::manage_button_press(GdkEventButton* event)
 bool Constraint_tool::manage_mouse_move(GdkEventMotion* event)
 {
 	glm::vec2 screenPos = glm::vec2(event->x, event->y);
-	auto draggablePt = mEnv->target()->closest_draggable(screenPos, mEnv->state()->cam.get(), mFilter);
+	auto draggablePt = mEnv->target()->closest_draggable(screenPos, mEnv->state()->cam, mFilter);
 	SkDrawable* ent = draggablePt ? draggablePt.ent : nullptr;
 
 	if(ent != mCurrentHover) {

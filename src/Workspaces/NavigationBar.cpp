@@ -1,10 +1,10 @@
 
-#include "navigationBar.hpp"
+#include "NavigationBar.hpp"
 
 #include <Utils/Expunge.hpp>
 #include <Tools/Tools_forward.hpp>
 
-navigationBar::navigationBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder) :
+NavigationBar::NavigationBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder) :
 	Gtk::Box(cobject),
 	mCurrentWorkspace(nullptr)
 {
@@ -29,15 +29,15 @@ navigationBar::navigationBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder>
 	mZoomButton->set_image(*mZoomIcon);
 	mSelectorButton->set_image(*mSelectorIcon);
 
-	// Bind all the buttons' callbacks to set the tools in the workspaces
-	mOrbitButton->signal_clicked().connect(sigc::mem_fun(*this, &navigationBar::notify_orbit));
-	mPanButton->signal_clicked().connect(sigc::mem_fun(*this, &navigationBar::notify_pan));
-	mZoomButton->signal_clicked().connect(sigc::mem_fun(*this, &navigationBar::notify_zoom));
-	mSelectorButton->signal_clicked().connect(sigc::mem_fun(*this, &navigationBar::notify_selector));
+	// Bind all the buttons' callbacks to set the tools in the Workspaces
+	mOrbitButton->signal_clicked().connect(sigc::mem_fun(*this, &NavigationBar::notify_orbit));
+	mPanButton->signal_clicked().connect(sigc::mem_fun(*this, &NavigationBar::notify_pan));
+	mZoomButton->signal_clicked().connect(sigc::mem_fun(*this, &NavigationBar::notify_zoom));
+	mSelectorButton->signal_clicked().connect(sigc::mem_fun(*this, &NavigationBar::notify_selector));
 
 	show_all(); // Ensures that nothing is hidden within gtk
 }
-navigationBar::~navigationBar()
+NavigationBar::~NavigationBar()
 {
 	expunge(mOrbitIcon);
 	expunge(mOrbitButton);
@@ -50,32 +50,34 @@ navigationBar::~navigationBar()
 
 	expunge(mSelectorIcon);
 	expunge(mSelectorButton);
+
+	mCurrentWorkspace = nullptr;
 }
 
-void navigationBar::set_workspace(workspace_ptr aWorkspace)
+void NavigationBar::set_workspace(Workspace_abstr* aWorkspace)
 {
 	mCurrentWorkspace = aWorkspace;
 }
 
-void navigationBar::notify_pan()
+void NavigationBar::notify_pan()
 {
 	if(mCurrentWorkspace) {
 		mCurrentWorkspace->set_tool(TOOLIDS::TOOLID_PAN);
 	}
 }
-void navigationBar::notify_orbit()
+void NavigationBar::notify_orbit()
 {
 	if(mCurrentWorkspace) {
 		mCurrentWorkspace->set_tool(TOOLIDS::TOOLID_ORBIT);
 	}
 }
-void navigationBar::notify_zoom()
+void NavigationBar::notify_zoom()
 {
 	if(mCurrentWorkspace) {
 		mCurrentWorkspace->set_tool(TOOLIDS::TOOLID_ZOOM);
 	}
 }
-void navigationBar::notify_selector()
+void NavigationBar::notify_selector()
 {
 	// if(mCurrentWorkspace) {
 	// 	mCurrentWorkspace->set_tool("simpleSelector");

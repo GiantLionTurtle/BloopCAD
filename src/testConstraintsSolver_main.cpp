@@ -11,10 +11,10 @@ int main()
 // #include <Utils/Conversions_util.hpp>
 // #include <ConstraintsSolver/Constraint_abstr.hpp>
 // #include <ConstraintsSolver/ConstraintsSystem.hpp>
-// #include <testFramework_eventsManager.hpp>
+// #include <testFramework_EventsManager.hpp>
 
 // #include "bloop.hpp"
-// #include "workspaces/partDesign.hpp"
+// #include "Workspaces/Part_ws.hpp"
 
 // #include <gtkmm.h>
 
@@ -53,7 +53,7 @@ int main()
 // 	bloop* window;
 // 	refBuilder->get_widget_derived("bloop", window);
 
-// 	document_ptr doc = std::make_shared<document>(new test_eventsManager);
+// 	document_ptr doc = std::make_shared<document>(new Test_EventsManager);
 // 	doc->set_name("test_doc");
 // 	window->add_document(doc);
 

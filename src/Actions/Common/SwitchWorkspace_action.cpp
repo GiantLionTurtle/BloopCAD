@@ -23,7 +23,7 @@ bool SwitchWorkspace_action::do_work(document* caller)
 		mValid = false;
 		LOG_WARNING("Document pointer is not valid.");
 	}
-	Camera_ptr tmpCam;
+	Camera* tmpCam;
 	if(mSet_Camera)
 		tmpCam = caller->state()->cam;
 	CameraState startState = caller->state()->cam->state();
@@ -42,7 +42,7 @@ bool SwitchWorkspace_action::undo_work(document* caller)
 void SwitchWorkspace_action::switch_workspace(document* caller, int name)
 {
 	if(mValid) {
-		workspace_ptr space = caller->set_workspace(name);
+		Workspace_abstr* space = caller->set_workspace(name);
 		if(space) 
 			space->set_tool(space->defaultTool());
 	}

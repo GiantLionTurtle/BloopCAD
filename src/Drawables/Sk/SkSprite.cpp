@@ -109,7 +109,7 @@ void SkSprite::init_impl()
 	}
 }
 
-void SkSprite::draw_impl(Camera_ptr cam, int frame, draw_type type)
+void SkSprite::draw_impl(Camera* cam, int frame, draw_type type)
 {
 	mShader->bind();
 

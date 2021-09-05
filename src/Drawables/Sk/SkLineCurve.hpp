@@ -29,7 +29,7 @@ public:
 	void set_annotOffset(SkSprite* sp, int ind);
 private:
 	void init_impl();
-	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
+	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL);
 	void update_impl();
 };
 

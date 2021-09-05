@@ -58,21 +58,21 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 	get_style_context()->add_class("bloop");
 
-	// Create all possible workspaces
-	mHomeWorkspace 			= std::shared_ptr<home>(new home(builder, this));
-	mSketchWorkspace 		= std::shared_ptr<sketchDesign>(new sketchDesign(builder, this));
-	mPartDesignWorkspace 	= std::shared_ptr<partDesign>(new partDesign(builder, this));
+	// Create all possible Workspaces
+	mHomeWorkspace 			= new Home_ws(builder, this);
+	mSketchWorkspace 		= new Sketch_ws(builder, this);
+	mPartDesignWorkspace 	= new Part_ws(builder, this);
 
 	// Create the window's widget
 	builder->get_widget("documentIndexer", mDocumentIndexer);
-	builder->get_widget("homePage", mHome);
+	builder->get_widget("Home_wsPage", mHome);
 	builder->get_widget("upperBar_stack", mUI_upperBar);
-	builder->get_widget_derived("navigationBar", mNavigationBar);
+	builder->get_widget_derived("NavigationBar", mNavigationBar);
 	builder->get_widget_derived("statusBar", mStatusBar);
 	builder->get_widget("sideBar", mSideBar);
 
 	if(mHome && mDocumentIndexer) {
-		try { // Fetch the icon and the home Image
+		try { // Fetch the icon and the Home_ws Image
 			mHomePage = new Gtk::Image(Gdk::Pixbuf::create_from_file("resources/textures/images/normal/chat.png"));
 			mHome->add_overlay(*mHomePage);
 			set_icon(Gdk::Pixbuf::create_from_file("resources/textures/images/icons/icon.png", 400, 400));
@@ -82,7 +82,7 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 			LOG_WARNING("Gtk pixbuf error: " + ex.what());
 		}
 	} else {
-		LOG_ERROR("Could not build home page.");
+		LOG_ERROR("Could not build Home_ws page.");
 	}
 	
 	if(!mDocumentIndexer) {
@@ -110,11 +110,29 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 		LOG_ERROR("Cold not build upper bar.");
 	}
 
-	// Start at home workspace
+	// Start at Home_ws workspace
 	set_workspace(workspace_types::HOME, nullptr);
 
 	connect_signals();
 	show_all();	// Make sure nothing is hidden for some reason
+}
+bloop::~bloop()
+{
+	expunge(mSketchWorkspace);
+	expunge(mPartDesignWorkspace);
+	expunge(mHomeWorkspace);
+	mCurrentWorkspace = nullptr;
+
+	expunge(mHomePage);
+	expunge(mIcon);
+	
+	expunge(mDocumentIndexer);
+	expunge(mUI_upperBar);
+	expunge(mSideBar); 
+	expunge(mHome);
+	
+	expunge(mNavigationBar);
+	expunge(mStatusBar);
 }
 
 void bloop::add_document(document_ptr doc)
@@ -134,7 +152,7 @@ void bloop::add_document(document_ptr doc)
 	show_all();
 }
 
-workspace_ptr bloop::set_workspace(int name, std::shared_ptr<workspaceState> state)
+Workspace_abstr* bloop::set_workspace(int name, WorkspaceState* state)
 {
 	switch(name) {
 	case workspace_types::HOME:

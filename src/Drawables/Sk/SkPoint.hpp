@@ -37,7 +37,7 @@ public:
 	std::vector<var_ptr> all_vars();
 protected:
 	void init_impl();
-	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
+	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL);
 	void update_impl();
 
 	void move_impl(glm::vec2 delta);

@@ -3,14 +3,14 @@
 #define DOCUMENT_HPP_
 
 #include <forward_bloop.hpp>
-#include <workspaces/workspace.hpp>
+#include <Workspaces/Workspace_abstr.hpp>
+#include <Workspaces/EventsManager.hpp>
 #include <Tools/Tool.hpp>
 #include <Graphics_utils/FrameBuffer.hpp>
 #include <Actions/Action.hpp>
 #include <Drawables/Part.hpp>
 #include <Graphics_utils/Camera.hpp>
 #include <Drawables/entityView.hpp>
-#include "eventsManager.hpp"
 
 #include <gtkmm.h>
 
@@ -48,16 +48,16 @@ using document_ptr = std::shared_ptr<document>;
 */
 class document : public Gtk::Box {
 private:
-	eventsManager* mEventsManager;
+	EventsManager* mEventsManager;
 
 	Part* mPart; // Curently, documents only work on a single part
 	Drawable* mToolPreview;
 	std::vector<selection> mSelection; // This will be kept linear for as long as there is no need for large selections
 
-	// std::map<std::string, workspaceState_ptr> mWorkspaceStates; // All the workspace states for the various workspaces
-	workspaceState_ptr mSketchState;
-	workspaceState_ptr mPartState;
-	workspaceState_ptr mCurrentWorkspaceState; // The workspace state for the current workspace working on the document
+	// std::map<std::string, WorkspaceState*> mWorkspaceStates; // All the workspace states for the various Workspaces
+	WorkspaceState* mSketchState;
+	WorkspaceState* mPartState;
+	WorkspaceState* mCurrentWorkspaceState; // The workspace state for the current workspace working on the document
 
 	std::vector<Action_ptr> mActionStack; // The stack of actions done in the document
 	int mActionInd, mCurrentActionNum, mActionStackSize; // Metrics for the action stack
@@ -79,7 +79,7 @@ public:
 	/*
 		@function document creates an empty and mostly unitialized document 
 	*/
-	document(eventsManager* manager = nullptr);
+	document(EventsManager* manager = nullptr);
 	~document();
 
 	/*
@@ -117,13 +117,13 @@ public:
 
 		@return : The set workspace, or nullptr 
 	*/
-	workspace_ptr set_workspace(int name);
+	Workspace_abstr* set_workspace(int name);
 	/*
 		@function set_workspace enforces the current workspace in the bloop window
 
 		@return : The set workspace, or nullptr 
 	*/
-	workspace_ptr set_workspace();
+	Workspace_abstr* set_workspace();
 	/*
 		@function has_workspace tells if a named workspace is available
 
@@ -138,7 +138,7 @@ public:
 
 		@return : The current workspace state
 	*/
-	workspaceState_ptr state() { return mCurrentWorkspaceState; };
+	WorkspaceState* state() { return mCurrentWorkspaceState; };
 
 	bloop* window() { return mParentBloop; }
 	void set_parent(bloop* parentBloop);

@@ -2,10 +2,10 @@
 #include "Horizontality_tool.hpp"
 
 #include <Drawables/Sk/SkLine.hpp>
-#include <workspaces/workspace.hpp>
+#include <Workspaces/Workspace_abstr.hpp>
 #include <document.hpp>
 
-Horizontality_tool::Horizontality_tool(sketchDesign* env):
+Horizontality_tool::Horizontality_tool(Sketch_ws* env):
 	Constraint_tool(env)
 {
 	load_icon("resources/textures/images/icons/sketch/cursors/horizontality_cursor.png");

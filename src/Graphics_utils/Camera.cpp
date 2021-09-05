@@ -89,7 +89,7 @@ void Camera::set_orientation(glm::vec3 orient)
 	mRequire_update = true; 
 }
 
-void Camera::copy(Camera_ptr other)
+void Camera::copy(Camera* other)
 {
 	mInternalPos = other->mInternalPos;
 	mInternalTarget = other->mInternalTarget;

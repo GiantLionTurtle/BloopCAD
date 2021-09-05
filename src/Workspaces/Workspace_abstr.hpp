@@ -8,6 +8,7 @@
 #include <Graphics_utils/FrameBuffer.hpp>
 #include <Drawables/Drawable.hpp>
 #include <Tools/Tools_forward.hpp>
+#include <Utils/Expunge.hpp>
 
 #include <gtkmm.h>
 
@@ -15,34 +16,39 @@
 #include <string>
 #include <memory>
 
-struct workspaceState;
-using workspaceState_ptr = std::shared_ptr<workspaceState>;
-
 /*
-	@struct workspaceState describes the state of a given workspace within a specific document
+	@struct WorkspaceState describes the state of a given workspace within a specific document
 	the goal is to not duplicate every workspace for every document but rather have each document record
 	a state in which each workspace is in this document
 */
-struct workspaceState {
+struct WorkspaceState {
 	document* doc; // The document owning the state
-	Drawable* target; // The target entity of the workspace
-	Camera_ptr cam; // The Camera rendering the scene for that workspace in the doc
+	Camera* cam; // The Camera rendering the scene for that workspace in the doc
 	CameraState startCamState;
-	Tool_abstract_ptr currentTool; // The tool being used by the workspace in the doc
+	Tool_abstract* currentTool; // The tool being used by the workspace in the doc
 	int workspaceName; // The name of the workspace it is describing
+
+	WorkspaceState():
+		doc(nullptr),
+		cam(nullptr),
+		currentTool(nullptr)
+	{
+
+	}
+	~WorkspaceState()
+	{
+		expunge(cam);
+	}
 };
 
-class workspace;
-using workspace_ptr = std::shared_ptr<workspace>;
-
-class workspace {
+class Workspace_abstr {
 protected:
-	std::shared_ptr<Orbit3d_tool> mOrbit3d_tool;
+	Orbit3d_tool* mOrbit3d_tool;
 
-	std::map<std::string, Tool_abstract_ptr> mTools; // All the tools used by the workspace
-	Tool_abstract_ptr mDefaultTool; // The tool used by default in the workspace (typically some sort of selector)
+	std::map<std::string, Tool_abstract*> mTools; // All the tools used by the workspace
+	Tool_abstract* mDefaultTool; // The tool used by default in the workspace (typically some sort of selector)
 
-	workspaceState_ptr mState; // The state used by the current document
+	WorkspaceState* mState; // The state used by the current document
 
 	Gtk::Box* mUpperBar; // The upper bar, where all buttons live
 	bloop* mParentBloop; // The parent window
@@ -52,7 +58,7 @@ public:
 
 		@param parent : The parent window of the workspace
 	*/
-	workspace(bloop* parent);
+	Workspace_abstr(bloop* parent);
 	/*
 		@function workspace creates a workspace with an upper bar and navigation tools
 
@@ -60,7 +66,9 @@ public:
 		@param builder : 	The builder provided by gtk that has loaded the design file
 		@param : 			The parent window of the workspace
 	*/
-	workspace(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
+	Workspace_abstr(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
+
+	~Workspace_abstr();
 
 	// bool invoke_from_key(unsigned int key, std::string& toolName);
 
@@ -77,22 +85,22 @@ public:
 
 		@param tool_ : The tool to set as active
 	*/
-	void set_tool(Tool_abstract_ptr tool_);
+	void set_tool(Tool_abstract* tool_);
 	/*
 		@function set_toolCursor sets a tool's cursor to it's 
 		own cursor
 
 		@param tool_ : The tool from which to extract the cursor info
 	*/
-	void set_toolCursor(Tool_abstract_ptr tool_);
+	void set_toolCursor(Tool_abstract* tool_);
 
-	std::shared_ptr<Orbit3d_tool> orbit() { return mOrbit3d_tool; }
+	Orbit3d_tool* orbit() { return mOrbit3d_tool; }
 	/*
 		@function defaultTool
 
 		@return : The workspace's default tool
 	*/
-	Tool_abstract_ptr defaultTool() { return mDefaultTool; }
+	Tool_abstract* defaultTool() { return mDefaultTool; }
 
 	/*
 		@function manage_key_press passes the key presses to the current tool and may
@@ -126,13 +134,13 @@ public:
 
 		@return : The current assigned state from the active document
 	*/
-	workspaceState_ptr state() { return mState; }
+	WorkspaceState* state() { return mState; }
 	/*
 		@function set_state sets the current state from the document
 
 		@param state_ : The new state of the workspace from the document
 	*/
-	void set_state(workspaceState_ptr state_);
+	void set_state(WorkspaceState* state_);
 
 	/*
 		@function upperBar

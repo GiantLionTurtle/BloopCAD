@@ -2,7 +2,7 @@
 #include "Line_tool.hpp"
 
 #include <Utils/Expunge.hpp>
-#include <workspaces/workspace.hpp>
+#include <Workspaces/Workspace_abstr.hpp>
 #include <document.hpp>
 #include <Drawables/Sketch.hpp>
 #include <Actions/Common/ToggleBaseObject_action.hpp>
@@ -10,13 +10,13 @@
 #include <Actions/Common/Parallel_action.hpp>
 #include <Tools/Sketch/Coincidence_tool.hpp>
 
-Line_tool::Line_tool(sketchDesign* env):
+Line_tool::Line_tool(Sketch_ws* env):
 	tool(env),
 	mEndPos(nullptr),
 	mLinePreview(nullptr),
 	mLastAdded(nullptr)
 {
-	DEBUG_ASSERT(mEnv, "No valid workspace.");
+	DEBUG_ASSERT(mEnv, "No valid Workspace_abstr.");
 }
 
 void Line_tool::init()
@@ -51,7 +51,7 @@ bool Line_tool::manage_mouse_move(GdkEventMotion* event)
 		Sketch* target = mEnv->target();
 		DEBUG_ASSERT(target, "No valid target.");
 
-		Camera_ptr cam = mEnv->state()->cam; // For ease of writing
+		Camera* cam = mEnv->state()->cam; // For ease of writing
 		Geom3d::Plane_abstr* pl = target->basePlane();
 		glm::vec2 line_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 		mLinePreview->ptB()->set(line_pos);
@@ -61,7 +61,7 @@ bool Line_tool::manage_mouse_move(GdkEventMotion* event)
 bool Line_tool::manage_button_press(GdkEventButton* event)
 {
 	// Find where the ray intersectpos_on_plane
-	Camera_ptr cam = mEnv->state()->cam; // For ease of writing
+	Camera* cam = mEnv->state()->cam; // For ease of writing
 	Geom3d::Plane_abstr* pl = mEnv->target()->basePlane();
 	glm::vec2 line_pos = pl->to_planePos(pl->line_intersection(cam->pos(), cam->cast_ray(glm::vec2(event->x, event->y), false)));
 

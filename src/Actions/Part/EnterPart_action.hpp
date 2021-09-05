@@ -10,7 +10,6 @@
 class EnterPart_action : public SwitchWorkspace_action {
 private:
 	Part* mTarget;
-	Drawable* mInitialTarget;
 public:
 	EnterPart_action(bool set_Camera = false);
 

@@ -34,7 +34,7 @@ public:
 	void set(glm::vec3 const& p);
 protected:
 	void init_impl();
-	void draw_impl(Camera_ptr cam, int frame, draw_type type = draw_type::ALL);
+	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL);
 	void update_impl();
 };
 

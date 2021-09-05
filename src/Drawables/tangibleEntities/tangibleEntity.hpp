@@ -22,7 +22,7 @@ public:
 
 	virtual void init() = 0;
 
-	void draw(Camera_ptr cam, int frame, draw_type type = draw_type::ALL, bool on_required = false)
+	void draw(Camera* cam, int frame, draw_type type = draw_type::ALL, bool on_required = false)
 	{
 		// This is not exactly duplicate logic from what is in entity.cpp
 		if(!mInited) {

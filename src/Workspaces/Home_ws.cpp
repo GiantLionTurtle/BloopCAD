@@ -1,15 +1,11 @@
 
-#include "home.hpp"
+#include "Home_ws.hpp"
 
 #include <Utils/Expunge.hpp>
 #include <bloop.hpp>
 
-home::home(bloop* parent) :
-	workspace(parent)
-{}
-
-home::home(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
-	workspace("home_upperBar", builder, parent)
+Home_ws::Home_ws(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
+	Workspace_abstr("Home_ws_upperBar", builder, parent)
 {
 	// Create empty buttons
 	mButtons["new"]     = std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);
@@ -38,13 +34,13 @@ home::home(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
 		std::get<0>(mButtons.at("open"))->	set_image(*std::get<1>(mButtons.at("open")));
 
 		// Link callbacks to have a reaction when buttons are pressed
-		std::get<0>(mButtons.at("new"))->signal_clicked().connect(sigc::mem_fun(*this, &home::new_file));
-		std::get<0>(mButtons.at("open"))->signal_clicked().connect(sigc::mem_fun(*this, &home::open_file));
+		std::get<0>(mButtons.at("new"))->signal_clicked().connect(sigc::mem_fun(*this, &Home_ws::new_file));
+		std::get<0>(mButtons.at("open"))->signal_clicked().connect(sigc::mem_fun(*this, &Home_ws::open_file));
 	} else {
-		LOG_ERROR("Could not build sketch workspace.");
+		LOG_ERROR("Could not build sketch Workspace_abstr.");
 	}
 }
-home::~home()
+Home_ws::~Home_ws()
 {
 	for(auto it = mButtons.begin(); it != mButtons.end(); ++it) {
 		expunge(it->second.first);
@@ -52,11 +48,11 @@ home::~home()
 	}
 }
 
-void home::new_file()
+void Home_ws::new_file()
 {
 	LOG_WARNING("New file not implemented yet");
 }
-void home::open_file()
+void Home_ws::open_file()
 {
 	LOG_WARNING("Open file not implemented yet");
 }

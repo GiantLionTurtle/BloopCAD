@@ -5,7 +5,7 @@
 #include <document.hpp>
 #include <Drawables/Sketch.hpp>
 #include <Utils/Debug_util.hpp>
-#include <workspaces/workspace.hpp>
+#include <Workspaces/Workspace_abstr.hpp>
 #include <document.hpp>
 #include <Actions/Common/MoveCamera_action.hpp>
 #include <Actions/Common/SwitchWorkspace_action.hpp>
@@ -15,8 +15,8 @@
 
 #include <iostream>
 
-SketchDefault_tool::SketchDefault_tool(sketchDesign* env):
-	tool<sketchDesign>(env),
+SketchDefault_tool::SketchDefault_tool(Sketch_ws* env):
+	tool<Sketch_ws>(env),
 	mMode(modes::NORMAL),
 	mSelArea(nullptr),
 	mCurrentHover(nullptr)
@@ -131,7 +131,7 @@ bool SketchDefault_tool::manage_mouse_move(GdkEventMotion* event)
 
 void SketchDefault_tool::update_dragCandidate(glm::vec2 cursorPos)
 {
-	Camera* cam = mEnv->state()->cam.get();
+	Camera* cam = mEnv->state()->cam;
 	Sketch* sk = mEnv->target();
 	if(cursorPos != mLastCursorPos && !sk->need_update() && !cam->need_update()) { // Prevent recomputing the same thing multiple times
 		mDragCandidate = sk->closest_draggable(cursorPos, cam, DRAWABLE);
@@ -140,7 +140,7 @@ void SketchDefault_tool::update_dragCandidate(glm::vec2 cursorPos)
 }
 void SketchDefault_tool::update_hover(glm::vec2 cursorPos)
 {
-	Drawable* hovered_drw = mEnv->target()->closest(cursorPos, mEnv->state()->cam.get(), DRAWABLE).ent;
+	Drawable* hovered_drw = mEnv->target()->closest(cursorPos, mEnv->state()->cam, DRAWABLE).ent;
 	if(hovered_drw != mCurrentHover) {
 		if(mCurrentHover) {
 			mCurrentHover->set_hover(false);

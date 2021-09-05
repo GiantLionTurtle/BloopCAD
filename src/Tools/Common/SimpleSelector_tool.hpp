@@ -82,7 +82,7 @@ public:
 	*/
 	virtual Drawable* entity_at_point(glm::vec2 pt)
 	{
-		return tool<wst>::mEnv->state()->doc->target()->closest(pt, tool<wst>::mEnv->state()->cam.get(), mFilter).ent;
+		return tool<wst>::mEnv->state()->doc->target()->closest(pt, tool<wst>::mEnv->state()->cam, mFilter).ent;
 	}
 };
 

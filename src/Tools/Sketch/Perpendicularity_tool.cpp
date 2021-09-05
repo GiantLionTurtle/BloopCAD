@@ -3,10 +3,10 @@
 
 #include <Drawables/Sk/SkLine.hpp>
 #include <Actions/Sketch/ToggleConstraint_action.hpp>
-#include <workspaces/workspace.hpp>
+#include <Workspaces/Workspace_abstr.hpp>
 #include <document.hpp>
 
-Perpendicularity_tool::Perpendicularity_tool(sketchDesign* env):
+Perpendicularity_tool::Perpendicularity_tool(Sketch_ws* env):
 	Constraint_tool(env)
 {
 	load_icon("resources/textures/images/icons/sketch/cursors/perpendicularity_cursor.png");

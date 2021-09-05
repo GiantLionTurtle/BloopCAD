@@ -3,9 +3,9 @@
 #define ZOOM2D_TOOL_HPP_
 
 #include <Tools/Tool.hpp>
-#include <workspaces/sketchDesign.hpp>
+#include <Workspaces/Sketch_ws.hpp>
 
-class Zoom2d_tool : public tool<sketchDesign> {
+class Zoom2d_tool : public tool<Sketch_ws> {
 private:
 	glm::vec2 mPrevPos; // Helper previous position of mouse, on last update
 	glm::vec3 mZoomStart_world;
@@ -16,7 +16,7 @@ public:
 
 		@param env : The workspace owning the tool
 	*/
-	Zoom2d_tool(sketchDesign* env);
+	Zoom2d_tool(Sketch_ws* env);
 	
 	/*
 		@function finish is an override to clean up after the tool stops being used (but not destroyed)

@@ -2,48 +2,40 @@
 #ifndef SKETCHDESIGN_HPP_
 #define SKETCHDESIGN_HPP_
 
-#include "workspace.hpp"
+#include "Workspace_abstr.hpp"
 #include <Drawables/Sketch.hpp>
 #include <Tools/Tools_forward.hpp>
 
 #include <map>
 
 /*
-	@class sketchDesign describes the workspace for parametrized sketches
+	@class Sketch_ws describes the workspace for parametrized sketches
 	@parent : workspace
 */
-class sketchDesign : public workspace {
+class Sketch_ws : public Workspace_abstr {
 protected:
-	std::shared_ptr<Pan2d_tool> 				mPan3d_tool;
-	std::shared_ptr<Zoom2d_tool> 				mZoom3d_tool;
-	std::shared_ptr<SketchDefault_tool> 		mSketchDefault_tool;
-	std::shared_ptr<Point_tool> 				mPoint_tool;
-	std::shared_ptr<Line_tool> 					mLine_tool;
-	std::shared_ptr<Circle_tool> 				mCircle_tool;
-	std::shared_ptr<Coincidence_tool> 			mCoincidence_tool;
-	std::shared_ptr<Verticality_tool> 			mVerticality_tool;
-	std::shared_ptr<Horizontality_tool> 		mHorizontality_tool;
-	std::shared_ptr<Perpendicularity_tool> 		mPerpendiculatiry_tool;
+	Pan2d_tool* 				mPan3d_tool;
+	Zoom2d_tool* 				mZoom3d_tool;
+	SketchDefault_tool* 		mSketchDefault_tool;
+	Point_tool* 				mPoint_tool;
+	Line_tool* 					mLine_tool;
+	Circle_tool* 				mCircle_tool;
+	Coincidence_tool* 			mCoincidence_tool;
+	Verticality_tool* 			mVerticality_tool;
+	Horizontality_tool* 		mHorizontality_tool;
+	Perpendicularity_tool* 		mPerpendiculatiry_tool;
 
 	std::map<std::string, std::pair<Gtk::Button*, Gtk::Image*>> mButtons; // Buttons with names and icons
 	Sketch* mTarget;
 public:
 	/*
-		@function sketchDesign creates an empty workspace
-
-		@param parent : The parent window of the workspace
-
-		@note : Not recommended since it won't have buttons
-	*/
-	sketchDesign(bloop* parent);
-	/*
-		@function sketchDesign creates an empty workspace
+		@function Sketch_ws creates an empty workspace
 
 		@param builder : 	The gtk builder that has all the info from an xml file
 		@param parent : 	The parent window of the workspace	
 	*/
-	sketchDesign(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
-	~sketchDesign();
+	Sketch_ws(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
+	~Sketch_ws();
 
 	void set_target(Sketch* sk) { mTarget = sk; }
 	Sketch* target() { return mTarget; }
@@ -53,15 +45,15 @@ public:
 	bool manage_key_press(GdkEventKey* event);
 	bool manage_mouse_scroll(GdkEventScroll* event);
 
-	std::shared_ptr<Pan2d_tool> pan() { return mPan3d_tool; }
-	std::shared_ptr<SketchDefault_tool> sketchDesignDefault() { return mSketchDefault_tool; }
-	std::shared_ptr<Point_tool> point() { return mPoint_tool; }
-	std::shared_ptr<Line_tool> line() { return mLine_tool; }
-	// std::shared_ptr<Circle_tool> circle() { return mCircle_tool; }
-	std::shared_ptr<Coincidence_tool> coincidence() { return mCoincidence_tool; }
-	std::shared_ptr<Verticality_tool> verticality() { return mVerticality_tool; }
-	std::shared_ptr<Horizontality_tool> horizontality() { return mHorizontality_tool; }
-	std::shared_ptr<Perpendicularity_tool> perpendicularity() { return mPerpendiculatiry_tool; }
+	Pan2d_tool* pan() { return mPan3d_tool; }
+	SketchDefault_tool* default_tool() { return mSketchDefault_tool; }
+	Point_tool* point() { return mPoint_tool; }
+	Line_tool* line() { return mLine_tool; }
+	// Circle_tool* circle() { return mCircle_tool; }
+	Coincidence_tool* coincidence() { return mCoincidence_tool; }
+	Verticality_tool* verticality() { return mVerticality_tool; }
+	Horizontality_tool* horizontality() { return mHorizontality_tool; }
+	Perpendicularity_tool* perpendicularity() { return mPerpendiculatiry_tool; }
 
 	/*
 		@function line invokes the line tool

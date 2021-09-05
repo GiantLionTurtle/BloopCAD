@@ -6,7 +6,7 @@
 #include "bloop.hpp"
 #include "Graphics_utils/GLCall.hpp"
 
-document::document(eventsManager* manager):
+document::document(EventsManager* manager):
 	mParentBloop(),
 	mEventsManager(manager),
 	mCurrentWorkspaceState(nullptr),
@@ -23,22 +23,22 @@ document::document(eventsManager* manager):
 	mVerboseLevel(0)
 {
 	if(!mEventsManager) {
-		mEventsManager = new stimuli_eventsManager();
+		mEventsManager = new stimuli_EventsManager();
 	}
 
 	mViewport.set_required_version(3, 2);
 	connect_signals();	
 	// Create the workspace states, their Cameras and all
-	mPartState 		= workspaceState_ptr(new workspaceState);
-	mPartState->cam = Camera_ptr(new Camera(glm::vec3(0.0f, 0.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f)));
+	mPartState 		= new WorkspaceState;
+	mPartState->cam = new Camera(glm::vec3(0.0f, 0.0f, 8.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f));
 	mPartState->cam->set_orientation(glm::vec3(0.615480037895f, -M_PI_4, 0.0f));
 
 	mPartState->doc 			= this;
 	mPartState->workspaceName 	= bloop::workspace_types::PART;
 
-	mSketchState 		= workspaceState_ptr(new workspaceState);
-	mSketchState->cam = Camera_ptr(new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f)));
-	mSketchState->doc = this;
+	mSketchState 		= new WorkspaceState;
+	mSketchState->cam 	= new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f));
+	mSketchState->doc 	= this;
 	mSketchState->workspaceName = bloop::workspace_types::SKETCH;
 
 	// Now any part of the program can change the background color hehehe
@@ -48,6 +48,9 @@ document::document(eventsManager* manager):
 }
 document::~document()
 {
+	expunge(mSketchState);
+	expunge(mPartState);
+	
 	expunge(mEventsManager);
 	expunge(mSideBar);
 	expunge(mPart);
@@ -93,9 +96,6 @@ void document::do_realize()
 		mParentBloop->add_sideBar(mSideBar);
 		mParentBloop->set_sideBar(mSideBar);
 		mParentBloop->notify_set_tool(mCurrentWorkspaceState->currentTool->name());
-
-		// Setup target
-		mCurrentWorkspaceState->target = mPart;
 	} catch(const Gdk::GLError& gle) {
 		LOG_ERROR("\ndomain: " + std::to_string(gle.domain()) + "\ncode: " + std::to_string(gle.code()) + "\nwhat: " + gle.what());
 	}
@@ -163,13 +163,13 @@ void document::connect_signals()
 	mViewport.signal_resize().connect(sigc::mem_fun(*this, &document::do_resize));
 	mViewport.signal_render().connect(sigc::mem_fun(*this, &document::do_render));
 
-	mViewport.signal_key_press_event().connect(sigc::mem_fun(*mEventsManager, &eventsManager::manage_key_press));
-	mViewport.signal_key_release_event().connect(sigc::mem_fun(*mEventsManager, &eventsManager::manage_key_release));
-	mViewport.signal_scroll_event().connect(sigc::mem_fun(*mEventsManager, &eventsManager::manage_mouse_scroll));
-	mViewport.signal_motion_notify_event().connect(sigc::mem_fun(*mEventsManager, &eventsManager::manage_mouse_move));
-	mViewport.signal_button_press_event().connect(sigc::mem_fun(*mEventsManager, &eventsManager::manage_button_press));
-	mViewport.signal_button_release_event().connect(sigc::mem_fun(*mEventsManager, &eventsManager::manage_button_release));
-	mViewport.add_tick_callback(sigc::mem_fun(*mEventsManager, &eventsManager::manage_tick));
+	mViewport.signal_key_press_event().connect(sigc::mem_fun(*mEventsManager, &EventsManager::manage_key_press));
+	mViewport.signal_key_release_event().connect(sigc::mem_fun(*mEventsManager, &EventsManager::manage_key_release));
+	mViewport.signal_scroll_event().connect(sigc::mem_fun(*mEventsManager, &EventsManager::manage_mouse_scroll));
+	mViewport.signal_motion_notify_event().connect(sigc::mem_fun(*mEventsManager, &EventsManager::manage_mouse_move));
+	mViewport.signal_button_press_event().connect(sigc::mem_fun(*mEventsManager, &EventsManager::manage_button_press));
+	mViewport.signal_button_release_event().connect(sigc::mem_fun(*mEventsManager, &EventsManager::manage_button_release));
+	mViewport.add_tick_callback(sigc::mem_fun(*mEventsManager, &EventsManager::manage_tick));
 
 	pack_end(mViewport);
 
@@ -180,7 +180,7 @@ void document::connect_signals()
 	mViewport.set_vexpand(true);
 }
 
-workspace_ptr document::set_workspace(int name) 
+Workspace_abstr* document::set_workspace(int name) 
 {
 	switch(name) {
 	case bloop::workspace_types::SKETCH:
@@ -195,12 +195,12 @@ workspace_ptr document::set_workspace(int name)
 		return nullptr;
 	}
 	mCurrentWorkspaceState->cam->set_viewport(glm::vec2((float)get_width(), (float)get_height())); // The dimensions might have changed, who knows?
-	mSideBar->set_workspaceState(mCurrentWorkspaceState);
+	mSideBar->set_WorkspaceState(mCurrentWorkspaceState);
 		
 	return mParentBloop->set_workspace(name, mCurrentWorkspaceState); // Enforce change of workspace
 }
 
-workspace_ptr document::set_workspace() 
+Workspace_abstr* document::set_workspace() 
 {
 	if(mCurrentWorkspaceState)
 		return set_workspace(mCurrentWorkspaceState->workspaceName);

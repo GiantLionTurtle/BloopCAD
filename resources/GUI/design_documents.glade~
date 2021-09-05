@@ -77,7 +77,7 @@
                 <property name="tab_pos">bottom</property>
                 <property name="enable_popup">True</property>
                 <child>
-                  <object class="GtkOverlay" id="homePage">
+                  <object class="GtkOverlay" id="Home_wsPage">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
@@ -129,7 +129,7 @@
       <placeholder/>
     </child>
   </object>
-  <object class="GtkBox" id="home_upperBar">
+  <object class="GtkBox" id="Home_ws_upperBar">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <child>
@@ -209,7 +209,7 @@
       </packing>
     </child>
   </object>
-  <object class="GtkBox" id="navigationBar">
+  <object class="GtkBox" id="NavigationBar">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="opacity">0.5</property>
@@ -297,7 +297,7 @@
       </packing>
     </child>
   </object>
-  <object class="GtkBox" id="partDesign_upperBar">
+  <object class="GtkBox" id="Part_ws_upperBar">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="valign">start</property>
@@ -393,7 +393,7 @@
       </packing>
     </child>
   </object>
-  <object class="GtkBox" id="sketchDesign_upperBar">
+  <object class="GtkBox" id="Sketch_ws_upperBar">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="margin_bottom">10</property>

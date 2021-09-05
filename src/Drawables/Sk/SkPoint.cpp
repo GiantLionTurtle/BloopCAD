@@ -106,7 +106,7 @@ void SkPoint::init_impl()
 		kFisrstInst = false;
 	}
 }
-void SkPoint::draw_impl(Camera_ptr cam, int frame, draw_type type)
+void SkPoint::draw_impl(Camera* cam, int frame, draw_type type)
 {
 	mShader->bind();
 	glm::vec4 color = glm::vec4(kColor, 1.0f);

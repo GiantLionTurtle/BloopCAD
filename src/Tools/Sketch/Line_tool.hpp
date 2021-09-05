@@ -6,7 +6,7 @@
 
 #include <Drawables/Sk/SkPoint.hpp>
 #include <Drawables/Sk/SkLine.hpp>
-#include <workspaces/sketchDesign.hpp>
+#include <Workspaces/Sketch_ws.hpp>
 
 #include <glm/glm.hpp>
 
@@ -14,7 +14,7 @@
 	@class Line_tool describes the tool used to make lines and polylines on a sketch
 	@parent : Tool_abstract
 */
-class Line_tool : public tool<sketchDesign> {
+class Line_tool : public tool<Sketch_ws> {
 private:
 	SkPoint* mEndPos; // end pos of the last line added
 	SkLine* mLinePreview, *mLastAdded;
@@ -25,7 +25,7 @@ public:
 
 		@param env : The workspace that owns the tool
 	*/
-	Line_tool(sketchDesign* env);
+	Line_tool(Sketch_ws* env);
 
 	/*
 		@function init makes sure the started flag is down

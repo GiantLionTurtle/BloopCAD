@@ -1,9 +1,9 @@
 
 #include <Drawables/Sk/SkDrawable.hpp>
 #include <Drawables/Sk/SkSelRect.hpp>
-#include <workspaces/sketchDesign.hpp>
+#include <Workspaces/Sketch_ws.hpp>
 
-class SketchDefault_tool : public tool<sketchDesign> {
+class SketchDefault_tool : public tool<Sketch_ws> {
 private:   
 	SkSelRect* mSelArea;
 	SkExpSelPoint mDragCandidate;
@@ -18,7 +18,7 @@ private:
 	glm::vec2 mLastPlPos;
 	float mAreaSelStartX;
 public:
-	SketchDefault_tool(sketchDesign* env);
+	SketchDefault_tool(Sketch_ws* env);
 	virtual ~SketchDefault_tool();
 	
 	void init();

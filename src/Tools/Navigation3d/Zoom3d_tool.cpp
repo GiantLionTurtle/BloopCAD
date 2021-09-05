@@ -1,11 +1,11 @@
 
 #include "Zoom3d_tool.hpp"
 
-#include <workspaces/workspace.hpp>
+#include <Workspaces/Workspace_abstr.hpp>
 #include <Utils/Maths_util.hpp>
 #include <Geom/Geom3d/Plane_abstr.hpp>
 
-Zoom3d_tool::Zoom3d_tool(workspace* env): 
+Zoom3d_tool::Zoom3d_tool(Workspace_abstr* env): 
 	tool(env)
 {
 	// Attempt to load the cursor icon
@@ -62,7 +62,7 @@ void Zoom3d_tool::zoom(glm::vec2 origin, float amount)
 {
 	// The goal of this function is to scale the model and translate it so that the scale origin appears fixed
 	float scale = 1.0f + amount;
-	Camera_ptr cam = mEnv->state()->cam;
+	Camera* cam = mEnv->state()->cam;
 	
 	glm::vec3 ray1 = cam->cast_ray(origin, false);
 	glm::vec4 model_pos1 = cam->model() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);

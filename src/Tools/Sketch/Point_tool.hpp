@@ -5,9 +5,9 @@
 #include <Tools/Tool.hpp>
 
 #include <Drawables/Sk/SkPoint.hpp>
-#include <workspaces/sketchDesign.hpp>
+#include <Workspaces/Sketch_ws.hpp>
 
-class Point_tool : public tool<sketchDesign> {
+class Point_tool : public tool<Sketch_ws> {
 private:
 	SkPoint* mCurrentPoint;
 public:
@@ -16,7 +16,7 @@ public:
 
 		@param env : The workspace that owns the tool
 	*/
-	Point_tool(sketchDesign* env);
+	Point_tool(Sketch_ws* env);
 
 	virtual void init();
 
