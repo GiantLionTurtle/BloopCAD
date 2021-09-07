@@ -1,8 +1,8 @@
 
 #include "EventsManager.hpp"
 
-#include <bloop.hpp>
-#include <document.hpp>
+#include <Bloop.hpp>
+#include <Workspaces/Document.hpp>
 
 EventsManager::EventsManager()
 {
@@ -44,7 +44,7 @@ bool stimuli_EventsManager::manage_button_release(GdkEventButton* event)
 
 bool stimuli_EventsManager::manage_tick(const Glib::RefPtr<Gdk::FrameClock>& frame_clock)
 {
-	document_ptr doc = mBloopWindow->currentDocument();
+	Document* doc = mBloopWindow->currentDocument();
 
 	if(doc) {
 		doc->update_actionStack();

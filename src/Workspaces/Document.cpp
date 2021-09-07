@@ -1,12 +1,12 @@
 
-#include "document.hpp"
+#include "Document.hpp"
 
 #include <Utils/Expunge.hpp>
 #include <Utils/Preferences.hpp>
-#include "bloop.hpp"
+#include "Bloop.hpp"
 #include "Graphics_utils/GLCall.hpp"
 
-document::document(EventsManager* manager):
+Document::Document(EventsManager* manager):
 	mParentBloop(),
 	mEventsManager(manager),
 	mCurrentWorkspaceState(nullptr),
@@ -34,19 +34,19 @@ document::document(EventsManager* manager):
 	mPartState->cam->set_orientation(glm::vec3(0.615480037895f, -M_PI_4, 0.0f));
 
 	mPartState->doc 			= this;
-	mPartState->workspaceName 	= bloop::workspace_types::PART;
+	mPartState->workspaceName 	= Bloop::workspace_types::PART;
 
 	mSketchState 		= new WorkspaceState;
 	mSketchState->cam 	= new Camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::radians(20.0f), glm::vec2(1.0f, 1.0f));
 	mSketchState->doc 	= this;
-	mSketchState->workspaceName = bloop::workspace_types::SKETCH;
+	mSketchState->workspaceName = Bloop::workspace_types::SKETCH;
 
 	// Now any part of the program can change the background color hehehe
 	mBackgroundColor = Preferences::get_instance().get_vec3("background");
 	Preferences::get_instance().add_callback("background", [this](glm::vec3 color) { mBackgroundColor = color; });
 	mSideBar = new entityView(this);
 }
-document::~document()
+Document::~Document()
 {
 	expunge(mSketchState);
 	expunge(mPartState);
@@ -56,12 +56,12 @@ document::~document()
 	expunge(mPart);
 }
 
-void document::make_glContext_current()
+void Document::make_glContext_current()
 {
 	mViewport.make_current(); // It's the viewport's context that is interesting
 }
 
-void document::do_realize()
+void Document::do_realize()
 {
 	make_glContext_current();
 	try{
@@ -88,7 +88,7 @@ void document::do_realize()
 		mPart->init();
 
 		// Start with the part design workspace
-		set_workspace(bloop::workspace_types::PART);
+		set_workspace(Bloop::workspace_types::PART);
 		// Setyp tools and all
 		if(mParentBloop->currentWorkspace())
 			mCurrentWorkspaceState->currentTool = mParentBloop->currentWorkspace()->defaultTool();
@@ -100,7 +100,7 @@ void document::do_realize()
 		LOG_ERROR("\ndomain: " + std::to_string(gle.domain()) + "\ncode: " + std::to_string(gle.code()) + "\nwhat: " + gle.what());
 	}
 }
-void document::do_unrealize()
+void Document::do_unrealize()
 {
 	make_glContext_current();
 	try {
@@ -109,12 +109,12 @@ void document::do_unrealize()
 		LOG_ERROR("\ndomain: " + std::to_string(gle.domain()) + "\ncode: " + std::to_string(gle.code()) + "\nwhat: " + gle.what());
 	}
 }
-void document::do_resize(int width, int height)
+void Document::do_resize(int width, int height)
 {
 	if(mCurrentWorkspaceState)
 		mCurrentWorkspaceState->cam->set_viewport(glm::vec2((float)width, (float)height)); // The dimensions might have changed, who knows?
 }
-bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
+bool Document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 {
 	mNeed_redraw = false;
 	// Background draw
@@ -138,7 +138,7 @@ bool document::do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */)
 	return true;
 }
 
-void document::connect_signals()
+void Document::connect_signals()
 {
 	// Is the double add_events really needed??
 	add_events(	  Gdk::POINTER_MOTION_MASK
@@ -157,11 +157,11 @@ void document::connect_signals()
 						| Gdk::STRUCTURE_MASK
 						| Gdk::SCROLL_MASK);
 
-	// Standard things needed to init and render the document
-	mViewport.signal_realize().connect(sigc::mem_fun(*this, &document::do_realize));
-	mViewport.signal_unrealize().connect(sigc::mem_fun(*this, &document::do_unrealize), false);
-	mViewport.signal_resize().connect(sigc::mem_fun(*this, &document::do_resize));
-	mViewport.signal_render().connect(sigc::mem_fun(*this, &document::do_render));
+	// Standard things needed to init and render the Document
+	mViewport.signal_realize().connect(sigc::mem_fun(*this, &Document::do_realize));
+	mViewport.signal_unrealize().connect(sigc::mem_fun(*this, &Document::do_unrealize), false);
+	mViewport.signal_resize().connect(sigc::mem_fun(*this, &Document::do_resize));
+	mViewport.signal_render().connect(sigc::mem_fun(*this, &Document::do_render));
 
 	mViewport.signal_key_press_event().connect(sigc::mem_fun(*mEventsManager, &EventsManager::manage_key_press));
 	mViewport.signal_key_release_event().connect(sigc::mem_fun(*mEventsManager, &EventsManager::manage_key_release));
@@ -180,13 +180,13 @@ void document::connect_signals()
 	mViewport.set_vexpand(true);
 }
 
-Workspace_abstr* document::set_workspace(int name) 
+Workspace_abstr* Document::set_workspace(int name) 
 {
 	switch(name) {
-	case bloop::workspace_types::SKETCH:
+	case Bloop::workspace_types::SKETCH:
 		mCurrentWorkspaceState = mSketchState;
 		break;
-	case bloop::workspace_types::PART:
+	case Bloop::workspace_types::PART:
 		mCurrentWorkspaceState = mPartState;
 		mParentBloop->partWorkspace()->set_target(mPart);
 		break;
@@ -200,30 +200,30 @@ Workspace_abstr* document::set_workspace(int name)
 	return mParentBloop->set_workspace(name, mCurrentWorkspaceState); // Enforce change of workspace
 }
 
-Workspace_abstr* document::set_workspace() 
+Workspace_abstr* Document::set_workspace() 
 {
 	if(mCurrentWorkspaceState)
 		return set_workspace(mCurrentWorkspaceState->workspaceName);
 	return nullptr;
 }
-bool document::has_workspace(int name)
+bool Document::has_workspace(int name)
 {
-	if(name == bloop::workspace_types::SKETCH || name == bloop::workspace_types::PART)
+	if(name == Bloop::workspace_types::SKETCH || name == Bloop::workspace_types::PART)
 		return true;
 	return false;
 }
 
-void document::set_parent(bloop* parentBloop)
+void Document::set_parent(Bloop* parentBloop)
 {
 	if(parentBloop) {
 		mParentBloop = parentBloop;
 		mEventsManager->set_bloop(parentBloop);
 	} else {
-		LOG_WARNING("Attempting to assign a null bloop as parent.");
+		LOG_WARNING("Attempting to assign a null Bloop as parent.");
 	}
 }
 
-bool document::update_Camera()
+bool Document::update_Camera()
 {
 	if(mCurrentWorkspaceState->cam->need_update()) {
 		mCurrentWorkspaceState->cam->update();
@@ -233,7 +233,7 @@ bool document::update_Camera()
 	return false;
 }
 
-void document::push_action(Action_ptr to_push)
+void Document::push_action(Action_ptr to_push)
 {
 	if(mActionInd != mActionStackSize) {
 		mActionStackSize = mActionInd; // If an action is pushed while the index is in the past, it starts from there and erases the stuff going after
@@ -252,20 +252,20 @@ void document::push_action(Action_ptr to_push)
 	mActionInd++;
 	mActionStackSize++;
 }
-void document::advance_action_index(unsigned int amount)
+void Document::advance_action_index(unsigned int amount)
 {
 	mActionInd += amount;
 	if(mActionInd >= mActionStackSize)
 		mActionInd = mActionStackSize;
 }
-void document::rewind_action_index(unsigned int amount)
+void Document::rewind_action_index(unsigned int amount)
 {
 	mActionInd -= amount;
 	if(mActionInd < 0)
 		mActionInd = 0;
 }
 
-void document::update_actionStack()
+void Document::update_actionStack()
 {
 	if(mCurrentActionNum < mActionInd) {
 		if(mActionStack.at(mCurrentActionNum)->do_work(this)) {
@@ -280,14 +280,14 @@ void document::update_actionStack()
 	}
 }
 
-selection document::selection_at(unsigned int ind)
+selection Document::selection_at(unsigned int ind)
 {
 	if(ind < selection_size()) {
 		return mSelection.at(ind);
 	}
 	return {nullptr, {glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)}}; // Empty selection
 }
-int document::selection_ind(Drawable* ent)
+int Document::selection_ind(Drawable* ent)
 {
 	for(int i = 0; i < mSelection.size(); ++i) { // Linear search because I don't see huge selections coming, but it might change
 		if(mSelection.at(i).ent == ent)
@@ -295,14 +295,14 @@ int document::selection_ind(Drawable* ent)
 	}
 	return -1;
 }
-void document::clear_selection()
+void Document::clear_selection()
 {
 	for(int i = 0; i < mSelection.size(); ++i) {
 		mSelection.at(i).ent->unselect();
 	}
 	mSelection.clear();
 }
-void document::toggle_select(Drawable* ent, CameraState cam, bool additive)
+void Document::toggle_select(Drawable* ent, CameraState cam, bool additive)
 {
 	if(!ent && !additive) {
 		clear_selection();
@@ -325,7 +325,7 @@ void document::toggle_select(Drawable* ent, CameraState cam, bool additive)
 		mSelection.push_back(selection(ent, cam)); // Add it to the buffer
 	}
 }
-void document::toggle_select(Drawable* ent, bool additive)
+void Document::toggle_select(Drawable* ent, bool additive)
 {
 	toggle_select(ent, mCurrentCamState, additive);
 }

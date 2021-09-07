@@ -2,7 +2,7 @@
 #include "PartDefault_tool.hpp"
 
 #include <Utils/Debug_util.hpp>
-#include <document.hpp>
+#include <Workspaces/Document.hpp>
 
 PartDefault_tool::PartDefault_tool(Part_ws* env):
 	SimpleSelector_tool(env)

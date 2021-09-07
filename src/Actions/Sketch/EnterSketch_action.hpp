@@ -17,11 +17,11 @@ public:
 	/*
 		@function do_work switches to desired workspace if it exists
 	*/
-	virtual bool do_work(document* caller);
+	virtual bool do_work(Document* caller);
 	/*
 		@function undo_work revert back to the initial workspace
 	*/
-	virtual bool undo_work(document* caller);
+	virtual bool undo_work(Document* caller);
 };
 
 #endif

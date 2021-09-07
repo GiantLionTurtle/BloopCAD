@@ -4,7 +4,7 @@
 #include <Utils/Maths_util.hpp>
 #include <Utils/Debug_util.hpp>
 #include <Utils/Preferences.hpp>
-#include <document.hpp>
+#include <Workspaces/Document.hpp>
 
 #include <glm/gtx/vector_angle.hpp>
 
@@ -36,7 +36,7 @@ Action_ptr MoveCamera_action::create_from_facingPlane(Geom3d::Plane_abstr* toFac
 	return create_from_facingPlane(toFace, dist_to_plane, cam->state(), cam);
 }
 
-bool MoveCamera_action::do_work(document* caller)
+bool MoveCamera_action::do_work(Document* caller)
 {
 	if(!mStarted) {
 		if(!mCamera) {
@@ -49,7 +49,7 @@ bool MoveCamera_action::do_work(document* caller)
 
 	return move_Camera();
 }
-bool MoveCamera_action::undo_work(document* caller)
+bool MoveCamera_action::undo_work(Document* caller)
 {
 	if(!mStarted) {
 		if(!mCamera) {

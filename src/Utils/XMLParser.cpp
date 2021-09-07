@@ -66,7 +66,7 @@ std::string no_leading_nor_trailing_spaces(char* it_first, char* it_last)
 	return std::string();
 }
 /*
-	@function print_tabs is a helper function to print nodes and document, it prints the required amount of tabs
+	@function print_tabs is a helper function to print nodes and Document, it prints the required amount of tabs
 
 	@param tabs : The number of tabs to print
 */

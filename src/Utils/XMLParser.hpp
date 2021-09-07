@@ -11,18 +11,18 @@
 	@note : It will however be made robust for ill formed files in a near future
 */
 
-class XML_document; // Forward declaration needed for pointer to document
+class XML_document; // Forward declaration needed for pointer to Document
 class XML_element; // Forward declaration needed for pointer to node
 
 /*
-	@class XML_node describes "something" in an XML document it can have children, a parent node, a parent document
+	@class XML_node describes "something" in an XML Document it can have children, a parent node, a parent Document
 	and it can be part of a chained list of nodes
 */
 class XML_node {
 public:
 	friend class XML_document;
 protected:
-	XML_document* mDocument; 				// The document that owns the node
+	XML_document* mDocument; 				// The Document that owns the node
 	XML_node* mParent;						// It's parent node, if it has one
 	XML_node* mPrevNode, *mNextNode; 		// Handles for linked chain
 	XML_node* mFirstChild, * mLastChild;	// Handles for children linked chain
@@ -39,12 +39,12 @@ public:
 	virtual ~XML_node();
 
 	/*
-		@function set_doc sets the identity of the document owning the node
+		@function set_doc sets the identity of the Document owning the node
 	*/
 	void set_doc(XML_document* doc) { mDocument = doc; }
 
 	/*
-		@function unlink strands the node ; it is no longer in the chained list and has no parent nor document
+		@function unlink strands the node ; it is no longer in the chained list and has no parent nor Document
 	*/
 	void unlink();
 
@@ -416,14 +416,14 @@ public:
 };
 
 /*
-	@class XML_document describes a document, containing multiple nodes in a linked chain
+	@class XML_document describes a Document, containing multiple nodes in a linked chain
 */
 class XML_document {
 private:
 	XML_node* mFirstChild, * mLastChild;	// Handles for children linked chain
 public:
 	/*
-		@function XML_document creates an empty document with nullptr initialized chain handles
+		@function XML_document creates an empty Document with nullptr initialized chain handles
 	*/
 	XML_document();
 	/*
@@ -483,11 +483,11 @@ public:
 	XML_element* get_child_by_name(std::string const& name);
 
 	/*
-		@function print prints the xml document in a non-xml-conform way, it just display data
+		@function print prints the xml Document in a non-xml-conform way, it just display data
 	*/
 	void print();
 	/*
-		@function save writes the document as an xml file 
+		@function save writes the Document as an xml file 
 
 		@param filePath : The location of the file to save
 	*/

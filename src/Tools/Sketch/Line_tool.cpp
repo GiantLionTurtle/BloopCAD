@@ -3,7 +3,7 @@
 
 #include <Utils/Expunge.hpp>
 #include <Workspaces/Workspace_abstr.hpp>
-#include <document.hpp>
+#include <Workspaces/Document.hpp>
 #include <Drawables/Containers/Sketch.hpp>
 #include <Actions/Common/ToggleBaseObject_action.hpp>
 #include <Actions/Sketch/ToggleConstraint_action.hpp>

@@ -3,7 +3,7 @@
 
 #include <Drawables/Sk/SkLine.hpp>
 #include <Workspaces/Workspace_abstr.hpp>
-#include <document.hpp>
+#include <Workspaces/Document.hpp>
 
 Horizontality_tool::Horizontality_tool(Sketch_ws* env):
 	Constraint_tool(env)

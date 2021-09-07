@@ -4,7 +4,7 @@
 
 #include "Expression_forward.hpp"
 
-#include <baseObject.hpp>
+#include <BaseObject.hpp>
 
 #include <memory>
 #include <string>
@@ -150,7 +150,7 @@ public:
 	virtual std::string to_string() { return "[var derivative]"; }
 };
 
-class ExpVar : public Expression_abstr, public baseObject {
+class ExpVar : public Expression_abstr, public BaseObject {
 private:
 	double mVal;
 	bool mExists;
@@ -410,7 +410,7 @@ public:
 	virtual std::string to_string();
 };
 
-class ExpEqu : public ExpSubstr, public defaultBaseObject {
+class ExpEqu : public ExpSubstr, public DefaultBaseObject {
 private:
 	int mTag;
 public:

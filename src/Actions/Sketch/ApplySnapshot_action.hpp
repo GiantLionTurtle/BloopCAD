@@ -12,8 +12,8 @@ private:
 public:
 	ApplySnapshot_action(std::vector<VarDualState> deltas, bool done_at_creation);
 
-	virtual bool do_work(document* caller);
-	virtual bool undo_work(document* caller);
+	virtual bool do_work(Document* caller);
+	virtual bool undo_work(Document* caller);
 };
 
 #endif

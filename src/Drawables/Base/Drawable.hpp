@@ -8,7 +8,8 @@
 #include <Graphics_utils/IndexBuffer.hpp>
 #include <Graphics_utils/Shader.hpp>
 #include <Graphics_utils/Camera.hpp>
-#include <baseObject.hpp>
+#include <BaseObject.hpp>
+#include <Forward_bloop.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -18,8 +19,7 @@
 #include <functional>
 #include <tuple>
 
-class bloop;
-class document;
+class Document;
 
 class Drawable;
 class entityHandle;
@@ -67,7 +67,7 @@ struct SelPoint {
 /*
 	@class entity describes a basic entity that appears on screen
 */
-class Drawable : virtual public baseObject {
+class Drawable : virtual public BaseObject {
 public: 
 	enum draw_type { ALL, TRANSLUCID, ACTIVE, INACTIVE };
 	enum notifications { SELECTED, UNSELECTED, HOVERED, UNHOVERED, HIDEN, UNHIDEN, DELETED, RESURRECTED, UPDATED};
@@ -238,7 +238,7 @@ public:
 	void set_need_update();
 	bool need_update() const { return mNeed_update; }
 	
-	virtual void invoke_workspace(document* doc) {}
+	virtual void invoke_workspace(Document* doc) {}
 protected:
 
 	virtual void init_impl() {}

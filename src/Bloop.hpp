@@ -2,14 +2,15 @@
 #ifndef BLOOP_HPP_
 #define BLOOP_HPP_
 
-#include "forward_bloop.hpp"
-#include "document.hpp"
+#include "Forward_bloop.hpp"
+#include <Workspaces/Document.hpp>
 #include <Tools/Tool.hpp>
 #include <Workspaces/Workspace_abstr.hpp>
 #include <Workspaces/NavigationBar.hpp>
-#include "Workspaces/Part_ws.hpp"
-#include "Workspaces/Sketch_ws.hpp"
-#include "Workspaces/Home_ws.hpp"
+#include <Workspaces/Part_ws.hpp>
+#include <Workspaces/Sketch_ws.hpp>
+#include <Workspaces/Home_ws.hpp>
+#include <Workspaces/MiscUI.hpp>
 
 #include <gtkmm.h>
 #include <string>
@@ -17,59 +18,17 @@
 #include <memory>
 
 /*
-	@class tabButton describes a tab with a label and a close button for the document indexer
-	@parent : Gtk::Box
-*/
-class tabButton : public Gtk::Box {
-private:
-	Gtk::Label mLabel; // The label set by the document/the window
-	Gtk::Button mCloseButton; // The close button, it is a 'x' character
-public:
-	/*
-		@function tabButton creates a tab object
-
-		@param label_ : The label on the tab
-	*/
-	tabButton(std::string const& label_);
-
-	/*
-		@function set_label sets the displayed label on the tab
-
-		@param label_ : The label to be set
-	*/
-	void set_label(std::string const& label_) { mLabel.set_text(label_); }
-	/*
-		@function label 
-
-		@return : The tab's text label
-	*/
-	std::string label() { return mLabel.get_text(); }
-};
-
-class statusBar : public Gtk::Box {
-public:
-	enum status { WORKSPACE, TOOL };
-private:
-	Gtk::Label* workspaceName, * toolName;
-public:
-	statusBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder);
-
-	void update(status which, std::string const& content);
-};
-
-
-/*
-	@class bloop describes a window containing the whole cad software
+	@class Bloop describes a window containing the whole cad software
 	@parent : Gtk::Window
 
 	@note : Kind of a dumpster fire at this point
 */
-class bloop : public Gtk::Window {
+class Bloop : public Gtk::Window {
 public:
 	enum workspace_types { SKETCH, PART, HOME };
 private:
-	std::vector<std::tuple<tabButton, Gtk::Overlay, document_ptr>> mDocuments; // All the document with their tab and overlay over which they render
-	document_ptr mCurrentDocument; // The current document object
+	std::vector<std::tuple<TabButton, Gtk::Overlay, Document*>> mDocuments; // All the Document with their tab and overlay over which they render
+	Document* mCurrentDocument; // The current Document object
 
 	// std::map<std::string, Workspace_abstr*> mWorkspaces; // All the existing Workspaces indexed by name
 	Sketch_ws* mSketchWorkspace;
@@ -79,35 +38,35 @@ private:
 
 	Glib::RefPtr<Gdk::Cursor> mCursor; // The current cursor
 	Gtk::Image* mHomePage, *mIcon; // Program icon and Home_ws page Image (the latter will not be a thing)
-	Gtk::Notebook* mDocumentIndexer; // The widget containing the document rendering
-	Gtk::Stack* mUI_upperBar, *mSideBar; // A stack of all the Workspaces upper bars and all the documents' side bars
-	Gtk::Overlay* mHome; // The Home_ws screen overlay (I guess that it could go with the document's)
+	Gtk::Notebook* mDocumentIndexer; // The widget containing the Document rendering
+	Gtk::Stack* mUI_upperBar, *mSideBar; // A stack of all the Workspaces upper bars and all the Documents' side bars
+	Gtk::Overlay* mHome; // The Home_ws screen overlay (I guess that it could go with the Document's)
 	NavigationBar* mNavigationBar; // The side navigation bar
-	statusBar* mStatusBar;
+	StatusBar* mStatusBar;
 
 	glm::vec2 scroll_deltas; // kinda dirty but it's a workaround for a bug in gtk3
 public:
 	/*
-		@function bloop creates an empty bloop window
+		@function Bloop creates an empty Bloop window
 
 		@note : Not recommended as it will just be an empty window
 	*/
-	bloop();
+	Bloop();
 	/*
-		@function bloop creates a bloop window from an xml file
+		@function Bloop creates a Bloop window from an xml file
 
 		@param cobject : The base c object from gtk
 		@param builder : The gtk builder that has loaded an xml file for design
 	*/
-	bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder);
-	~bloop();
+	Bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder);
+	~Bloop();
 	/*
 		@function currentDocument 
 
-		@return : The currently used document
+		@return : The currently used Document
 	*/
-	document_ptr currentDocument() { return mCurrentDocument; }
-	void add_document(document_ptr doc);
+	Document* currentDocument() { return mCurrentDocument; }
+	void add_document(Document* doc);
 	
 	/*
 		@function currentWorkspace
@@ -136,7 +95,7 @@ public:
 	
 	/*
 		@function manage_mouse_scroll_internal keeps track of the scroll within the window
-		because the scroll event captured by the document doesn't have a delta y somewhy
+		because the scroll event captured by the Document doesn't have a delta y somewhy
 
 		@param event : The scroll event handed by gtk
 	*/
@@ -145,10 +104,10 @@ public:
 
 	/*
 		@function manage_tab_switch handles the tab switching, sets up the 
-		new current document and cleans up the previous
+		new current Document and cleans up the previous
 
-		@param widget : The new current document widget
-		@param tab_ind : The tab index of the new current document
+		@param widget : The new current Document widget
+		@param tab_ind : The tab index of the new current Document
 	*/
 	void manage_tab_switch(Gtk::Widget* widget, unsigned int tab_ind);
 
@@ -165,13 +124,13 @@ public:
 	void set_cursor(Glib::RefPtr<Gdk::Cursor> cursor_);
 
 	/*
-		@function get_document_at_tabInd gets the document at the specified index
+		@function get_document_at_tabInd gets the Document at the specified index
 
-		@param ind : The index of the document of interest
+		@param ind : The index of the Document of interest
 
-		@return : The document at the particular index or nullptr if it doesn't exist
+		@return : The Document at the particular index or nullptr if it doesn't exist
 	*/
-	document_ptr get_document_at_tabInd(unsigned int ind);
+	Document* get_document_at_tabInd(unsigned int ind);
 };
 
 #endif

@@ -15,8 +15,8 @@
 
 #include <Utils/Debug_util.hpp>
 #include <Utils/Maths_util.hpp>
-#include <bloop.hpp>
-#include <document.hpp>
+#include <Bloop.hpp>
+#include <Workspaces/Document.hpp>
 
 Sketch::Sketch(Geom3d::Plane_abstr* base_plane):
 	mBasePlane(base_plane),
@@ -281,7 +281,7 @@ void Sketch::revert_system_to_backup()
 	apply_snapshot(mConstrSystemBackup);
 }
 
-void Sketch::invoke_workspace(document* doc)
+void Sketch::invoke_workspace(Document* doc)
 {
 	doc->push_action(std::shared_ptr<Serial_action>(new Serial_action({
 		Action_ptr(new EnterSketch_action(this, true)),

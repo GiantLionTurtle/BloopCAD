@@ -4,10 +4,10 @@
 
 #include <Tools/Tool.hpp>
 #include <Drawables/Base/Drawable.hpp>
-#include <document.hpp>
+#include <Workspaces/Document.hpp>
 
 /*
-	@class SimpleSelector_tool describes a tool used to select entities in a document
+	@class SimpleSelector_tool describes a tool used to select entities in a Document
 */
 template<typename wst>
 class SimpleSelector_tool : public tool<wst> {
@@ -39,7 +39,7 @@ public:
 	virtual bool manage_button_press(GdkEventButton* event)
 	{
 		if(tool<wst>::mEnv->state() && event->button == 1) {
-			// Here it lets the document manage it's selection
+			// Here it lets the Document manage it's selection
 			// it hands over the shift&ctrl
 			tool<wst>::mEnv->state()->doc->toggle_select(
 				entity_at_point(glm::vec2(event->x, event->y)), 

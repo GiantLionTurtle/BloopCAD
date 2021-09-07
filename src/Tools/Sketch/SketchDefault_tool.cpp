@@ -2,11 +2,11 @@
 #include "SketchDefault_tool.hpp"
 
 #include <Utils/Expunge.hpp>
-#include <document.hpp>
+#include <Workspaces/Document.hpp>
 #include <Drawables/Containers/Sketch.hpp>
 #include <Utils/Debug_util.hpp>
 #include <Workspaces/Workspace_abstr.hpp>
-#include <document.hpp>
+#include <Workspaces/Document.hpp>
 #include <Actions/Common/MoveCamera_action.hpp>
 #include <Actions/Common/SwitchWorkspace_action.hpp>
 #include <Actions/Common/ToggleBaseObject_action.hpp>

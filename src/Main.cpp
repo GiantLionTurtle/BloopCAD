@@ -3,7 +3,7 @@
 #include <Utils/Preferences.hpp>
 #include <Utils/Conversions_util.hpp>
 
-#include "bloop.hpp"
+#include "Bloop.hpp"
 #include "Workspaces/Part_ws.hpp"
 
 #include <gtkmm.h>
@@ -40,11 +40,11 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	bloop* window;
-	refBuilder->get_widget_derived("bloop", window);
+	Bloop* window;
+	refBuilder->get_widget_derived("Bloop", window);
 	
-	document_ptr doc = std::make_shared<document>();
-	doc->set_name("document");
+	Document* doc = new Document();
+	doc->set_name("Document");
 	window->add_document(doc);
 
 	if(window) {

@@ -34,7 +34,7 @@ public:
 		@param builder : 	The gtk builder that has all the info from an xml file
 		@param parent : 	The parent window of the workspace	
 	*/
-	Sketch_ws(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
+	Sketch_ws(Glib::RefPtr<Gtk::Builder> const& builder, Bloop* parent);
 	~Sketch_ws();
 
 	void set_target(Sketch* sk) { mTarget = sk; }

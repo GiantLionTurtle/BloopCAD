@@ -1,8 +1,8 @@
 
 #include "TestFramework_eventsManager.hpp"
 
-#include <bloop.hpp>
-#include <document.hpp>
+#include <Bloop.hpp>
+#include <Workspaces/Document.hpp>
 
 #include <Tools/Part/StartSketch_tool.hpp>
 #include <Tools/Sketch/Line_tool.hpp>
@@ -35,9 +35,9 @@ bool Test_EventsManager::manage_tick(const Glib::RefPtr<Gdk::FrameClock>& frame_
 void Test_EventsManager::do_test()
 {
 	if(mTestStep >= mTestStepDone) {
-		document_ptr doc = mBloopWindow->currentDocument();
+		Document* doc = mBloopWindow->currentDocument();
 		if(!doc) {
-			LOG_ERROR("Invalid document");
+			LOG_ERROR("Invalid Document");
 		}
 		switch(mTestStep) {
 		case 0:

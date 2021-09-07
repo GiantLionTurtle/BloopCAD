@@ -2,7 +2,7 @@
 #ifndef WORKSPACE_HPP_
 #define WORKSPACE_HPP_
 
-#include <forward_bloop.hpp>
+#include <Forward_bloop.hpp>
 #include <Graphics_utils/Camera.hpp>
 #include <Tools/Tool.hpp>
 #include <Graphics_utils/FrameBuffer.hpp>
@@ -17,12 +17,12 @@
 #include <memory>
 
 /*
-	@struct WorkspaceState describes the state of a given workspace within a specific document
-	the goal is to not duplicate every workspace for every document but rather have each document record
-	a state in which each workspace is in this document
+	@struct WorkspaceState describes the state of a given workspace within a specific Document
+	the goal is to not duplicate every workspace for every Document but rather have each Document record
+	a state in which each workspace is in this Document
 */
 struct WorkspaceState {
-	document* doc; // The document owning the state
+	Document* doc; // The Document owning the state
 	Camera* cam; // The Camera rendering the scene for that workspace in the doc
 	CameraState startCamState;
 	Tool_abstract* currentTool; // The tool being used by the workspace in the doc
@@ -48,17 +48,17 @@ protected:
 	std::map<std::string, Tool_abstract*> mTools; // All the tools used by the workspace
 	Tool_abstract* mDefaultTool; // The tool used by default in the workspace (typically some sort of selector)
 
-	WorkspaceState* mState; // The state used by the current document
+	WorkspaceState* mState; // The state used by the current Document
 
 	Gtk::Box* mUpperBar; // The upper bar, where all buttons live
-	bloop* mParentBloop; // The parent window
+	Bloop* mParentBloop; // The parent window
 public:
 	/*
 		@function workspace creates an empty workspace
 
 		@param parent : The parent window of the workspace
 	*/
-	Workspace_abstr(bloop* parent);
+	Workspace_abstr(Bloop* parent);
 	/*
 		@function workspace creates a workspace with an upper bar and navigation tools
 
@@ -66,7 +66,7 @@ public:
 		@param builder : 	The builder provided by gtk that has loaded the design file
 		@param : 			The parent window of the workspace
 	*/
-	Workspace_abstr(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
+	Workspace_abstr(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> const& builder, Bloop* parent);
 
 	~Workspace_abstr();
 
@@ -132,13 +132,13 @@ public:
 	/*
 		@function state 
 
-		@return : The current assigned state from the active document
+		@return : The current assigned state from the active Document
 	*/
 	WorkspaceState* state() { return mState; }
 	/*
-		@function set_state sets the current state from the document
+		@function set_state sets the current state from the Document
 
-		@param state_ : The new state of the workspace from the document
+		@param state_ : The new state of the workspace from the Document
 	*/
 	void set_state(WorkspaceState* state_);
 

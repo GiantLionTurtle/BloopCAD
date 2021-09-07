@@ -4,7 +4,7 @@
 #include <Drawables/Sk/SkPoint.hpp>
 #include <Drawables/Sk/SkConstraint.hpp>
 #include <Actions/Sketch/ToggleConstraint_action.hpp>
-#include <document.hpp>
+#include <Workspaces/Document.hpp>
 
 
 Coincidence_tool::Coincidence_tool(Sketch_ws* env):

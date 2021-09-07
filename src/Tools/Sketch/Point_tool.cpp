@@ -1,7 +1,7 @@
 
 #include "Point_tool.hpp"
 
-#include <document.hpp>
+#include <Workspaces/Document.hpp>
 #include <Drawables/Containers/Sketch.hpp>
 #include <Actions/Common/ToggleBaseObject_action.hpp>
 

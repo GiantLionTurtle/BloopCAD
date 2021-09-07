@@ -1,40 +1,8 @@
 
-#include "bloop.hpp"
+#include "Bloop.hpp"
 #include <Utils/Debug_util.hpp>
 
-tabButton::tabButton(std::string const& label_) 
-{
-	mLabel = Gtk::Label(label_);
-	mCloseButton = Gtk::Button("x");
-	mCloseButton.set_relief(Gtk::ReliefStyle::RELIEF_NONE); // Make the button blend in
-
-	pack_start(mLabel);
-	pack_start(mCloseButton);
-
-	show_all();
-}
-
-
-statusBar::statusBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder):
-	Gtk::Box(cobject)
-{
-	builder->get_widget("status_workspace", workspaceName);
-	builder->get_widget("status_tool", toolName);
-}
-
-void statusBar::update(status which, std::string const& content)
-{
-	if(which == status::WORKSPACE) {
-		workspaceName->set_label(content);
-	} else if(which == status::TOOL) {
-		toolName->set_label(content);
-	} else {
-		LOG_WARNING("Attempted to set unknown status: " + std::to_string(which) + ".");
-	}
-}
-
-
-bloop::bloop()
+Bloop::Bloop()
 {
 	set_border_width(6);
 
@@ -42,7 +10,7 @@ bloop::bloop()
 	show_all();
 }
 
-bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder) :
+Bloop::Bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder) :
 	Gtk::Window(cobject),
 	mDocumentIndexer(nullptr),
 	mHomePage(nullptr),
@@ -56,7 +24,7 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	if(!css->load_from_path("resources/GUI/style.css"))
 		LOG_WARNING("Could not load styling info.");
 	get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-	get_style_context()->add_class("bloop");
+	get_style_context()->add_class("Bloop");
 
 	// Create all possible Workspaces
 	mHomeWorkspace 			= new Home_ws(builder, this);
@@ -64,11 +32,11 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	mPartDesignWorkspace 	= new Part_ws(builder, this);
 
 	// Create the window's widget
-	builder->get_widget("documentIndexer", mDocumentIndexer);
+	builder->get_widget("DocumentIndexer", mDocumentIndexer);
 	builder->get_widget("Home_wsPage", mHome);
 	builder->get_widget("upperBar_stack", mUI_upperBar);
 	builder->get_widget_derived("NavigationBar", mNavigationBar);
-	builder->get_widget_derived("statusBar", mStatusBar);
+	builder->get_widget_derived("StatusBar", mStatusBar);
 	builder->get_widget("sideBar", mSideBar);
 
 	if(mHome && mDocumentIndexer) {
@@ -86,7 +54,7 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	}
 	
 	if(!mDocumentIndexer) {
-		LOG_ERROR("Could not build document indexer.");
+		LOG_ERROR("Could not build Document indexer.");
 	}
 
 	if(!mSideBar) {
@@ -116,7 +84,7 @@ bloop::bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
 	connect_signals();
 	show_all();	// Make sure nothing is hidden for some reason
 }
-bloop::~bloop()
+Bloop::~Bloop()
 {
 	expunge(mSketchWorkspace);
 	expunge(mPartDesignWorkspace);
@@ -133,26 +101,30 @@ bloop::~bloop()
 	
 	expunge(mNavigationBar);
 	expunge(mStatusBar);
+
+	for(int i = 0; i < mDocuments.size(); ++i) {
+		expunge(std::get<2>(mDocuments[i]));
+	}
 }
 
-void bloop::add_document(document_ptr doc)
+void Bloop::add_document(Document* doc)
 {
 	if(!doc) {
 		LOG_WARNING("Trying to add null doc.");
 		return;
 	}
-	mDocuments.push_back(std::make_tuple(tabButton(doc->name()), Gtk::Overlay(), doc));
+	mDocuments.push_back(std::make_tuple(TabButton(doc->name()), Gtk::Overlay(), doc));
 	std::get<2>(mDocuments.back())->set_parent(this);
 
 	mDocumentIndexer->append_page(std::get<1>(mDocuments.back()), std::get<0>(mDocuments.back()));
-	std::get<1>(mDocuments.back()).add(*std::get<2>(mDocuments.back())); // Add the document (for Gtk it is a box with a GLArea) to the new overlay
+	std::get<1>(mDocuments.back()).add(*std::get<2>(mDocuments.back())); // Add the Document (for Gtk it is a box with a GLArea) to the new overlay
 
 	std::get<1>(mDocuments.back()).add_overlay(*mNavigationBar);
 	std::get<1>(mDocuments.back()).add_overlay(*mStatusBar);
 	show_all();
 }
 
-Workspace_abstr* bloop::set_workspace(int name, WorkspaceState* state)
+Workspace_abstr* Bloop::set_workspace(int name, WorkspaceState* state)
 {
 	switch(name) {
 	case workspace_types::HOME:
@@ -169,39 +141,39 @@ Workspace_abstr* bloop::set_workspace(int name, WorkspaceState* state)
 		return nullptr;
 	}
 	mUI_upperBar->set_visible_child(*mCurrentWorkspace->upperBar()); // Update the upper bar
-	mCurrentWorkspace->set_state(state); // Whoopsie, this surely should be fetching a new state from the document. TODO: Fix this please
+	mCurrentWorkspace->set_state(state); // Whoopsie, this surely should be fetching a new state from the Document. TODO: Fix this please
 	mNavigationBar->set_workspace(mCurrentWorkspace);
-	mStatusBar->update(statusBar::WORKSPACE, mCurrentWorkspace->name());
+	mStatusBar->update(StatusBar::WORKSPACE, mCurrentWorkspace->name());
 
 	return mCurrentWorkspace;
 }
 
-void bloop::notify_set_tool(std::string const& name)
+void Bloop::notify_set_tool(std::string const& name)
 {
-	mStatusBar->update(statusBar::status::TOOL, name);
+	mStatusBar->update(StatusBar::status::TOOL, name);
 }
 
-void bloop::set_sideBar(Gtk::Widget* to_show)
+void Bloop::set_sideBar(Gtk::Widget* to_show)
 {
 	mSideBar->set_visible_child(*to_show);
 }
-void bloop::add_sideBar(Gtk::Widget* sideBar) 
+void Bloop::add_sideBar(Gtk::Widget* sideBar) 
 {
 	mSideBar->add(*sideBar, "part");
 	show_all();
 }
 
-bool bloop::manage_mouse_scroll_internal(GdkEventScroll* event)
+bool Bloop::manage_mouse_scroll_internal(GdkEventScroll* event)
 {
 	scroll_deltas = glm::vec2(event->delta_x, event->delta_y); // Record the scroll event
 	return true;
 }
 
-void bloop::manage_tab_switch(Gtk::Widget* widget, unsigned int tab_ind)
+void Bloop::manage_tab_switch(Gtk::Widget* widget, unsigned int tab_ind)
 {
-	std::shared_ptr<document> doc = get_document_at_tabInd(tab_ind);
+	Document* doc = get_document_at_tabInd(tab_ind);
 
-	if(doc) { // If it's a doc do all the doc switching thingies (currently there can only be one document, so there is surely problems here)
+	if(doc) { // If it's a doc do all the doc switching thingies (currently there can only be one Document, so there is surely problems here)
 		mCurrentDocument = doc;
 		mCurrentDocument->set_workspace();
 	} else {
@@ -210,22 +182,22 @@ void bloop::manage_tab_switch(Gtk::Widget* widget, unsigned int tab_ind)
 	}
 }
 
-void bloop::set_cursor(Glib::RefPtr<Gdk::Cursor> cursor_)
+void Bloop::set_cursor(Glib::RefPtr<Gdk::Cursor> cursor_)
 {
 	mCursor = cursor_;
 	get_window()->set_cursor(cursor_);
 }
 
-std::shared_ptr<document> bloop::get_document_at_tabInd(unsigned int ind)
+Document* Bloop::get_document_at_tabInd(unsigned int ind)
 {
 	if(ind == 0 || ind > mDocuments.size())
 		return nullptr;
 	return std::get<2>(mDocuments.at(ind-1));
 }
 
-void bloop::connect_signals()
+void Bloop::connect_signals()
 {
-	// I don't know if setting all the masks is really usefull since it is set in document and other parts as well	
+	// I don't know if setting all the masks is really usefull since it is set in Document and other parts as well	
 	add_events( 		  Gdk::POINTER_MOTION_MASK
 						| Gdk::BUTTON_PRESS_MASK
 						| Gdk::BUTTON_RELEASE_MASK
@@ -233,7 +205,7 @@ void bloop::connect_signals()
 						| Gdk::KEY_RELEASE_MASK
 						| Gdk::STRUCTURE_MASK
 						| Gdk::SCROLL_MASK);
-	// signal_key_press_event().connect(sigc::mem_fun(*this, &bloop::manage_key_press));
-	signal_scroll_event().connect(sigc::mem_fun(*this, &bloop::manage_mouse_scroll_internal));
-	mDocumentIndexer->signal_switch_page().connect(sigc::mem_fun(*this, &bloop::manage_tab_switch)); 
+	// signal_key_press_event().connect(sigc::mem_fun(*this, &Bloop::manage_key_press));
+	signal_scroll_event().connect(sigc::mem_fun(*this, &Bloop::manage_mouse_scroll_internal));
+	mDocumentIndexer->signal_switch_page().connect(sigc::mem_fun(*this, &Bloop::manage_tab_switch)); 
 }

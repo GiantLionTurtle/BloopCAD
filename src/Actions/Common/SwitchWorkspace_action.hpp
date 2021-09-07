@@ -7,7 +7,7 @@
 #include <memory>
 
 /*
-	@class SwitchWorkspace_action is an action to change the workspace of a document
+	@class SwitchWorkspace_action is an action to change the workspace of a Document
 	@parent : action
 */
 class SwitchWorkspace_action : public Action {
@@ -19,7 +19,7 @@ public:
 	/*
 		@function SwitchWorkspace_action creates the action and saves the current workspace
 
-		@param doc : 			The document onto which to perform the action
+		@param doc : 			The Document onto which to perform the action
 		@param workspaceNme : 	The name of the target workspace
 	*/
 	SwitchWorkspace_action(int workspaceName, bool set_Camera = false);
@@ -27,13 +27,13 @@ public:
 	/*
 		@function do_work switches to desired workspace if it exists
 	*/
-	virtual bool do_work(document* caller);
+	virtual bool do_work(Document* caller);
 	/*
 		@function undo_work revert back to the initial workspace
 	*/
-	virtual bool undo_work(document* caller);
+	virtual bool undo_work(Document* caller);
 
-	void switch_workspace(document* caller, int wrksp);
+	void switch_workspace(Document* caller, int wrksp);
 };
 
 #endif

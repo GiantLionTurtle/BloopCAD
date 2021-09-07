@@ -2,14 +2,14 @@
 #include "Part_ws.hpp"
 
 #include <Utils/Expunge.hpp>
-#include <bloop.hpp>
+#include <Bloop.hpp>
 #include <Tools/Part/PartDefault_tool.hpp>
 #include <Tools/Part/StartSketch_tool.hpp>
 #include <Tools/Navigation3d/Navigation3d.hpp>
 
 #include <memory>
 
-Part_ws::Part_ws(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
+Part_ws::Part_ws(Glib::RefPtr<Gtk::Builder> const& builder, Bloop* parent) :
 	Workspace_abstr("Part_ws_upperBar", builder, parent) // Create base workspace with ui upper bar
 {
 	// Creat all the tools used in this workspace

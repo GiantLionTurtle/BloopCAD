@@ -8,10 +8,11 @@ add_subdirectory(Tools)
 add_subdirectory(Workspaces)
 add_subdirectory(ConstraintsSolver)
 
+add_subdirectory(Tests)
+
 add_executable(BloopCAD
-	document.cpp
-	bloop.cpp
-	main.cpp)
+	Bloop.cpp
+	Main.cpp)
 
 target_link_libraries(BloopCAD
 	vendor
@@ -23,22 +24,3 @@ target_link_libraries(BloopCAD
 	${GTKMM_LIBRARIES}
 	${CMAKE_DL_LIBS} epoxy)
 
-# ******************* tests ************************
-
-# add_executable(ConstraintsSolverTest
-# 	testConstraintsSolver_main.cpp
-# 	document.cpp
-# 	EventsManager.cpp
-# 	testFramework_EventsManager.cpp
-# 	bloop.cpp
-# 	)
-# target_link_libraries(ConstraintsSolverTest
-# 	vendor
-# 	Utils
-# 	Graphics_utils
-# 	Drawables
-# 	actions
-# 	tools
-# 	Workspaces
-# 	${GTKMM_LIBRARIES}
-# 	${CMAKE_DL_LIBS} epoxy)

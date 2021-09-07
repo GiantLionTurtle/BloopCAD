@@ -130,7 +130,7 @@ public:
 	void backup_system();
 	void revert_system_to_backup();
 
-	virtual void invoke_workspace(document* doc);
+	virtual void invoke_workspace(Document* doc);
 
 	void toggle_solve() { mSolve_allowed = !mSolve_allowed; }
 	bool solve_allowed() { return mSolve_allowed; }

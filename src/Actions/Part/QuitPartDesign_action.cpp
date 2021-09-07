@@ -1,6 +1,6 @@
 
 #include "QuitPartDesign_action.hpp"
-#include <document.hpp>
+#include <Workspaces/Document.hpp>
 
 QuitPartDesign_action::QuitPartDesign_action():
 	mTarget(nullptr)
@@ -8,7 +8,7 @@ QuitPartDesign_action::QuitPartDesign_action():
 
 }
 
-bool QuitPartDesign_action::do_work(document* caller)
+bool QuitPartDesign_action::do_work(Document* caller)
 {
 	mTarget = caller->target();
 	if(mTarget) {
@@ -17,7 +17,7 @@ bool QuitPartDesign_action::do_work(document* caller)
 	return true;
 }
 
-bool QuitPartDesign_action::undo_work(document* caller)
+bool QuitPartDesign_action::undo_work(Document* caller)
 {
 	if(mTarget && !mTarget->has_volume()) {
 		mTarget->show_origin();

@@ -10,14 +10,14 @@ ApplySnapshot_action::ApplySnapshot_action(std::vector<VarDualState> deltas, boo
 
 }
 
-bool ApplySnapshot_action::do_work(document* caller)
+bool ApplySnapshot_action::do_work(Document* caller)
 {
 	if(mDone)
 		return true;
 	Sketch::apply_deltaSnapshot(mDeltas, true);
 	return true;
 }
-bool ApplySnapshot_action::undo_work(document* caller)
+bool ApplySnapshot_action::undo_work(Document* caller)
 {
 	mDone = false;
 	Sketch::apply_deltaSnapshot(mDeltas, false);

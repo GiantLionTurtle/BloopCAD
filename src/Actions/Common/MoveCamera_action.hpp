@@ -24,8 +24,8 @@ public:
 															CameraState const& camSt, Camera* cam);
 	static Action_ptr create_from_facingPlane(Geom3d::Plane_abstr* toFace, float dist_to_plane, Camera* cam);
 
-	virtual bool do_work(document* caller);
-	virtual bool undo_work(document* caller);
+	virtual bool do_work(Document* caller);
+	virtual bool undo_work(Document* caller);
 private:
 	bool move_Camera();
 	void compute_Animatables(CameraState const& state);

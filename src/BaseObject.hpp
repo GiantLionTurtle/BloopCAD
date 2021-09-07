@@ -4,18 +4,18 @@
 
 #include <memory>
 
-class baseObject {
+class BaseObject {
 public:
     virtual bool exists() const = 0;
     virtual void set_exists(bool exists_) = 0;
 };
 
-class defaultBaseObject : public baseObject {
+class DefaultBaseObject : public BaseObject {
 protected:
     bool mExists;
 public:
-    defaultBaseObject(): mExists(true) {}
-    virtual ~defaultBaseObject() {}
+    DefaultBaseObject(): mExists(true) {}
+    virtual ~DefaultBaseObject() {}
     virtual bool exists() const { return mExists; }
     virtual void set_exists(bool exists_) { mExists = exists_; }
 };

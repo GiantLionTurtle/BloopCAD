@@ -16,7 +16,7 @@ Parallel_action::Parallel_action():
 }
 
 
-bool Parallel_action::do_work(document* caller)
+bool Parallel_action::do_work(Document* caller)
 {
 	int n_pendingActions = 0;
 	for(int i = 0; i < mActions.size() && i < mActions_done.size(); ++i) {
@@ -30,7 +30,7 @@ bool Parallel_action::do_work(document* caller)
 	}
 	return n_pendingActions == 0;
 }
-bool Parallel_action::undo_work(document* caller)
+bool Parallel_action::undo_work(Document* caller)
 {
 	int n_pendingActions = 0;
 	for(int i = mActions.size(); i >= 0; --i) {

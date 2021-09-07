@@ -4,7 +4,7 @@
 #include <Drawables/Sk/SkLine.hpp>
 #include <Actions/Sketch/ToggleConstraint_action.hpp>
 #include <Workspaces/Workspace_abstr.hpp>
-#include <document.hpp>
+#include <Workspaces/Document.hpp>
 
 Perpendicularity_tool::Perpendicularity_tool(Sketch_ws* env):
 	Constraint_tool(env)

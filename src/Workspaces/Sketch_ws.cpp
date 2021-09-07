@@ -19,9 +19,9 @@
 #include <Tools/Sketch/Pan2d_tool.hpp>
 #include <Tools/Sketch/Zoom2d_tool.hpp>
 #include <Utils/XMLParser.hpp>
-#include <bloop.hpp>
+#include <Bloop.hpp>
 
-Sketch_ws::Sketch_ws(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
+Sketch_ws::Sketch_ws(Glib::RefPtr<Gtk::Builder> const& builder, Bloop* parent) :
 	Workspace_abstr("Sketch_ws_upperBar", builder, parent) // Create base workspace with upper bar
 {	
 	// Create all the tools used in this workspace

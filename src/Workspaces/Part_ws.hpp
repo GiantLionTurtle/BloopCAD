@@ -23,7 +23,7 @@ public:
 		@param builder : 	The gtk builder that has all the info from an xml file
 		@param parent : 	The parent window of the workspace	
 	*/
-	Part_ws(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
+	Part_ws(Glib::RefPtr<Gtk::Builder> const& builder, Bloop* parent);
 	~Part_ws();
 
 	void set_target(Part* prt) { mTarget = prt; }

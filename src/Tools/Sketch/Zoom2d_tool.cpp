@@ -1,7 +1,7 @@
 
 #include "Zoom2d_tool.hpp"
 
-#include <document.hpp>
+#include <Workspaces/Document.hpp>
 #include <Geometry/3d/Plane_abstr.hpp>
 
 Zoom2d_tool::Zoom2d_tool(Sketch_ws* env): 

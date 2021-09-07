@@ -10,7 +10,7 @@
 
 #include <memory>
 
-class document; // The forward declaration of document is needed for pointer declaration
+class Document; // The forward declaration of Document is needed for pointer declaration
 class modelColumns;
 
 class PartIndexer : public Indexer_abstr {

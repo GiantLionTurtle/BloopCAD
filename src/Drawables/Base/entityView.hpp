@@ -7,7 +7,7 @@
 
 #include <gtkmm.h>
 
-class document;
+class Document;
 class entityView;
 
 class entityHandle : public Gtk::EventBox {
@@ -62,15 +62,15 @@ private:
 
 	entityHandle mRootHandle;
 	std::vector<entityHandle*> mHandles;
-	document* mDoc;
+	Document* mDoc;
 public:
-	entityView(document* doc);
+	entityView(Document* doc);
 	~entityView();
 
 	void add_handle(entityHandle* handle, int at);
 
 	entityHandle& root() { return mRootHandle; };
-	document* doc() { return mDoc; }
+	Document* doc() { return mDoc; }
 
 	WorkspaceState* state() const { return mCurrentWorkspaceState; }
 	void set_WorkspaceState(WorkspaceState* WorkspaceState_) { mCurrentWorkspaceState = WorkspaceState_; };

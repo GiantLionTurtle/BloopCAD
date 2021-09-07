@@ -21,7 +21,7 @@ public:
 		@param builder : 	The gtk builder that creates widget from an xml file
 		@param parent : 	The window which it is part of
 	*/
-	Home_ws(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent);
+	Home_ws(Glib::RefPtr<Gtk::Builder> const& builder, Bloop* parent);
 	~Home_ws();
 	/*
 		@function new_file will eventually create a file

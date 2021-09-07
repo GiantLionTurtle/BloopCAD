@@ -4,7 +4,7 @@
 #include <Drawables/Sk/SkLine.hpp>
 #include <Workspaces/Workspace_abstr.hpp>
 #include <Actions/Sketch/ToggleConstraint_action.hpp>
-#include <document.hpp>
+#include <Workspaces/Document.hpp>
 
 Verticality_tool::Verticality_tool(Sketch_ws* env):
 	Constraint_tool(env)

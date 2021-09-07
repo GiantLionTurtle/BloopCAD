@@ -15,14 +15,14 @@ Serial_action::Serial_action():
 }
 
 
-bool Serial_action::do_work(document* caller)
+bool Serial_action::do_work(Document* caller)
 {
 	if(mCurrentInd >= 0 && mCurrentInd < mActions.size() && mActions[mCurrentInd]->do_work(caller)) {
 		mCurrentInd++;
 	}
 	return mCurrentInd >= mActions.size();
 }
-bool Serial_action::undo_work(document* caller)
+bool Serial_action::undo_work(Document* caller)
 {
 	if(mCurrentInd > 0 && mCurrentInd <= mActions.size() && mActions[mCurrentInd-1]->undo_work(caller)) {
 		mCurrentInd--;

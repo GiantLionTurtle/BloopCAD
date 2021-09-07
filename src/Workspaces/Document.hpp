@@ -2,7 +2,7 @@
 #ifndef DOCUMENT_HPP_
 #define DOCUMENT_HPP_
 
-#include <forward_bloop.hpp>
+#include <Forward_bloop.hpp>
 #include <Workspaces/Workspace_abstr.hpp>
 #include <Workspaces/EventsManager.hpp>
 #include <Tools/Tool.hpp>
@@ -39,33 +39,30 @@ struct selection {
 	{}
 };
 
-class document;
-using document_ptr = std::shared_ptr<document>;
-
 /*
-	@class document represents a document that the user is working with
+	@class Document represents a Document that the user is working with
 	@parent Gtk::Box
 */
-class document : public Gtk::Box {
+class Document : public Gtk::Box {
 private:
 	EventsManager* mEventsManager;
 
-	Part* mPart; // Curently, documents only work on a single part
+	Part* mPart; // Curently, Documents only work on a single part
 	Drawable* mToolPreview;
 	std::vector<selection> mSelection; // This will be kept linear for as long as there is no need for large selections
 
 	// std::map<std::string, WorkspaceState*> mWorkspaceStates; // All the workspace states for the various Workspaces
 	WorkspaceState* mSketchState;
 	WorkspaceState* mPartState;
-	WorkspaceState* mCurrentWorkspaceState; // The workspace state for the current workspace working on the document
+	WorkspaceState* mCurrentWorkspaceState; // The workspace state for the current workspace working on the Document
 
-	std::vector<Action_ptr> mActionStack; // The stack of actions done in the document
+	std::vector<Action_ptr> mActionStack; // The stack of actions done in the Document
 	int mActionInd, mCurrentActionNum, mActionStackSize; // Metrics for the action stack
 
 	glm::vec3 mBackgroundColor; // The rendering background color
 	Gtk::GLArea mViewport; // The rendering widget
 	int mFrameId; // The current frame id, it is NOT garanteed to be unique
-	bloop* mParentBloop; // The bloop window owning the document
+	Bloop* mParentBloop; // The Bloop window owning the Document
 	CameraState mCurrentCamState;
 
 	bool mNeed_redraw;
@@ -77,10 +74,10 @@ private:
 	int mVerboseLevel;
 public:
 	/*
-		@function document creates an empty and mostly unitialized document 
+		@function Document creates an empty and mostly unitialized Document 
 	*/
-	document(EventsManager* manager = nullptr);
-	~document();
+	Document(EventsManager* manager = nullptr);
+	~Document();
 
 	/*
 		@function make_glContext makes the rendering context current, it is used if the openGL states 
@@ -104,7 +101,7 @@ public:
 	bool do_render(const Glib::RefPtr<Gdk::GLContext>& /* context */);
 
 	/*
-		@function connect_signals connects the viewport events to bloop's callbacks
+		@function connect_signals connects the viewport events to Bloop's callbacks
 	*/
 	void connect_signals();
 
@@ -119,7 +116,7 @@ public:
 	*/
 	Workspace_abstr* set_workspace(int name);
 	/*
-		@function set_workspace enforces the current workspace in the bloop window
+		@function set_workspace enforces the current workspace in the Bloop window
 
 		@return : The set workspace, or nullptr 
 	*/
@@ -140,8 +137,8 @@ public:
 	*/
 	WorkspaceState* state() { return mCurrentWorkspaceState; };
 
-	bloop* window() { return mParentBloop; }
-	void set_parent(bloop* parentBloop);
+	Bloop* window() { return mParentBloop; }
+	void set_parent(Bloop* parentBloop);
 
 	std::string name() { return mName; }
 	void set_name(std::string const& name_) { mName = name_; }
@@ -149,7 +146,7 @@ public:
 	/*
 		@function target
 
-		@return : The part that is worked on in the document, as a part
+		@return : The part that is worked on in the Document, as a part
 	*/
 	Part* target() { return mPart; }
 	int frameId() { return mFrameId; }

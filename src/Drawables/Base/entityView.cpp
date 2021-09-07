@@ -2,7 +2,7 @@
 #include "entityView.hpp"
 
 #include <Utils/Expunge.hpp>
-#include <document.hpp>
+#include <Workspaces/Document.hpp>
 
 entityHandle::entityHandle(Drawable* ent, entityView* view, entityHandle* parent):
 	mEntity(ent),
@@ -200,7 +200,7 @@ void entityHandle::update_name(std::string name)
 	mContent.set_label(name);	
 }
 
-entityView::entityView(document* doc):
+entityView::entityView(Document* doc):
 	mCurrentWorkspaceState(nullptr),
 	mRootHandle(),
 	mDoc(doc)

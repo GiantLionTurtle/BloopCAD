@@ -4,11 +4,11 @@
 
 #include "Expression_forward.hpp"
 #include <Utils/Debug_util.hpp>
-#include <baseObject.hpp>
+#include <BaseObject.hpp>
 
 #include <array>
 
-class Constraint_abstr : virtual public baseObject {
+class Constraint_abstr : virtual public BaseObject {
 public:
 	Constraint_abstr();
 	~Constraint_abstr();

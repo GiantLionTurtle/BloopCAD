@@ -4,7 +4,7 @@
 #include <Actions/Common/Parallel_action.hpp>
 #include <Actions/Sketch/ToggleConstraint_action.hpp>
 #include <Actions/Sketch/ApplySnapshot_action.hpp>
-#include <document.hpp>
+#include <Workspaces/Document.hpp>
 
 Constraint_tool::Constraint_tool(Sketch_ws* env, int filter):
 	tool<Sketch_ws>(env),

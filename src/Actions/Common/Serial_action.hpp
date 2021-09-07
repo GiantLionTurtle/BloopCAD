@@ -18,8 +18,8 @@ public:
 	Serial_action(std::vector<Action_ptr> actions);
 	Serial_action();
 
-	virtual bool do_work(document* caller);
-	virtual bool undo_work(document* caller);
+	virtual bool do_work(Document* caller);
+	virtual bool undo_work(Document* caller);
 
 	void add_action(Action_ptr anAction);
 

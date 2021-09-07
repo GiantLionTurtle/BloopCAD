@@ -2,9 +2,9 @@
 #include "Home_ws.hpp"
 
 #include <Utils/Expunge.hpp>
-#include <bloop.hpp>
+#include <Bloop.hpp>
 
-Home_ws::Home_ws(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :
+Home_ws::Home_ws(Glib::RefPtr<Gtk::Builder> const& builder, Bloop* parent) :
 	Workspace_abstr("Home_ws_upperBar", builder, parent)
 {
 	// Create empty buttons
