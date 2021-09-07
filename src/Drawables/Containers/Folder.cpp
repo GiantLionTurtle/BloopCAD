@@ -1,7 +1,7 @@
 
 #include "Folder.hpp"
 
-#include "entityView.hpp"
+#include <Drawables/Base/entityView.hpp>
 
 
 Folder::Folder(std::string const& name_)

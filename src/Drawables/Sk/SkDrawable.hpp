@@ -2,8 +2,8 @@
 #ifndef SKETCHDRAWABLE_HPP_
 #define SKETCHDRAWABLE_HPP_
 
-#include <Geom/Geom3d/Plane_abstr.hpp>
-#include <Drawables/Tangible.hpp>
+#include <Drawables/Base/Drawable.hpp>
+#include <Geometry/3d/Plane_abstr.hpp>
 #include <ConstraintsSolver/Expression.hpp>
 #include <ConstraintsSolver/ExpressionVec.hpp>
 

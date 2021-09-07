@@ -3,7 +3,7 @@
 #define SIMPLESELECTOR_TOOL_HPP_
 
 #include <Tools/Tool.hpp>
-#include <Drawables/Drawable.hpp>
+#include <Drawables/Base/Drawable.hpp>
 #include <document.hpp>
 
 /*

@@ -1,7 +1,7 @@
 
 #include "ApplySnapshot_action.hpp"
 
-#include <Drawables/Sketch.hpp>
+#include <Drawables/Containers/Sketch.hpp>
 
 ApplySnapshot_action::ApplySnapshot_action(std::vector<VarDualState> deltas, bool done_at_creation):
 	mDeltas(deltas),

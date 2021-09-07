@@ -2,7 +2,7 @@
 #ifndef PART_HPP_
 #define PART_HPP_
 
-#include "Collection.hpp"
+#include <Drawables/Base/Collection.hpp>
 #include "Folder.hpp"
 #include "Sketch.hpp"
 

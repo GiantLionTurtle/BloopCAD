@@ -3,7 +3,7 @@
 
 #include <Utils/Expunge.hpp>
 #include <document.hpp>
-#include <Drawables/Sketch.hpp>
+#include <Drawables/Containers/Sketch.hpp>
 #include <Utils/Debug_util.hpp>
 #include <Workspaces/Workspace_abstr.hpp>
 #include <document.hpp>

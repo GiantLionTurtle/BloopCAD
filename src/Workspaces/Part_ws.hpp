@@ -3,7 +3,7 @@
 #define PARTDESIGN_HPP_
 
 #include "Workspace_abstr.hpp"
-#include <Drawables/Part.hpp>
+#include <Drawables/Containers/Part.hpp>
 
 #include <string>
 

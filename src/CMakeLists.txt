@@ -1,7 +1,7 @@
 
 add_subdirectory(Utils)
 add_subdirectory(Graphics_utils)
-add_subdirectory(Geom)
+add_subdirectory(Geometry)
 add_subdirectory(Drawables)
 add_subdirectory(Actions)
 add_subdirectory(Tools)

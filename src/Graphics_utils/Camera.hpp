@@ -5,7 +5,7 @@
 #include <Utils/Animatable.hpp>
 #include <Utils/Debug_util.hpp>
 
-#include <Geom/Geom3d/Plane_abstr.hpp>
+#include <Geometry/3d/Plane_abstr.hpp>
 
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>

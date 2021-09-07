@@ -2,7 +2,7 @@
 #include "Point.hpp"
 
 #include <Utils/Expunge.hpp>
-#include <Geom/Geom3d/Plane_abstr.hpp>
+#include <Geometry/3d/Plane_abstr.hpp>
 #include <Graphics_utils/GLCall.hpp>
 #include <Graphics_utils/ShadersPool.hpp>
 #include <Utils/Maths_util.hpp>

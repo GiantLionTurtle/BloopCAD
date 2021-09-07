@@ -3,7 +3,7 @@
 #define TOOL_HPP_
 
 #include <forward_bloop.hpp>
-#include <Drawables/Drawable.hpp>
+#include <Drawables/Base/Drawable.hpp>
 
 #include <glm/glm.hpp>
 #include <gtkmm.h>

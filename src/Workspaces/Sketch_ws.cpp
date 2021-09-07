@@ -19,7 +19,6 @@
 #include <Tools/Sketch/Pan2d_tool.hpp>
 #include <Tools/Sketch/Zoom2d_tool.hpp>
 #include <Utils/XMLParser.hpp>
-#include <Drawables/svgEntity.hpp>
 #include <bloop.hpp>
 
 Sketch_ws::Sketch_ws(Glib::RefPtr<Gtk::Builder> const& builder, bloop* parent) :

@@ -2,8 +2,8 @@
 #ifndef PLANE_HPP_
 #define PLANE_HPP_
 
-#include <Drawables/Drawable.hpp>
-#include <Geom/Geom3d/Plane_abstr.hpp>
+#include <Drawables/Base/Drawable.hpp>
+#include <Geometry/3d/Plane_abstr.hpp>
 
 #include <Graphics_utils/VertexArray.hpp>
 #include <Graphics_utils/VertexBuffer.hpp>

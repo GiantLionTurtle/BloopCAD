@@ -4,7 +4,7 @@
 
 #include "Expression.hpp"
 
-#include <Geom/Geom2d/Point_abstr.hpp>
+#include <Geometry/2d/Point_abstr.hpp>
 
 #include <array>
 #include <memory>

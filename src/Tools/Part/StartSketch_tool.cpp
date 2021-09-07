@@ -2,8 +2,8 @@
 #include "StartSketch_tool.hpp"
 
 #include <document.hpp>
-#include <Drawables/Sketch.hpp>
-#include <Drawables/tangibleEntities/Plane.hpp>
+#include <Drawables/Containers/Sketch.hpp>
+#include <Drawables/3d/Plane.hpp>
 #include <Actions/Common/ToggleBaseObject_action.hpp>
 #include <Actions/Sketch/EnterSketch_action.hpp>
 #include <Actions/Part/QuitPartDesign_action.hpp>

@@ -4,7 +4,7 @@
 
 #include "SkCurve.hpp"
 #include "SkPoint.hpp"
-#include <Drawables/Collection.hpp>
+#include <Drawables/Base/Collection.hpp>
 #include "SkGeometry.hpp"
 
 template<size_t nH, typename Curve>

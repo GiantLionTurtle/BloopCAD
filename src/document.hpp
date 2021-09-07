@@ -8,9 +8,9 @@
 #include <Tools/Tool.hpp>
 #include <Graphics_utils/FrameBuffer.hpp>
 #include <Actions/Action.hpp>
-#include <Drawables/Part.hpp>
+#include <Drawables/Containers/Part.hpp>
 #include <Graphics_utils/Camera.hpp>
-#include <Drawables/entityView.hpp>
+#include <Drawables/Base/entityView.hpp>
 
 #include <gtkmm.h>
 

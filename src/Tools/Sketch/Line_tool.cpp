@@ -4,7 +4,7 @@
 #include <Utils/Expunge.hpp>
 #include <Workspaces/Workspace_abstr.hpp>
 #include <document.hpp>
-#include <Drawables/Sketch.hpp>
+#include <Drawables/Containers/Sketch.hpp>
 #include <Actions/Common/ToggleBaseObject_action.hpp>
 #include <Actions/Sketch/ToggleConstraint_action.hpp>
 #include <Actions/Common/Parallel_action.hpp>

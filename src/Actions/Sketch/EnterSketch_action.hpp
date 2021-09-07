@@ -3,8 +3,8 @@
 #define ENTERSKETCHDESIGN_ACTION_HPP_
 
 #include <Actions/Common/SwitchWorkspace_action.hpp>
-#include <Drawables/Sketch.hpp>
-#include <Drawables/tangibleEntities/Plane.hpp>
+#include <Drawables/Containers/Sketch.hpp>
+#include <Drawables/3d/Plane.hpp>
 
 #include <memory>
 

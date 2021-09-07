@@ -6,7 +6,7 @@
 #include <Graphics_utils/Camera.hpp>
 #include <Tools/Tool.hpp>
 #include <Graphics_utils/FrameBuffer.hpp>
-#include <Drawables/Drawable.hpp>
+#include <Drawables/Base/Drawable.hpp>
 #include <Tools/Tools_forward.hpp>
 #include <Utils/Expunge.hpp>
 

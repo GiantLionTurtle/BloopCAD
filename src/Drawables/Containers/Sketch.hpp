@@ -2,13 +2,13 @@
 #ifndef SKETCH_HPP_
 #define SKETCH_HPP_
 
-#include "Collection.hpp"
-#include <Geom/Geom3d/Plane_abstr.hpp>
-#include <Drawables/Folder.hpp>
+#include <Drawables/Base/Collection.hpp>
+#include <Geometry/3d/Plane_abstr.hpp>
+#include <Drawables/Containers//Folder.hpp>
 #include <ConstraintsSolver/ConstraintsSystem.hpp>
-#include "Sk/SkDrawable.hpp"
-#include "Sk/SkGeometry.hpp"
-#include "Sk/SkConstraint.hpp"
+#include <Drawables/Sk/SkDrawable.hpp>
+#include <Drawables/Sk/SkGeometry.hpp>
+#include <Drawables/Sk/SkConstraint.hpp>
 #include <Actions/Common/Serial_action.hpp>
 
 #include <memory>

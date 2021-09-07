@@ -5,7 +5,7 @@
 #include "SkGeometry.hpp"
 #include "SkCurve.hpp"
 #include <ConstraintsSolver/Expression.hpp>
-#include <Geom/Geom2d/Line_abstr.hpp>
+#include <Geometry/2d/Line_abstr.hpp>
 
 class SkLineCurve : public Geom2d::Line_abstr, public SkCurve<std::array<ExpVec2<ExpVar>*, 2>, SkLineCurve> {
 private:

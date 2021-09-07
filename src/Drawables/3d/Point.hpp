@@ -2,8 +2,8 @@
 #ifndef POINT_HPP_
 #define POINT_HPP_
 
-#include <Drawables/Drawable.hpp>
-#include <Geom/Geom3d/Point_abstr.hpp>
+#include <Drawables/Base/Drawable.hpp>
+#include <Geometry/3d/Point_abstr.hpp>
 #include <ConstraintsSolver/Expression.hpp>
 
 #include <Graphics_utils/VertexArray.hpp>

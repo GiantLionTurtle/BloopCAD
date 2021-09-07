@@ -2,7 +2,7 @@
 #include "Point_tool.hpp"
 
 #include <document.hpp>
-#include <Drawables/Sketch.hpp>
+#include <Drawables/Containers/Sketch.hpp>
 #include <Actions/Common/ToggleBaseObject_action.hpp>
 
 Point_tool::Point_tool(Sketch_ws* env):

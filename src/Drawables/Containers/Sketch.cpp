@@ -2,8 +2,8 @@
 #include "Sketch.hpp"
 
 #include <ConstraintsSolver/SolverState.hpp>
-#include "Sk/SkPoint.hpp"
-#include "Sk/SkLine.hpp"
+#include <Drawables/Sk/SkPoint.hpp>
+#include <Drawables/Sk/SkLine.hpp>
 
 #include <Actions/Common/Serial_action.hpp>
 #include <Actions/Common/MoveCamera_action.hpp>

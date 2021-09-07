@@ -3,7 +3,7 @@
 #define SERIAL_ACTION_HPP_
 
 #include <Actions/Action.hpp>
-#include <Drawables/Drawable.hpp>
+#include <Drawables/Base/Drawable.hpp>
 
 #include <glm/glm.hpp>
 

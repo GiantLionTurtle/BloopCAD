@@ -4,7 +4,7 @@
 
 #include <Actions/Action.hpp>
 
-#include <Drawables/Sketch.hpp>
+#include <Drawables/Containers/Sketch.hpp>
 #include <Drawables/Sk/SkConstraint.hpp>
 
 class ToggleConstraint_action : public Action {

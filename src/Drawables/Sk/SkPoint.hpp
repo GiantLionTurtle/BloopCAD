@@ -3,10 +3,9 @@
 #define SKPOINT_HPP_
 
 #include "SkGeometry.hpp"
-#include <Drawables/Tangible.hpp>
 #include <ConstraintsSolver/Expression.hpp>
 #include <ConstraintsSolver/ExpressionVec.hpp>
-#include <Geom/Geom2d/Point_abstr.hpp>
+#include <Geometry/2d/Point_abstr.hpp>
 
 #include <Graphics_utils/VertexArray.hpp>
 #include <Graphics_utils/VertexBuffer.hpp>

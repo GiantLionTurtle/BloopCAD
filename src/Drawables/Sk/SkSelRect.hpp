@@ -3,7 +3,7 @@
 #define SELECTIONRECTANGLE_HPP_
 
 #include "SkDrawable.hpp"
-#include <Geom/Geom3d/Plane_abstr.hpp>
+#include <Geometry/3d/Plane_abstr.hpp>
 
 class SkSelRect : public SkDrawable {
 public:

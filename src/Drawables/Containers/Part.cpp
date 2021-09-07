@@ -1,10 +1,10 @@
 
 #include "Part.hpp"
 
-#include "entityView.hpp"
+#include <Drawables/Base/entityView.hpp>
 #include <Utils/Debug_util.hpp>
-#include "tangibleEntities/Point.hpp"
-#include "tangibleEntities/Plane.hpp"
+#include <Drawables/3d/Point.hpp>
+#include <Drawables/3d/Plane.hpp>
 
 Part::Part():
 	Drawable()

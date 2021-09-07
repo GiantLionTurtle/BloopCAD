@@ -2,7 +2,7 @@
 #ifndef FOLDER_HPP_
 #define FOLDER_HPP_
 
-#include "Collection.hpp"
+#include <Drawables/Base/Collection.hpp>
 
 class Folder;
 using Folder_ptr = std::shared_ptr<Folder>;

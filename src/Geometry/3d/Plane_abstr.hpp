@@ -4,7 +4,7 @@
 
 #include "Geom3d_abstr.hpp"
 #include "Point_abstr.hpp"
-#include <Geom/Geom2d/Point_abstr.hpp>
+#include <Geometry/2d/Point_abstr.hpp>
 
 #include <glm/glm.hpp>
 

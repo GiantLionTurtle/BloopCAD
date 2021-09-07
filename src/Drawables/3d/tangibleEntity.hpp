@@ -2,7 +2,7 @@
 #ifndef GEOMETRICENTITY_HPP_
 #define GEOMETRICENTITY_HPP_
 
-#include <Drawables/Drawable.hpp>
+#include <Drawables/Base/Drawable.hpp>
 
 class tangibleEntity : public Drawable {
 protected:
