@@ -1,25 +1,22 @@
 
 #include "Folder.hpp"
 
-#include <Drawables/Base/entityView.hpp>
-
-
 Folder::Folder(std::string const& name_)
 {
 	set_name(name_);
 }
 
-void Folder::set_handle(entityHandle* handle_)
+void Folder::set_handle(UILink* handle_)
 {
-	mHandle = handle_;
-	for(int i = 0; i < mDrawList.size(); ++i) {
-		auto ent = mDrawList.at(i);
-		if(ent->handle()) {
-			delete ent->handle();
-			ent->set_handle(nullptr);
-		}
-		ent->set_handle(new entityHandle(ent, mHandle->view(), mHandle));
-	}
+	mUILink = handle_;
+	// for(int i = 0; i < mDrawList.size(); ++i) {
+	// 	auto ent = mDrawList.at(i);
+	// 	if(ent->handle()) {
+	// 		delete ent->handle();
+	// 		ent->set_handle(nullptr);
+	// 	}
+	// 	ent->set_handle(new entityHandle(ent, mHandle->view(), mHandle));
+	// }
 }
 void Folder::add(Drawable* ent)
 {
@@ -27,8 +24,8 @@ void Folder::add(Drawable* ent)
 		need_redraw();
 		ent->set_parent(this);
 		mDrawList.add(ent);
-		if(mHandle)
-			ent->set_handle(new entityHandle(ent, mHandle->view(), mHandle));
+		// if(mHandle)
+			// ent->set_handle(new entityHandle(ent, mHandle->view(), mHandle));
 	}
 }
 

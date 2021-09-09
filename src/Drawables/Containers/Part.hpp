@@ -83,7 +83,7 @@ public:
 	*/
 	virtual void init_impl();
 
-	virtual void set_handle(entityHandle* handle_);
+	virtual void set_handle(UILink* handle_);
 
 	SelPoint closest(glm::vec2 cursor, Camera* cam, int filter);
 

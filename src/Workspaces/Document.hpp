@@ -10,7 +10,7 @@
 #include <Actions/Action.hpp>
 #include <Drawables/Containers/Part.hpp>
 #include <Graphics_utils/Camera.hpp>
-#include <Drawables/Base/entityView.hpp>
+#include "DocumentTree.hpp"
 
 #include <gtkmm.h>
 
@@ -67,7 +67,7 @@ private:
 
 	bool mNeed_redraw;
 	bool mUseSelectionBuffer;
-	entityView* mSideBar;
+	DocumentTree* mSideBar;
 
 	std::string mName;
 
@@ -105,7 +105,7 @@ public:
 	*/
 	void connect_signals();
 
-	entityView* sideBar() const { return mSideBar; }
+	DocumentTree* sideBar() const { return mSideBar; }
 
 	/*
 		@function set_workspace sets the current workspace to a named workspace

@@ -17,7 +17,7 @@ tooltip { /* lack of '.' or '#' references GTK's tooltip class */
     background: rgb(202, 16, 187);
 }
 
-.entityView {
+.DocumentTree {
     background: rgb(90, 90, 90);
     min-width: 200px;
 }

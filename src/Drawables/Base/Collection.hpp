@@ -31,6 +31,12 @@ public:
 	{
 		mDrawList.init_newElems();
 	}
+	void draw(Camera* cam, int frame, draw_type type)
+	{
+		if(!exists())
+			return;
+		draw_impl(cam, frame, type);
+	}
 	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL)
 	{
 		for(size_t i = 0; i < n_children(); ++i) {

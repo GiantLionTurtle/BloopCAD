@@ -14,7 +14,7 @@ SkSelRect::SkSelRect(glm::vec2 start, glm::vec2 end, Geom3d::Plane_abstr* basePl
 	mVB(nullptr),
 	mShader(nullptr)
 {
-
+	set_name("selection");
 }
 SkSelRect::~SkSelRect()
 {
@@ -50,7 +50,6 @@ void SkSelRect::init_impl()
 {
 	set_points(mStartPt, mEndPt);
 	init_buffers();
-	set_name("selection");
 	
 	mVB = new VertexBuffer(mVertices, sizeof(glm::vec3) * 4); // Upload the vertices
 	mVA = new VertexArray();

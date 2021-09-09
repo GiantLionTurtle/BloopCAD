@@ -11,7 +11,7 @@ class Folder : public Collection_abstr<LinearResizable_indexer<Drawable*>> {
 public:
 	Folder(std::string const& name_ = "folder");
 
-	virtual void set_handle(entityHandle* handle_);
+	virtual void set_handle(UILink* handle_);
 	
 	void add(Drawable* elem);
 	Drawable* get(size_t ind);

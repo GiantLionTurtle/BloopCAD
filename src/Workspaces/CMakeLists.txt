@@ -6,6 +6,7 @@ set(Workspaces_Utils_source_files
 	Workspace_abstr.cpp
 	EventsManager.cpp
 	MiscUI.cpp
+	DocumentTree.cpp
 	Document.cpp
 )
 

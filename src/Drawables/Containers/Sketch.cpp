@@ -11,8 +11,6 @@
 #include <Actions/Part/QuitPartDesign_action.hpp>
 #include <Actions/Common/ToggleBaseObject_action.hpp>
 
-
-
 #include <Utils/Debug_util.hpp>
 #include <Utils/Maths_util.hpp>
 #include <Bloop.hpp>
@@ -193,7 +191,7 @@ bool Sketch::add_constraint(SkConstraint* constr, SkDrawable* immovable_hint)
 	mDrawList.add_constr(constr);
 	mConstrSystem.add_constraint(constr);
 	// constr->set_parent(this);
-	mHandle->update_name(mName + "(" + std::to_string(mConstrSystem.n_constraints()) + ",  " + std::to_string(mConstrSystem.n_variables()) + ")");
+	// mHandle->update_name(mName + "(" + std::to_string(mConstrSystem.n_constraints()) + ",  " + std::to_string(mConstrSystem.n_variables()) + ")");
 
 	if(immovable_hint) {
 		// BLOOPBLOOPCHECK
@@ -217,7 +215,7 @@ bool Sketch::toggle_constraint(SkConstraint* constr, bool enable)
 		return false;
 	constr->set_exists(enable);
 	mConstrSystem.toggle_constraint(constr, enable);
-	mHandle->update_name(mName + "(" + std::to_string(mConstrSystem.n_constraints()) + ",  " + std::to_string(mConstrSystem.n_variables()) + ")");
+	// mHandle->update_name(mName + "(" + std::to_string(mConstrSystem.n_constraints()) + ",  " + std::to_string(mConstrSystem.n_variables()) + ")");
 
 	if(update_constraints(true, false))
 		return true;

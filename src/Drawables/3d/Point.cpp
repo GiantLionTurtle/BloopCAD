@@ -18,6 +18,8 @@ Point::Point(glm::vec3 const& basePoint):
 	mZ = ExpVar::make(basePoint.z);
 
 	mType |= Drawable_types::POINT;
+
+	set_name("point");
 }
 Point::~Point()
 {
@@ -69,7 +71,6 @@ void Point::init_impl()
 		{"resources/Shaders/Point.frag", GL_FRAGMENT_SHADER}}); // Geometry Shader is needed because point is expanded on the gpu
 		ShadersPool::get_instance().add("point", mShader);
 	}
-	set_name("point");
 }
 
 void Point::draw_impl(Camera* cam, int frame, draw_type type)

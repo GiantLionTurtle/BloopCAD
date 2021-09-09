@@ -12,6 +12,7 @@ Plane::Plane(Plane_abstr const& plane_):
 	mShader(nullptr)
 {
 	mType |= Drawable_types::PLANE;
+	set_name("plane");
 }
 Plane::~Plane()
 {
@@ -35,7 +36,6 @@ SelPoint Plane::closest(glm::vec2 cursor, Camera* cam, int filter)
 void Plane::init_impl()
 {
 	set_need_redraw();
-	set_name("plane");
 	init_buffers(); // Set all the vertices to the right values
 	
 	mVB = new VertexBuffer(mVertices, sizeof(glm::vec3) * 4); // Upload the vertices
@@ -68,8 +68,8 @@ void Plane::draw_impl(Camera* cam, int frame, draw_type type)
 		color = mColorB;
 	}
 	if(selected()) 
-		color += glm::vec3(0.0f, 0.0f, 0.3f); // Make it blue-er if selected
-	mShader->setUniform4f("u_Color", color.r, color.g, color.b, hovered() ? 0.5 : 0.3);
+		color += glm::vec3(0.0f, 0.0f, 0.4f); // Make it blue-er if selected
+	mShader->setUniform4f("u_Color", color.r, color.g, color.b, hovered() || selected() ? 0.5 : 0.3);
 
 	if(mShader->lastUsed() != frame) {
 		mShader->setUniformMat4f("u_MVP", cam->mvp());

@@ -22,7 +22,6 @@
 class Document;
 
 class Drawable;
-class entityHandle;
 
 /*
 	@define BLOOP_ENTITY_ describe state flags for an entity
@@ -64,6 +63,12 @@ struct SelPoint {
 	float dist_to_cam;
 };
 
+class UILink {
+public:
+	virtual void notify_hover(bool hov) {}
+	virtual void notify_select(bool sel) {}
+};
+
 /*
 	@class entity describes a basic entity that appears on screen
 */
@@ -82,7 +87,7 @@ protected:
 
 	Drawable* mParent;
 
-	entityHandle* mHandle;
+	UILink* mUILink;
 public:
 	/*
 		@function entity creates an empty entity with reasonable state defaults:
@@ -220,8 +225,8 @@ public:
 	std::string name() const { return mName; }
 	void set_name(std::string const& name_) { mName = name_; }
 
-	entityHandle* handle() const { return mHandle; }
-	virtual void set_handle(entityHandle* handle_) { mHandle = handle_; }
+	UILink* handle() const { return mUILink; }
+	virtual void set_handle(UILink* handle_) { mUILink = handle_; }
 
 	/*
 		@function is_following
@@ -249,8 +254,6 @@ protected:
 	virtual void hover_impl(bool hov) {}
 	virtual void hidden_impl(bool hid) {}
 	virtual void exists_impl(bool ex) {}
-
-	// bool should_draw_self(draw_type type, bool on_required);
 };
 
 

@@ -1,10 +1,10 @@
 
 #include "Part.hpp"
 
-#include <Drawables/Base/entityView.hpp>
 #include <Utils/Debug_util.hpp>
 #include <Drawables/3d/Point.hpp>
 #include <Drawables/3d/Plane.hpp>
+#include <Workspaces/DocumentTree.hpp>
 
 Part::Part():
 	Drawable()
@@ -33,28 +33,42 @@ void Part::init_impl()
 	zx->set_parent(this);
 
 	Point* center = new Point(glm::vec3(0.0f, 0.0f, 0.0f));
-	center->set_name("originPoint");
+	center->set_name("Origin point");
+
+	Plane* testplane = new Plane(
+		Geom3d::Plane_abstr::from_1Point2Vectors(glm::vec3(-3.0f, 0.5f, 0.0f), glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.5f, 0.0f))); // Temporary test plane
+
+	DocumentNode* node = new DocumentNode("Origin");
+	static_cast<DocumentDrawableNode*>(mUILink)->add_node(node);
+
+	node->add_node(new DocumentDrawableNode(center));
+	node->add_node(new DocumentDrawableNode(xy));
+	node->add_node(new DocumentDrawableNode(yz));
+	node->add_node(new DocumentDrawableNode(zx));
+	node->add_node(new DocumentDrawableNode(testplane));
+	node->collapse();
+
+	
 
 	mDrawList.add_origin(center);
 	mDrawList.add_origin(xy);
 	mDrawList.add_origin(yz);
 	mDrawList.add_origin(zx);
-	mDrawList.add_origin(new Plane(
-		Geom3d::Plane_abstr::from_1Point2Vectors(glm::vec3(-3.0f, 0.5f, 0.0f), glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.5f, 0.0f)))); // Temporary test plane
+	mDrawList.add_origin(testplane);
 
 	mDrawList.init_newElems();
 }
 
-void Part::set_handle(entityHandle* handle_)
+void Part::set_handle(UILink* handle_)
 {
-	mHandle = handle_;
+	mUILink = handle_;
 	
-	for(int i = 0; i < mDrawList.size(); ++i) {
-		auto drw = mDrawList.at(i);
-		if(drw->handle())
-			delete drw->handle();
-		drw->set_handle(new entityHandle(drw, mHandle->view(), mHandle));
-	}
+	// for(int i = 0; i < mDrawList.size(); ++i) {
+	// 	auto drw = mDrawList.at(i);
+	// 	if(drw->handle())
+	// 		delete drw->handle();
+	// 	drw->set_handle(new UILink(drw, mHandle->view(), mHandle));
+	// }
 }
 
 SelPoint Part::closest(glm::vec2 cursor, Camera* cam, int filter)
@@ -86,8 +100,11 @@ void Part::add_sketch(Sketch* sk)
 	sk->set_parent(this);
 	mDrawList.add_sketch(sk);
 	
-	if(mHandle)
-		sk->set_handle(new entityHandle(sk, mHandle->view(), mHandle));
+	if(mUILink) {
+		DocumentDrawableNode* sklink = new DocumentDrawableNode(sk);
+		static_cast<DocumentDrawableNode*>(mUILink)->add_node(sklink);
+		sk->set_handle(sklink);
+	}
 }
 
 void Part::show_origin()

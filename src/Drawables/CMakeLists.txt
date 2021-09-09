@@ -4,7 +4,6 @@ set(Drawables_source_files
 	Containers/Part.cpp
 	Containers/Sketch.cpp
 	Containers/Folder.cpp
-	Base/entityView.cpp
 	
 	Sk/SkLineCurve.cpp
 	Sk/SkCircleCurve.cpp

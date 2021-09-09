@@ -1,7 +1,6 @@
 
 #include "Drawable.hpp"
 
-#include "entityView.hpp"
 #include <Utils/Debug_util.hpp>
 #include <Utils/Expunge.hpp>
 
@@ -9,7 +8,7 @@ Drawable::Drawable():
 	mState(BLOOP_ENTITY_EXISTS_FLAG),
 	mStdNotifs(0),
 	mParent(nullptr),
-	mHandle(nullptr),
+	mUILink(nullptr),
 	mNeed_redraw(true),
 	mNeed_update(false),
 	mInited(false),
@@ -19,7 +18,7 @@ Drawable::Drawable():
 }
 Drawable::~Drawable()
 {
-	expunge(mHandle);
+	expunge(mUILink);
 }
 void Drawable::init()
 {
@@ -32,7 +31,7 @@ void Drawable::draw(Camera* cam, int frame, draw_type type)
 {
 	if(type == draw_type::ACTIVE && !active())
 		return;
-	if(visible() && exists()) {
+	if((visible() || active()) && exists()) {
 		draw_impl(cam, frame, type);
 		mNeed_redraw = false;
 	}
@@ -64,8 +63,8 @@ void Drawable::set_selected(bool select_, bool silent)
 		}
 		if(!silent && notif_on_selected())
 			notify_parent(select_ ? SELECTED : UNSELECTED);
-		if(mHandle)
-			mHandle->set_selected(select_);
+		if(mUILink && !silent)
+			mUILink->notify_select(select_);
 	}
 	select_impl(select_);
 }
@@ -96,8 +95,8 @@ void Drawable::set_hover(bool hover, bool silent)
 		if(!silent && notif_on_hover())
 			notify_parent(hover ? HOVERED : UNHOVERED);
 		hover_impl(hover);
-		if(mHandle)
-			mHandle->set_hovered(hover);
+		if(mUILink && !silent)
+			mUILink->notify_hover(hover);
 	}
 }
 bool Drawable::hovered() const
@@ -152,8 +151,6 @@ void Drawable::set_exists(bool exists_, bool silent)
 		exists_impl(exists_);
 		if(!silent && notif_on_exists())
 			notify_parent(exists_ ? RESURRECTED : DELETED);
-		if(mHandle)
-			mHandle->set_exists(exists_);
 	}
 }
 bool Drawable::exists() const

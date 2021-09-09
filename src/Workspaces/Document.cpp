@@ -44,7 +44,7 @@ Document::Document(EventsManager* manager):
 	// Now any part of the program can change the background color hehehe
 	mBackgroundColor = Preferences::get_instance().get_vec3("background");
 	Preferences::get_instance().add_callback("background", [this](glm::vec3 color) { mBackgroundColor = color; });
-	mSideBar = new entityView(this);
+	mSideBar = new DocumentTree(this);
 }
 Document::~Document()
 {
@@ -85,14 +85,15 @@ void Document::do_realize()
 		
 		// Create an empty part. This surely should be in the constructor right?
 		mPart = new Part();
-		mPart->init();
 
 		// Start with the part design workspace
 		set_workspace(Bloop::workspace_types::PART);
 		// Setyp tools and all
 		if(mParentBloop->currentWorkspace())
 			mCurrentWorkspaceState->currentTool = mParentBloop->currentWorkspace()->defaultTool();
-		mPart->set_handle(new entityHandle(mPart, mSideBar, &mSideBar->root()));
+		mSideBar->add_node(new DocumentDrawableNode("Part", mPart));
+		mPart->init();
+
 		mParentBloop->add_sideBar(mSideBar);
 		mParentBloop->set_sideBar(mSideBar);
 		mParentBloop->notify_set_tool(mCurrentWorkspaceState->currentTool->name());
@@ -195,7 +196,9 @@ Workspace_abstr* Document::set_workspace(int name)
 		return nullptr;
 	}
 	mCurrentWorkspaceState->cam->set_viewport(glm::vec2((float)get_width(), (float)get_height())); // The dimensions might have changed, who knows?
-	mSideBar->set_WorkspaceState(mCurrentWorkspaceState);
+	
+	// TODOBEFOORECOMMIT
+	// mSideBar->set_workspaceState(mCurrentWorkspaceState);
 		
 	return mParentBloop->set_workspace(name, mCurrentWorkspaceState); // Enforce change of workspace
 }
