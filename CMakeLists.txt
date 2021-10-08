@@ -10,12 +10,12 @@ find_package(PkgConfig)
 pkg_check_modules(GTKMM gtkmm-3.0)
 
 include_directories(
-    vendor/
-	src/
+    Vendor/
+	Src/
 	${GTKMM_INCLUDE_DIRS})
 
 link_directories(
 	${GTKMM_LIBRARY_DIRS})
 
-add_subdirectory(vendor)
-add_subdirectory(src)
+add_subdirectory(Vendor)
+add_subdirectory(Src)
