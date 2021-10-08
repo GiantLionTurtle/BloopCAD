@@ -32,7 +32,3 @@ double Constraint_abstr::derivative(var_ptr withRespectTo, size_t from_eq)
     withRespectTo->set_as_coeff();
     return der;
 }
-double Constraint_abstr::d(var_ptr withRespectTo, size_t from_eq) 
-{
-    return derivative(withRespectTo, from_eq);
-}

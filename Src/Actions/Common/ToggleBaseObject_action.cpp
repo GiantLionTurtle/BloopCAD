@@ -12,11 +12,11 @@ ToggleBaseObject_action::ToggleBaseObject_action(BaseObject* obj, bool toggle_to
 
 bool ToggleBaseObject_action::do_work(Document* caller)
 {
-	mObj->set_exists(mToggle_to);
+	mObj->set_exists(mToggle_to); // Notify the object of it's faith
 	return true;
 }
 bool ToggleBaseObject_action::undo_work(Document* caller)
 {
-	mObj->set_exists(!mToggle_to);
+	mObj->set_exists(!mToggle_to); // Notify the object of it's faith
 	return true;
 }

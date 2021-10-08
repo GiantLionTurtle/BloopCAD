@@ -3,8 +3,8 @@
 #include <Workspaces/Document.hpp>
 #include <Bloop.hpp>
 
-EnterSketch_action::EnterSketch_action(Sketch* target, bool set_Camera):
-	SwitchWorkspace_action(Bloop::workspace_types::SKETCH, set_Camera),
+EnterSketch_action::EnterSketch_action(Sketch* target, bool set_camera):
+	SwitchWorkspace_action(Bloop::workspace_types::SKETCH, set_camera),
 	mTarget(target)
 {
 
@@ -12,13 +12,7 @@ EnterSketch_action::EnterSketch_action(Sketch* target, bool set_Camera):
 
 bool EnterSketch_action::do_work(Document* caller)
 {
-	caller->window()->sketchWorkspace()->set_target(mTarget);
-	SwitchWorkspace_action::do_work(caller);
-	return true;
-}
-
-bool EnterSketch_action::undo_work(Document* caller)
-{
-	SwitchWorkspace_action::undo_work(caller);
+	caller->window()->sketchWorkspace()->set_target(mTarget); // The Sketch workspace now edits the target sketch
+	SwitchWorkspace_action::do_work(caller); // Do switch the workspace
 	return true;
 }

@@ -8,7 +8,7 @@
 #include <Actions/Common/Serial_action.hpp>
 #include <Actions/Common/MoveCamera_action.hpp>
 #include <Actions/Sketch/EnterSketch_action.hpp>
-#include <Actions/Part/QuitPartDesign_action.hpp>
+#include <Actions/Part/QuitPart_action.hpp>
 #include <Actions/Common/ToggleBaseObject_action.hpp>
 
 #include <Utils/Debug_util.hpp>
@@ -283,7 +283,7 @@ void Sketch::invoke_workspace(Document* doc)
 {
 	doc->push_action(std::shared_ptr<Serial_action>(new Serial_action({
 		Action_ptr(new EnterSketch_action(this, true)),
-		Action_ptr(new QuitPartDesign_action()),
+		Action_ptr(new QuitPart_action()),
 		MoveCamera_action::create_from_facingPlane(basePlane(), 8.0, doc->state()->cam->state(), nullptr)
 	})));
 }

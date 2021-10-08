@@ -17,12 +17,12 @@ bool ToggleConstraint_action::do_work(Document* caller)
 {
 	if(mDone)
 		return true;
-	mSketch_parent->toggle_constraint(mConstraint, mToggle_to);
+	mSketch_parent->toggle_constraint(mConstraint, mToggle_to); // Let sketch handle everything..
 	return true;
 }
 bool ToggleConstraint_action::undo_work(Document* caller)
 {
-	mDone = false;
+	mDone = false; // Will never be true again
 	mSketch_parent->toggle_constraint(mConstraint, !mToggle_to);
 	return true;
 }

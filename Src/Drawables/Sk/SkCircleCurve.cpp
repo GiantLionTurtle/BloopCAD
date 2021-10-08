@@ -25,7 +25,7 @@ SkCircleCurve::SkCircleCurve(Geom3d::Plane_abstr* pl, bool fixed_):
 	mRadius(std::make_shared<ExpVar>(0.0f))
 {
 	set_name("SkCircleCurve");
-	mRadius->add_changeCallBack(this, std::bind(&SkCircleCurve::set_need_update, this));
+	mRadius->add_callback(this, std::bind(&SkCircleCurve::set_need_update, this));
 }
 
 SkCircleCurve::~SkCircleCurve()

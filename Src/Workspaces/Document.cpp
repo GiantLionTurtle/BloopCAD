@@ -197,9 +197,9 @@ Workspace_abstr* Document::set_workspace(int name)
 	}
 	mCurrentWorkspaceState->cam->set_viewport(glm::vec2((float)get_width(), (float)get_height())); // The dimensions might have changed, who knows?
 	
-	// TODOBEFOORECOMMIT
+	// TODOBEFOIREMERGE
 	// mSideBar->set_workspaceState(mCurrentWorkspaceState);
-		
+	
 	return mParentBloop->set_workspace(name, mCurrentWorkspaceState); // Enforce change of workspace
 }
 

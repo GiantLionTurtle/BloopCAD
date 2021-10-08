@@ -20,8 +20,8 @@ SkPoint::SkPoint(glm::vec2 pos, Geom3d::Plane_abstr* pl, bool fixed_):
 	mShader(nullptr)
 {
 	mType |= Drawable_types::POINT;
-	x()->add_changeCallBack(this, std::bind(&SkPoint::set_need_update, this));
-	y()->add_changeCallBack(this, std::bind(&SkPoint::set_need_update, this));
+	x()->add_callback(this, std::bind(&SkPoint::set_need_update, this));
+	y()->add_callback(this, std::bind(&SkPoint::set_need_update, this));
 	set_name("SkPoint");
 }
 

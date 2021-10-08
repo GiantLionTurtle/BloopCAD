@@ -7,6 +7,16 @@
 #include <algorithm>
 #include <iostream>
 
+/*
+	@define SIMPLIFY_EXP_AT_OPERATOR enables simple simplifications
+	at run time for expression creation (e.g x + 0 will return x),
+	it will also catch invalid expressions such as division by zeroget_single_var
+*/
+// #define SIMPLIFY_EXP_AT_OPERATOR
+
+/*
+	Useful constants
+*/
 std::shared_ptr<ExpConst> ExpConst::zero(new ExpConst(0.0));
 std::shared_ptr<ExpConst> ExpConst::one(new ExpConst(1.0));
 std::shared_ptr<ExpConst> ExpConst::two(new ExpConst(2.0));
@@ -17,7 +27,7 @@ std::shared_ptr<ExpConst> ExpConst::pi2(new ExpConst(M_PI_2));
 int Expression_abstr::n_exp = 0;
 
 Expression_abstr::Expression_abstr():
-	mID(n_exp++)
+	mID(n_exp++) // ID for debug purposes
 {
 
 }
@@ -48,51 +58,49 @@ exp_ptr Expression::derivative()
 	return mDerivative;
 }
 
-unaryExpression::unaryExpression():
+UnaryExp::UnaryExp():
 	mOperand(nullptr)
 {
 
 }
-unaryExpression::unaryExpression(exp_ptr operand):
+UnaryExp::UnaryExp(exp_ptr operand):
 	mOperand(operand)
 {
 
 }
 
-void unaryExpression::add_changeCallBack(void* owner, std::function<void(void)> func)
+void UnaryExp::add_callback(void* owner, std::function<void(void)> func)
 {
-	mOperand->add_changeCallBack(owner, func);
+	mOperand->add_callback(owner, func);
 }
-void unaryExpression::delete_callBack(void* owner)
+void UnaryExp::delete_callback(void* owner)
 {
-	mOperand->delete_callBack(owner);
+	mOperand->delete_callback(owner);
 }
 
-binaryExpression::binaryExpression():
+BinaryExp::BinaryExp():
 	mLeft(nullptr),
 	mRight(nullptr)
 {
 
 }
-binaryExpression::binaryExpression(exp_ptr left, exp_ptr right):
+BinaryExp::BinaryExp(exp_ptr left, exp_ptr right):
 	mLeft(left),
 	mRight(right)
 {
 
 }
 
-void binaryExpression::add_changeCallBack(void* owner, std::function<void(void)> func)
+void BinaryExp::add_callback(void* owner, std::function<void(void)> func)
 {
-	mLeft->add_changeCallBack(owner, func);
-	mRight->add_changeCallBack(owner, func);
+	mLeft->add_callback(owner, func);
+	mRight->add_callback(owner, func);
 }
-void binaryExpression::delete_callBack(void* owner)
+void BinaryExp::delete_callback(void* owner)
 {
-	mLeft->delete_callBack(owner);
-	mRight->delete_callBack(owner);
+	mLeft->delete_callback(owner);
+	mRight->delete_callback(owner);
 }
-
-
 
 /* -------------- Const -------------- */
 ExpConst::ExpConst(double val)
@@ -120,130 +128,130 @@ std::string ExpConst::to_string()
 }
 /* -------------- End const -------------- */
 /* -------------- Coefficient -------------- */
-ExpCoeff::ExpCoeff()
-{
+// ExpCoeff::ExpCoeff()
+// {
 
-}
+// }
 
-double ExpCoeff::eval()
-{
-	return mVal;
-}
-exp_ptr ExpCoeff::generate_derivative()
-{
-	return ExpConst::zero;
-}
-std::string ExpCoeff::to_string()
-{
-	return std::to_string(val()) + unit_symbol(mUnit);
-}
-void ExpCoeff::set_unit(int unit_, bool convert_currentValue_to_newUnit)
-{
-	if(convert_currentValue_to_newUnit) {
-		double oldUnit_val = val();
-		mUnit = unit_;
-		set_val(oldUnit_val);
-	} else {
-		mUnit = unit_;
-	}
-	mUnit_to_internalFormat = unit_to_internalFormat(unit_);
-	mInternalFormat_to_unit = internalFormat_to_unit(unit_);
-}
-int ExpCoeff::unit()
-{
-	return mUnit;
-}
-void ExpCoeff::set_val(double val)
-{
-	mVal = val * mUnit_to_internalFormat;
-}
-double ExpCoeff::val()
-{
-	return mVal * mInternalFormat_to_unit;
-}
+// double ExpCoeff::eval()
+// {
+// 	return mVal;
+// }
+// exp_ptr ExpCoeff::generate_derivative()
+// {
+// 	return ExpConst::zero;
+// }
+// std::string ExpCoeff::to_string()
+// {
+// 	return std::to_string(val()) + unit_symbol(mUnit);
+// }
+// void ExpCoeff::set_unit(int unit_, bool convert_currentValue_to_newUnit)
+// {
+// 	if(convert_currentValue_to_newUnit) {
+// 		double oldUnit_val = val();
+// 		mUnit = unit_;
+// 		set_val(oldUnit_val);
+// 	} else {
+// 		mUnit = unit_;
+// 	}
+// 	mUnit_to_internalFormat = unit_to_internalFormat(unit_);
+// 	mInternalFormat_to_unit = internalFormat_to_unit(unit_);
+// }
+// int ExpCoeff::unit()
+// {
+// 	return mUnit;
+// }
+// void ExpCoeff::set_val(double val)
+// {
+// 	mVal = val * mUnit_to_internalFormat;
+// }
+// double ExpCoeff::val()
+// {
+// 	return mVal * mInternalFormat_to_unit;
+// }
 
-/* -------------- End coefficient -------------- */
-/* -------------- Coefficient angle -------------- */
-ExpCoeffAngle::ExpCoeffAngle(double angle, int unit_)
-{
-	set_unit(unit_, false);
-	set_val(angle);
-}
-double ExpCoeffAngle::eval()
-{
-	return std::fmod(ExpCoeff::eval(), M_PI * 2.0);
-}
-std::shared_ptr<ExpCoeffAngle> ExpCoeffAngle::make(double angle, int unit_)
-{
-	return std::make_shared<ExpCoeffAngle>(angle, unit_);
-}
-std::string ExpCoeffAngle::unit_symbol(int unit_)
-{
-	switch(mUnit) {
-	case units::DEG:
-		return " deg";
-	default:
-		return " rad";
-	};
-}
-double ExpCoeffAngle::unit_to_internalFormat(int unit_)
-{
-	switch(mUnit) {
-	case units::DEG:
-		return M_PI / 180.0;
-	default:
-		return 1.0;
-	};
-}
-/* -------------- End coefficient angle -------------- */
-/* -------------- Coefficient length -------------- */
-ExpCoeffLength::ExpCoeffLength(double length, int unit_)
-{
-	set_unit(unit_, false);
-	set_val(length);
-}
-std::shared_ptr<ExpCoeffLength> ExpCoeffLength::make(double length, int unit_)
-{
-	return std::make_shared<ExpCoeffLength>(length, unit_);
-}
-std::string ExpCoeffLength::unit_symbol(int unit_)
-{
-	switch(mUnit) {
-	case units::MM:
-		return " mm";
-	case units::CM:
-		return " cm";
-	case units::DM:
-		return " dm";
-	case units::M:
-		return " m";
-	case units::IN:
-		return " in";
-	case units::FT:
-		return " ft";
-	default:
-		return " cm";
-	};
-}
-double ExpCoeffLength::unit_to_internalFormat(int unit_)
-{
-	switch(mUnit) {
-	case units::MM:
-		return 1.0e-1;
-	case units::CM:
-		return 1.0;
-	case units::DM:
-		return 1.0e1;
-	case units::M:
-		return 1.0e2;
-	case units::IN:
-		return 2.54;
-	case units::FT:
-		return 30.48;
-	default:
-		return 1.0;
-	};
-}
+// /* -------------- End coefficient -------------- */
+// /* -------------- Coefficient angle -------------- */
+// ExpCoeffAngle::ExpCoeffAngle(double angle, int unit_)
+// {
+// 	set_unit(unit_, false);
+// 	set_val(angle);
+// }
+// double ExpCoeffAngle::eval()
+// {
+// 	return std::fmod(ExpCoeff::eval(), M_PI * 2.0);
+// }
+// std::shared_ptr<ExpCoeffAngle> ExpCoeffAngle::make(double angle, int unit_)
+// {
+// 	return std::make_shared<ExpCoeffAngle>(angle, unit_);
+// }
+// std::string ExpCoeffAngle::unit_symbol(int unit_)
+// {
+// 	switch(mUnit) {
+// 	case units::DEG:
+// 		return " deg";
+// 	default:
+// 		return " rad";
+// 	};
+// }
+// double ExpCoeffAngle::unit_to_internalFormat(int unit_)
+// {
+// 	switch(mUnit) {
+// 	case units::DEG:
+// 		return M_PI / 180.0;
+// 	default:
+// 		return 1.0;
+// 	};
+// }
+// /* -------------- End coefficient angle -------------- */
+// /* -------------- Coefficient length -------------- */
+// ExpCoeffLength::ExpCoeffLength(double length, int unit_)
+// {
+// 	set_unit(unit_, false);
+// 	set_val(length);
+// }
+// std::shared_ptr<ExpCoeffLength> ExpCoeffLength::make(double length, int unit_)
+// {
+// 	return std::make_shared<ExpCoeffLength>(length, unit_);
+// }
+// std::string ExpCoeffLength::unit_symbol(int unit_)
+// {
+// 	switch(mUnit) {
+// 	case units::MM:
+// 		return " mm";
+// 	case units::CM:
+// 		return " cm";
+// 	case units::DM:
+// 		return " dm";
+// 	case units::M:
+// 		return " m";
+// 	case units::IN:
+// 		return " in";
+// 	case units::FT:
+// 		return " ft";
+// 	default:
+// 		return " cm";
+// 	};
+// }
+// double ExpCoeffLength::unit_to_internalFormat(int unit_)
+// {
+// 	switch(mUnit) {
+// 	case units::MM:
+// 		return 1.0e-1;
+// 	case units::CM:
+// 		return 1.0;
+// 	case units::DM:
+// 		return 1.0e1;
+// 	case units::M:
+// 		return 1.0e2;
+// 	case units::IN:
+// 		return 2.54;
+// 	case units::FT:
+// 		return 30.48;
+// 	default:
+// 		return 1.0;
+// 	};
+// }
 /* -------------- End coefficient length -------------- */
 
 /* -------------- Variable -------------- */
@@ -265,10 +273,9 @@ exp_ptr ExpVarDerivative::generate_derivative()
 }
 
 
-ExpVar::ExpVar(double val, bool is_coeficient):
+ExpVar::ExpVar(double val):
 	mVal(val),
 	mExists(true),
-	mIs_coeff(is_coeficient),
 	mAs_coeff(true),
 	mIs_substituted(false),
 	mIs_dragged(false),
@@ -284,12 +291,8 @@ double ExpVar::eval()
 }
 exp_ptr ExpVar::derivative()
 {
-	// TODO should it be in this order??
 	if(mIs_substituted)
 		return mSubstituant->derivative();
-	// if(is_deriv_zero())
-	// 	return ExpConst::zero;
-	// // return ExpConst::one;
 	return mDerivative;
 }
 
@@ -297,34 +300,18 @@ std::string ExpVar::to_string()
 {
 	return "[" + std::to_string(mVal) + "]";
 }
-var_ptr ExpVar::make(double val, bool is_coeficient)
+var_ptr ExpVar::make(double val)
 {
-	return var_ptr(new ExpVar(val, is_coeficient));
+	return var_ptr(new ExpVar(val));
 }
 
-int ExpVar::weight()
-{
-	return (mIs_coeff ? 2 : 0 + mIs_dragged ? 1 : 0);
-}
 bool ExpVar::is_deriv_zero()
 {
-	return (mAs_coeff || weight());
+	return (mAs_coeff || dragged());
 }
 bool ExpVar::as_coeff()
 {
 	return mIs_substituted ? mSubstituant->as_coeff() : (mAs_coeff);
-}
-bool ExpVar::is_coeff()
-{
-	return mIs_substituted ? mSubstituant->is_coeff() : (mIs_coeff);
-}
-void ExpVar::set_is_coeff(bool coef)
-{
-	if(mIs_substituted) {
-		mSubstituant->set_is_coeff(coef);
-	} else {
-		mIs_coeff = coef;
-	}
 }
 void ExpVar::set_as_coeff()
 {
@@ -344,8 +331,7 @@ void ExpVar::set_as_var()
 }
 void ExpVar::set(double val)
 {
-	if(!is_coeff())
-		mVal = val;
+	mVal = val;
 	callback();
 }
 void ExpVar::drag(double val)
@@ -400,11 +386,11 @@ void ExpVar::callback()
 	for(auto call : mChangeCallbacks)
 		std::get<1>(call)();
 }
-void ExpVar::add_changeCallBack(void* owner, std::function<void(void)> func)
+void ExpVar::add_callback(void* owner, std::function<void(void)> func)
 {
 	mChangeCallbacks[owner] = func;
 }
-void ExpVar::delete_callBack(void* owner)
+void ExpVar::delete_callback(void* owner)
 {
 	mChangeCallbacks.erase(owner);
 }
@@ -425,7 +411,7 @@ var_ptr ExpVar::driving(var_ptr a, var_ptr b)
 
 /* -------------- Plus -------------- */
 ExpPlus::ExpPlus(exp_ptr operand):
-	unaryExpression(operand)
+	UnaryExp(operand)
 {
 
 }
@@ -447,7 +433,7 @@ std::string ExpPlus::to_string()
 
 /* -------------- Minus -------------- */
 ExpMinus::ExpMinus(exp_ptr operand):
-	unaryExpression(operand)
+	UnaryExp(operand)
 {
 
 }
@@ -469,7 +455,7 @@ std::string ExpMinus::to_string()
 
 /* -------------- Sin -------------- */
 ExpSin::ExpSin(exp_ptr operand):
-	unaryExpression(operand)
+	UnaryExp(operand)
 {
 
 }
@@ -490,7 +476,7 @@ std::string ExpSin::to_string()
 /* -------------- End sin -------------- */
 /* -------------- Asin -------------- */
 ExpAsin::ExpAsin(exp_ptr operand):
-	unaryExpression(operand)
+	UnaryExp(operand)
 {
 
 }
@@ -511,7 +497,7 @@ std::string ExpAsin::to_string()
 /* -------------- End asin -------------- */
 /* -------------- Csc -------------- */
 ExpCsc::ExpCsc(exp_ptr operand):
-	unaryExpression(operand)
+	UnaryExp(operand)
 {
 
 }
@@ -533,7 +519,7 @@ std::string ExpCsc::to_string()
 
 /* -------------- Cos -------------- */
 ExpCos::ExpCos(exp_ptr operand):
-	unaryExpression(operand)
+	UnaryExp(operand)
 {
 
 }
@@ -554,7 +540,7 @@ std::string ExpCos::to_string()
 /* -------------- End cos -------------- */
 /* -------------- Acos -------------- */
 ExpAcos::ExpAcos(exp_ptr operand):
-	unaryExpression(operand)
+	UnaryExp(operand)
 {
 
 }
@@ -575,7 +561,7 @@ std::string ExpAcos::to_string()
 /* -------------- End acos -------------- */
 /* -------------- Sec -------------- */
 ExpSec::ExpSec(exp_ptr operand):
-	unaryExpression(operand)
+	UnaryExp(operand)
 {
 
 }
@@ -597,7 +583,7 @@ std::string ExpSec::to_string()
 
 /* -------------- Tan -------------- */
 ExpTan::ExpTan(exp_ptr operand):
-	unaryExpression(operand)
+	UnaryExp(operand)
 {
 
 }
@@ -618,7 +604,7 @@ std::string ExpTan::to_string()
 /* -------------- End tan -------------- */
 /* -------------- Atan2 -------------- */
 ExpAtan2::	ExpAtan2(exp_ptr left, exp_ptr right):
-	binaryExpression(left, right)
+	BinaryExp(left, right)
 {
 
 }
@@ -639,7 +625,7 @@ std::string ExpAtan2::to_string()
 /* -------------- End atan2 -------------- */
 /* -------------- Cot -------------- */
 ExpCot::ExpCot(exp_ptr operand):
-	unaryExpression(operand)
+	UnaryExp(operand)
 {
 
 }
@@ -660,7 +646,7 @@ std::string ExpCot::to_string()
 /* -------------- End cot -------------- */
 /* -------------- Abs -------------- */
 ExpAbs::ExpAbs(exp_ptr operand):
-	unaryExpression(operand)
+	UnaryExp(operand)
 {
 
 }
@@ -683,7 +669,7 @@ std::string ExpAbs::to_string()
 /* -------------- End abs -------------- */
 /* -------------- Mod -------------- */
 ExpMod::ExpMod(exp_ptr operand, double modulo):
-	unaryExpression(operand),
+	UnaryExp(operand),
 	mMod(modulo)
 {
 
@@ -706,7 +692,7 @@ std::string ExpMod::to_string()
 
 /* -------------- Add -------------- */
 ExpAdd::ExpAdd(exp_ptr left, exp_ptr right):
-	binaryExpression(left, right)
+	BinaryExp(left, right)
 {
 
 }
@@ -728,7 +714,7 @@ std::string ExpAdd::to_string()
 
 /* -------------- Substr -------------- */
 ExpSubstr::ExpSubstr(exp_ptr left, exp_ptr right):
-	binaryExpression(left, right)
+	BinaryExp(left, right)
 {
 
 }
@@ -751,7 +737,7 @@ std::string ExpSubstr::to_string()
 
 /* -------------- Mult -------------- */
 ExpMult::ExpMult(exp_ptr left, exp_ptr right):
-	binaryExpression(left, right)
+	BinaryExp(left, right)
 {
 
 }
@@ -773,7 +759,7 @@ std::string ExpMult::to_string()
 
 /* -------------- Div -------------- */
 ExpDiv::ExpDiv(exp_ptr left, exp_ptr right):
-	binaryExpression(left, right)
+	BinaryExp(left, right)
 {
 
 }
@@ -798,7 +784,7 @@ std::string ExpDiv::to_string()
 
 /* -------------- Pow -------------- */
 ExpPow::ExpPow(exp_ptr base, exp_ptr power):
-	binaryExpression(base, power)
+	BinaryExp(base, power)
 {
 
 }
@@ -842,6 +828,9 @@ void ExpEqu::get_substitution_vars(var_ptr& a, var_ptr& b)
 
 var_ptr ExpEqu::get_single_var()
 {
+	// WAAAIT, not sure this does what it should... for non point-point coincidence cases..
+
+
 	var_ptr l(nullptr), r(nullptr);
 	if(mLeft->is_var()) {
 		l = std::static_pointer_cast<ExpVar>(mLeft);
@@ -849,7 +838,8 @@ var_ptr ExpEqu::get_single_var()
 	if(mRight->is_var()) {
 		r = std::static_pointer_cast<ExpVar>(mRight);
 	}
-		
+	
+
 	if(l != nullptr && r == nullptr) {
 		return l;
 	} else if(l == nullptr && r != nullptr) {

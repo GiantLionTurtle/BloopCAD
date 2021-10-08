@@ -6,7 +6,7 @@
 #include <Drawables/3d/Plane.hpp>
 #include <Actions/Common/ToggleBaseObject_action.hpp>
 #include <Actions/Sketch/EnterSketch_action.hpp>
-#include <Actions/Part/QuitPartDesign_action.hpp>
+#include <Actions/Part/QuitPart_action.hpp>
 #include <Actions/Common/Serial_action.hpp>
 #include <Actions/Common/MoveCamera_action.hpp>
 
@@ -59,7 +59,7 @@ void StartSketch_tool::start_sketch(Geom3d::Plane_abstr* sketchPlane, CameraStat
 	mEnv->state()->doc->push_action(std::shared_ptr<Serial_action>(new Serial_action({
 		Action_ptr(new ToggleBaseObject_action(mCurrentSketch, true)),
 		Action_ptr(new EnterSketch_action(mCurrentSketch, true)),
-		Action_ptr(new QuitPartDesign_action()),
+		Action_ptr(new QuitPart_action()),
 		MoveCamera_action::create_from_facingPlane(sketchPlane, 8.0, camState_, nullptr)
 	})));
 }
