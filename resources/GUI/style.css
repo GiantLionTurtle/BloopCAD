@@ -1,0 +1,23 @@
+
+.bloop {
+    font-family: 'OpenDyslexic';
+    font-size: 99%;
+    /* background: rgb(155, 0, 142); */
+}
+
+tooltip { /* lack of '.' or '#' references GTK's tooltip class */
+    font-family: 'OpenDyslexic';
+}
+
+.hovered {
+    background: rgb(202, 79, 192);
+}
+
+.selected {
+    background: rgb(202, 16, 187);
+}
+
+.entityView {
+    background: rgb(90, 90, 90);
+    min-width: 200px;
+}
