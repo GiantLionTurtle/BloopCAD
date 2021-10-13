@@ -88,7 +88,7 @@ void Plane::draw_impl(Camera* cam, int frame, draw_type type)
 	// GLCall(glEnable(GL_DEPTH_TEST));
 }
 
-void Plane::update_impl()
+void Plane::graphicUpdate_impl()
 {
 	init_buffers();
 	mVB->bind();

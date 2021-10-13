@@ -69,15 +69,6 @@ UnaryExp::UnaryExp(exp_ptr operand):
 
 }
 
-void UnaryExp::add_callback(void* owner, std::function<void(void)> func)
-{
-	mOperand->add_callback(owner, func);
-}
-void UnaryExp::delete_callback(void* owner)
-{
-	mOperand->delete_callback(owner);
-}
-
 BinaryExp::BinaryExp():
 	mLeft(nullptr),
 	mRight(nullptr)
@@ -89,17 +80,6 @@ BinaryExp::BinaryExp(exp_ptr left, exp_ptr right):
 	mRight(right)
 {
 
-}
-
-void BinaryExp::add_callback(void* owner, std::function<void(void)> func)
-{
-	mLeft->add_callback(owner, func);
-	mRight->add_callback(owner, func);
-}
-void BinaryExp::delete_callback(void* owner)
-{
-	mLeft->delete_callback(owner);
-	mRight->delete_callback(owner);
 }
 
 /* -------------- Const -------------- */
@@ -331,8 +311,8 @@ void ExpVar::set_as_var()
 }
 void ExpVar::set(double val)
 {
-	mVal = val;
-	callback();
+	// if(!dragged())
+		mVal = val;
 }
 void ExpVar::drag(double val)
 {
@@ -378,21 +358,6 @@ void ExpVar::substitute(var_ptr sub)
 		sub->clear_substitution();
 	mSubstituant = sub;
 	mIs_substituted = true;
-	callback();
-}
-
-void ExpVar::callback()
-{
-	for(auto call : mChangeCallbacks)
-		std::get<1>(call)();
-}
-void ExpVar::add_callback(void* owner, std::function<void(void)> func)
-{
-	mChangeCallbacks[owner] = func;
-}
-void ExpVar::delete_callback(void* owner)
-{
-	mChangeCallbacks.erase(owner);
 }
 
 var_ptr ExpVar::driving(var_ptr a, var_ptr b)
@@ -828,9 +793,6 @@ void ExpEqu::get_substitution_vars(var_ptr& a, var_ptr& b)
 
 var_ptr ExpEqu::get_single_var()
 {
-	// WAAAIT, not sure this does what it should... for non point-point coincidence cases..
-
-
 	var_ptr l(nullptr), r(nullptr);
 	if(mLeft->is_var()) {
 		l = std::static_pointer_cast<ExpVar>(mLeft);

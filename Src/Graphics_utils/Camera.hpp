@@ -27,23 +27,56 @@ struct transform {
 };
 
 /*
-	@struct CameraState is a helper struct to help describe a Camera at a given orientation
+	@struct CameraState is a helper struct to describe a Camera at a place in space with an orientation
+
+	@note Maybe a better name could be found, there are too many 'states' in this project
 */
 struct CameraState {
-	glm::vec3 pos, right, up;
+	glm::vec3 pos, right, up; // Position, and vectors describing orientation
 };
 
+/*
+	@function print_states prints a CameraState to the console, for debugging
+
+	@param st The state to print
+*/
 void print_state(CameraState const& st);
+/*
+	@function operator<< prints a CameraState to the console, for debugging
+
+	@param os The output stream
+	@param st The state to print
+*/
 std::ostream& operator<<(std::ostream &os, CameraState const& st);
+
+/*
+	@operator != makes a boolean comparison of each member of two states
+
+	@param st1 The first state to compare
+	@param st2 The second state to compare
+	@return If they are not identical
+*/
 bool operator !=(CameraState const& st1, CameraState const& st2);
+/*
+	@operator != makes a boolean comparison of each member of two states
+
+	@param st1 The first state to compare
+	@param st2 The second state to compare
+	@return If they are identical
+*/
 bool operator ==(CameraState const& st1, CameraState const& st2);
 
 class Camera {
 protected:
-	glm::vec3 mInternalPos, mInternalTarget; // Position of the Camera and the position it is looking at
-	glm::vec3 mInternalFront;
-	glm::vec3 mOrientation; // Rotation along x, y then z axis
+	// Since it's the model that is transformed by the mvp, it is good to keep
+	// The "true" parameters of the camera AND the "virtual" ones
 
+	// "True" parameters of the camera
+	glm::vec3 mInternalPos, mInternalTarget; // Position of the Camera and the position it is looking at
+	glm::vec3 mInternalFront; // The front of the vector (should go from mInternalPos to mInternalTarget)
+	glm::vec3 mOrientation; // Rotation along x, y then z axis, this is not a quaternion, this orientation is spherical (since the camera is orbital)
+
+	// Virtual parameters of the camera, they form a CameraState but with more data (some is redundant, like front)
 	glm::vec3 mRight, mUp, mFront, mPos, mTarget;
 
 	float mZoom; 		// The overall zoom (unused and not supported for now)
@@ -53,61 +86,76 @@ protected:
 	transform mTransformation;		// The transformation of the model
 	glm::mat4 mModel, mView, mProjection, mMVP, mModel_inv;
 
-	bool mRequire_update;
+	bool mNeed_update;
 public:
 	/*
-		@function Camera creates a Camera
+		@constructor Camera creates a Camera
 
-		@param cartesianCoords : 	The position of the Camera in the world
+		@param cartesianCoords 	The position of the Camera in the world
 		@param target :				The position of the target of the Camera in the world
 		@param FOV_ :				The field of view of the Camera
-		@param viewport_ : 			The dimensions the drawing area
+		@param viewport_ 			The dimensions the drawing area
 	*/
 	Camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float FOV_, glm::vec2 viewport_);
 	Camera();
 
 	/*
+		@functiongroup
+
+		@function model
+		@function model_inv
+		@function view
+		@function projection
+		@function mvp
+		@function pos
+		@function target
+
+		@note (computed in update so it *might* not be up to date)
+	*/
+	/*
 		@function model
 
-		@return : The model transformation matrix
+		@return The model transformation matrix 
 	*/
 	glm::mat4 model() const { return mModel; }
 	/*
 		@function model_inv
 
-		@return : The Camera transformation matrix
+		@return The Camera transformation matrix 
+		@note It is used to compute the "virtual" parameters of the Camera, for instantce, if the "true" 
+				Camera position is multiplied with this matrix it gives the "virtual" position
 	*/
 	glm::mat4 model_inv() const { return mModel_inv; }
 	/*
 		@function view 
 
-		@return : The view matrix
+		@return The view matrix 
 	*/
 	glm::mat4 view() const { return mView; }
 	/*
 		@function projection
 
-		@return : The projection matrix
+		@return The projection matrix 
 	*/
 	glm::mat4 projection() const { return mProjection; }
 	/*
-		@function mvp - helper
+		@function mvp
 
-		@return : The conjonction of model, view and projection matrices
+		@return The conjonction of model, view and projection matrices 
 	*/
 	glm::mat4 mvp() const { return mMVP; };
 
 	/*
 		@function pos
 
-		@return : The position of the Camera in the world (obtained with model_inv and the "real" position)
+		@return The position of the Camera in the world
 	*/
 	glm::vec3 pos() const { return mPos; }
 	glm::vec3 predictedPos(transform trans) const;
 	/*
 		@function target
 
-		@return : The position of the target in the world (obtained with model_inv and the "real" target)
+		@return The position of the target in the world
 	*/
 	glm::vec3 target() const { return mTarget; }
 
@@ -118,93 +166,99 @@ public:
 	/*
 		@function up
 
-		@return : The position of the up in the world (obtained with model_inv and the "real" up)
+		@return The position of the up in the world
 	*/
 	glm::vec3 up() const { return mUp; }
 	/*
 		@function right
 
-		@return : The position of the right in the world (obtained with model_inv and the "real" right)
+		@return The position of the right in the world
 	*/
 	glm::vec3 right() const { return mRight; }
 	/*
 		@function front
 
-		@return : The position of the front in the world (obtained with model_inv and the "real" front)
+		@return The position of the front in the world 
 	*/
 	glm::vec3 front() const { return mFront; }
 	
 	/*
 		@function orientation
 
-		@return : The orientation of the Camera
+		@return The orientation of the Camera
 	*/
 	glm::vec3 orientation() { return mOrientation; }
+	/*
+		@function set_orientation
+
+		@return orient The new orientation
+	*/
 	void set_orientation(glm::vec3 orient);
 	
 	/*
 		@function FOV
 
-		@return : The field of view of the Camera as a simple float
+		@return The field of view of the Camera as a simple float
 	*/
 	float& FOV() { return mFOV; }
-	void set_FOV(float aFOV) { mFOV = aFOV; mRequire_update = true; }
+	void set_FOV(float aFOV) { mFOV = aFOV; set_need_update(); }
 
 	/*
 		@function zoom
 
-		@return : The zoom of the Camera
+		@return The zoom of the Camera
 	*/
 	float zoom() const { return mZoom; }
-	void set_zoom(float aZoom) { mZoom = aZoom; mRequire_update = true; };
+	void set_zoom(float aZoom) { mZoom = aZoom; set_need_update(); };
 
 	float nearPlane() { return mNearPlane; }
-	void set_nearPlane(float near) { mNearPlane = near; mRequire_update = true; }
+	void set_nearPlane(float near) { mNearPlane = near; set_need_update(); }
 	float farPlane() { return mFarPlane; }
-	void set_farPlane(float far) { mFarPlane = far; mRequire_update = true; }
+	void set_farPlane(float far) { mFarPlane = far; set_need_update(); }
 
 	glm::vec2 viewport() const { return mViewport; }
-	void set_viewport(glm::vec2 dimensions) { mViewport = dimensions; mRequire_update = true; }
+	void set_viewport(glm::vec2 dimensions) { mViewport = dimensions; set_need_update(); }
 	/*
 		@function aspectRatio
 
-		@return : The aspectRatio of the drawing area
+		@return The aspectRatio of the drawing area
 	*/
 	float aspectRatio() const { return mViewport.x / mViewport.y; }
 
 	/*
 		@function transformation
 
-		@return : The transformation of the model
+		@return The transformation of the model
 	*/
 	glm::vec3 translation() { return mTransformation.translation; }
 	glm::vec3 scale() { return mTransformation.scale; }
 	float fscale() { return mTransformation.scale.x; }
 	glm::quat rotation() { return mTransformation.rotation; }
 	transform transformation() { return mTransformation; }
-	void set_transformation(transform transf) { mTransformation = transf; mRequire_update = true; }
-	void set_translation(glm::vec3 tr) { mTransformation.translation = tr; mRequire_update = true; }
-	void set_scale(glm::vec3 sc) { mTransformation.scale = sc; mRequire_update = true; }
-	void set_rotation(glm::quat rot) { mTransformation.rotation = rot; mRequire_update = true; }
+	void set_transformation(transform transf) { mTransformation = transf; set_need_update(); }
+	void set_translation(glm::vec3 tr) { mTransformation.translation = tr; set_need_update(); }
+	void set_scale(glm::vec3 sc) { mTransformation.scale = sc; set_need_update(); }
+	void set_rotation(glm::quat rot) { mTransformation.rotation = rot; set_need_update(); }
 
 	glm::vec3 internalPos() { return mInternalPos; } 
-	void set_internalPos(glm::vec3 aPos) { mInternalPos = aPos; mRequire_update = true; } 
+	void set_internalPos(glm::vec3 aPos) { mInternalPos = aPos; set_need_update(); } 
 
 	glm::vec3 internalFront() { return mInternalFront; } 
-	void set_internalFront(glm::vec3 aFront) { mInternalFront = aFront; mRequire_update = true; } 
+	void set_internalFront(glm::vec3 aFront) { mInternalFront = aFront; set_need_update(); } 
 
 	/*
 		@function set sets the Camera to have the same everything as another Camera
 	*/
 	void copy(Camera* other);
 
-	bool need_update() const { return mRequire_update; }
+	void set_need_update() { mNeed_update = true; }
+	bool need_update() const { return mNeed_update; }
 	void update(bool silent = false);
 
 	/*
 		@function flipped 
 
-		@return : Whether or not the Camera is upside down
+		@return Whether or not the Camera is upside down
 	*/
 	bool flipped() const;
 	static bool flipped(CameraState state_);

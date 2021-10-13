@@ -58,11 +58,11 @@ public:
 
 	size_t n_sketches() { return mSketches.size(); }
 	Sketch* sketch(size_t ind) { return mSketches.at(ind); }
-	void add_sketch(Sketch* g) { mSketches.push_back(g); mDriven->set_need_update(); }
+	void add_sketch(Sketch* g) { mSketches.push_back(g); mDriven->update(); }
 
 	size_t n_origin() { return mOrigin.size(); }
 	Drawable* origin(size_t ind) { return mOrigin.at(ind); }
-	void add_origin(Drawable* d) { mOrigin.push_back(d); mDriven->set_need_update(); }
+	void add_origin(Drawable* d) { mOrigin.push_back(d); mDriven->update(); }
 };
 
 /*

@@ -20,8 +20,8 @@ SkPoint::SkPoint(glm::vec2 pos, Geom3d::Plane_abstr* pl, bool fixed_):
 	mShader(nullptr)
 {
 	mType |= Drawable_types::POINT;
-	x()->add_callback(this, std::bind(&SkPoint::set_need_update, this));
-	y()->add_callback(this, std::bind(&SkPoint::set_need_update, this));
+	// x()->add_callback(this, std::bind(&SkPoint::update, this));
+	// y()->add_callback(this, std::bind(&SkPoint::update, this));
 	set_name("SkPoint");
 }
 
@@ -61,6 +61,7 @@ void SkPoint::set(glm::vec2 pt)
 {
 	x()->drag(pt.x);
 	y()->drag(pt.y);
+	notify_parent(SkNotifiers::SET);
 }
 
 std::vector<var_ptr> SkPoint::all_vars()
@@ -70,7 +71,7 @@ std::vector<var_ptr> SkPoint::all_vars()
 
 void SkPoint::init_impl()
 {
-    mNeed_update = false;
+    mNeed_graphicUpdate = false;
 	mVA = new VertexArray();
 	VertexBufferLayout layout;
 	layout.add_proprety_float(3);
@@ -133,7 +134,7 @@ void SkPoint::draw_impl(Camera* cam, int frame, draw_type type)
 	mVA->unbind();
 	mShader->unbind();
 }
-void SkPoint::update_impl()
+void SkPoint::graphicUpdate_impl()
 {
 	update_annots();
 	mVB->bind();

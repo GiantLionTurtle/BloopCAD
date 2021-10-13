@@ -45,14 +45,15 @@ public:
 			child(i)->draw(cam, frame, type);
 		}
 	}
-	virtual void update_impl()
+	virtual void graphicUpdate_impl()
 	{
 		if(mDrawList.has_newElems()) {
 			mDrawList.init_newElems();
 		}
 
 		for(size_t i = 0; i < n_children(); ++i) {
-			child(i)->update(linked);
+			auto ch = child(i);
+			ch->graphicUpdate(linked || need_graphicUpdate() == 2);
 		}
 		if(notif_on_update())
 			notify_parent(UPDATED);
@@ -73,13 +74,18 @@ public:
 
 class Indexer_abstr {
 protected:
-	Drawable* mDriven;
+	Drawable* mDriven; // The collection that uses this indexer
 public:
 	Indexer_abstr(Drawable* driven_):
 		mDriven(driven_)
 	{
 
 	}
+	/*
+		@function driven
+
+		@return The Collection that uses this indexer
+	*/
 	Drawable* driven() { return mDriven; }
 };
 
@@ -145,7 +151,7 @@ public:
 	std::vector<eT>& list() { return Linear_indexer<std::vector<eT>, eT>::mList; }
 	void add(eT elem)
 	{
-		driven()->set_need_update();
+		driven()->update();
 		list().push_back(elem);
 	}
 };

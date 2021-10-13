@@ -117,7 +117,6 @@ bool SketchDefault_tool::manage_mouse_move(GdkEventMotion* event)
 		// } else {
 			sk->move_selected(plPos - mLastPlPos);
 		// }
-		sk->update_constraints(true, false);
 	} else if(mMode == modes::AREASELECT) {
 		areaSelect(plPos, cursorPos.x);
 	} else if(mMode == modes::NORMAL && event->state & GDK_BUTTON1_MASK && mDragCandidate.ent) {
@@ -133,7 +132,7 @@ void SketchDefault_tool::update_dragCandidate(glm::vec2 cursorPos)
 {
 	Camera* cam = mEnv->state()->cam;
 	Sketch* sk = mEnv->target();
-	if(cursorPos != mLastCursorPos && !sk->need_update() && !cam->need_update()) { // Prevent recomputing the same thing multiple times
+	if(cursorPos != mLastCursorPos && !sk->need_graphicUpdate() && !cam->need_update()) { // Prevent recomputing the same thing multiple times
 		mDragCandidate = sk->closest_draggable(cursorPos, cam, DRAWABLE);
 		mLastCursorPos = cursorPos;
 	}

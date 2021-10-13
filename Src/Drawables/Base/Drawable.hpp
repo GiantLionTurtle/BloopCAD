@@ -77,11 +77,14 @@ public:
 	enum draw_type { ALL, TRANSLUCID, ACTIVE, INACTIVE };
 	enum notifications { SELECTED, UNSELECTED, HOVERED, UNHOVERED, HIDEN, UNHIDEN, DELETED, RESURRECTED, UPDATED};
 protected:
+	static int nDrawable;
+	int mID;
 	int mState;	// The state of the entity, described by the above flags
 	int mStdNotifs; // Standard notifications sent by a child to it's parent
 	int mType;
 	bool mInited;
-	bool mNeed_redraw, mNeed_update;
+	bool mNeed_redraw;
+	int mNeed_graphicUpdate; // 0 => no update ; 1 => need update ; 2 => need update and force
 
 	std::string mName;
 
@@ -101,7 +104,28 @@ public:
 
 	void init();
 	virtual void draw(Camera* cam, int frame, draw_type type = draw_type::ALL);
-	void update(bool force = false);
+	/*
+		@function internalUpdate is used to update internal states
+		eg. set a variable to "dragged"
+
+		@note This update does not propagate
+		@note This update must be quick and non-blocking
+	*/
+	void internalUpdate();
+	/*
+		@function graphicUpdate is used to update opengl states
+		eg. update a vertex buffer,
+		
+		@param force Wheter to force an update even if the mNeed_graphicUpdate is false
+
+		@note This update propagates from top to bottom, all children are updated if
+		the parent updates
+	*/
+	void graphicUpdate(bool force = false);
+	/*
+		@function update does an internal update then schedules a graphic update
+	*/
+	void update(bool forceGraphic = false);
 
 	void notify_parent(int msg); // BLOOPBLOOPCHECKIFUSED
 	virtual void notify(Drawable* who, int msg, bool child) {}
@@ -240,15 +264,16 @@ public:
 	bool need_init() const { return !mInited; }
 	void set_need_redraw();
 	bool need_redraw() const { return mNeed_redraw; }
-	void set_need_update();
-	bool need_update() const { return mNeed_update; }
+	void set_need_graphicUpdate(bool force = false);
+	int need_graphicUpdate() const { return mNeed_graphicUpdate; }
 	
 	virtual void invoke_workspace(Document* doc) {}
 protected:
 
 	virtual void init_impl() {}
 	virtual void draw_impl(Camera* cam, int frame, draw_type type) {}
-	virtual void update_impl() {}
+	virtual void internalUpdate_impl() {}
+	virtual void graphicUpdate_impl() {}
 
 	virtual void select_impl(bool sel) {}
 	virtual void hover_impl(bool hov) {}

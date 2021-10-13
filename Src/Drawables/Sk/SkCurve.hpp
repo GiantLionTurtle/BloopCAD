@@ -54,7 +54,7 @@ public:
 	void set_handle(size_t ind, ExpVec2<ExpVar>* pt) 
 	{
 		mHandles.at(ind) = pt;
-		set_need_update();
+		set_need_graphicUpdate();
 	}
 
 	glm::vec2 pos(size_t ind) { return mHandles.at(ind)->pos(); }

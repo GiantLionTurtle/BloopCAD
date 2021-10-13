@@ -25,7 +25,7 @@ SkCircleCurve::SkCircleCurve(Geom3d::Plane_abstr* pl, bool fixed_):
 	mRadius(std::make_shared<ExpVar>(0.0f))
 {
 	set_name("SkCircleCurve");
-	mRadius->add_callback(this, std::bind(&SkCircleCurve::set_need_update, this));
+	// mRadius->add_callback(this, std::bind(&SkCircleCurve::update, this));
 }
 
 SkCircleCurve::~SkCircleCurve()
@@ -49,7 +49,7 @@ void SkCircleCurve::set_annotOffset(SkSprite* sp, int ind)
 
 void SkCircleCurve::init_impl()
 {
-	mNeed_update = false;
+	mNeed_graphicUpdate = false;
 	
 	mVA = new VertexArray();
 	VertexBufferLayout layout;
@@ -116,10 +116,10 @@ void SkCircleCurve::draw_impl(Camera* cam, int frame, draw_type type)
 	mVA->unbind();
 	mShader->unbind();
 }
-void SkCircleCurve::update_impl()
+void SkCircleCurve::graphicUpdate_impl()
 {
 	update_annots();
-	mNeed_update = false;
+	mNeed_graphicUpdate = false;
 	circleData tosend = { basePlane()->to_worldPos(center_pos()), radius_val(), basePlane()->v(), basePlane()->w() };
 	mVB->bind();
 	mVB->set(&tosend, sizeof(circleData));

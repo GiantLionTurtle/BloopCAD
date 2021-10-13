@@ -79,23 +79,6 @@ public:
 		a single function to check an instance type..
 	*/
 	virtual bool is_var() { return false; }
-
-	/*
-		@function add_callback adds a function called when the value of the expression changes
-		currently only ExpVar uses it but it could be expended quite easily if needed
-
-		@param owner 	A generic pointer to the object owning this callback, useful to delete it if needed
-		@param func 	Function pointer to the callback
-
-		@Note Not a 100% sure the callback thingy is the right way to go, might change later
-	*/
-	virtual void add_callback(void* owner, std::function<void(void)> func) {}
-	/*
-		@function delete_callback deletes a change callback placed by an owner
-
-		@param owner The owner of the callback (most likely the object that placed it)
-	*/
-	virtual void delete_callback(void* owner) {}
 };
 
 /*
@@ -143,17 +126,6 @@ public:
 		@param operand The parameter of the expression
 	*/
 	UnaryExp(exp_ptr operand);
-
-	/*
-		@function add_callback simply passes the command to the expression's operand
-		@override
-	*/
-	void add_callback(void* owner, std::function<void(void)> func);
-	/*
-		@function delete_callback simply passes the command to the expression's operand
-		@override
-	*/
-	void delete_callback(void* owner);
 };
 
 /*
@@ -171,17 +143,6 @@ public:
 		@param right	The right hand side of the expression
 	*/
 	BinaryExp(exp_ptr left, exp_ptr right);
-	
-	/*
-		@function add_callback simply passes the command to both of the expressions' operands
-		@override
-	*/
-	void add_callback(void* owner, std::function<void(void)> func);
-	/*
-		@function delete_callback simply passes the command to both of the expressions' operands
-		@override
-	*/
-	void delete_callback(void* owner);
 };
 
 /*
@@ -316,7 +277,6 @@ private:
 	var_ptr mSubstituant; // Variable that drives this one if it is substituted
 
 	std::shared_ptr<ExpVarDerivative> mDerivative; // Derivative of this variable (can be set to coeff/variable)
-	std::map<void*, std::function<void(void)>> mChangeCallbacks; // Change callbacks indexed by their owner pointer
 public:
 	/*
 		@constructor
@@ -416,13 +376,6 @@ public:
 		(derivative = 1)
 	*/
 	void set_as_var();
-
-	/*
-		@function callback executes all callbacks that were previously set
-	*/
-	void callback();
-	void add_callback(void* owner, std::function<void(void)> func);
-	void delete_callback(void* owner);
 
 	/*
 		@function is_var this variable is a variable 

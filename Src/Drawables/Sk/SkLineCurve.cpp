@@ -43,7 +43,7 @@ void SkLineCurve::set_annotOffset(SkSprite* sp, int ind)
 void SkLineCurve::init_impl()
 {
 	asvecExp = *ptA() - *ptB();
-	mNeed_update = false;
+	mNeed_graphicUpdate = false;
 	
 	// mLength2 = (pow(mA->x()-mB->x(), 2.0) + pow(mA->y()-mB->y(), 2.0));
 
@@ -107,10 +107,10 @@ void SkLineCurve::draw_impl(Camera* cam, int frame, draw_type type)
 	mVA->unbind();
 	mShader->unbind();
 }
-void SkLineCurve::update_impl()
+void SkLineCurve::graphicUpdate_impl()
 {
 	update_annots();
-	mNeed_update = false;
+	mNeed_graphicUpdate = false;
 	mVertices[0] = mBasePlane->to_worldPos(posA());
 	mVertices[1] = mBasePlane->to_worldPos(posB());
 	mVB->bind();

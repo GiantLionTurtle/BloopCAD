@@ -99,7 +99,7 @@ void Point::draw_impl(Camera* cam, int frame, draw_type type)
 	mVA->unbind();
 	mShader->unbind();
 }
-void Point::update_impl()
+void Point::graphicUpdate_impl()
 {
 	mVB->bind();
 	glm::vec3 pos_tmp = pos();

@@ -10,14 +10,14 @@ protected:
 	std::shared_ptr<VertexArray> 	mVA; // The vertex array to contain the attributes on the gpu
 	std::shared_ptr<IndexBuffer>    mIB; // The index buffer to contain vertex handles on the gpu
 	Shader* 		mShader; // Shader to draw the entity
-	bool mRequire_VBUpdate;
+	bool mNeed_VBUpdate;
 public:
 	tangibleEntity(): 
 		mVB(nullptr), 
 		mVA(nullptr), 
 		mIB(nullptr),
 		mShader(nullptr), 
-		mRequire_VBUpdate(false) {}
+		mNeed_VBUpdate(false) {}
 	virtual ~tangibleEntity() {}
 
 	virtual void init() = 0;
@@ -29,7 +29,7 @@ public:
 			init();
 			mInited = true;
 		}
-		if(mRequire_VBUpdate)
+		if(mNeed_VBUpdate)
 			update_VB();
 		Drawable::draw(cam, frame, type, on_required);
 	}
@@ -43,10 +43,10 @@ public:
 
 	virtual void update_VB() = 0;
 
-	void set_require_VBUpdate() { mRequire_VBUpdate = true; set_need_redraw(); notify_parent(UPDATED); }
-	bool require_VBUpdate() const { return mRequire_VBUpdate; }
+	void set_require_VBUpdate() { mNeed_VBUpdate = true; set_need_redraw(); notify_parent(UPDATED); }
+	bool require_VBUpdate() const { return mNeed_VBUpdate; }
 protected:
-	virtual void update_impl() { set_require_VBUpdate(); }
+	virtual void graphicUpdate_impl() { set_require_VBUpdate(); }
 };
 
 #endif

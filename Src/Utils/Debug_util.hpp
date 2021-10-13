@@ -6,13 +6,17 @@
 #include <fstream>
 #include <algorithm>
 
-#define VERBOSE_WARNINGS 1
-#define VERBOSE_CONFIGS 2
-#define VERBOSE_STEPS 3
-#define VERBOSE_INNERSTEPS 4
+#define VERBOSE_NONE 		0
+#define VERBOSE_WARNINGS 	1
+#define VERBOSE_CONFIGS 	2
+#define VERBOSE_STEPS 		3
+#define VERBOSE_INNERSTEPS 	4
+#define VERBOSE_ALL 		5
 
 // #define DISABLE_VERBOSE
-#define VERBOSE_LEVEL VERBOSE_WARNINGS
+#ifndef VERBOSE_LEVEL
+#define VERBOSE_LEVEL VERBOSE_NONE
+#endif
 
 #ifndef DISABLE_VERBOSE
 #define VERBOSE_INTERNAL(level, msg, comp) \
@@ -22,7 +26,11 @@
 #define VERBOSE_INTERNAL(level, msg, comp)
 #endif
 
+#ifdef VERBOSE_LEVEL
 #define verbose(level, msg) VERBOSE_INTERNAL(level, msg, VERBOSE_LEVEL)
+#else
+#define verbose(level, msg) 
+#endif
 
 /*
 	@class ErrorLogger logs messages in stream and or console streams

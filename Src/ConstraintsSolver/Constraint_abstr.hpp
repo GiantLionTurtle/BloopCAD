@@ -3,7 +3,6 @@
 #define CONSTRAINT_ABSTR_HPP_
 
 #include "Expression_forward.hpp"
-#include <Utils/Debug_util.hpp>
 #include <BaseObject.hpp>
 
 #include <array>

@@ -39,7 +39,7 @@ Camera::Camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float 
 	mTransformation{glm::vec3(0.0f, 0.0f, 0.0f)/*No translation*/, 
 		glm::vec3(1.0f, 1.0f, 1.0f)/*Scale of 100%*/, 
 		glm::quat(1.0f, 0.0f, 0.0f, 0.0f)/*No rotation with unit quaternion*/},
-	mRequire_update(false)
+	mNeed_update(false)
 {
 
 }
@@ -56,7 +56,7 @@ Camera::Camera():
 	mTransformation{glm::vec3(0.0f, 0.0f, 0.0f)/*No translation*/, 
 		glm::vec3(1.0f, 1.0f, 1.0f)/*Scale of 100%*/, 
 		glm::quat(1.0f, 0.0f, 0.0f, 0.0f)/*No rotation with unit quaternion*/},
-	mRequire_update(false)
+	mNeed_update(false)
 {
 
 }
@@ -86,7 +86,7 @@ void Camera::set_orientation(glm::vec3 orient)
 {
 	mOrientation = orient;
 	orientation_to_rotation(mOrientation, mTransformation.rotation);
-	mRequire_update = true; 
+	mNeed_update = true; 
 }
 
 void Camera::copy(Camera* other)
@@ -102,12 +102,12 @@ void Camera::copy(Camera* other)
 	mTransformation.rotation = other->mTransformation.rotation;
 	mTransformation.translation = other->mTransformation.translation;
 	mTransformation.scale = other->mTransformation.scale;
-	mRequire_update = true;
+	mNeed_update = true;
 }
 void Camera::update(bool silent)
 {
 	if(!silent)
-		mRequire_update = false;
+		mNeed_update = false;
 	mModel 		= model(mTransformation);
 	mView 		= glm::lookAt(mInternalPos, mInternalPos + mInternalFront, glm::vec3(0.0f, 1.0f, 0.0f));
 	mProjection =  glm::perspective(mFOV, aspectRatio(), mNearPlane, mFarPlane);

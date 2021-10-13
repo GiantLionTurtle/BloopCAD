@@ -65,12 +65,12 @@ void SkSprite::set(glm::vec2 pos_)
 {
 	mPos[0]->set(pos_.x);
 	mPos[1]->set(pos_.y);
-	set_need_update();
+	update();
 }
 void SkSprite::set_pixelOffset(glm::vec2 offset)
 {
 	mPixelOffset = offset;
-	set_need_update();
+	update();
 }
 
 void SkSprite::init_impl()
@@ -81,7 +81,7 @@ void SkSprite::init_impl()
 		TexturesPool::get_instance().add(mTexturePath, mTexture);
 	}
 	
-	mNeed_update = false;
+	mNeed_graphicUpdate = false;
 	mVA = new VertexArray();
 	VertexBufferLayout layout;
 	layout.add_proprety_float(3);
@@ -140,9 +140,8 @@ void SkSprite::draw_impl(Camera* cam, int frame, draw_type type)
 	mShader->unbind();
 }
 
-void SkSprite::update_impl()
+void SkSprite::graphicUpdate_impl()
 {
-	mNeed_update = false;
 	pos_offseted tmpPos= { mBasePlane->to_worldPos(pos()), mPixelOffset };
 	mVB->bind();
 	mVB->set(&tmpPos, sizeof(pos_offseted));

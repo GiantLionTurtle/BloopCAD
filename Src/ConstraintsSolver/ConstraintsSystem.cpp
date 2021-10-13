@@ -3,11 +3,13 @@
 #include "SolverState.hpp"
 
 #include <Utils/Expunge.hpp>
+
+#define VERBOSE_LEVEL VERBOSE_ALL
 #include <Utils/Debug_util.hpp>
 
 ConstraintsSystem::ConstraintsSystem():
 	mBrokenDown(false),
-	mSolverType(SolverState::LevenbergMarquardt),
+	mSolverType(SolverState::DogLeg),
 	mNum_liveConstrs(0),
 	mNum_liveVars(0),
 	mNum_liveClusters(0)
@@ -147,8 +149,7 @@ void ConstraintsSystem::breakDown_problem()
 	// Add variable to clusters one at a time
 	for (size_t i = 0; i < var_clust.size(); ++i) {
 		int ind = var_clust[i];
-		if(ind < 0 || ind >= mClusters.size()) { // Check if cluster id is valid
-			LOG_WARNING("How did we get here??");
+		if(ind < 0 || ind >= mClusters.size()) { // Check if cluster id is valid, -1: it is in no cluster (eg. a variable that has no constraint)
 			continue;
 		}
 		mClusters[ind]->add_var(liveVars[i]);

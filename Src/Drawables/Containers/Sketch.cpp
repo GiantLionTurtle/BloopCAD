@@ -54,7 +54,7 @@ void Sketch::notify(Drawable* who, int msg, bool child)
 void Sketch::dragUpdate()
 {
 	mConstrSystem.updatedSystem();
-	set_need_update();
+	update();
 }
 
 SelPoint Sketch::closest(glm::vec2 cursor, Camera* cam, int filter)
@@ -232,7 +232,7 @@ bool Sketch::update_constraints(bool safeUpdate, bool update_on_solveFail)
 		backup_system();
 	int solve_out = mConstrSystem.solve();
 	if(update_on_solveFail || solve_out != SolverState::FAILURE) {
-		set_need_update();
+		update(true);
 	} else if(safeUpdate && solve_out == SolverState::FAILURE) {
 		revert_system_to_backup();
 	}

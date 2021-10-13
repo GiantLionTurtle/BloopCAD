@@ -8,6 +8,7 @@
 
 /*
 	@class SwitchWorkspace_action is an action to change the workspace of a Document
+
 	@parent : action
 */
 class SwitchWorkspace_action : public Action {
@@ -19,20 +20,36 @@ public:
 	/*
 		@function SwitchWorkspace_action creates the action and saves the current workspace
 
-		@param doc : 			The Document onto which to perform the action
-		@param workspaceNme : 	The name of the target workspace
+		@param workspaceNme	The name of the target workspace
+		@param set_camera	If the camera of the new workspace should be set to be at
+							the same state then the camera of the workspace that is left
 	*/
-	SwitchWorkspace_action(int workspaceName, bool set_Camera = false);
+	SwitchWorkspace_action(int workspaceName, bool set_camera = false);
 
 	/*
-		@function do_work switches to desired workspace if it exists
+		@function do_work switches to desired workspace if it exists and clone the initial workespace's
+		camera into the new workspace's camera if desired
+
+		@param caller	The document calling the function and that will have it's workspace switched
+		@return bool	True, because it can be done in one go
 	*/
 	virtual bool do_work(Document* caller);
 	/*
-		@function undo_work revert back to the initial workspace
+		@function undo_work revert back to the initial workspace and clone the target workespace's
+		camera into the initial's camera if desired
+	
+		@param caller	The document calling the function and that will have it's workspace switched
+		@return bool	True, because it can be done in one go
 	*/
 	virtual bool undo_work(Document* caller);
 
+	/*
+		@function switch_workspace switches the workspace to a target workspace
+		
+		@param 			The document onto which the workspace will act
+		@param wrksp 	The name of the workspace (which is a number refering to an enum in Bloop)
+		@note This is the core of the class
+	*/
 	void switch_workspace(Document* caller, int wrksp);
 };
 

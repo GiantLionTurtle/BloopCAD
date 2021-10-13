@@ -52,11 +52,11 @@ public:
 
 	size_t n_geom() { return mGeometries.size(); }
 	SkGeometry* geom(size_t ind) { return mGeometries.at(ind); }
-	void add_geom(SkGeometry* g) { mGeometries.push_back(g); mDriven->set_need_update(); }
+	void add_geom(SkGeometry* g) { mGeometries.push_back(g); mDriven->update(); }
 
 	size_t n_constr() { return mConstraints.size(); }
 	SkConstraint* constr(size_t ind) { return mConstraints.at(ind); }
-	void add_constr(SkConstraint* c) { mConstraints.push_back(c); mDriven->set_need_update(); }
+	void add_constr(SkConstraint* c) { mConstraints.push_back(c); mDriven->update(); }
 };
 
 /*

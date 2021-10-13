@@ -29,6 +29,8 @@ struct SkExpSelPoint {
 };
 
 class SkDrawable : virtual public Drawable {
+public:
+	enum SkNotifiers { SET = 5 };
 protected:
 	Geom3d::Plane_abstr* mBasePlane; // Should it be the parent sketch directly??
 public:
@@ -39,7 +41,7 @@ public:
 	}
 
 	Geom3d::Plane_abstr* basePlane() { return mBasePlane; }
-	void set_basePlane(Geom3d::Plane_abstr* pl) { mBasePlane = pl; set_need_update(); }
+	void set_basePlane(Geom3d::Plane_abstr* pl) { mBasePlane = pl; update(); }
 };
 
 // interactive drawables

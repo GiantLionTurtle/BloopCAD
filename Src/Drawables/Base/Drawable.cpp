@@ -4,15 +4,18 @@
 #include <Utils/Debug_util.hpp>
 #include <Utils/Expunge.hpp>
 
+int Drawable::nDrawable = 0;
+
 Drawable::Drawable(): 
 	mState(BLOOP_ENTITY_EXISTS_FLAG),
 	mStdNotifs(0),
 	mParent(nullptr),
 	mUILink(nullptr),
 	mNeed_redraw(true),
-	mNeed_update(false),
+	mNeed_graphicUpdate(false),
 	mInited(false),
-	mType(0)
+	mType(0),
+	mID(nDrawable++)
 {
 	mType |= Drawable_types::DRAWABLE;
 }
@@ -37,12 +40,21 @@ void Drawable::draw(Camera* cam, int frame, draw_type type)
 
 	draw_impl(cam, frame, type);
 }
-void Drawable::update(bool force)
+void Drawable::internalUpdate()
 {
-	if((need_update() || force) && exists()) {
-		update_impl();
-		mNeed_update = false;
+	internalUpdate_impl();
+}
+void Drawable::graphicUpdate(bool force)
+{
+	if((need_graphicUpdate() || force) && exists()) {
+		graphicUpdate_impl();
+		mNeed_graphicUpdate = 0;
 	}
+}
+void Drawable::update(bool forceGraphic)
+{
+	internalUpdate();
+	set_need_graphicUpdate(forceGraphic);
 }
 
 void Drawable::notify_parent(int msg)
@@ -245,15 +257,16 @@ void Drawable::set_need_redraw()
 	}
 	mNeed_redraw = true;
 }
-void Drawable::set_need_update()
+void Drawable::set_need_graphicUpdate(bool force)
 {
+	if(mNeed_graphicUpdate && !(mNeed_graphicUpdate != 2 && force)) // This makes sure that multiple graphic updates 
+		return;				// are not spawn and create callback loops + it avoids loosing the "force" parameter
 	set_need_redraw();
-	if(mNeed_update)
-		return;
+
 	if(mParent) {
-		mParent->set_need_update();
+		mParent->set_need_graphicUpdate(force);
 	}
-	mNeed_update = true;
+	mNeed_graphicUpdate = force ? 2 : 1;
 }
 
 // bool Drawable::should_draw_self(draw_type type, bool on_required)
@@ -262,7 +275,7 @@ void Drawable::set_need_update()
 	
 // 	switch(type) {
 // 	case draw_type::ALL:
-// 		return draw_self || (mRequire_selfRedraw && active());
+// 		return draw_self || (mNeed_selfRedraw && active());
 // 	case draw_type::ACTIVE:
 // 		return active() && !translucid();
 // 	case draw_type::INACTIVE:

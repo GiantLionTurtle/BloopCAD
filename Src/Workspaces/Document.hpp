@@ -155,7 +155,7 @@ public:
 	void clear_toolPreview() { set_toolPreview(nullptr); }
 
 	bool need_redraw() { return mNeed_redraw || (mToolPreview && mToolPreview->need_redraw()); }
-	bool need_update() { return (mToolPreview && mToolPreview->need_update()); }
+	bool need_graphicUpdate() { return (mToolPreview && mToolPreview->need_graphicUpdate()); }
 
 	Gtk::GLArea& viewport() { return mViewport; }
 

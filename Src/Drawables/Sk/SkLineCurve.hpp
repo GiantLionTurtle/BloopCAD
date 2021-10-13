@@ -27,10 +27,10 @@ public:
 	int selection_rank() { return 3; }
 	void set_annotPos(SkSprite* sp) { sp->set((posA() + posB()) / 2.0f); }
 	void set_annotOffset(SkSprite* sp, int ind);
-private:
+// protected:
 	void init_impl();
 	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL);
-	void update_impl();
+	void graphicUpdate_impl();
 };
 
 #endif

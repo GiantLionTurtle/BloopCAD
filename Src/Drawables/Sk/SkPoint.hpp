@@ -37,7 +37,7 @@ public:
 protected:
 	void init_impl();
 	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL);
-	void update_impl();
+	void graphicUpdate_impl();
 
 	void move_impl(glm::vec2 delta);
 };
