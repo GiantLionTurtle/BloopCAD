@@ -172,7 +172,9 @@ public:
 	/*
 		@function clear_substitutions removes substitution of each variable
 
-		@note It is often called after @function apply_substitutions
+		@note It is often called after @function apply_substitutions (or in the next loop cycle)
+		@note It is now unused as this work is done higher up in ConstraintsSystem, but it will remain here
+		as well for now
 	*/
 	void clear_substitutions();
 	/*
@@ -182,6 +184,7 @@ public:
 		@note It is used after solve to make variables independant from their substituant,
 		it could be more complex and allow for better behavior if substituant is changed after
 		solve (TODO: check if it would work to call it before solve instead of after)
+
 	*/
 	void apply_substitutions();
 

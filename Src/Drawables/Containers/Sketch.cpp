@@ -256,18 +256,21 @@ void Sketch::apply_snapshot(std::map<var_ptr, float> shot)
 	for(auto it = shot.begin(); it != shot.end(); ++it) {
 		it->first->set(it->second);
 	}
+	update(true);
 }
 void Sketch::apply_snapshot(std::vector<VarState> shot)
 {
 	for(auto vst : shot) {
 		vst.var->set(vst.st);
 	}
+	update(true);
 }
 void Sketch::apply_deltaSnapshot(std::vector<VarDualState> deltaShot, bool first)
 {
 	for(auto vst : deltaShot) {
 		vst.var->set(first ? vst.st1 : vst.st2);
 	}
+	update(true);
 }
 
 void Sketch::backup_system()

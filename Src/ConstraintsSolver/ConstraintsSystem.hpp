@@ -97,6 +97,12 @@ public:
 		@function clear_clusters destroys the clusters
 	*/
 	void clear_clusters();
+	/*
+		@function clear_substitutions removes substitution of each variable
+
+		@note It is often called after @function apply_substitutions (or in the next loop cycle)
+	*/
+	void clear_substitutions();
 
 	/*
 		@function var is a getter for the variables of the system

@@ -36,8 +36,8 @@ public:
 	{
 
 	}
-	size_t size() { return 1 + mHandles.size(); }
-	SkIntDrawable* at(size_t ind)
+	size_t size() const { return 1 + mHandles.size(); }
+	SkIntDrawable* at(size_t ind) const
 	{
 		if(ind == 0) {
 			return mCurve;
@@ -45,10 +45,11 @@ public:
 			return mHandles.at(ind-1);
 		}
 	}
+	Curve* curve() const { return mCurve; }
 	Curve* curve() { return mCurve; }
 	std::array<SkPoint*, nH>& handles() { return mHandles; }
 
-	bool has_newElems() { return mInitInd < size(); }
+	bool has_newElems() const { return mInitInd < size(); }
 	void init_newElems()
 	{
 		for(size_t i = mInitInd; i < size(); ++i) {
@@ -95,6 +96,7 @@ public:
 
 	size_t n_handles() { return pT::mDrawList.handles().size(); }
 	SkPoint* handle(size_t ind) { return pT::mDrawList.handles().at(ind); }
+	Curve* curve() const { return pT::mDrawList.curve(); }
 	Curve* curve() { return pT::mDrawList.curve(); }
 
 	void notify(Drawable* who, int msg, bool child)
@@ -157,7 +159,28 @@ public:
 		}
 		return vars;
 	}
+
+	/*
+		@function selected
+
+		@return If the underlying curve is selected
+		@note It is overriden because if the curve is selected, the sketch must act
+		on the whole object (with handles)
+
+		@override
+	*/
+	virtual bool selected() const
+	{
+		return curve()->selected();
+	}
 protected:
+	void exists_impl(bool ex)
+	{
+		curve()->set_exists(ex, true);
+		for(size_t i = 0; i < n_handles(); ++i) {
+			handle(i)->set_exists(ex, true);
+		}
+	}
 	void select_impl(bool sel)
 	{
 		bool set_handles = false;

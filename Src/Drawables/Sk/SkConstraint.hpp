@@ -96,6 +96,15 @@ public:
 		return pT::mDrawList.at(ind);
 	}
 protected:
+	virtual void exists_impl(bool ex)
+	{
+		SkConstraint::exists_impl(ex);
+		// True as second argument to avoid getting notified and causing recursion
+		for(int i = 0; i < nA; ++i) {
+			pT::mDrawList.at(i)->set_exists(ex, true);
+		}
+
+	}
 	virtual void select_impl(bool sel)
 	{
 		// True as second argument to avoid getting notified and causing recursion

@@ -330,7 +330,7 @@ void ExpVar::set_dragged(bool dr)
 
 bool ExpVar::exists() const
 {
-	return mIs_substituted ? mSubstituant->exists() : (mExists);
+	return mExists;
 }
 void ExpVar::set_exists(bool ex)
 {

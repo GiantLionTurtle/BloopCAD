@@ -93,7 +93,7 @@ bool SketchDefault_tool::manage_button_release(GdkEventButton* event)
 	if(mMode == modes::NORMAL && !mDragCandidate.ent) {
 		mEnv->target()->unselect_all(); // Clear selection if the user clicks an empty space
 	} else if(mMode == modes::DRAGGING) {
-		mEnv->state()->doc->push_action(std::make_shared<ApplySnapshot_action>(mEnv->target()->deltaSnapshot(mStartSnapshot), true));
+			mEnv->state()->doc->push_action(std::make_shared<ApplySnapshot_action>(mEnv->target(), mEnv->target()->deltaSnapshot(mStartSnapshot), true));
 		mEnv->target()->dragConstr()->clear();
 	} else if(mMode == modes::AREASELECT) {
 		mEnv->state()->doc->clear_toolPreview(); // Clear the selection rectangle

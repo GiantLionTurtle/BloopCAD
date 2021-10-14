@@ -149,7 +149,7 @@ public:
 
 		@return : Wheter or not the selected flag is up
 	*/
-	bool selected() const;
+	virtual bool selected() const;
 
 	/*
 		@function set_hover sets the hovered flag

@@ -11,7 +11,6 @@ public:
 		SkHandleCurve({ ptA_, ptB_ }, pl, fixed_)
 	{
 		set_name("SkLine");
-		std::cout<<"Create line: "<<ptA()->x()->id()<<",  "<<ptA()->y()->id()<<" ; "<<ptB()->x()->id()<<",  "<<ptB()->y()->id()<<"\n";
 	}
 	virtual ~SkLine() {}
 

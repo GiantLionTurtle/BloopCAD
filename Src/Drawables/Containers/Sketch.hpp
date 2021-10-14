@@ -124,9 +124,9 @@ public:
 
 	std::map<var_ptr, float> snapshot();
 	std::vector<VarDualState> deltaSnapshot(std::map<var_ptr, float> first);
-	static void apply_snapshot(std::map<var_ptr, float> shot);
-	static void apply_snapshot(std::vector<VarState> shot);
-	static void apply_deltaSnapshot(std::vector<VarDualState> deltaShot, bool first);
+	void apply_snapshot(std::map<var_ptr, float> shot);
+	void apply_snapshot(std::vector<VarState> shot);
+	void apply_deltaSnapshot(std::vector<VarDualState> deltaShot, bool first);
 	void backup_system();
 	void revert_system_to_backup();
 

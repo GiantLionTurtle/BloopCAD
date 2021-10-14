@@ -57,6 +57,8 @@ void ConstraintsSystem::toggle_constraint(Constraint_abstr* constr, bool enable)
 
 int ConstraintsSystem::solve()
 {
+	clear_substitutions(); // Called here instead of in cluster in the case that substitutions remain in deleted clusters
+
 	verbose(VERBOSE_STEPS, "Start solve attempt...");
 	if(!mBrokenDown) {
 		verbose(VERBOSE_STEPS, "Breaking down problem...");
@@ -164,6 +166,12 @@ void ConstraintsSystem::clear_clusters()
 		expunge(mClusters[i]);
 	}
 	mClusters.clear();
+}
+void ConstraintsSystem::clear_substitutions()
+{
+	for(auto var : mVariables) {
+		var->clear_substitution();
+	}
 }
 
 void ConstraintsSystem::varState(std::vector<VarState>& state)

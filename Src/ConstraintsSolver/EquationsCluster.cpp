@@ -52,7 +52,7 @@ int EquationsCluster::solve()
 {
 	mLastOutput = SolverState::FAILURE;
 
-	clear_substitutions(); // Fresh start for substitutions
+	// clear_substitutions(); // Fresh start for substitutions
 	clear_tags(); 
 	substitutions(); // Create substitutions
 
