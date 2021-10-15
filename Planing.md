@@ -43,7 +43,6 @@ Project started on september 27 2020
 * Check if it is possible to simplify ConstraintsSystem's varState thingy
 * Re-enable point-line and point-circle coincidence
 * Re-enable double-click to enter sketch
-* Solve updating problem when adding coincidence constraint between a free and fixed point
 * Enforce a better constraint behavior when dragging a partially constrained line
 * Comments for dragged point
 * Replace expvec with alias to std::array

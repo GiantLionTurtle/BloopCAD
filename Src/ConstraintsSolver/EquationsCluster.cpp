@@ -105,11 +105,11 @@ void EquationsCluster::substitutions()
 		if(equ->can_substitute()) {
 			equ->get_substitution_vars(a, b); // Get both variables of the equations (there can only be two for the moment)
 
-			if(mVars.find(a) == mVars.end() || mVars.find(b) == mVars.end()) // Check if variable is in cluster (TODO: really useful???)
-				continue;
+			// if(mVars.find(a) == mVars.end() || mVars.find(b) == mVars.end()) // Check if variable is in cluster (TODO: really useful???)
+				// continue;
 
 			// Check which variable is gonna drive, TODO: check edge case where both variables are dragged??
-			if(a->dragged()) {
+			if(a->weight() > b->weight()) {
 				b->substitute(a);
 			} else {
 				a->substitute(b);

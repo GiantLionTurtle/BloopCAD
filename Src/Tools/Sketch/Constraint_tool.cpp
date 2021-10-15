@@ -93,6 +93,7 @@ void Constraint_tool::add_constraint()
 		std::make_shared<ApplySnapshot_action>(mEnv->target(), mEnv->target()->deltaSnapshot(snp), true),
 		std::make_shared<ToggleConstraint_action>(mEnv->target(), constr, true, true)
 	})));
+	// mEnv->target()->update(true);
 	clear_geometries();
 }
 

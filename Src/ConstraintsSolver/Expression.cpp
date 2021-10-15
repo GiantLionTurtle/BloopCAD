@@ -253,12 +253,13 @@ exp_ptr ExpVarDerivative::generate_derivative()
 }
 
 
-ExpVar::ExpVar(double val):
+ExpVar::ExpVar(double val, bool fixed_):
 	mVal(val),
 	mExists(true),
 	mAs_coeff(true),
 	mIs_substituted(false),
 	mIs_dragged(false),
+	mFrozen(fixed_ ? 2 : 0),
 	mSubstituant(nullptr),
 	mDerivative(std::make_shared<ExpVarDerivative>(this))
 {
@@ -267,7 +268,7 @@ ExpVar::ExpVar(double val):
 
 double ExpVar::eval()
 {
-	return mIs_substituted ? mSubstituant->eval() : mVal;
+	return is_substituted() ? mSubstituant->eval() : mVal;
 }
 exp_ptr ExpVar::derivative()
 {
@@ -280,18 +281,18 @@ std::string ExpVar::to_string()
 {
 	return "[" + std::to_string(mVal) + "]";
 }
-var_ptr ExpVar::make(double val)
+var_ptr ExpVar::make(double val, bool fixed_)
 {
-	return var_ptr(new ExpVar(val));
+	return var_ptr(new ExpVar(val, fixed_));
 }
 
 bool ExpVar::is_deriv_zero()
 {
-	return (mAs_coeff || dragged());
+	return (mAs_coeff || dragged() || frozen());
 }
 bool ExpVar::as_coeff()
 {
-	return mIs_substituted ? mSubstituant->as_coeff() : (mAs_coeff);
+	return is_substituted() ? mSubstituant->as_coeff() : (mAs_coeff);
 }
 void ExpVar::set_as_coeff()
 {
@@ -311,7 +312,7 @@ void ExpVar::set_as_var()
 }
 void ExpVar::set(double val)
 {
-	// if(!dragged())
+	if(!frozen())
 		mVal = val;
 }
 void ExpVar::drag(double val)
@@ -321,11 +322,28 @@ void ExpVar::drag(double val)
 }
 bool ExpVar::dragged()
 {
-	return mIs_substituted ? mSubstituant->dragged() : mIs_dragged;
+	return is_substituted() ? mSubstituant->dragged() : mIs_dragged;
 }
 void ExpVar::set_dragged(bool dr)
 {
 	mIs_dragged = dr;
+}
+
+int ExpVar::frozen()
+{
+	return mFrozen;
+}
+void ExpVar::set_frozen(bool fr)
+{
+	if(mFrozen != 2)
+		mFrozen = fr;
+	if(fr)
+		clear_substitution();
+}
+
+int ExpVar::weight()
+{
+	return dragged() + frozen() * 2; // This way a temporary freeze looses to a permanent one??, is it really helpful
 }
 
 bool ExpVar::exists() const
@@ -354,6 +372,8 @@ void ExpVar::apply_substitution()
 }
 void ExpVar::substitute(var_ptr sub)
 {
+	if(frozen())
+		return;
 	if(sub->is_substituted() && sub->mSubstituant.get() == this)
 		sub->clear_substitution();
 	mSubstituant = sub;

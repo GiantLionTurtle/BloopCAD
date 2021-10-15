@@ -265,7 +265,8 @@ private:
 	bool mExists; // Wheter the variable *exists*, as a base object, it is used when geometries are deleted but not dealocated
 	bool mAs_coeff; // Variable act as coefficient by default to be able to derive complex expressions with respect to a single variable
 	bool mIs_dragged; // Wheter this variable is being dragged (it has priority in the solver)
-	
+	int mFrozen; // Wheter this variable can change or not [0: not frozen, 1: frozen but can unfreeze, 2: frozen for ever (set at creation)]
+
 	// Substitution in this case is a when a variable follows another variable so it 
 	// returns the other variable's value and sets the other variable's value on set.
 	// Currently it is limited to very simple equations (x1 = x2) but they are quite 
@@ -283,13 +284,13 @@ public:
 
 		@param val The initial value of the variable
 	*/
-	ExpVar(double val);
+	ExpVar(double val, bool fixed_ = false);
 	/*
 		@function make is a light wrapper around std::make_shared<ExpVar>(val)
 
 		@return a shared_ptr to a newly created ExpVar
 	*/
-	static var_ptr make(double val);
+	static var_ptr make(double val, bool fixed_ = false);
 
 	virtual double eval();
 	exp_ptr derivative();
@@ -320,6 +321,21 @@ public:
 		@param dr The new value of the flag
 	*/
 	void set_dragged(bool dr);
+
+	/*
+		@function frozen
+
+		@return Wheter or not this variable can change (>0 : cannot change, == 0: can change)
+	*/
+	int frozen();
+	/*
+		@function set_frozen
+
+		@param fr If the variable should be frozen (immovable) or not
+	*/
+	void set_frozen(bool fr);
+
+	int weight();
 
 	bool exists() const;
 	void set_exists(bool ex);
