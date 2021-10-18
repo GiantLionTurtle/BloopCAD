@@ -590,7 +590,7 @@ public:
 	virtual double eval();
 	virtual exp_ptr generate_derivative();
 
-	virtual std::string to_string() { return "[var derivative]"; }
+	virtual std::string to_string() { return "[abs derivative]"; }
 };
 
 class ExpAbs : public UnaryExp { 

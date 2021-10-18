@@ -839,11 +839,12 @@ var_ptr ExpEqu::get_single_var()
 	}
 	
 
-	if(l != nullptr && r == nullptr) {
-		return l;
-	} else if(l == nullptr && r != nullptr) {
-		return r;
-	} else if(l != nullptr && r != nullptr) {
+	// if(l != nullptr && r == nullptr) {
+	// 	return l;
+	// } else if(l == nullptr && r != nullptr) {
+	// 	return r;
+	// } else 
+	if(l != nullptr && r != nullptr) { // Only very simple substitutions are allowed
 		return ExpVar::driving(l, r);
 	}
 	return nullptr;

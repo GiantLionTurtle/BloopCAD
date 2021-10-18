@@ -113,7 +113,7 @@ bool Constraint_tool::is_line(SkDrawable* drw)
 }
 bool Constraint_tool::is_curve(SkDrawable* drw)
 {
-	return is_line(drw) || drw->type() == Drawable_types::CURVE;
+	return is_line(drw) || drw->type() & Drawable_types::CURVE;
 }
 bool Constraint_tool::is_point_or_curve(SkDrawable* drw)
 {

@@ -37,7 +37,4 @@ Project started on september 27 2020
     * Pan
     * Zoom
 
-
-## TODO before merge with main
-* Re-enable point-line and point-circle coincidence
-* Enforce a better constraint behavior when dragging a partially constrained line
+* Better dragging behavior with partially constrained geometries

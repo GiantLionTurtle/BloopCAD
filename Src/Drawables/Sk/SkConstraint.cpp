@@ -4,6 +4,7 @@
 #include <ConstraintsSolver/Expression.hpp>
 #include "SkPoint.hpp"
 #include "SkLine.hpp"
+#include "SkCircle.hpp"
 #include <Drawables/Containers/Sketch.hpp>
 
 #include <Utils/Debug_util.hpp>
@@ -140,21 +141,7 @@ SkPoint* p1, SkPoint* p2, exp_ptr dist):
 
 // }
 
-SkPointLine_coincidence::SkPointLine_coincidence(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l):
-	SkSprite_constraint<1>(baseplane_, { },
-	{ abs((l->ptB()->x()-l->ptA()->x())*(p->y() - l->ptA()->y()) - 
-	(l->ptB()->y()-l->ptA()->y())*(p->x() - l->ptA()->x())) / sqrt(l->length2()) ^= ExpConst::zero }, 
-	"Resources/Textures/Images/Icons/Sketch/Constraints/Coincidence.png"),	
-	mPoint(p),
-	mLine(l)
-{
-	if(!p->fixed())
-		mVars.insert(mVars.end(), { p->x(), p->y() });
-	if(!l->fixed())
-		mVars.insert(mVars.end(), { l->ptA()->x(), l->ptA()->y(), l->ptB()->x(), l->ptB()->y() });
-	
-	mPoint->add_annot(annot(0));
-}
+
 
 // SkCircleLine_distance::SkCircleLine_distance(Geom3d::Plane_abstr* baseplane_, sketchCircle_ptr c, SkLineCurve* l, exp_ptr dist):
 // 	SkPointLine_distance_abstr(baseplane_, c->center(), l, dist + c->radius())
@@ -198,4 +185,34 @@ SkPointPoint_coincidence::SkPointPoint_coincidence(Geom3d::Plane_abstr* baseplan
 	
 	mP1->add_annot(annot(0));
 	mP2->add_annot(annot(0));
+}
+SkPointLine_coincidence::SkPointLine_coincidence(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l):
+	SkSprite_constraint<1>(baseplane_, { },
+	{ abs((l->ptB()->x()-l->ptA()->x())*(p->y() - l->ptA()->y()) - 
+	(l->ptB()->y()-l->ptA()->y())*(p->x() - l->ptA()->x())) / sqrt(l->length2()) ^= ExpConst::zero }, 
+	"Resources/Textures/Images/Icons/Sketch/Constraints/Coincidence.png"),	
+	mPoint(p),
+	mLine(l)
+{
+	if(!p->fixed())
+		mVars.insert(mVars.end(), { p->x(), p->y() });
+	if(!l->fixed())
+		mVars.insert(mVars.end(), { l->ptA()->x(), l->ptA()->y(), l->ptB()->x(), l->ptB()->y() });
+	
+	mPoint->add_annot(annot(0));
+}
+
+SkPointCircle_coincidence::SkPointCircle_coincidence(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkCircleCurve* c):
+	SkSprite_constraint<1>(baseplane_, { },
+	{ sqrt(pow(p->x() - c->center()->x(), 2) + pow(p->y() - c->center()->y(), 2)) ^= c->radius() }, 
+	"Resources/Textures/Images/Icons/Sketch/Constraints/Coincidence.png"),	
+	mPoint(p),
+	mCircle(c)
+{
+	if(!p->fixed())
+		mVars.insert(mVars.end(), { p->x(), p->y() });
+	if(!c->fixed())
+		mVars.insert(mVars.end(), { c->center()->x(), c->center()->y(), c->radius() });
+	
+	mPoint->add_annot(annot(0));
 }

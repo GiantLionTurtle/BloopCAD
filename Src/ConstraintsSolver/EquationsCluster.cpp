@@ -68,6 +68,7 @@ int EquationsCluster::solve()
 	for(auto equ : mEqus) {
 		auto var = equ->get_single_var(); // Fetch a substituted/lonely variable from equation
 		if(var) {
+			std::cout<<equ->to_string()<<"\n";
 			equ->set_tag(single_tag); // Now this is the only equation with this tag in the cluster, it will be solved alone
 			if(equ->eval() <= 1e-12)
 				continue;
@@ -258,8 +259,12 @@ int EquationsCluster::solve_LM(double eps1, int tag, bool activeVars_only)
 	int n_vars = activeVars_only ? n_activeVars() : mVars.size();		// Number of variables in the system
 	int n_equs = n_taggedEqus(tag);	// Number of equations in the system
 	verbose(VERBOSE_INNERSTEPS, "Num tagged: "<<n_equs);
-	if(n_equs == 0)
+
+	if(n_equs == 0) {
+		verbose(VERBOSE_STEPS, "Returning early, no equation to solve.");
 		return SolverState::SUCCESS;
+	}
+
 	Eigen::VectorXd P(n_vars), dP(n_vars), P_new(n_vars), 	// Variables values, attempt change in variables and candidate variables values
 					e(n_equs), e_new(n_equs), g(n_vars), 	// Error over variables, candidate variables and error scaled with jacobian  
 					A_diag(n_vars);							// Diagonal of approximation of Hessian matrix
@@ -388,8 +393,10 @@ int EquationsCluster::solve_DL(double eps, int tag, bool activeVars_only)
 	int n_equs = n_taggedEqus(tag);	// Number of equations in the system
 	verbose(VERBOSE_INNERSTEPS,	"Num tagged: "<<n_equs);
 	
-	if(n_equs == 0)
+	if(n_equs == 0) {
+		verbose(VERBOSE_STEPS, "Returning early, no equation to solve.");
 		return SolverState::SUCCESS;
+	}
 	Eigen::VectorXd X(n_vars), X_new(n_vars), X_init(n_vars), // Variables values, candidate variables values and initial valies
 					h_sd(n_vars), // Stepest Descent *direction* (not step!)
 					h_gn(n_vars), // Gauss-Newton step

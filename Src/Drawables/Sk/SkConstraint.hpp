@@ -17,7 +17,7 @@
 class SkPoint;
 class SkLineCurve;
 class Sketch;
-// class SkCircle;
+class SkCircleCurve;
 
 class SkConstraint : public SkIntDrawable, public Constraint_abstr {
 protected:
@@ -199,14 +199,7 @@ public:
 // 	SkPointLine_distance(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist);
 // 	std::string name() { return "SkPointLine_distance"; }
 // };
-class SkPointLine_coincidence : public SkSprite_constraint<1> {
-private:
-	SkPoint* mPoint;
-	SkLineCurve* mLine;
-public:
-	SkPointLine_coincidence(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l);
-	std::string name() { return "SkPointLine_coincidence"; }
-};
+
 // class SkCircleLine_distance : public SkPointLine_distance_abstr {
 // private:
 // 	sketchCircle_ptr mCircle;
@@ -233,6 +226,22 @@ private:
 public:
 	SkPointPoint_coincidence(Geom3d::Plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2);
 	std::string name() { return "SkPointPoint_coincidence"; }
+};
+class SkPointLine_coincidence : public SkSprite_constraint<1> {
+private:
+	SkPoint* mPoint;
+	SkLineCurve* mLine;
+public:
+	SkPointLine_coincidence(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l);
+	std::string name() { return "SkPointLine_coincidence"; }
+};
+class SkPointCircle_coincidence : public SkSprite_constraint<1> {
+private:
+	SkPoint* mPoint;
+	SkCircleCurve* mCircle;
+public:
+	SkPointCircle_coincidence(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkCircleCurve* c);
+	std::string name() { return "SkPointCircle_coincidence"; }
 };
 
 // class circleLine_coincidence : public SkSprite_constraint<2> {

@@ -42,7 +42,7 @@ public:
 	SkCurve(Geom3d::Plane_abstr* pl, bool fixed_):
 		SkCurve_abstr(pl, fixed_)
 	{
-
+		mType |= Drawable_types::CURVE;
 	}
 	virtual ~SkCurve()
 	{

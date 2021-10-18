@@ -21,7 +21,7 @@ public:
 	void set_center(glm::vec2 pos) { center()->set(pos); }
     var_ptr radius() { return curve()->radius(); }
 	float radius_val() { return radius()->eval(); }
-	void set_radius(float val) { radius()->drag(val); }
+	void set_radius(float val) { radius()->drag(val); update(); }
 
 	std::vector<var_ptr> all_vars()
 	{
