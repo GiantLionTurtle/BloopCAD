@@ -46,9 +46,11 @@ public:
 	}
 	virtual ~SkCurve()
 	{
-		expunge(mVA);
-		expunge(mVB);
-		// Shader is not deleted because the shader pool manages it
+		if(mInited) {
+			expunge(mVA);
+			expunge(mVB);
+			// Shader is not deleted because the shader pool manages it
+		}
 	}
 
 	void set_handle(size_t ind, ExpVec2<ExpVar>* pt) 

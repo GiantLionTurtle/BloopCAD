@@ -18,9 +18,11 @@ SkSelRect::SkSelRect(glm::vec2 start, glm::vec2 end, Geom3d::Plane_abstr* basePl
 }
 SkSelRect::~SkSelRect()
 {
-	expunge(mVA);
-	expunge(mVB);
-	expunge(mIB);
+	if(mInited) {
+		expunge(mVA);
+		expunge(mVB);
+		expunge(mIB);
+	}
 }
 
 void SkSelRect::set_endPoint(glm::vec2 pt)

@@ -23,12 +23,12 @@ bool Test_EventsManager::manage_key_press(GdkEventKey* event)
 	if(event->keyval == GDK_KEY_o) {
 		mTestStep++;
 	}
+	do_test();
 	return true;
 }
 
 bool Test_EventsManager::manage_tick(const Glib::RefPtr<Gdk::FrameClock>& frame_clock)
 {
-	do_test();
 	return stimuli_EventsManager::manage_tick(frame_clock);
 }
 
@@ -39,87 +39,137 @@ void Test_EventsManager::do_test()
 		if(!doc) {
 			LOG_ERROR("Invalid Document");
 		}
-		switch(mTestStep) {
+	// 	switch(mTestStep) {
+	// 	case 0:
+	// 		mBloopWindow->partWorkspace()->startSketch()->init();
+	// 		mBloopWindow->partWorkspace()->startSketch()->start_sketch(dynamic_cast<Geom3d::Plane_abstr*>(doc->target()->indexer().origin(1)), mBloopWindow->partWorkspace()->state()->cam->state());
+	// 		mTestStep = 0;
+	// 		break;
+	// 	case 1:
+	// 		mBloopWindow->sketchWorkspace()->line()->init();
+	// 		mPoints[0] = mBloopWindow->sketchWorkspace()->line()->add_point(glm::vec2(0.238092,  0.299035));
+	// 		mTestStep = 1;
+	// 		break;
+	// 	case 2:
+	// 		mPoints[1] = mBloopWindow->sketchWorkspace()->line()->add_point(glm::vec2(1.02165,  0.171687));
+	// 		mLines[0] = mBloopWindow->sketchWorkspace()->line()->lastAdded();
+	// 		mTestStep = 2;
+	// 		break;
+	// 	case 3:
+	// 		mPoints[2] = mBloopWindow->sketchWorkspace()->line()->add_point(glm::vec2(1.1587,  0.799526));
+	// 		mLines[1] = mBloopWindow->sketchWorkspace()->line()->lastAdded();
+	// 		mTestStep = 3;
+	// 		break;
+	// 	case 4:
+	// 		mPoints[3] = mBloopWindow->sketchWorkspace()->line()->add_point(glm::vec2(0.362863,  1.27707));
+	// 		mLines[2] = mBloopWindow->sketchWorkspace()->line()->lastAdded();
+	// 		mTestStep = 4;
+	// 		break;
+	// 	case 5:
+	// 		mPoints[4] = mBloopWindow->sketchWorkspace()->line()->add_point(glm::vec2(0.387337,  0.436465));
+	// 		mLines[3] = mBloopWindow->sketchWorkspace()->line()->lastAdded();
+	// 		mBloopWindow->sketchWorkspace()->line()->finish();
+	// 		mTestStep = 5;
+	// 		break;
+	// 	case 6:
+	// 		mBloopWindow->sketchWorkspace()->coincidence()->init();			
+	// 		mBloopWindow->sketchWorkspace()->coincidence()->add_geom(mPoints[0]);
+	// 		mBloopWindow->sketchWorkspace()->coincidence()->add_geom(mPoints[4]);
+	// 		mBloopWindow->sketchWorkspace()->coincidence()->add_constraint();
+	// 		mBloopWindow->sketchWorkspace()->coincidence()->finish();
+	// 		mTestStep = 6;
+	// 		break;
+	// 	case 7:
+	// 		mBloopWindow->sketchWorkspace()->horizontality()->init();
+	// 		mBloopWindow->sketchWorkspace()->horizontality()->add_geom(mLines[0]->curve());
+	// 		mBloopWindow->sketchWorkspace()->horizontality()->add_constraint();
+	// 		mBloopWindow->sketchWorkspace()->horizontality()->finish();
+	// 		mTestStep = 7;
+	// 		break;
+	// 	case 8:
+	// 		mBloopWindow->sketchWorkspace()->perpendicularity()->init();
+	// 		mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[0]->curve());
+	// 		mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[1]->curve());
+	// 		mBloopWindow->sketchWorkspace()->perpendicularity()->add_constraint();
+	// 		mBloopWindow->sketchWorkspace()->perpendicularity()->finish();
+	// 		mTestStep = 8;
+	// 		break;
+	// 	case 9:
+	// 		mBloopWindow->sketchWorkspace()->perpendicularity()->init();
+	// 		mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[1]->curve());
+	// 		mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[2]->curve());
+	// 		mBloopWindow->sketchWorkspace()->perpendicularity()->add_constraint();
+	// 		mBloopWindow->sketchWorkspace()->perpendicularity()->finish();
+	// 		mTestStep = 9;
+	// 		break;
+	// 	case 10:
+	// 		mBloopWindow->sketchWorkspace()->perpendicularity()->init();
+	// 		mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[2]->curve());
+	// 		mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[3]->curve());
+	// 		mBloopWindow->sketchWorkspace()->perpendicularity()->add_constraint();
+	// 		mBloopWindow->sketchWorkspace()->perpendicularity()->finish();
+	// 		mTestStep = 10;
+	// 		break;
+	// 	// case 11:
+	// 	// 	mPoints[2]->set_dragged(true);
+	// 	// 	for(int i = 0; i < 5; ++i) {
+	// 	// 		std::cout<<"Point "<<i<<": ("<<mPoints[i]->x()->id()<<",  "<<mPoints[i]->y()->id()<<")\n";
+	// 	// 	}
+	// 	// 	mTestStep = 11;
+	// 	// 	break;
+	// 	default:
+	// 		if(mTestStep%2 == 1) {
+	// 			mPoints[2]->move(glm::vec2(-0.05f, -0.05f));
+	// 		} else {
+	// 			mBloopWindow->sketchWorkspace()->target()->update_constraints(false, true);
+	// 		}
+	// 		break;
+	// 	}
+	// 	mTestStepDone++;
+	// 	// if(mTestStep > 0 && duration_cast<milliseconds>(steady_clock::now() - mLastAction).count() > 100) {
+	// 	// 	mLastAction = steady_clock::now();
+	// 	// 	std::cout<<"test! "<<i++<<"\n";
+	// 	// }
+	// }
+	switch(mTestStep) {
 		case 0:
 			mBloopWindow->partWorkspace()->startSketch()->init();
-			mBloopWindow->partWorkspace()->startSketch()->start_sketch(dynamic_cast<Geom3d::Plane_abstr*>(doc->target()->indexer().origin(0)), mBloopWindow->partWorkspace()->state()->cam->state());
+			mBloopWindow->partWorkspace()->startSketch()->start_sketch(dynamic_cast<Geom3d::Plane_abstr*>(doc->target()->indexer().origin(1)), mBloopWindow->partWorkspace()->state()->cam->state());
 			mTestStep = 0;
 			break;
 		case 1:
 			mBloopWindow->sketchWorkspace()->line()->init();
-			mPoints[0] = mBloopWindow->sketchWorkspace()->line()->add_point(glm::vec2(0.238092,  0.299035));
+			mPoints[0] = mBloopWindow->sketchWorkspace()->line()->add_point(glm::vec2(0.5,  0.3));
 			mTestStep = 1;
 			break;
 		case 2:
-			mPoints[1] = mBloopWindow->sketchWorkspace()->line()->add_point(glm::vec2(1.02165,  0.171687));
+			mPoints[1] = mBloopWindow->sketchWorkspace()->line()->add_point(glm::vec2(1.0,  0.3));
 			mLines[0] = mBloopWindow->sketchWorkspace()->line()->lastAdded();
 			mTestStep = 2;
 			break;
 		case 3:
-			mPoints[2] = mBloopWindow->sketchWorkspace()->line()->add_point(glm::vec2(1.1587,  0.799526));
+			mPoints[2] = mBloopWindow->sketchWorkspace()->line()->add_point(glm::vec2(1.0,  0.8));
 			mLines[1] = mBloopWindow->sketchWorkspace()->line()->lastAdded();
 			mTestStep = 3;
 			break;
+		// case 4:
+		// 	mBloopWindow->sketchWorkspace()->horizontality()->init();
+		// 	mBloopWindow->sketchWorkspace()->horizontality()->add_geom(mLines[0]->curve());
+		// 	mBloopWindow->sketchWorkspace()->horizontality()->add_constraint();
+		// 	mBloopWindow->sketchWorkspace()->horizontality()->finish();
+		// 	mTestStep = 4;
+		// 	break;
 		case 4:
-			mPoints[3] = mBloopWindow->sketchWorkspace()->line()->add_point(glm::vec2(0.362863,  1.27707));
-			mLines[2] = mBloopWindow->sketchWorkspace()->line()->lastAdded();
+			mBloopWindow->sketchWorkspace()->perpendicularity()->init();
+			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[0]->curve());
+			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[1]->curve());
+			mBloopWindow->sketchWorkspace()->perpendicularity()->add_constraint();
+			mBloopWindow->sketchWorkspace()->perpendicularity()->finish();
 			mTestStep = 4;
 			break;
-		case 5:
-			mPoints[4] = mBloopWindow->sketchWorkspace()->line()->add_point(glm::vec2(0.387337,  0.436465));
-			mLines[3] = mBloopWindow->sketchWorkspace()->line()->lastAdded();
-			mBloopWindow->sketchWorkspace()->line()->finish();
-			mTestStep = 5;
-			break;
-		case 6:
-			mBloopWindow->sketchWorkspace()->coincidence()->init();			
-			mBloopWindow->sketchWorkspace()->coincidence()->add_geom(mPoints[0]);
-			mBloopWindow->sketchWorkspace()->coincidence()->add_geom(mPoints[4]);
-			mBloopWindow->sketchWorkspace()->coincidence()->add_constraint();
-			mBloopWindow->sketchWorkspace()->coincidence()->finish();
-			mTestStep = 6;
-			break;
-		case 7:
-			mBloopWindow->sketchWorkspace()->horizontality()->init();
-			mBloopWindow->sketchWorkspace()->horizontality()->add_geom(mLines[0]);
-			mBloopWindow->sketchWorkspace()->horizontality()->add_constraint();
-			mBloopWindow->sketchWorkspace()->horizontality()->finish();
-			mTestStep = 7;
-			break;
-		case 8:
-			mBloopWindow->sketchWorkspace()->perpendicularity()->init();
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[0]);
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[1]);
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_constraint();
-			mBloopWindow->sketchWorkspace()->perpendicularity()->finish();
-			mTestStep = 8;
-			break;
-		case 9:
-			mBloopWindow->sketchWorkspace()->perpendicularity()->init();
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[1]);
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[2]);
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_constraint();
-			mBloopWindow->sketchWorkspace()->perpendicularity()->finish();
-			mTestStep = 9;
-			break;
-		case 10:
-			mBloopWindow->sketchWorkspace()->perpendicularity()->init();
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[2]);
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[3]);
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_constraint();
-			mBloopWindow->sketchWorkspace()->perpendicularity()->finish();
-			mTestStep = 10;
-			break;
-		// case 11:
-		// 	mPoints[2]->set_dragged(true);
-		// 	for(int i = 0; i < 5; ++i) {
-		// 		std::cout<<"Point "<<i<<": ("<<mPoints[i]->x()->id()<<",  "<<mPoints[i]->y()->id()<<")\n";
-		// 	}
-		// 	mTestStep = 11;
-		// 	break;
 		default:
 			if(mTestStep%2 == 1) {
-				mPoints[2]->move(glm::vec2(0.0f, 0.0f), glm::vec2(-0.05f, -0.05f), glm::vec2(0.0f));
+				mPoints[0]->move(glm::vec2(-1.0f, -1.0f));
 			} else {
 				mBloopWindow->sketchWorkspace()->target()->update_constraints(false, true);
 			}

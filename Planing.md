@@ -39,10 +39,5 @@ Project started on september 27 2020
 
 
 ## TODO before merge with main
-
-* Check if it is possible to simplify ConstraintsSystem's varState thingy
 * Re-enable point-line and point-circle coincidence
-* Re-enable double-click to enter sketch
 * Enforce a better constraint behavior when dragging a partially constrained line
-* Comments for dragged point
-* Replace expvec with alias to std::array

@@ -161,7 +161,7 @@ SkLineLinePerpendicularity::SkLineLinePerpendicularity(Geom3d::Plane_abstr* base
 	exp_ptr x2 = (l2->ptA()->x()-l2->ptB()->x());
 	exp_ptr y2 = (l2->ptA()->y()-l2->ptB()->y());
 
-	mEqus.push_back(mod(acos(dot(x1, y1, x2, y2) / (sqrt(x1*x1+y1*y1) * sqrt(x2*x2+y2*y2))), 2.0*M_PI) ^= mod(ExpConst::pi2, 2.0*M_PI));
+	mEqus.push_back(mod(acos(dot(x1, y1, x2, y2) / (sqrt(x1*x1+y1*y1) * sqrt(x2*x2+y2*y2))), 2.0*M_PI) ^= ExpConst::pi2);
 
 	// https://www.omnicalculator.com/math/angle-between-two-vectors
 

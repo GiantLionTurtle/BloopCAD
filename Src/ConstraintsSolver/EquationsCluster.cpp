@@ -1,6 +1,7 @@
 
 #include "EquationsCluster.hpp"
 #include "Expression.hpp"
+#include "Constraint_abstr.hpp"
 #include "SolverState.hpp"
 #include <Utils/Debug_util.hpp>
 
@@ -20,20 +21,25 @@ EquationsCluster::~EquationsCluster()
 
 }
 
+void EquationsCluster::add_constr(Constraint_abstr* constr)
+{
+	DEBUG_ASSERT(constr, "Attempted to add a null constraint");
+
+	mConstrs.push_back(constr);
+	for(int i = 0; i < constr->n_equs(); ++i) {
+		mEqus.push_back(constr->equ(i));
+	}
+}
 void EquationsCluster::add_equ(equ_ptr equ)
 {
-	if(!equ) { // Wait that's illegal
-		LOG_WARNING("Attempted to add null equation");
-		return;
-	}
+	DEBUG_ASSERT(equ, "Attempted to add null equation");
+
 	mEqus.push_back(equ);
 }
 void EquationsCluster::add_var(var_ptr var)
 {
-	if(!var) { // You can't do that >:(
-		LOG_WARNING("Attempted to add null equation");
-		return;
-	}
+	DEBUG_ASSERT(var, "Attempted to add null equation");
+
 	mVars.insert(var);
 }
 
@@ -230,6 +236,17 @@ void EquationsCluster::apply_substitutions()
 	}
 }
 
+double EquationsCluster::stepScale()
+{
+	// Currently arbitrary, it is low enough to avoid much of the jumps during test but absolutely not optimal
+	double scale = 0.08;//1.0;
+
+	// for(auto constr : mConstrs) {
+	// 	scale = std::min(scale, constr->stepScale(scale)); // The smallest step is taken to ensure that all constraints can be respected
+	// }
+	return scale;
+}
+
 int EquationsCluster::solve_LM(double eps1, int tag, bool activeVars_only)
 {
 	// Lots of maths
@@ -293,7 +310,8 @@ int EquationsCluster::solve_LM(double eps1, int tag, bool activeVars_only)
 			// dP = A.ldlt().solve(g);
 			// dP = A.llt().solve(g);
 			
-			if((A*dP-g).norm() / g.norm() <= 1e-5) { // Check if linear system solve was successful
+			if(((A*dP-g).norm() / g.norm()) <= 1e-5) { // Check if linear system solve was successful
+				
 				double dp_norm = dP.norm();
 				if(dp_norm <= eps2 * P.norm()) { // norm() is L2 norm, change in variables is very small, the solver is likely stuck
 					output = SolverState::FAILURE;
@@ -304,6 +322,8 @@ int EquationsCluster::solve_LM(double eps1, int tag, bool activeVars_only)
 				// Assign new values to the candidate values and compute error
 				P_new = P + dP;
 				set_variables(P_new, activeVars_only);
+				double p_scale = stepScale();
+
 				compute_errors_no_resize(e_new, tag);
 				e_new = -e_new;
 				e_new_norm = e_new.squaredNorm();
@@ -341,6 +361,7 @@ int EquationsCluster::solve_LM(double eps1, int tag, bool activeVars_only)
 	}
 
 	set_variables(P, activeVars_only);
+	verbose(VERBOSE_STEPS, "Satisfied: "<<std::boolalpha<<satisfied())
 	switch(output) {
 	case SolverState::SUCCESS:
 		verbose(VERBOSE_STEPS, "Succeeded in "<<k<<" iterations ; squared error of "<<e_norm);
@@ -445,6 +466,7 @@ int EquationsCluster::solve_DL(double eps, int tag, bool activeVars_only)
 	if(output != SolverState::SUCCESS)
 		set_variables(X_init, activeVars_only);
 
+	verbose(VERBOSE_STEPS, "Satisfied: "<<std::boolalpha<<satisfied())
 	switch(output) {
 	case SolverState::SUCCESS:
 		verbose(VERBOSE_STEPS, "Succeeded in "<<k<<" steps ; squared error of "<<e.squaredNorm());

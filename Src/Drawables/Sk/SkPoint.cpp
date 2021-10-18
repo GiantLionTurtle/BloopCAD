@@ -27,8 +27,10 @@ SkPoint::SkPoint(glm::vec2 pos, Geom3d::Plane_abstr* pl, bool fixed_):
 
 SkPoint::~SkPoint()
 {
-	expunge(mVA);
-	expunge(mVB);
+	if(mInited) {
+		expunge(mVA);
+		expunge(mVB);
+	}
 }
 
 SelPoint SkPoint::closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)

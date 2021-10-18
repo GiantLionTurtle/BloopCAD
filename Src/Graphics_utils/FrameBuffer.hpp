@@ -11,7 +11,7 @@
 /*
     @class FrameBuffer describes an abstraction of a GL_FRAMEBUFFER specifically to use it as a selection buffer
 
-    @warning : Make sure that all function are used within the same openGL context
+    @warning Make sure that all function are used within the same openGL context
 */
 class FrameBuffer {
 private:
@@ -21,8 +21,8 @@ public:
     /*
         @function FrameBuffer creates a FrameBuffer object
 
-        @param width :  The width in pixels of the FrameBuffer
-        @param height : The height in pixels of the FrameBuffer
+        @param width  The width in pixels of the FrameBuffer
+        @param height The height in pixels of the FrameBuffer
     */
     FrameBuffer(unsigned int width, unsigned int height);
     /*
@@ -37,14 +37,14 @@ public:
     /*
         @function unbind desactivate the FrameBuffer within openGL
 
-        @param defaultID [defaults to 0] : A GL_FRAMEBUFFER id to bind instead
+        @param defaultID [defaults to 0] A GL_FRAMEBUFFER id to bind instead
     */
     void unbind(unsigned int defaultID = 0) const;
 
     /*
         @function id
 
-        @return : The openGL id of the FrameBuffer
+        @return The openGL id of the FrameBuffer
     */
     unsigned int id() const { return mRendererID; }
 };

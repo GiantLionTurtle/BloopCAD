@@ -13,7 +13,7 @@ public:
 	/*
 		@function image creates an image object
 
-		@param filePath : The path to the file that contains the image
+		@param filePath The path to the file that contains the image
 	*/
 	Image(std::string const& filePath);
 	/*

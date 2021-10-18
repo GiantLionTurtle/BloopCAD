@@ -16,9 +16,11 @@ Plane::Plane(Plane_abstr const& plane_):
 }
 Plane::~Plane()
 {
-	expunge(mVA);
-	expunge(mVB);
-	expunge(mIB);
+	if(mInited) {
+		expunge(mVA);
+		expunge(mVB);
+		expunge(mIB);
+	}
 }
 
 SelPoint Plane::closest(glm::vec2 cursor, Camera* cam, int filter)

@@ -9,7 +9,7 @@
 
 ConstraintsSystem::ConstraintsSystem():
 	mBrokenDown(false),
-	mSolverType(SolverState::DogLeg),
+	mSolverType(SolverState::LevenbergMarquardt),
 	mNum_liveConstrs(0),
 	mNum_liveVars(0),
 	mNum_liveClusters(0)
@@ -142,10 +142,7 @@ void ConstraintsSystem::breakDown_problem()
 			LOG_WARNING("How did we get here??");
 			continue; // Should not be reached
 		}
-		// Add all equations of this constraint (currently only point-point coincidence has more than 1)
-		for(size_t j = 0; j < liveConstraints[i]->n_equs(); ++j) {
-			mClusters[ind]->add_equ(liveConstraints[i]->equ(j));
-		}
+		mClusters[ind]->add_constr(liveConstraints[i]);
 	}
 
 	// Add variable to clusters one at a time

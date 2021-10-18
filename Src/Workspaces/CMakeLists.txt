@@ -5,6 +5,7 @@ set(Workspaces_Utils_source_files
 	Home_ws.cpp
 	Workspace_abstr.cpp
 	EventsManager.cpp
+	TestFramework_eventsManager.cpp
 	MiscUI.cpp
 	DocumentTree.cpp
 	Document.cpp

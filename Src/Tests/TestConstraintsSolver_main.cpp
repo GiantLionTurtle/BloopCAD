@@ -1,72 +1,56 @@
 
+#include <Utils/Debug_util.hpp>
+#include <Utils/Preferences.hpp>
+#include <Utils/Conversions_util.hpp>
+#include <ConstraintsSolver/Constraint_abstr.hpp>
+#include <ConstraintsSolver/ConstraintsSystem.hpp>
+#include <Workspaces/TestFramework_eventsManager.hpp>
 
-int main()
+#include <Bloop.hpp>
+#include "Workspaces/Part_ws.hpp"
+
+#include <gtkmm.h>
+
+#include <iostream>
+#include <iomanip>
+#include <cmath>
+
+int main(int argc, char *argv[])
 {
+	ErrorLogger::get_instance().init(); // Init the error logger singleton
+	Preferences::get_instance().load_from_file("Resources/Configs/Configs.xml"); // Init the Preferences service singleton
+
+	auto app = Gtk::Application::create(argc, argv, ""); // Create an application 
+	auto refBuilder = Gtk::Builder::create(); // Gtk builder
+	try {
+		refBuilder->add_from_file("Resources/GUI/Layout.glade");
+	} catch(const Glib::FileError& ex) {
+		LOG_ERROR("Glib file error: " + ex.what());
+		return 1;
+	} catch(const Glib::MarkupError& ex) {
+		LOG_ERROR("Glib markup error: " + ex.what());
+		return 1;
+	} catch(const Gtk::BuilderError& ex) {
+		LOG_ERROR("Gtk builder error: " + ex.what());
+		return 1;
+	}
+
+	Bloop* window;
+	refBuilder->get_widget_derived("Bloop", window);
+
+	Document* doc = new Document(new Test_EventsManager);
+	doc->set_name("test_doc");
+	window->add_document(doc);
+
+	if(window) {
+		return app->run(*window); // Run the app
+	}
+	LOG_ERROR("Could not build window, returning early.");
+
+
+
 	return 0;
 }
-
-// // #include <ConstraintsSolver/DR_planner.hpp>
-// #include <Utils/Debug_util.hpp>
-// #include <Utils/Preferences.hpp>
-// #include <Utils/Conversions_util.hpp>
-// #include <ConstraintsSolver/Constraint_abstr.hpp>
-// #include <ConstraintsSolver/ConstraintsSystem.hpp>
-// #include <testFramework_EventsManager.hpp>
-
-// #include "Bloop.hpp"
-// #include "Workspaces/Part_ws.hpp"
-
-// #include <gtkmm.h>
-
-// #include <iostream>
-// #include <iomanip>
-// #include <cmath>
-
-// void printLine(sketchLine_ptr l, std::string pre = "")
-// {
-// 	using std::setw;
-// 	int w = 20;
-// 	std::cout<<pre<<"("<<setw(w)<<l->A()->x()->eval()<<",  "<<setw(w)<<l->A()->y()->eval()<<") ------ ("
-// 				<<setw(w)<<l->B()->x()->eval()<<",  "<<setw(w)<<l->B()->y()->eval()<<")\n";
-// }
-
-// int main(int argc, char *argv[])
-// {
-// 	ErrorLogger::get_instance().init(); // Init the error logger singleton
-// 	Preferences::get_instance().load_from_file("Resources/Configs/Configs.xml"); // Init the Preferences service singleton
-
-// 	auto app = Gtk::Application::create(argc, argv, ""); // Create an application 
-// 	auto refBuilder = Gtk::Builder::create(); // Gtk builder
-// 	try {
-// 		refBuilder->add_from_file("Resources/GUI/Layout.glade");
-// 	} catch(const Glib::FileError& ex) {
-// 		LOG_ERROR("Glib file error: " + ex.what());
-// 		return 1;
-// 	} catch(const Glib::MarkupError& ex) {
-// 		LOG_ERROR("Glib markup error: " + ex.what());
-// 		return 1;
-// 	} catch(const Gtk::BuilderError& ex) {
-// 		LOG_ERROR("Gtk builder error: " + ex.what());
-// 		return 1;
-// 	}
-
-// 	Bloop* window;
-// 	refBuilder->get_widget_derived("Bloop", window);
-
-// 	Document* doc = std::make_shared<Document>(new Test_EventsManager);
-// 	doc->set_name("test_doc");
-// 	window->add_document(doc);
-
-// 	if(window) {
-// 		return app->run(*window); // Run the app
-// 	}
-
-// 	LOG_ERROR("Could not build window, returning early.");
-
-
-
-// 	return 0;
-// }
 
 
 // /*

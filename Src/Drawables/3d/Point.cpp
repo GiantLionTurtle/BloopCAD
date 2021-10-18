@@ -23,8 +23,10 @@ Point::Point(glm::vec3 const& basePoint):
 }
 Point::~Point()
 {
-	expunge(mVB);
-	expunge(mVA);
+	if(mInited) {
+		expunge(mVB);
+		expunge(mVA);
+	}
 }
 
 SelPoint Point::closest(glm::vec2 cursor, Camera* cam, int filter)

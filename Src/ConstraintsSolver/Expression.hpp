@@ -152,6 +152,7 @@ class ExpConst : public Expression {
 public:
 	// Some useful constants, no need to create *zero* multiple time for instance
 	static std::shared_ptr<ExpConst> zero;
+	static std::shared_ptr<ExpConst> one_half;
 	static std::shared_ptr<ExpConst> one;
 	static std::shared_ptr<ExpConst> two;
 	static std::shared_ptr<ExpConst> e;
@@ -626,6 +627,12 @@ public:
 
 class ExpPow : public BinaryExp {
 public:
+	/*
+		@constructor ExpPow
+
+		@param base 	The base of the exponent
+		@param power 	The power of the exponent, it is assumed to not change after creation
+	*/
 	ExpPow(exp_ptr base, exp_ptr power);
 
 	virtual double eval();

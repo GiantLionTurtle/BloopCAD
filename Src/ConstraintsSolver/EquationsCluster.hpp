@@ -9,12 +9,15 @@
 
 #include <Eigen/Eigen>
 
+class Constraint_abstr;
+
 /*
 	@class EquationsCluster numericaly solves cluster of equations with respect to a set 
 	of variables
 */
 class EquationsCluster {
 private:
+	std::vector<Constraint_abstr*> mConstrs;
 	std::vector<equ_ptr> mEqus; // All equations to solve
 	std::set<var_ptr> mVars;	// Variables that must be tweaked, they are an ordered set to ensure that there is no dupplicate 
 
@@ -33,6 +36,7 @@ public:
 	EquationsCluster(std::vector<equ_ptr> equs, std::set<var_ptr> vars, int solver_algo);
 	~EquationsCluster();	
 
+	void add_constr(Constraint_abstr* constr);
 	/*
 		@function add_equ adds an equation to the cluster
 
@@ -108,6 +112,21 @@ public:
 		@note There might be implementation errors that are yet to be discovered as this is a complex bit
 	*/
 	int solve_DL(double eps = 1e-12, int tag = 0, bool activeVars_only = false);
+
+	/*
+		@function stepScale will be used to slow down the solver and augment stability.
+		When points are dragged and the amplitude of the drag is too big, the solver "jumps"
+		and this create distorsion in the sketch. The distorsion is legal in that it does not
+		break any constraint, but it is annoying to the user to have a lines and points jumping
+		around. This creates the maximum step size the solver can take, it scales the delta.
+
+		@return The scale factor of the current step
+
+		@note The smaller the value returned the slower the solver will be, it needs careful balance
+		@note This is not yet implemented because it would require some pretty extensive change in the
+		solver structure and perhaps in the whole expression scheme
+	*/
+	double stepScale();
 
 	/*
 		@function substitutions create substitutes variable that can be simply expressed as a function of another variable

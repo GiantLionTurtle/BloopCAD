@@ -4,7 +4,7 @@
 
 /*
 	@class IndexBuffer describes an abstraction of an openGL indices buffer
-	@warning : Make sure all the functions are called within the same openGL context
+	@warning Make sure all the functions are called within the same openGL context
 */
 class IndexBuffer {
 private:
@@ -14,8 +14,8 @@ public:
 	/*
 		@function IndexBuffer creates an IndexBuffer object
 
-		@param data : 	A pointer to the data assigned to the buffer, currently, only unsigned ints are supported
-		@param count_ : The NUMBER of data points
+		@param data 	A pointer to the data assigned to the buffer, currently, only unsigned ints are supported
+		@param count_ 	The NUMBER of data points
 	*/
 	IndexBuffer(unsigned int const* data, unsigned int count_);
 	/*
@@ -35,13 +35,13 @@ public:
 	/*
 		@function count 
 
-		@return : The NUMBER of indices in the buffer
+		@return The NUMBER of indices in the buffer
 	*/
 	unsigned int count() const { return mCount; };
 	/*
 		@function id
 
-		@return : The internal openGL handle to the buffer
+		@return The internal openGL handle to the buffer
 	*/
 	unsigned int id() const { return mRendererID; }
 };

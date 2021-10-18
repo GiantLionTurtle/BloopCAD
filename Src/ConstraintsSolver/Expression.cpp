@@ -18,6 +18,7 @@
 	Useful constants
 */
 std::shared_ptr<ExpConst> ExpConst::zero(new ExpConst(0.0));
+std::shared_ptr<ExpConst> ExpConst::one_half(new ExpConst(0.5));
 std::shared_ptr<ExpConst> ExpConst::one(new ExpConst(1.0));
 std::shared_ptr<ExpConst> ExpConst::two(new ExpConst(2.0));
 std::shared_ptr<ExpConst> ExpConst::e(new ExpConst(M_E));
@@ -780,7 +781,7 @@ double ExpPow::eval()
 }
 exp_ptr ExpPow::generate_derivative()
 {
-	return mRight * pow(mLeft, mRight->eval() - 1.0) * mLeft->derivative();
+	return mRight->eval() * pow(mLeft, mRight->eval() - 1.0) * mLeft->derivative(); // This assumes that the right opperand will not change dynamically
 }
 
 std::string ExpPow::to_string()
@@ -990,7 +991,7 @@ exp_ptr pow(exp_ptr base, double power)
 }
 exp_ptr sqrt(exp_ptr expr)
 {
-	return pow(expr, 0.5);
+	return pow(expr, ExpConst::one_half);
 }
 
 exp_ptr sin(exp_ptr expr)
