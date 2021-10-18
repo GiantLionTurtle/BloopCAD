@@ -631,6 +631,24 @@ std::string ExpCot::to_string()
 }
 /* -------------- End cot -------------- */
 /* -------------- Abs -------------- */
+ExpAbsDerivative::ExpAbsDerivative(ExpAbs* var):
+	mAbs(var)
+{
+
+}
+
+double ExpAbsDerivative::eval()
+{
+	if(mAbs->mOperand->eval() > 0) 
+		return mAbs->mOperand->derivative()->eval();
+	return -mAbs->mOperand->derivative()->eval(); // not legit if the operands evaluates at 0 because abs'() is not defined at 0
+}
+exp_ptr ExpAbsDerivative::generate_derivative()
+{
+	LOG_WARNING("This part should not be reached aaaaaaaaa >.<");
+	return ExpConst::zero; // Not true but it should not be reached..
+}
+
 ExpAbs::ExpAbs(exp_ptr operand):
 	UnaryExp(operand)
 {
@@ -643,9 +661,7 @@ double ExpAbs::eval()
 }
 exp_ptr ExpAbs::generate_derivative()
 {
-	if(mOperand->eval() > 0) 
-		return mOperand->derivative();
-	return -mOperand->derivative(); // not legit if the operands evaluates at 0 because abs'() is not defined at 0
+	return std::make_shared<ExpAbsDerivative>(this);	
 }
 
 std::string ExpAbs::to_string()

@@ -186,18 +186,26 @@ public:
 	SkPoint* p1, SkPoint* p2, exp_ptr dist);
 	std::string name() { return "SkPointPoint_verticalDistance"; }
 };
-class SkPointLine_distance_abstr : public SkConstraint {
-public:
-	SkPointLine_distance_abstr(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist);
-};
-class SkPointLine_distance : public SkPointLine_distance_abstr {
+// class SkPointLine_distance_abstr : public SkConstraint {
+// public:
+// 	SkPointLine_distance_abstr(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist);
+// };
+// class SkPointLine_distance : public SkPointLine_distance_abstr {
+// private:
+// 	SkPoint* mPoint;
+// 	SkLineCurve* mLine;
+// 	exp_ptr mDistance;
+// public:
+// 	SkPointLine_distance(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist);
+// 	std::string name() { return "SkPointLine_distance"; }
+// };
+class SkPointLine_coincidence : public SkSprite_constraint<1> {
 private:
 	SkPoint* mPoint;
 	SkLineCurve* mLine;
-	exp_ptr mDistance;
 public:
-	SkPointLine_distance(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist);
-	std::string name() { return "SkPointLine_distance"; }
+	SkPointLine_coincidence(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l);
+	std::string name() { return "SkPointLine_coincidence"; }
 };
 // class SkCircleLine_distance : public SkPointLine_distance_abstr {
 // private:

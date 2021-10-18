@@ -562,8 +562,40 @@ public:
 
 	virtual std::string to_string();
 };
+
+/*
+	@class ExpAbsDerivative is the derivative of an absolute value,
+	it needs a separate class because the derivative of an absolute value depends on
+	the value of it's opperand.
+
+	@note it could be merged with ExpVarDerivative in the future
+*/
+class ExpAbs;
+class ExpAbsDerivative : public Expression {
+private:
+	ExpAbs* mAbs; // Variable that this expression is the derivative of
+public:
+	/*
+		@constructor
+
+		@param var The ExpAbs that this expression is the derivative of
+	*/
+	ExpAbsDerivative(ExpAbs* abs);
+
+	/*
+		@function eval checks if the variable is a coefficient
+
+		@return 0 if the variable is in coefficient mode and 1 if not
+	*/
+	virtual double eval();
+	virtual exp_ptr generate_derivative();
+
+	virtual std::string to_string() { return "[var derivative]"; }
+};
+
 class ExpAbs : public UnaryExp { 
 public:
+	friend ExpAbsDerivative;
 	ExpAbs(exp_ptr operand);
 
 	virtual double eval();

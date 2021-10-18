@@ -120,24 +120,40 @@ SkPoint* p1, SkPoint* p2, exp_ptr dist):
 		mVars.push_back(mP2->y());	
 }
 
-SkPointLine_distance_abstr::SkPointLine_distance_abstr(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist):
-	SkConstraint(baseplane_, { },
-	{ abs((l->ptB()->x()-l->ptA()->x())*(p->y() - l->ptA()->y()) - (l->ptB()->y()-l->ptA()->y())*(p->x() - l->ptA()->x())) / sqrt(l->length2()) ^= dist })
+// SkPointLine_distance_abstr::SkPointLine_distance_abstr(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist):
+// 	SkConstraint(baseplane_, { },
+// 	{ abs((l->ptB()->x()-l->ptA()->x())*(p->y() - l->ptA()->y()) - (l->ptB()->y()-l->ptA()->y())*(p->x() - l->ptA()->x())) / sqrt(l->length2()) ^= dist })
+// {
+// 	if(!p->fixed())
+// 		mVars.insert(mVars.end(), { p->x(), p->y() });
+// 	if(!l->fixed())
+// 		mVars.insert(mVars.end(), { l->ptA()->x(), l->ptA()->y(), l->ptB()->x(), l->ptB()->y() });
+// }
+
+
+// SkPointLine_distance::SkPointLine_distance(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist):
+// 	SkPointLine_distance_abstr(baseplane_, p, l, dist),
+// 	mPoint(p),
+// 	mLine(l),
+// 	mDistance(dist)
+// {
+
+// }
+
+SkPointLine_coincidence::SkPointLine_coincidence(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l):
+	SkSprite_constraint<1>(baseplane_, { },
+	{ abs((l->ptB()->x()-l->ptA()->x())*(p->y() - l->ptA()->y()) - 
+	(l->ptB()->y()-l->ptA()->y())*(p->x() - l->ptA()->x())) / sqrt(l->length2()) ^= ExpConst::zero }, 
+	"Resources/Textures/Images/Icons/Sketch/Constraints/Coincidence.png"),	
+	mPoint(p),
+	mLine(l)
 {
 	if(!p->fixed())
 		mVars.insert(mVars.end(), { p->x(), p->y() });
 	if(!l->fixed())
 		mVars.insert(mVars.end(), { l->ptA()->x(), l->ptA()->y(), l->ptB()->x(), l->ptB()->y() });
-}
-
-
-SkPointLine_distance::SkPointLine_distance(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l, exp_ptr dist):
-	SkPointLine_distance_abstr(baseplane_, p, l, dist),
-	mPoint(p),
-	mLine(l),
-	mDistance(dist)
-{
-
+	
+	mPoint->add_annot(annot(0));
 }
 
 // SkCircleLine_distance::SkCircleLine_distance(Geom3d::Plane_abstr* baseplane_, sketchCircle_ptr c, SkLineCurve* l, exp_ptr dist):

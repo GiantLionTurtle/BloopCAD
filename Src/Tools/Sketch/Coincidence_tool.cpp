@@ -2,6 +2,7 @@
 #include "Coincidence_tool.hpp"
 
 #include <Drawables/Sk/SkPoint.hpp>
+#include <Drawables/Sk/SkLine.hpp>
 #include <Drawables/Sk/SkConstraint.hpp>
 #include <Actions/Sketch/ToggleConstraint_action.hpp>
 #include <Workspaces/Document.hpp>
@@ -31,10 +32,7 @@ int Coincidence_tool::could_add_geom(SkDrawable* geom)
 
 void Coincidence_tool::create_constraint(SkConstraint*& constr, SkDrawable*& priority_ent)
 {
-	if(!mEntA || !mEntB) {
-		LOG_WARNING("Attempting to add incomplete constraint.");
-		return;
-	}
+	DEBUG_ASSERT(mEntA && mEntB, "Attempting to add incomplete constraint.");
 
 	SkDrawable* curve;
 	SkPoint* pt;
@@ -47,6 +45,7 @@ void Coincidence_tool::create_constraint(SkConstraint*& constr, SkDrawable*& pri
 	}
 
 	if(is_line(curve)) {
+		constr = new SkPointLine_coincidence(mEnv->target()->basePlane(), pt, static_cast<SkLineCurve*>(curve));
 		// constr = SkPointLine_distance::make(pt, static_cast<sketchLine>(curve), ExpConst::zero);
 		priority_ent = curve;
 	} else if(is_curve(curve)) {

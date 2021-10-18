@@ -3,6 +3,8 @@
 #include "Expression.hpp"
 #include "Constraint_abstr.hpp"
 #include "SolverState.hpp"
+
+#define VERBOSE_LEVEL VERBOSE_STEPS
 #include <Utils/Debug_util.hpp>
 
 #include <iostream>
@@ -320,9 +322,9 @@ int EquationsCluster::solve_LM(double eps1, int tag, bool activeVars_only)
 
 
 				// Assign new values to the candidate values and compute error
-				P_new = P + dP;
+				double p_scale = 1.0;//stepScale();
+				P_new = P + dP * p_scale;
 				set_variables(P_new, activeVars_only);
-				double p_scale = stepScale();
 
 				compute_errors_no_resize(e_new, tag);
 				e_new = -e_new;

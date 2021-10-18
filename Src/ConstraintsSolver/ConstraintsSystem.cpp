@@ -9,7 +9,7 @@
 
 ConstraintsSystem::ConstraintsSystem():
 	mBrokenDown(false),
-	mSolverType(SolverState::LevenbergMarquardt),
+	mSolverType(SolverState::DogLeg),
 	mNum_liveConstrs(0),
 	mNum_liveVars(0),
 	mNum_liveClusters(0)
