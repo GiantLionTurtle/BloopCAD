@@ -19,7 +19,8 @@ class DraggedPoint : public Constraint_abstr {
 private:
 	DragSystemHandler* mPointEmiter;
 
-	std::array<var_ptr, dims> mVars;
+	std::array<var_ptr, dims> mPoint;
+	std::vector<var_ptr> mVars;
 	std::vector<equ_ptr> mEqus;
 
 	bool mExists;
@@ -29,7 +30,7 @@ public:
 		mExists(false)
 	{
 		for(size_t i = 0; i < dims; ++i) {
-			mVars[i] = ExpVar::make(0.0);	
+			mPoint[i] = ExpVar::make(0.0);	
 		}
 	}
 
@@ -37,30 +38,31 @@ public:
 	{
 		for(size_t i = 0; i < dims; ++i) {
 			// TODO: change to drag()??
-			mVars[i]->set(*(&pos[0]+i));
+			mPoint[i]->set(*(&pos[0]+i));
 		}
 	}
 	template<typename eT>
-	void set_equality(ExpVec<eT, dims> equality)
+	void set_equality(ExpVec<eT, dims> equality, std::vector<var_ptr> vars)
 	{
 		set_exists(true);
 		mEqus.resize(dims);
+		mVars = vars;
 		mPointEmiter->dragUpdate();
-		
+
 		for(size_t i = 0; i < dims; ++i) {
-			mEqus[i] = mVars[i] ^= equality.comp(i);
+			mEqus[i] = mPoint[i] ^= equality.comp(i);
 		}
 	}
-	void set_equality(std::array<exp_ptr, dims> equality)
-	{
-		set_exists(true);
-		mEqus.resize(dims);
-		mPointEmiter->dragUpdate();
+	// void set_equality(std::array<exp_ptr, dims> equality)
+	// {
+	// 	set_exists(true);
+	// 	mEqus.resize(dims);
+	// 	mPointEmiter->dragUpdate();
 		
-		for(size_t i = 0; i < dims; ++i) {
-			mEqus[i] = mVars[i] ^= equality[i];
-		}
-	}
+	// 	for(size_t i = 0; i < dims; ++i) {
+	// 		mEqus[i] = mVars[i] ^= equality[i];
+	// 	}
+	// }
 	void clear()
 	{
 		set_exists(false);

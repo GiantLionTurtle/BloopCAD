@@ -23,6 +23,11 @@ public:
 	float radius_val() { return radius()->eval(); }
 	void set_radius(float val) { radius()->drag(val); update(); }
 
+	virtual void release()
+	{
+		center()->release();
+		radius()->set_dragged(false);
+	}
 	std::vector<var_ptr> all_vars()
 	{
 		std::vector<var_ptr> vars = parentType::all_vars();

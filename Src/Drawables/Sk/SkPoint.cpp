@@ -70,6 +70,11 @@ std::vector<var_ptr> SkPoint::all_vars()
 {
 	return { x(), y() };
 }
+void SkPoint::release()
+{
+	x()->set_dragged(false);
+	y()->set_dragged(false);
+}
 
 void SkPoint::init_impl()
 {

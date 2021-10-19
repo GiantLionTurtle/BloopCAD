@@ -23,6 +23,7 @@ public:
 	ExpVec2<ExpVar>* ptA() { return pt(0); }
 	ExpVec2<ExpVar>* ptB() { return pt(1); }
 	ExpVec2<Expression_abstr> atExp(float t);
+	// virtual std::vector<var_ptr> all_vars() { return { ptA()->x(), ptA()->y(), ptB()->x(), ptB()->y() }; };
 
 	int selection_rank() { return 3; }
 	void set_annotPos(SkSprite* sp) { sp->set((posA() + posB()) / 2.0f); }

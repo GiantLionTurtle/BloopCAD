@@ -56,8 +56,6 @@ public:
 	}
 	virtual void set_annotPos(SkSprite* sp) = 0;
 	virtual void set_annotOffset(SkSprite* sp, int ind) = 0;
-
-	virtual std::vector<var_ptr> all_vars() { return {}; };
 protected:
 	virtual void select_impl(bool sel)
 	{

@@ -68,7 +68,6 @@ int EquationsCluster::solve()
 	for(auto equ : mEqus) {
 		auto var = equ->get_single_var(); // Fetch a substituted/lonely variable from equation
 		if(var) {
-			std::cout<<equ->to_string()<<"\n";
 			equ->set_tag(single_tag); // Now this is the only equation with this tag in the cluster, it will be solved alone
 			if(equ->eval() <= 1e-12)
 				continue;
@@ -82,7 +81,7 @@ int EquationsCluster::solve()
 			single_tag++; // Create new unique tag
 		}
 	}
-	// apply_substitutions(); // Seemed to increase numerical stability (TODO: check)
+
 	verbose(VERBOSE_INNERSTEPS, "Solved "<<single_tag-1<<(single_tag < 2 ? "equation" : "equations")<<" alone");
 	
 	mLastOutput = solve_numeric(mAlgorithm, 0, true); // Solve the rest of the equations
@@ -263,6 +262,9 @@ int EquationsCluster::solve_LM(double eps1, int tag, bool activeVars_only)
 	if(n_equs == 0) {
 		verbose(VERBOSE_STEPS, "Returning early, no equation to solve.");
 		return SolverState::SUCCESS;
+	} else if(n_vars == 0) {
+		verbose(VERBOSE_STEPS, "Returning early, no variable to solve for.");
+		return SolverState::SUCCESS;
 	}
 
 	Eigen::VectorXd P(n_vars), dP(n_vars), P_new(n_vars), 	// Variables values, attempt change in variables and candidate variables values
@@ -395,6 +397,9 @@ int EquationsCluster::solve_DL(double eps, int tag, bool activeVars_only)
 	
 	if(n_equs == 0) {
 		verbose(VERBOSE_STEPS, "Returning early, no equation to solve.");
+		return SolverState::SUCCESS;
+	} else if(n_vars == 0) {
+		verbose(VERBOSE_STEPS, "Returning early, no variable to solve for.");
 		return SolverState::SUCCESS;
 	}
 	Eigen::VectorXd X(n_vars), X_new(n_vars), X_init(n_vars), // Variables values, candidate variables values and initial valies

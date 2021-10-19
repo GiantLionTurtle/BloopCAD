@@ -81,6 +81,22 @@ public:
 		}
 		return SkExpSelPoint();
 	}
+	virtual void release()
+	{
+		for(int i = 0; i < mHandles.size(); ++i) {
+			pt(i)->x()->set_dragged(false);
+			pt(i)->y()->set_dragged(false);
+		}
+	}
+	virtual std::vector<var_ptr> all_vars()
+	{
+		std::vector<var_ptr> out(mHandles.size() * 2);
+		for(int i = 0; i < mHandles.size(); ++i) {
+			out[2*i] = pt(i)->x();
+			out[2*i+1] = pt(i)->y();
+		}
+		return out;
+	}
 protected:
 	void move_impl(glm::vec2 delta)
 	{

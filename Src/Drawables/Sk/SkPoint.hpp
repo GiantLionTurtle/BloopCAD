@@ -34,6 +34,7 @@ public:
 	void set(glm::vec2 pt);
 
 	std::vector<var_ptr> all_vars();
+	virtual void release();
 protected:
 	void init_impl();
 	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL);

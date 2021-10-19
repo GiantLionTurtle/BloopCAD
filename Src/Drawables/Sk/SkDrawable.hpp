@@ -56,6 +56,8 @@ public:
 	virtual SkExpSelPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
 	virtual void move_selected(glm::vec2 delta) { if(selected()) move(delta); }
 	virtual void move(glm::vec2 delta) {}
+	virtual std::vector<var_ptr> all_vars() { return {}; };
+	virtual void release() {}
 };
 
 #endif

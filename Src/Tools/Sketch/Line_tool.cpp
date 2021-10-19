@@ -92,6 +92,7 @@ SkPoint* Line_tool::add_point(glm::vec2 pt)
 
 		mLinePreview->ptB()->set(pt);
 		mEnv->target()->add_geometry(mLinePreview);
+		mLinePreview->release();
 
 		auto lineAction = std::make_shared<ToggleBaseObject_action>(mLinePreview, true);
 		Action_ptr compoundAction;

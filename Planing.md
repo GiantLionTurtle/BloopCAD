@@ -36,5 +36,3 @@ Project started on september 27 2020
     * Orbit
     * Pan
     * Zoom
-
-* Better dragging behavior with partially constrained geometries
