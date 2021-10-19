@@ -1,0 +1,2 @@
+/usr/bin/ar qc libGeom.a  CMakeFiles/Geom.dir/2d/Geom2d_abstr.cpp.o CMakeFiles/Geom.dir/2d/Point_abstr.cpp.o CMakeFiles/Geom.dir/2d/Line_abstr.cpp.o CMakeFiles/Geom.dir/2d/Circle_abstr.cpp.o CMakeFiles/Geom.dir/3d/Geom3d_abstr.cpp.o CMakeFiles/Geom.dir/3d/Plane_abstr.cpp.o CMakeFiles/Geom.dir/3d/Point_abstr.cpp.o
+/usr/bin/ranlib libGeom.a
