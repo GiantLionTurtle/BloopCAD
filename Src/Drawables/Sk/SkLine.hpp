@@ -7,7 +7,7 @@
 
 class SkLine : public SkHandleCurve<SkHandleCurve_FixedIndexer<2, SkLineCurve>> {
 public:
-	SkLine(glm::vec2 ptA_, glm::vec2 ptB_, Geom3d::Plane_abstr* pl, bool fixed_):
+	SkLine(glm::vec2 ptA_, glm::vec2 ptB_, Geom3d::Plane_abstr* pl, bool fixed_ = false):
 		SkHandleCurve({ ptA_, ptB_ }, pl, fixed_)
 	{
 		set_name("SkLine");

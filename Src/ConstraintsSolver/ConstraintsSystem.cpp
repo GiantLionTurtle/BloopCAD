@@ -4,7 +4,7 @@
 
 #include <Utils/Expunge.hpp>
 
-#define VERBOSE_LEVEL VERBOSE_ALL
+#define VERBOSE_LEVEL VERBOSE_NONE
 #include <Utils/Debug_util.hpp>
 
 ConstraintsSystem::ConstraintsSystem():

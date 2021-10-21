@@ -4,7 +4,7 @@
 #include "Constraint_abstr.hpp"
 #include "SolverState.hpp"
 
-#define VERBOSE_LEVEL VERBOSE_STEPS
+#define VERBOSE_LEVEL VERBOSE_NONE
 #include <Utils/Debug_util.hpp>
 
 #include <iostream>
@@ -241,7 +241,7 @@ void EquationsCluster::apply_substitutions()
 double EquationsCluster::stepScale()
 {
 	// Currently arbitrary, it is low enough to avoid much of the jumps during test but absolutely not optimal
-	double scale = 0.08;//1.0;
+	double scale = 0.5;
 
 	// for(auto constr : mConstrs) {
 	// 	scale = std::min(scale, constr->stepScale(scale)); // The smallest step is taken to ensure that all constraints can be respected
@@ -329,7 +329,7 @@ int EquationsCluster::solve_LM(double eps1, int tag, bool activeVars_only)
 
 
 				// Assign new values to the candidate values and compute error
-				double p_scale = 1.0;//stepScale();
+				double p_scale = stepScale();
 				P_new = P + dP * p_scale;
 				set_variables(P_new, activeVars_only);
 
@@ -380,7 +380,8 @@ int EquationsCluster::solve_LM(double eps1, int tag, bool activeVars_only)
 		verbose(VERBOSE_STEPS, "Failed in "<<k<<" iterations ; squared error of "<<e_norm);
 		break;
 	}
-	return output;
+	// return output;
+	return satisfied() ? SolverState::solveOutput::SUCCESS : SolverState::solveOutput::FAILURE;
 }
 
 int EquationsCluster::solve_DL(double eps, int tag, bool activeVars_only)
@@ -456,7 +457,8 @@ int EquationsCluster::solve_DL(double eps, int tag, bool activeVars_only)
 			break;
 		}
 
-		X_new = X + h_dl; // Try a new X in a direction in n dimensions
+		double h_scale = stepScale();
+		X_new = X + h_dl * h_scale; // Try a new X in a direction in n dimensions
 		set_variables(X_new, activeVars_only); // Update variables (must do it in loop to compute errors)
 		compute_errors_no_resize(e_new, tag);
 
@@ -490,6 +492,6 @@ int EquationsCluster::solve_DL(double eps, int tag, bool activeVars_only)
 		verbose(VERBOSE_STEPS, "Failed in "<<k<<" steps ; squared error of "<<e.squaredNorm()<<" ; Gaming Gamer UwU");
 		break;
 	}
-
-	return output;
+	// return output;
+	return satisfied() ? SolverState::solveOutput::SUCCESS : SolverState::solveOutput::FAILURE;
 }
