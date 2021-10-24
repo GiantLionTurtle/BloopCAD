@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD:Src/Drawables/Sk/SkCircleCurve.cpp
 // BloopCAD
 // Copyright (C) 2020  BloopCorp
 
@@ -22,16 +23,14 @@
 #include <Graphics_utils/VertexBuffer.hpp>
 #include <Graphics_utils/VertexBufferLayout.hpp>
 #include <Graphics_utils/VertexArray.hpp>
+=======
+#include "SkCircle.hpp"
+
+>>>>>>> Rebuilt abstract 2d geometries and adapted SkGeometries:Src/Drawables/Sk/SkCircle.cpp
 #include <Graphics_utils/ShadersPool.hpp>
 #include <Utils/Preferences.hpp>
 #include <Graphics_utils/GLCall.hpp>
-
-template<>
-float SkCurve<std::array<ExpVec2<ExpVar>*, 1>, SkCircleCurve>::kSelDist2 = 0.0f;
-bool SkCircleCurve::kFisrstInst = true;
-glm::vec3 SkCircleCurve::kColor = glm::vec3(0.0); 
-glm::vec3 SkCircleCurve::kColorHovered = glm::vec3(0.0);
-glm::vec3 SkCircleCurve::kColorSelected = glm::vec3(0.0);
+#include <Utils/Debug_util.hpp>
 
 struct circleData {
 	glm::vec3 pos;
@@ -39,33 +38,23 @@ struct circleData {
 	glm::vec3 v, w;
 };
 
-SkCircleCurve::SkCircleCurve(Geom3d::Plane_abstr* pl, bool fixed_):
-    SkCurve<std::array<ExpVec2<ExpVar>*, 1>, SkCircleCurve>(pl, fixed_),
-	mRadius(std::make_shared<ExpVar>(0.0f))
+SkCircle::SkCircle(glm::vec2 center_, float radius_, Geom3d::Plane_abstr* pl, bool fixed_)
+	: SkCurve<LinearFixed_indexer<SkPoint*, 1>, Geom2d::Circle>(pl, fixed_)
 {
-	set_name("SkCircleCurve");
+	mGeom = new Geom2d::Circle(center_, radius_);
+	handle(0) = new SkPoint(mGeom->center(), pl, fixed_);
+	set_name("SkCircle");
 }
 
-SkCircleCurve::~SkCircleCurve()
+void SkCircle::set_annotOffset(SkSprite* sp, int ind)
 {
-
-}
-
-ExpVec2<Expression_abstr> SkCircleCurve::atExp(float t)
-{
-	float angle = t * (M_PI * 2.0f);
-	return (radius() * ExpVec2<Expression_abstr>(ExpConst::make(std::cos(angle)), ExpConst::make(std::sin(angle)))) + *center();
-}
-
-void SkCircleCurve::set_annotOffset(SkSprite* sp, int ind)
-{
-    // probably change that so that the center point's constraints and the circle's constraints are clearly separated
+	// probably change that so that the center point's constraints and the circle's constraints are clearly separated
 	int level = ind / 6;
 	float angle = (float)(ind % 6) / 6.0f * M_PI * 2.0 + M_PI_2;
 	sp->set_pixelOffset(glm::vec2(std::cos(angle) * (float)(ind) * 25.0f, std::sin(angle) * (float)(ind) * 25.0f));
 }
 
-void SkCircleCurve::init_impl()
+void SkCircle::init_impl()
 {
 	mNeed_graphicUpdate = false;
 	
@@ -105,7 +94,7 @@ void SkCircleCurve::init_impl()
 	}
 }
 
-void SkCircleCurve::draw_impl(Camera* cam, int frame, draw_type type)
+void SkCircle::draw_impl(Camera* cam, int frame, draw_type type)
 {
 	mShader->bind();
 	glm::vec4 color = glm::vec4(kColor, 1.0f);
@@ -134,7 +123,7 @@ void SkCircleCurve::draw_impl(Camera* cam, int frame, draw_type type)
 	mVA->unbind();
 	mShader->unbind();
 }
-void SkCircleCurve::graphicUpdate_impl()
+void SkCircle::graphicUpdate_impl()
 {
 	update_annots();
 	mNeed_graphicUpdate = false;

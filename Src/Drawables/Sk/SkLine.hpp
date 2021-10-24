@@ -18,51 +18,37 @@
 #ifndef SKLINE_HPP_
 #define SKLINE_HPP_
 
-#include "SkHandleCurve.hpp"
-#include "SkLineCurve.hpp"
+#include "SkCurve.hpp"
+#include "SkPoint.hpp"
 
-class SkLine : public SkHandleCurve<SkHandleCurve_FixedIndexer<2, SkLineCurve>> {
+#include <Geometry/2d/Line_abstr.hpp>
+
+class SkLine : public SkCurve<LinearFixed_indexer<SkPoint*, 2>, Geom2d::Line> {
+private:
+	static bool kFisrstInst;
+	static glm::vec3 kColor, kColorHovered, kColorSelected; // Line color
+
+	glm::vec3 mVertices[2]; // The vertices describing the rendered line
 public:
-	SkLine(glm::vec2 ptA_, glm::vec2 ptB_, Geom3d::Plane_abstr* pl, bool fixed_ = false):
-		SkHandleCurve({ ptA_, ptB_ }, pl, fixed_)
-	{
-		set_name("SkLine");
-	}
-	virtual ~SkLine() {}
-
-	void notify(Drawable* who, int msg, bool child)
-	{
-		if(msg == SkNotifiers::SET) {
-			update();
-		}
-	}
+	using SkCurve<LinearFixed_indexer<SkPoint*, 2>, Geom2d::Line>::handle;
+	SkLine(glm::vec2 ptA_, glm::vec2 ptB_, Geom3d::Plane_abstr* pl, bool fixed_ = false);
 
 	SkPoint* ptA() { return handle(0); }
 	SkPoint* ptB() { return handle(1); }
 
+	glm::vec2 posA() { return mGeom->posA(); }
+	glm::vec2 posB() { return mGeom->posB(); }
+
 	int selection_rank() { return 3; }
+
+	void set_annotPos(SkSprite* sp) { sp->set((posA() + posB()) / 2.0f); }
+	void set_annotOffset(SkSprite* sp, int ind);
+
 protected:
-	void internalUpdate_impl()
-	{
-		verbose(VERBOSE_INNERSTEPS, "Lineupdate drag: "<<ptA()->x()->dragged()<<",  "<<
-		ptA()->y()->dragged()<<" : "<<ptB()->x()->dragged()<<",  "<<ptB()->y()->dragged())
-
-		if(ptA()->x()->dragged() && !ptB()->x()->dragged()) {
-			ptB()->x()->set_dragged(true);
-			verbose(VERBOSE_INNERSTEPS, "Set ptbx");
-		} else if(!ptA()->x()->dragged() && ptB()->x()->dragged()) {
-			ptA()->x()->set_dragged(true);
-			verbose(VERBOSE_INNERSTEPS, "Set ptax");
-		}
-
-		if(ptA()->y()->dragged() && !ptB()->y()->dragged()) {
-			ptB()->y()->set_dragged(true);
-			verbose(VERBOSE_INNERSTEPS, "Set ptby");
-		} else if(!ptA()->y()->dragged() && ptB()->y()->dragged()) {
-			ptA()->y()->set_dragged(true);
-			verbose(VERBOSE_INNERSTEPS, "Set ptay");
-		}
-	}
+	void init_impl();
+	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL);
+	void graphicUpdate_impl();
+	void internalUpdate_impl();
 };
 
 #endif

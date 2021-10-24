@@ -32,17 +32,17 @@ glm::vec3 SkPoint::kColor = glm::vec3(0.0);
 glm::vec3 SkPoint::kColorHovered = glm::vec3(0.0);
 glm::vec3 SkPoint::kColorSelected = glm::vec3(0.0);
 
-SkPoint::SkPoint(glm::vec2 pos, Geom3d::Plane_abstr* pl, bool fixed_):
-    ExpVec2<ExpVar>(ExpVar::make(pos.x, fixed_), ExpVar::make(pos.y, fixed_)),
-    SkPrimitiveGeometry(pl, fixed_),
-	mVA(nullptr),
-	mVB(nullptr),
-	mShader(nullptr)
+SkPoint::SkPoint(glm::vec2 pos, Geom3d::Plane_abstr* pl, bool fixed_)
+	: SkPrimitiveGeometry<Geom2d::Point>(pl, fixed_)
 {
+	mGeom = new Geom2d::Point(pos);
 	mType |= Drawable_types::POINT;
-	// x()->add_callback(this, std::bind(&SkPoint::update, this));
-	// y()->add_callback(this, std::bind(&SkPoint::update, this));
 	set_name("SkPoint");
+}
+SkPoint::SkPoint(Geom2d::Point* pt, Geom3d::Plane_abstr* pl, bool fixed_)
+	: SkPrimitiveGeometry<Geom2d::Point>(pl, fixed_)
+{
+
 }
 
 SkPoint::~SkPoint()
@@ -67,7 +67,7 @@ SkExpSelPoint SkPoint::closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm
 	if(mType & filter) {
 		glm::vec3 worldpos = mBasePlane->to_worldPos(pos());
 		if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
-			return SkExpSelPoint(this, ExpVec2<Expression_abstr>({x(), y()}));
+			return SkExpSelPoint(this);//, ExpVec2<Expression_abstr>({x(), y()}));
 	}
 	return SkExpSelPoint();
 }
@@ -81,24 +81,24 @@ void SkPoint::set_annotOffset(SkSprite* sp, int ind)
 
 void SkPoint::set(glm::vec2 pt)
 {
-	x()->drag(pt.x);
-	y()->drag(pt.y);
+	mGeom->x().drag(pt.x);
+	mGeom->y().drag(pt.y);
 	notify_parent(SkNotifiers::SET);
 }
 
 std::vector<var_ptr> SkPoint::all_vars()
 {
-	return { x(), y() };
+	return {};//{ x(), y() };
 }
 void SkPoint::release()
 {
-	x()->set_dragged(false);
-	y()->set_dragged(false);
+	mGeom->x().set_dragged(false);
+	mGeom->y().set_dragged(false);
 }
 
 void SkPoint::init_impl()
 {
-    mNeed_graphicUpdate = false;
+	mNeed_graphicUpdate = false;
 	mVA = new VertexArray();
 	VertexBufferLayout layout;
 	layout.add_proprety_float(3);

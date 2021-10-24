@@ -20,7 +20,7 @@
 
 #include "EquationsCluster.hpp"
 #include "Constraint_abstr.hpp"
-#include "DraggedPoint.hpp"
+#include "Expression.hpp"
 
 #include <map>
 #include <set>
@@ -214,23 +214,6 @@ private:
 		*/
 		void set_clust(int vert, int clust, std::vector<int>& constr_clust, std::vector<int>& var_clust);
 	};
-};
-
-
-// Work in progress
-template<size_t nD>
-class DragEnabled_ConstraintsSystem : public ConstraintsSystem {
-private:
-	DraggedPoint<nD>* mDragConstraint;
-public:
-	DragEnabled_ConstraintsSystem(DragSystemHandler* handler):
-		ConstraintsSystem(),
-		mDragConstraint(new DraggedPoint<nD>(handler))
-	{
-		mConstraints.push_back(mDragConstraint);
-	}
-
-	DraggedPoint<nD>* dragConstr() { return mDragConstraint; }
 };
 
 #endif

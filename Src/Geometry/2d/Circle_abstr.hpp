@@ -19,29 +19,51 @@
 #define CIRCLE_ABSTR2_HPP_
 
 #include "Point_abstr.hpp"
+#include "Line_abstr.hpp"
 
 #include <memory>
 
 namespace Geom2d {
 
-class Circle_abstr : public virtual Geom2d_abstr {
+template<typename Impl>
+class Circle_abstr : public Geom2d_abstr<Circle_abstr<Impl>> {
 public:
 	Circle_abstr();
-	virtual ~Circle_abstr();
+	glm::vec2 center_pos();
+	float radius_val();
 
-	virtual glm::vec2 center_pos() = 0;
-	virtual float radius_val() = 0;
+	glm::vec2 at_geom(float t);
+	bool within_geom(glm::vec2 top_left, glm::vec2 bottom_right, bool contained);
 
-	virtual glm::vec2 at(float t);
-	virtual bool within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained);
+	float closest_to_point_interp_geom(glm::vec2 const& pt);
+	glm::vec2 closest_to_point_geom(glm::vec2 const& pt);
+	float dist_to_point_geom(glm::vec2 const& pt);
 
-	float closest_to_point_interp(glm::vec2 const& pt);
-	virtual glm::vec2 closest_to_point(glm::vec2 const& pt);
-	virtual float dist_to_point(glm::vec2 const& pt);
-
-	bool intersects(Line_abstr* l);
-	bool intersects(std::shared_ptr<Line_abstr> l) { return intersects(l.get()); }
+	bool intersects(Simple_line& l);
 };
+
+class Circle : public Circle_abstr<Circle> {
+private:
+	Geom2d::Point mCenter;
+	ExpVar mRadius;
+	double* mParams[3];
+public:
+	Circle(glm::vec2 c, float r);
+	Circle();
+
+	glm::vec2 center_pos_impl() { return mCenter.pos(); }
+	float radius_val_impl() { return mRadius.eval(); }
+
+	Geom2d::Point* center() { return &mCenter; }
+	ExpVar* radius() { return &mRadius; }
+
+	int n_params() { return 3; }
+	double** params() { return &mParams[0]; }
+private:
+	void init_params();
+};
+
+#include "Circle_abstr.cpp"
 
 } // !Geom2d
 

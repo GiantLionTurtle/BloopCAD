@@ -1,3 +1,4 @@
+<<<<<<< HEAD:Src/Drawables/Sk/SkLineCurve.cpp
 
 // BloopCAD
 // Copyright (C) 2020  BloopCorp
@@ -16,36 +17,25 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "SkLineCurve.hpp"
+=======
+#include "SkLine.hpp"
+>>>>>>> Rebuilt abstract 2d geometries and adapted SkGeometries:Src/Drawables/Sk/SkLine.cpp
 
 #include <Graphics_utils/ShadersPool.hpp>
 #include <Utils/Preferences.hpp>
 #include <Graphics_utils/GLCall.hpp>
+#include <Utils/Debug_util.hpp>
 
-template<>
-float SkCurve<std::array<ExpVec2<ExpVar>*, 2>, SkLineCurve>::kSelDist2 = 0.0f;
-bool SkLineCurve::kFisrstInst = true;
-glm::vec3 SkLineCurve::kColor = glm::vec3(0.0); 
-glm::vec3 SkLineCurve::kColorHovered = glm::vec3(0.0);
-glm::vec3 SkLineCurve::kColorSelected = glm::vec3(0.0);
-
-SkLineCurve::SkLineCurve(Geom3d::Plane_abstr* pl, bool fixed_):
-	SkCurve<std::array<ExpVec2<ExpVar>*, 2>, SkLineCurve>(pl, fixed_)
+SkLine::SkLine(glm::vec2 ptA_, glm::vec2 ptB_, Geom3d::Plane_abstr* pl, bool fixed_)
+	: SkCurve<LinearFixed_indexer<SkPoint*, 2>, Geom2d::Line>(pl, fixed_)
 {
-	mType |= Drawable_types::AXIS;
-	set_name("SkLineCurve");
+	mGeom = new Geom2d::Line(ptA_, ptB_);
+	handle(0) = new SkPoint(mGeom->ptA(), pl, fixed_);
+	handle(1) = new SkPoint(mGeom->ptB(), pl, fixed_);
+	set_name("SkLine");
 }
 
-SkLineCurve::~SkLineCurve()
-{
-
-}
-
-ExpVec2<Expression_abstr> SkLineCurve::atExp(float t)
-{
-	return *ptA() - (double)t * asvecExp;
-}
-
-void SkLineCurve::set_annotOffset(SkSprite* sp, int ind)
+void SkLine::set_annotOffset(SkSprite* sp, int ind)
 {
 	glm::vec2 dir = glm::normalize(posA() - posB());
 	glm::vec2 normal = glm::cross(glm::vec3(dir, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
@@ -56,9 +46,9 @@ void SkLineCurve::set_annotOffset(SkSprite* sp, int ind)
 	sp->set_pixelOffset(dir * 25.0f * (float)icon_dir * dir_offset + normal * 25.0f * (float)line_side);
 }
 
-void SkLineCurve::init_impl()
+void SkLine::init_impl()
 {
-	asvecExp = *ptA() - *ptB();
+	// asvecExp = *ptA() - *ptB();
 	mNeed_graphicUpdate = false;
 	
 	// mLength2 = (pow(mA->x()-mB->x(), 2.0) + pow(mA->y()-mB->y(), 2.0));
@@ -96,7 +86,7 @@ void SkLineCurve::init_impl()
 	}
 }
 
-void SkLineCurve::draw_impl(Camera* cam, int frame, draw_type type)
+void SkLine::draw_impl(Camera* cam, int frame, draw_type type)
 {
 	mShader->bind();
 	glm::vec4 color = glm::vec4(kColor, 1.0f);
@@ -123,7 +113,7 @@ void SkLineCurve::draw_impl(Camera* cam, int frame, draw_type type)
 	mVA->unbind();
 	mShader->unbind();
 }
-void SkLineCurve::graphicUpdate_impl()
+void SkLine::graphicUpdate_impl()
 {
 	update_annots();
 	mNeed_graphicUpdate = false;
@@ -132,4 +122,31 @@ void SkLineCurve::graphicUpdate_impl()
 	mVB->bind();
 	mVB->set(&mVertices[0], sizeof(glm::vec3) * 2);
 	mVB->unbind();
+}
+
+void SkLine::internalUpdate_impl()
+{
+	ExpVar* Ax = ptA()->x();
+	ExpVar* Ay = ptA()->y();
+	ExpVar* Bx = ptB()->x();
+	ExpVar* By = ptB()->y();
+	
+	verbose(VERBOSE_INNERSTEPS, "Lineupdate drag: "<<Ax->dragged()<<",  "<<
+	Ay->dragged()<<" : "<<Bx->dragged()<<",  "<<By->dragged())
+
+	if(Ax->dragged() && !Bx->dragged()) {
+		Bx->set_dragged(true);
+		verbose(VERBOSE_INNERSTEPS, "Set ptbx");
+	} else if(!Ax->dragged() && Bx->dragged()) {
+		Ax->set_dragged(true);
+		verbose(VERBOSE_INNERSTEPS, "Set ptax");
+	}
+
+	if(Ay->dragged() && !By->dragged()) {
+		By->set_dragged(true);
+		verbose(VERBOSE_INNERSTEPS, "Set ptby");
+	} else if(!Ay->dragged() && By->dragged()) {
+		Ay->set_dragged(true);
+		verbose(VERBOSE_INNERSTEPS, "Set ptay");
+	}
 }

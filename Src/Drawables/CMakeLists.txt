@@ -21,8 +21,8 @@ set(Drawables_source_files
 	Containers/Sketch.cpp
 	Containers/Folder.cpp
 	
-	Sk/SkLineCurve.cpp
-	Sk/SkCircleCurve.cpp
+	Sk/SkLine.cpp
+	Sk/SkCircle.cpp
 	Sk/SkPoint.cpp
 	Sk/SkSelRect.cpp
 	Sk/SkSprite.cpp

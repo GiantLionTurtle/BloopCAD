@@ -21,7 +21,6 @@
 #include <Drawables/Base/Drawable.hpp>
 #include <Geometry/3d/Plane_abstr.hpp>
 #include <ConstraintsSolver/Expression.hpp>
-#include <ConstraintsSolver/ExpressionVec.hpp>
 
 class SkIntDrawable;
 
@@ -31,9 +30,9 @@ struct SkExpSelPoint {
 	{
 
 	}
-	SkExpSelPoint(SkIntDrawable* dr, ExpVec2<Expression_abstr> p):
-		ent(dr),
-		pt(p)
+	SkExpSelPoint(SkIntDrawable* dr)//, ExpVec2<Expression_abstr> p):
+		: ent(dr)//,
+		// pt(p)
 	{
 		
 	}
@@ -41,7 +40,7 @@ struct SkExpSelPoint {
 	operator bool() { return ent; }
 
 	SkIntDrawable* ent;
-	ExpVec2<Expression_abstr> pt;
+	// ExpVec2<Expression_abstr> pt;
 };
 
 class SkDrawable : virtual public Drawable {
@@ -50,8 +49,8 @@ public:
 protected:
 	Geom3d::Plane_abstr* mBasePlane; // Should it be the parent sketch directly??
 public:
-	SkDrawable(Geom3d::Plane_abstr* pl):
-		mBasePlane(pl)
+	SkDrawable(Geom3d::Plane_abstr* pl)
+		: mBasePlane(pl)
 	{
 		mType |= Drawable_types::SKDRAWABLE;
 	}
@@ -63,8 +62,8 @@ public:
 // interactive drawables
 class SkIntDrawable : public SkDrawable {
 public:
-	SkIntDrawable(Geom3d::Plane_abstr* pl):
-		SkDrawable(pl)
+	SkIntDrawable(Geom3d::Plane_abstr* pl)
+		: SkDrawable(pl)
 	{
 		
 	}

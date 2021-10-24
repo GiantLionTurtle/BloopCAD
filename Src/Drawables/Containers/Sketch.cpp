@@ -32,10 +32,10 @@
 #include <Bloop/Bloop.hpp>
 #include <Workspaces/Document.hpp>
 
-Sketch::Sketch(Geom3d::Plane_abstr* base_plane):
-	mBasePlane(base_plane),
-	mConstrSystem(this),
-	mSolve_allowed(true)
+Sketch::Sketch(Geom3d::Plane_abstr* base_plane)
+	: mBasePlane(base_plane)
+	, mConstrSystem()//this),
+	, mSolve_allowed(true)
 {
 	set_name("Sketch");
 	// create_origin();

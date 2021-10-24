@@ -73,7 +73,7 @@ SkExpSelPoint SkSprite::closest_2d_draggable(glm::vec2 planePos, Camera* cam, gl
 		glm::vec3 worldPos = mBasePlane->to_worldPos(pos());
 		glm::vec2 screenPos = cam->world_to_screen(worldPos);
 		if(std::abs(screenPos.x - cursorPos.x) <= mDimensions.x && std::abs(screenPos.y - cursorPos.y) <= mDimensions.y)
-			return SkExpSelPoint(this, { mPos[0], mPos[1] });
+			return SkExpSelPoint(this);//, { mPos[0], mPos[1] });
 	}
 	return SkExpSelPoint();
 }
