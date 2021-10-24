@@ -63,13 +63,14 @@ public:
 	@class sketch describes a sketch which is a bunch of geometries with constraints
 	@parent : entity
 */
-class Sketch : public Collection_abstr<SkIndexer>, public DragSystemHandler {
+class Sketch : public Collection_abstr<SkIndexer>/*, public DragSystemHandler*/ {
 public:
 private:
 	Geom3d::Plane_abstr* mBasePlane; // Plane onto which every geometry is added, maybe it should descend from Plane_abstract..
 
 	// Folder* mOrigin;
-	DragEnabled_ConstraintsSystem<2> mConstrSystem;
+	// DragEnabled_ConstraintsSystem<2> mConstrSystem;
+	ConstraintsSystem mConstrSystem;
 	std::vector<VarState> mConstrSystemBackup;
 
 	bool mSolve_allowed; // THIS IS FOR DEBUG IT SHOULD GO AWAY
@@ -117,7 +118,7 @@ public:
 
 	// Folder* origin() const { return mOrigin; }
 
-	DraggedPoint<2>* dragConstr() { return mConstrSystem.dragConstr(); }
+	// DraggedPoint<2>* dragConstr() { return mConstrSystem.dragConstr(); }
 	bool add_constraint(SkConstraint* constr, SkDrawable* immovable_hint = nullptr);
 	bool toggle_constraint(SkConstraint* constr, bool enable);
 	bool update_constraints(bool safeUpdate, bool update_on_solveFail);

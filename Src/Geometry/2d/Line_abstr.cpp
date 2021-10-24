@@ -1,77 +1,56 @@
 
-#include "Line_abstr.hpp"
-#include "Point_abstr.hpp"
 
-#include <glm/gtx/string_cast.hpp>
-#include <glm/gtx/norm.hpp>
-
-namespace Geom2d {
-
-Line_abstr::Line_abstr()
+template<typename Impl>
+Line_abstr<Impl>::Line_abstr()
+	: Geom2d_abstr<Line_abstr<Impl>>(LINE)
 {
 
 }
-Line_abstr::~Line_abstr()
+
+template<typename Impl>
+glm::vec2 Line_abstr<Impl>::posA()
 {
-	
+	return static_cast<Impl*>(this)->posA_impl();
+}
+template<typename Impl>
+glm::vec2 Line_abstr<Impl>::posB()
+{
+	return static_cast<Impl*>(this)->posB_impl();
+}
+template<typename Impl>
+float Line_abstr<Impl>::length()
+{
+	return glm::distance(posA(), posB());
+}
+template<typename Impl>
+float Line_abstr<Impl>::length2()
+{
+	return glm::distance2(posA(), posB());
 }
 
-// XML_element* Line_abstract::to_svg(Plane_abstract* drawingPlane, glm::vec2 &min, glm::vec2 &max)
-// {
-// 	glm::vec2 ptA = drawingPlane->point_3d_to_2d(mPointA->pos_val());
-// 	glm::vec2 ptB = drawingPlane->point_3d_to_2d(mPointB->pos_val());
-// 	ptA.y = -ptA.y;
-// 	ptB.y = -ptB.y;
-	
-// 	update_min_max(ptA, min, max);
-// 	update_min_max(ptB, min, max);
-
-// 	XML_element* svgLine = new XML_element("line");
-// 	svgLine->add_lastAttribute(new XML_attribute("x1", std::to_string(ptA.x)));
-// 	svgLine->add_lastAttribute(new XML_attribute("y1", std::to_string(ptA.y)));
-// 	svgLine->add_lastAttribute(new XML_attribute("x2", std::to_string(ptB.x)));
-// 	svgLine->add_lastAttribute(new XML_attribute("y2", std::to_string(ptB.y)));
-// 	svgLine->add_lastAttribute(new XML_attribute("stroke", "red"));
-// 	svgLine->add_lastAttribute(new XML_attribute("stroke-width", "1"));
-// 	return svgLine;
-// }
-
-// Point_abstract_ptr Line_abstract::closest_point(Point_abstract const& pt, float& on_line)
-// {
-// 	float len2 = length2();
-// 	if(len2 == 0) {
-// 		return mPointA;
-// 	}
-// 	glm::vec3 line_vec = as_vec();
-// 	on_line = glm::dot(line_vec, mPointA->pos_val()-pt.pos_val()) / len2;
-// 	if(on_line <= 0) { // First point
-// 		return mPointA;
-// 	} else if(on_line >= 1) { // Second point 
-// 		return mPointB;
-// 	} else {
-// 		return at(on_line);
-// 	}
-// }
-
-glm::vec2 Line_abstr::at(float t)
+template<typename Impl>
+glm::vec2 Line_abstr<Impl>::at_geom(float t)
 {
 	return (posA() - t * as_vec());
 }
-bool Line_abstr::within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
+
+template<typename Impl>
+bool Line_abstr<Impl>::within_geom(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
 {
 	// If the whole line has to be contained, return true if both points are within the selection
 	if(contained) {
-		return Point_abstr::within(posA(), top_left, bottom_right) && Point_abstr::within(posB(), top_left, bottom_right);
+		return point_within(posA(), top_left, bottom_right) && point_within(posB(), top_left, bottom_right);
 	}
 
 	// If only a part has to be contained, return if either point is contained or 
 	// if the line crosses  any of the four lines of the selection rectangle
 	glm::vec2 top_right(bottom_right.x, top_left.y), bottom_left(top_left.x, bottom_right.y);
-	return Point_abstr::within(posA(), top_left, bottom_right) || Point_abstr::within(posB(), top_left, bottom_right)
+	return point_within(posA(), top_left, bottom_right) || point_within(posB(), top_left, bottom_right)
 			|| intersects(top_left, top_right) || intersects(bottom_left, bottom_right)
 			|| intersects(top_left, bottom_left) || intersects(top_right, bottom_right);
 }
-float Line_abstr::closest_to_point_interp(glm::vec2 const& pt)
+template<typename Impl>
+float Line_abstr<Impl>::closest_to_point_interp_geom(glm::vec2 const& pt)
 {
 	float len2 = length2();
 	if(len2 == 0) {
@@ -86,52 +65,55 @@ float Line_abstr::closest_to_point_interp(glm::vec2 const& pt)
 		return t;
 	}
 }
-float Line_abstr::dist_to_point(glm::vec2 const& pt)
+template<typename Impl>
+float Line_abstr<Impl>::dist_to_point_geom(glm::vec2 const& pt)
 {
-	return glm::distance(closest_to_point(pt), pt);
+	return glm::distance(closest_to_point_geom(pt), pt);
 }
-
-float Line_abstr::length()
-{
-	return glm::distance(posA(), posB());
-}
-float Line_abstr::length2()
-{
-	return glm::distance2(posA(), posB());
-}
-
-bool Line_abstr::intersects(Line_abstr* l)
+template<typename Impl>
+bool Line_abstr<Impl>::intersects(Line_abstr* l)
 {
 	// Better explanation than I could give
 	// https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
 	return ccw(posA(), l->posA(), l->posB()) != ccw(posB(), l->posA(), l->posB()) && ccw(posA(), posB(), l->posA()) != ccw(posA(), posB(), l->posB());
 }
-bool Line_abstr::intersects(glm::vec2 a, glm::vec2 b)
+template<typename Impl>
+bool Line_abstr<Impl>::intersects(glm::vec2 a, glm::vec2 b)
 {
 	// Better explanation than I could give
 	// https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
 	return ccw(posA(), a, b) != ccw(posB(), a, b) && ccw(posA(), posB(), a) != ccw(posA(), posB(), b);
 }
 
-glm::vec2 Line_abstr::as_vec()
+template<typename Impl>
+glm::vec2 Line_abstr<Impl>::as_vec()
 {
 	return posA() - posB();
 }
-
-bool Line_abstr::ccw(glm::vec2 A, glm::vec2 B, glm::vec2 C)
+template<typename Impl>
+bool Line_abstr<Impl>::ccw(glm::vec2 A, glm::vec2 B, glm::vec2 C)
 {
 	return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x);
 }
-// bool line_intersect(glm::vec2 A, glm::vec2 B, glm::vec2 C, glm::vec2 D)
-// {
-// 	return ccw(A,C,D) != ccw(B,C,D) and ccw(A,B,C) != ccw(A,B,D);
-// }
 
-simple_line::simple_line(glm::vec2 a, glm::vec2 b):
-	mA(a),
-	mB(b)
+
+Line::Line(glm::vec2 a, glm::vec2 b)
+	: mA(new Point(a))
+	, mB(new Point(b))
 {
-	
+	init_params();
+}
+Line::Line()
+	: mA(nullptr)
+	, mB(nullptr)
+{
+	init_params();
 }
 
-} // !Geom2d
+void Line::init_params()
+{
+	mParams[0] = mA->x_raw();
+	mParams[1] = mA->y_raw();
+	mParams[2] = mB->x_raw();
+	mParams[3] = mB->y_raw();
+}

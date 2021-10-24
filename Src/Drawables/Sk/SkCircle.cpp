@@ -1,70 +1,58 @@
 
-#include "SkLineCurve.hpp"
+#include "SkCircle.hpp"
 
 #include <Graphics_utils/ShadersPool.hpp>
 #include <Utils/Preferences.hpp>
 #include <Graphics_utils/GLCall.hpp>
+#include <Utils/Debug_util.hpp>
 
-template<>
-float SkCurve<std::array<ExpVec2<ExpVar>*, 2>, SkLineCurve>::kSelDist2 = 0.0f;
-bool SkLineCurve::kFisrstInst = true;
-glm::vec3 SkLineCurve::kColor = glm::vec3(0.0); 
-glm::vec3 SkLineCurve::kColorHovered = glm::vec3(0.0);
-glm::vec3 SkLineCurve::kColorSelected = glm::vec3(0.0);
+struct circleData {
+	glm::vec3 pos;
+	float radius;
+	glm::vec3 v, w;
+};
 
-SkLineCurve::SkLineCurve(Geom3d::Plane_abstr* pl, bool fixed_):
-	SkCurve<std::array<ExpVec2<ExpVar>*, 2>, SkLineCurve>(pl, fixed_)
+SkCircle::SkCircle(glm::vec2 center_, float radius_, Geom3d::Plane_abstr* pl, bool fixed_)
+	: SkCurve<LinearFixed_indexer<SkPoint*, 1>, Geom2d::Circle>(pl, fixed_)
 {
-	mType |= Drawable_types::AXIS;
-	set_name("SkLineCurve");
+	mGeom = new Geom2d::Circle(center_, radius_);
+	handle(0) = new SkPoint(mGeom->center(), pl, fixed_);
+	set_name("SkCircle");
 }
 
-SkLineCurve::~SkLineCurve()
+void SkCircle::set_annotOffset(SkSprite* sp, int ind)
 {
-
+	// probably change that so that the center point's constraints and the circle's constraints are clearly separated
+	int level = ind / 6;
+	float angle = (float)(ind % 6) / 6.0f * M_PI * 2.0 + M_PI_2;
+	sp->set_pixelOffset(glm::vec2(std::cos(angle) * (float)(ind) * 25.0f, std::sin(angle) * (float)(ind) * 25.0f));
 }
 
-ExpVec2<Expression_abstr> SkLineCurve::atExp(float t)
+void SkCircle::init_impl()
 {
-	return *ptA() - (double)t * asvecExp;
-}
-
-void SkLineCurve::set_annotOffset(SkSprite* sp, int ind)
-{
-	glm::vec2 dir = glm::normalize(posA() - posB());
-	glm::vec2 normal = glm::cross(glm::vec3(dir, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-
-	int line_side = ind % 2 == 0 ? 1 : -1;
-	bool icon_dir = line_side == -1 ? ind % 4 ? -1 : 1 : ind % 3 ? -1 : 1;
-	float dir_offset = line_side == 1 ? ind : ind - 1;
-	sp->set_pixelOffset(dir * 25.0f * (float)icon_dir * dir_offset + normal * 25.0f * (float)line_side);
-}
-
-void SkLineCurve::init_impl()
-{
-	asvecExp = *ptA() - *ptB();
 	mNeed_graphicUpdate = false;
 	
-	// mLength2 = (pow(mA->x()-mB->x(), 2.0) + pow(mA->y()-mB->y(), 2.0));
-
 	mVA = new VertexArray();
 	VertexBufferLayout layout;
 	layout.add_proprety_float(3);
+	layout.add_proprety_float(1);
+	layout.add_proprety_float(3);
+	layout.add_proprety_float(3);
 	mVA->bind();
-
-	mVertices[0] = mBasePlane->to_worldPos(posA());
-	mVertices[1] = mBasePlane->to_worldPos(posB());
-	mVB = new VertexBuffer(&mVertices[0], sizeof(glm::vec3) * 2);
+	circleData tosend = { basePlane()->to_worldPos(center_pos()), radius_val(), basePlane()->v(), basePlane()->w() };
+	mVB = new VertexBuffer(&tosend, sizeof(circleData));
 	mVA->add_buffer(*mVB, layout);
 	mVA->unbind();
 
-	mShader = ShadersPool::get_instance().get("line");
+	mShader = ShadersPool::get_instance().get("circle");
 	if(!mShader) {
 		mShader = Shader::fromFiles_ptr({
-		{"Resources/Shaders/Point.vert", GL_VERTEX_SHADER},
+		{"Resources/Shaders/Circle.vert", GL_VERTEX_SHADER},
+		{"Resources/Shaders/Circle.tesc", GL_TESS_CONTROL_SHADER},
+		{"Resources/Shaders/Circle.tese", GL_TESS_EVALUATION_SHADER},
 		{"Resources/Shaders/Line.geom", GL_GEOMETRY_SHADER}, 
 		{"Resources/Shaders/Line.frag", GL_FRAGMENT_SHADER}}); // Geometry Shader is needed because line is expanded on the gpu
-		ShadersPool::get_instance().add("line", mShader);
+		ShadersPool::get_instance().add("circle", mShader);
 	}
 	if(kFisrstInst) {
 		kSelDist2 = Preferences::get_instance().get_float("seldistcurve2");
@@ -80,7 +68,7 @@ void SkLineCurve::init_impl()
 	}
 }
 
-void SkLineCurve::draw_impl(Camera* cam, int frame, draw_type type)
+void SkCircle::draw_impl(Camera* cam, int frame, draw_type type)
 {
 	mShader->bind();
 	glm::vec4 color = glm::vec4(kColor, 1.0f);
@@ -97,23 +85,24 @@ void SkLineCurve::draw_impl(Camera* cam, int frame, draw_type type)
 	if(mShader->lastUsed() != frame) {
 		mShader->setUniformMat4f("u_MVP", cam->mvp());
 		mShader->setUniform2f("u_Viewport", cam->viewport());
+		mShader->setUniform1f("u_Scale", cam->fscale());
 		mShader->set_used(frame);
 	}
 
 	mVA->bind();
 
-	GLCall(glDrawArrays(GL_LINES, 0, 2)); // No indexing needed, a line only has two vertices
+	GLCall(glPatchParameteri(GL_PATCH_VERTICES, 1));
+	GLCall(glDrawArrays(GL_PATCHES, 0, 1));
 
 	mVA->unbind();
 	mShader->unbind();
 }
-void SkLineCurve::graphicUpdate_impl()
+void SkCircle::graphicUpdate_impl()
 {
 	update_annots();
 	mNeed_graphicUpdate = false;
-	mVertices[0] = mBasePlane->to_worldPos(posA());
-	mVertices[1] = mBasePlane->to_worldPos(posB());
+	circleData tosend = { basePlane()->to_worldPos(center_pos()), radius_val(), basePlane()->v(), basePlane()->w() };
 	mVB->bind();
-	mVB->set(&mVertices[0], sizeof(glm::vec3) * 2);
+	mVB->set(&tosend, sizeof(circleData));
 	mVB->unbind();
 }

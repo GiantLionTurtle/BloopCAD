@@ -1,6 +1,5 @@
 set(ConstraintsSolver_source_files
 	Expression.cpp
-	ExpressionVec.cpp
 	Constraint_abstr.cpp
 	EquationsCluster.cpp
 	ConstraintsSystem.cpp

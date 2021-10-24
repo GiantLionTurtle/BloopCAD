@@ -22,8 +22,8 @@ private:
 	std::string mTexturePath;
 	Texture* mTexture;
 	glm::vec2 mDimensions;
-	glm::vec2 mPixelOffset;   // A sprite has a position in the world as well
-									// as a screen offset that stays constant regardless of zoom
+	glm::vec2 mPixelOffset; // A sprite has a position in the world as well
+			 				// as a screen offset that stays constant regardless of zoom
 
 	std::array<var_ptr, 2> mPos;
 	VertexArray* mVA;

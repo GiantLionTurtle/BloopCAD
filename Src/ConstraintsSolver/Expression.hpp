@@ -304,6 +304,8 @@ public:
 		@param val The new value of the variable
 	*/
 	void set(double val);
+
+	double* val_ptr() { return &mVal; }
 	/*
 		@function drag sets the value of the variable and sets the mIs_dragged flag to true
 

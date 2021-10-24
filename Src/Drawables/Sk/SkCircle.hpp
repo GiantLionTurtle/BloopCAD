@@ -2,24 +2,21 @@
 #ifndef SKCIRCLE_HPP_
 #define SKCIRCLE_HPP_
 
-#include "SkHandleCurve.hpp"
-#include "SkCircleCurve.hpp"
 
-class SkCircle : public SkHandleCurve<SkHandleCurve_FixedIndexer<1, SkCircleCurve>> {
+#include "SkCurve.hpp"
+#include <Geometry/2d/Circle_abstr.hpp>
+
+class SkCircle : public SkCurve<LinearFixed_indexer<SkPoint*, 1>, Geom2d::Circle> {
+private:
+	static bool kFisrstInst;
+	static glm::vec3 kColor, kColorHovered, kColorSelected; // Line color
 public:
-	using parentType = SkHandleCurve<SkHandleCurve_FixedIndexer<1, SkCircleCurve>>;
-	SkCircle(glm::vec2 center_, float radius_, Geom3d::Plane_abstr* pl, bool fixed_):
-		SkHandleCurve({ center_ }, pl, fixed_)
-	{
-		set_name("SkLine");
-		set_radius(radius_);
-	}
-
+	SkCircle(glm::vec2 center_, float radius_, Geom3d::Plane_abstr* pl, bool fixed_);
 
 	SkPoint* center() { return handle(0); }
 	glm::vec2 center_pos() { return handle(0)->pos(); }
 	void set_center(glm::vec2 pos) { center()->set(pos); }
-    var_ptr radius() { return curve()->radius(); }
+    ExpVar* radius() { return mGeom->radius(); }
 	float radius_val() { return radius()->eval(); }
 	void set_radius(float val) { radius()->drag(val); update(); }
 
@@ -28,14 +25,15 @@ public:
 		center()->release();
 		radius()->set_dragged(false);
 	}
-	std::vector<var_ptr> all_vars()
-	{
-		std::vector<var_ptr> vars = parentType::all_vars();
-		vars.push_back(radius());
-		return vars;
-	}
 
-	int selection_rank() { return 3; }
+	int selection_rank() { return 5; }
+
+	void set_annotPos(SkSprite* sp) { sp->set(center_pos()); }
+	void set_annotOffset(SkSprite* sp, int ind);
+protected:
+	void init_impl();
+	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL);
+	void graphicUpdate_impl();
 };
 
 #endif

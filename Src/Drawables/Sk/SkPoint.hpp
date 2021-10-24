@@ -4,27 +4,26 @@
 
 #include "SkGeometry.hpp"
 #include <ConstraintsSolver/Expression.hpp>
-#include <ConstraintsSolver/ExpressionVec.hpp>
 #include <Geometry/2d/Point_abstr.hpp>
 
 #include <Graphics_utils/VertexArray.hpp>
 #include <Graphics_utils/VertexBuffer.hpp>
 #include <Graphics_utils/Shader.hpp>
 
-class SkPoint : public ExpVec2<ExpVar>, public SkPrimitiveGeometry {
+class SkPoint : public SkPrimitiveGeometry<Geom2d::Point> {
 private:
 	static float kSelDist2;
 	static bool kFisrstInst;
 	static glm::vec3 kColor, kColorHovered, kColorSelected; // Point color
-
-	VertexArray* mVA;
-	VertexBuffer* mVB;
-	Shader* mShader;
 public:
 	SkPoint(glm::vec2 pos, Geom3d::Plane_abstr* pl, bool fixed_);
+	SkPoint(Geom2d::Point* pt, Geom3d::Plane_abstr* pl, bool fixed_);
 	virtual ~SkPoint();
 
-	glm::vec2 pos() { return ExpVec2<ExpVar>::pos(); }
+	ExpVar* x() { return &mGeom->x(); }
+	ExpVar* y() { return &mGeom->y(); }
+
+	glm::vec2 pos() { return mGeom->pos(); }
 	SelPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	SkExpSelPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	int selection_rank() { return 5; }

@@ -36,15 +36,13 @@ public:
 		mNeed_redraw = false;
 		if(!exists())
 			return;
-		draw_impl(cam, frame, type);
-	}
-	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL)
-	{
 		for(size_t i = 0; i < n_children(); ++i) {
 			auto ch = child(i);
 			child(i)->draw(cam, frame, type);
 		}
+		draw_impl(cam, frame, type);
 	}
+
 	virtual void graphicUpdate_impl()
 	{
 		if(mDrawList.has_newElems()) {

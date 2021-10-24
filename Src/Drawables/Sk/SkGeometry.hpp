@@ -6,6 +6,7 @@
 
 #include <Geometry/2d/Geom2d_abstr.hpp>
 #include "SkSprite.hpp"
+#include <Utils/Expunge.hpp>
 
 #include <vector>
 
@@ -68,18 +69,52 @@ protected:
 	virtual void move_impl(glm::vec2 delta) {}
 };
 
-class SkPrimitiveGeometry : public SkGeometry, virtual public Geom2d::Geom2d_abstr {
+template<typename Geom>
+class SkPrimitiveGeometry : public SkGeometry {
+protected:
+	Geom* mGeom;
+
+	VertexArray* mVA;
+	VertexBuffer* mVB;
+	Shader* mShader;
 public:
-	SkPrimitiveGeometry(Geom3d::Plane_abstr* pl, bool fixed_):
-		SkGeometry(pl, fixed_)
+	SkPrimitiveGeometry(Geom3d::Plane_abstr* pl, bool fixed_)
+		: SkGeometry(pl, fixed_)
+		, mGeom(nullptr)
+		, mVA(nullptr)
+		, mVB(nullptr)
+		, mShader(nullptr)
 	{
 
 	}
-	virtual ~SkPrimitiveGeometry() {}
+	SkPrimitiveGeometry(Geom* g, Geom3d::Plane_abstr* pl, bool fixed_)
+		: SkGeometry(pl, fixed_)
+		, mGeom(nullptr)
+		, mVA(nullptr)
+		, mVB(nullptr)
+		, mShader(nullptr)
+	{
+
+	}
+	SkPrimitiveGeometry()
+		: SkGeometry(nullptr, false)
+		, mGeom(nullptr)
+		, mVA(nullptr)
+		, mVB(nullptr)
+		, mShader(nullptr)
+	{
+
+	}
+	~SkPrimitiveGeometry()
+	{
+		expunge(mGeom); // By this point it might already been expunged.. but it matters not delete on nullptr is fine
+		expunge(mVA);
+		expunge(mVB);
+	}
 
 	void select_within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
 	{
-		bool should_select = within(top_left, bottom_right, contained);
+		bool should_select = mGeom->within(top_left, bottom_right, contained);
 
 		if(should_select != selected())
 			set_selected(should_select);

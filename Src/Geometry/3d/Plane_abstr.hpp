@@ -90,9 +90,6 @@ public:
 	glm::vec2 to_planePos(Point_abstr& pt) { return to_planePos(pt.pos()); }
 	glm::vec2 to_planePos(Point_abstr_ptr pt) { return to_planePos(pt->pos()); }
 	glm::vec3 to_worldPos(glm::vec2 const& pt);
-	glm::vec3 to_worldPos(Geom2d::Point_abstr& pt) { return to_worldPos(pt.pos()); }
-	glm::vec3 to_worldPos(Geom2d::Point_abstr_ptr pt) { return to_worldPos(pt->pos()); }
-
 
 	/*
 		@function inverted tells if the plane has a manual inversion applied

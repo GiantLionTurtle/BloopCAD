@@ -1,26 +1,31 @@
 
-#include "Geom2d_abstr.hpp"
-#include "Point_abstr.hpp"
 
-namespace Geom2d {
-
-Geom2d_abstr::Geom2d_abstr()
+template<typename Geom>
+glm::vec2 Geom2d_abstr<Geom>::at(float t)
 {
-
-}
-Geom2d_abstr::~Geom2d_abstr()
-{
-    
+	return static_cast<Geom*>(this)->at_geom(t);
 }
 
-glm::vec2 Geom2d_abstr::closest_to_point(Point_abstr& pt)
+template<typename Geom>
+bool Geom2d_abstr<Geom>::within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
 {
-    return closest_to_point(pt.pos());
+	return static_cast<Geom*>(this)->within_geom(top_left, bottom_right, contained);
 }
 
-float Geom2d_abstr::dist_to_point(Point_abstr& pt)
+template<typename Geom>
+float Geom2d_abstr<Geom>::closest_to_point_interp(glm::vec2 const& pt)
 {
-    return dist_to_point(pt.pos());
+	return static_cast<Geom*>(this)->closest_to_point_interp_geom(pt);
 }
 
-} // !Geom2d
+template<typename Geom>
+glm::vec2 Geom2d_abstr<Geom>::closest_to_point(glm::vec2 const& pt)
+{
+	return static_cast<Geom*>(this)->closest_to_point_geom(pt);
+}
+
+template<typename Geom>
+float Geom2d_abstr<Geom>::dist_to_point(glm::vec2 const& pt)
+{
+    return static_cast<Geom*>(this)->dist_to_point_geom(pt);
+}

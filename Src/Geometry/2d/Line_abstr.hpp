@@ -2,29 +2,29 @@
 #ifndef LINE_ABSTR2_HPP_
 #define LINE_ABSTR2_HPP_
 
-#include "Point_abstr.hpp"
+#include <ConstraintsSolver/Expression.hpp>
 
+#include "Point_abstr.hpp"
 #include <glm/glm.hpp>
-#include <iostream>
 
 namespace Geom2d {
 
-class Line_abstr : public virtual Geom2d_abstr {
+template<typename Impl>
+class Line_abstr : public Geom2d_abstr<Line_abstr<Impl>> {
 public:
 	Line_abstr();
-	virtual ~Line_abstr();
 
-	virtual glm::vec2 posA() = 0;
-	virtual glm::vec2 posB() = 0;
-
-	glm::vec2 at(float t);
-	bool within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained);
-
-	float closest_to_point_interp(glm::vec2 const& pt);
-	virtual float dist_to_point(glm::vec2 const& pt);
-
+	glm::vec2 posA();
+	glm::vec2 posB();
 	float length();
 	float length2();
+
+	glm::vec2 at_geom(float t);
+	bool within_geom(glm::vec2 top_left, glm::vec2 bottom_right, bool contained);
+
+	float closest_to_point_interp_geom(glm::vec2 const& pt);
+	glm::vec2 closest_to_point_geom(glm::vec2 const& pt) { return at_geom(closest_to_point_interp_geom(pt)); }
+	float dist_to_point_geom(glm::vec2 const& pt);
 
 	bool intersects(Line_abstr* l);
 	bool intersects(glm::vec2 a, glm::vec2 b);
@@ -34,18 +34,38 @@ protected:
 };
 
 
-// bool line_intersect(glm::vec2 A, glm::vec2 B, glm::vec2 C, glm::vec2 D);
-
-class simple_line : public Line_abstr {
+class Simple_line : public Line_abstr<Simple_line> {
 private:
 	glm::vec2 mA, mB;
 public:
-	simple_line(glm::vec2 a, glm::vec2 b);
+	Simple_line(glm::vec2 a, glm::vec2 b);
 
-	virtual glm::vec2 posA() { return mA; }
-	virtual glm::vec2 posB() { return mB; }
+	glm::vec2 posA_impl() { return mA; }
+	glm::vec2 posB_impl() { return mB; }
 };
 
-} // !Geom2ds
+class Line : public Line_abstr<Simple_line> {
+private:
+	Geom2d::Point* mA, *mB;
+	double* mParams[4];
+public:
+	Line(glm::vec2 a, glm::vec2 b);
+	Line();
+
+	glm::vec2 posA_impl() { return mA->pos(); }
+	glm::vec2 posB_impl() { return mB->pos(); }
+
+	Geom2d::Point* ptA() { return mA; }
+	Geom2d::Point* ptB() { return mB; }
+
+	int n_params() { return 4; }
+	double** params() { return &mParams[0]; }
+private:
+	void init_params();
+};
+
+#include "Line_abstr.cpp"
+
+} // !Geom2d
 
 #endif

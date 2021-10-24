@@ -8,31 +8,31 @@
 
 namespace Geom2d {
 
-class Point_abstr;
-class Line_abstr;
-class Circle_abstr;
-using Point_abstr_ptr = std::shared_ptr<Point_abstr>;
-using Line_abstr_ptr = std::shared_ptr<Line_abstr>;
-using Circle_abstr_ptr = std::shared_ptr<Circle_abstr>;
+class Point;
+class Line;
+class Circle;
 
+enum GeomTypes { POINT, LINE, CIRCLE };
+
+template<typename Geom>
 class Geom2d_abstr {
+private:
+	GeomTypes mType;
 public:
-	Geom2d_abstr();
-	virtual ~Geom2d_abstr();
+	Geom2d_abstr(GeomTypes type);
+	GeomTypes type() { return mType; }
 
-	virtual glm::vec2 at(float t) = 0;
+	glm::vec2 at(float t);
 
-	virtual bool within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained) = 0;
+	bool within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained);
 
-	virtual float closest_to_point_interp(glm::vec2 const& pt) = 0; // Plugging this function in at(t) should give the same as closest_to_point
-	virtual glm::vec2 closest_to_point(glm::vec2 const& pt) { return at(closest_to_point_interp(pt)); }
-	virtual glm::vec2 closest_to_point(Point_abstr& pt);
-	virtual glm::vec2 closest_to_point(Point_abstr_ptr pt) { return closest_to_point(*pt.get()); }
+	float closest_to_point_interp(glm::vec2 const& pt); // Plugging this function in at(t) should give the same as closest_to_point
+	glm::vec2 closest_to_point(glm::vec2 const& pt);
 
-	virtual float dist_to_point(glm::vec2 const& pt) = 0;
-	virtual float dist_to_point(Point_abstr& pt);
-	virtual float dist_to_point(Point_abstr_ptr pt) { return dist_to_point(*pt.get()); }
+	float dist_to_point(glm::vec2 const& pt);
 };
+
+#include "Geom2d_abstr.cpp"
 
 } // !Geom2d
 
