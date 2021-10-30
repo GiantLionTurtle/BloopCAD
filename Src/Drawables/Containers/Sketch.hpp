@@ -24,6 +24,7 @@
 #include <Drawables/Sk/SkDrawable.hpp>
 #include <Drawables/Sk/SkGeometry.hpp>
 #include <Drawables/Sk/SkConstraint.hpp>
+#include <Drawables/Sk/SkConstrAnnot.hpp>
 #include <Actions/Common/Serial_action.hpp>
 
 #include <memory>
@@ -32,7 +33,7 @@
 class SkIndexer : public Indexer_abstr {
 private:
 	std::vector<SkGeometry*> mGeometries;
-	std::vector<SkConstraint*> mConstraints;
+	std::vector<SkConstraint*> mAnnotations;
 	int mInitInd_geom, mInitInd_constr;
 public:
 	SkIndexer(Drawable* driven):
@@ -74,6 +75,7 @@ public:
 	void add_constr(SkConstraint* c) { mConstraints.push_back(c); mDriven->update(); }
 };
 
+
 /*
 	@class sketch describes a sketch which is a bunch of geometries with constraints
 	@parent : entity
@@ -86,6 +88,7 @@ private:
 	// Folder* mOrigin;
 	// DragEnabled_ConstraintsSystem<2> mConstrSystem;
 	ConstraintsSystem mConstrSystem;
+	std::map<Constraint_abstr*, Drawable*> mConstr2Annot;
 	std::vector<VarState> mConstrSystemBackup;
 
 	bool mSolve_allowed; // THIS IS FOR DEBUG IT SHOULD GO AWAY

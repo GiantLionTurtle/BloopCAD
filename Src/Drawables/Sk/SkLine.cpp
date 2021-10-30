@@ -1,4 +1,3 @@
-<<<<<<< HEAD:Src/Drawables/Sk/SkLineCurve.cpp
 
 // BloopCAD
 // Copyright (C) 2020  BloopCorp
@@ -17,9 +16,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "SkLineCurve.hpp"
-=======
-#include "SkLine.hpp"
->>>>>>> Rebuilt abstract 2d geometries and adapted SkGeometries:Src/Drawables/Sk/SkLine.cpp
 
 #include <Graphics_utils/ShadersPool.hpp>
 #include <Utils/Preferences.hpp>

@@ -1,5 +1,4 @@
 
-<<<<<<< HEAD:Src/Drawables/Sk/SkCircleCurve.cpp
 // BloopCAD
 // Copyright (C) 2020  BloopCorp
 
@@ -23,10 +22,6 @@
 #include <Graphics_utils/VertexBuffer.hpp>
 #include <Graphics_utils/VertexBufferLayout.hpp>
 #include <Graphics_utils/VertexArray.hpp>
-=======
-#include "SkCircle.hpp"
-
->>>>>>> Rebuilt abstract 2d geometries and adapted SkGeometries:Src/Drawables/Sk/SkCircle.cpp
 #include <Graphics_utils/ShadersPool.hpp>
 #include <Utils/Preferences.hpp>
 #include <Graphics_utils/GLCall.hpp>
