@@ -12,3 +12,20 @@
 * http://users.ics.forth.gr/~lourakis/levmar/levmar.pdf
 
 * http://www2.imm.dtu.dk/pubdb/edoc/imm3215.pdf
+
+
+### Graph decomposition
+
+* https://www.cs.purdue.edu/cgvlab/papers/cmh/decompJSC01a.pdf
+* https://upcommons.upc.edu/bitstream/handle/2117/86309/R07-31.pdf;sequence=1
+* https://arxiv.org/pdf/1405.6131.pdf
+* https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm
+* https://www.cs.cmu.edu/~15451-f18/lectures/lec19-DFS-strong-components.pdf
+* https://www.geeksforgeeks.org/maximum-bipartite-matching/?ref=lbp
+
+## Graph theory
+* https://webdocs.cs.ualberta.ca/~stewart/c672/Definitions.pdf
+
+### Bezier curve constraints
+
+* https://www.cspaul.com/publications/Ahn.2014.JCAM.pdf
