@@ -119,19 +119,11 @@ Line::Line(glm::vec2 a, glm::vec2 b)
 	: mA(new Point(a))
 	, mB(new Point(b))
 {
-	init_params();
+
 }
 Line::Line()
 	: mA(nullptr)
 	, mB(nullptr)
 {
-	init_params();
-}
 
-void Line::init_params()
-{
-	mParams[0] = mA->x_raw();
-	mParams[1] = mA->y_raw();
-	mParams[2] = mB->x_raw();
-	mParams[3] = mB->y_raw();
 }

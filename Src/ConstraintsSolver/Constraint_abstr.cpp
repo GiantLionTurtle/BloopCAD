@@ -62,24 +62,51 @@ double PointPoint_horizontality::error()
 
 void PointPoint_horizontality::substitute()
 {
-	if(mP1->y().weight() > mP2->y().weight()) {
-		// substitute p2 by p1
-	} else if(mP1->y().weight() < mP2->y().weight()) {
-		// substitute p1 by p2
+	if(mP1->y()->weight() > mP2->y()->weight()) {
+		mP2->y()->set_substitution(mP1->y());
+	} else if(mP1->y()->weight() < mP2->y()->weight()) {
+		mP1->y()->set_substitution(mP2->y());
 	}
 	// No substitution could be done
 }
+Param* PointPoint_horizontality::param(int ind)
+{
+	switch(ind) {
+	case 0: return mP1->y();
+	case 1: return mP2->y();
+	}
+	return nullptr;
+}
 
 
-// SkLine_horizontality::SkLine_horizontality(Geom3d::Plane_abstr* baseplane_, SkLineCurve* l):
-// 	SkSprite_constraint<1>(baseplane_, { }, { l->ptA()->y() ^= l->ptB()->y() },
-// 	"Resources/Textures/Images/Icons/Sketch/Constraints/Horizontality"),
-// 	mLine(l)
-// {
-// 	if(!mLine->fixed())
-// 		mVars.insert(mVars.end(), { l->ptA()->y(), l->ptB()->y() });
-// 	mLine->add_annot(annot(0));
-// }
+Line_horizontality::Line_horizontality(Geom2d::Line* l)
+#ifndef RELEASE_MODE
+	: Constraint_abstr("PointPoint_horizontality")
+#else
+	: Constraint_abstr()
+#endif
+	, mLine(l)
+{
+
+}
+
+double Line_horizontality::error()
+{
+	return mLine->ptA()->y()->val() - mLine->ptB()->y()->val();
+}
+
+void Line_horizontality::substitute()
+{
+
+}
+Param* Line_horizontality::param(int ind)
+{
+	switch(ind) {
+	case 0: return mLine->ptA()->y();
+	case 1: return mLine->ptA()->y();
+	}
+	return nullptr;
+}
 
 
 // SkPointPoint_verticality::SkPointPoint_verticality(Geom3d::Plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2):

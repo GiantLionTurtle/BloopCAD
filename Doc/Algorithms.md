@@ -22,6 +22,7 @@
 * https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm
 * https://www.cs.cmu.edu/~15451-f18/lectures/lec19-DFS-strong-components.pdf
 * https://www.geeksforgeeks.org/maximum-bipartite-matching/?ref=lbp
+* https://en.wikipedia.org/wiki/Hopcroft%E2%80%93Karp_algorithm
 
 ## Graph theory
 * https://webdocs.cs.ualberta.ca/~stewart/c672/Definitions.pdf

@@ -117,17 +117,11 @@ Circle::Circle(glm::vec2 c, float r)
 	: mCenter(c)
 	, mRadius(r)
 {
-	init_params();
+
 }
 Circle::Circle()
 	: mCenter(glm::vec2(0.0f, 0.0f))
 	, mRadius(0.0)
 {
-	init_params();
-}
-void Circle::init_params()
-{
-	mParams[0] = mCenter.x_raw();
-	mParams[1] = mCenter.y_raw();
-	mParams[2] = mRadius.val_ptr();
+
 }

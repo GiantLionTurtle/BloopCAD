@@ -57,22 +57,16 @@ Point::Point(glm::vec2 pt):
 	mX(pt.x),
 	mY(pt.y)
 {
-	init_params();
+
 }
 Point::Point():
 	mX(0.0),
 	mY(0.0)
 {
-	init_params();
+
 }
 
 glm::vec2 Point::pos_impl()
 {
-	return glm::vec2(mX.eval(), mY.eval());
-}
-
-void Point::init_params()
-{
-	mParams[0] = x_raw();
-	mParams[1] = y_raw();
+	return glm::vec2(mX.val(), mY.val());
 }

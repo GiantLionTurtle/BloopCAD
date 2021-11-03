@@ -35,7 +35,7 @@ class EquationsCluster {
 private:
 	std::vector<Constraint_abstr*> mConstrs;
 	std::vector<equ_ptr> mEqus; // All equations to solve
-	std::set<var_ptr> mVars;	// Variables that must be tweaked, they are an ordered set to ensure that there is no dupplicate 
+	std::set<Param*> mVars;	// Variables that must be tweaked, they are an ordered set to ensure that there is no dupplicate 
 
 	int const mMaxIt_LM = 1000, mMaxIt_DL = 1000; // Max iterations of Levenberg-Marquardt and DogLeg algorithms (in practice it rarely exeeds 5)
 	int mId;
@@ -49,7 +49,7 @@ public:
 		@param vars The variables in the cluster
 		@param solver_algo The numerical solver to use [None = 0, DogLeg = 1, LevenbergMarquardt = 2]
 	*/
-	EquationsCluster(std::vector<equ_ptr> equs, std::set<var_ptr> vars, int solver_algo);
+	EquationsCluster(std::vector<equ_ptr> equs, std::set<Param*> vars, int solver_algo);
 	~EquationsCluster();	
 
 	void add_constr(Constraint_abstr* constr);
@@ -64,7 +64,7 @@ public:
 
 		@param var Variable to add
 	*/
-	void add_var(var_ptr var);
+	void add_var(Param* var);
 
 	/*
 		@function satisfied 
@@ -278,7 +278,7 @@ private:
 		@param var Variable to evaluate
 		@return If the variable is active
 	*/
-	static bool active(var_ptr var);
+	static bool active(Param* var);
 };
 
 #endif
