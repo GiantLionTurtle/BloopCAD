@@ -33,14 +33,14 @@ void ConstraintsSystem::add_constraint(Constraint_abstr* constr)
 	mBrokenDown = false;
 	mConstraints.push_back(constr);
 }
-void ConstraintsSystem::add_variable(var_ptr v)
+void ConstraintsSystem::add_variable(Param* v)
 {
 	if(!v)
 		return;
 	// if(std::find(mVariables.begin(), mVariables.end(), v) != mVariables.end())
 		mVariables.push_back(v);
 }
-void ConstraintsSystem::add_variables(std::vector<var_ptr> vars)
+void ConstraintsSystem::add_variables(std::vector<Param*> vars)
 {
 	for(auto v : vars)
 		add_variable(v);
@@ -103,7 +103,7 @@ int ConstraintsSystem::solve()
 void ConstraintsSystem::breakDown_problem()
 {
 	std::vector<Constraint_abstr*> liveConstraints;
-	std::vector<var_ptr> liveVars;
+	std::vector<Param*> liveVars;
 
 	// Enforce the exist/dont exist proprety of constraints
 	for(auto constr : mConstraints) {
@@ -167,43 +167,43 @@ void ConstraintsSystem::clear_clusters()
 void ConstraintsSystem::clear_substitutions()
 {
 	for(auto var : mVariables) {
-		var->clear_substitution();
+		var->delete_substitution();
 	}
 }
 
-void ConstraintsSystem::varState(std::vector<VarState>& state)
+void ConstraintsSystem::varState(std::vector<ParamState>& state)
 {
 	state.resize(mVariables.size());
 	for(int i = 0; i < mVariables.size(); ++i) {
 		if(mVariables[i]->exists())
-			state[i] = VarState(mVariables[i], mVariables[i]->eval());
+			state[i] = ParamState(mVariables[i], mVariables[i]->val());
 	}
 }
-void ConstraintsSystem::varState(std::map<var_ptr, float>& state)
+void ConstraintsSystem::varState(std::map<Param*, float>& state)
 {
 	state.clear();
 	for(int i = 0; i < mVariables.size(); ++i) {
 		if(mVariables[i]->exists())
-			state[mVariables[i]] = mVariables[i]->eval();
+			state[mVariables[i]] = mVariables[i]->val();
 	}
 }
-void ConstraintsSystem::varDelta(std::map<var_ptr, float> first, std::vector<VarDualState>& delta)
+void ConstraintsSystem::varDelta(std::map<Param*, float> first, std::vector<ParamDualState>& delta)
 {
 	delta.clear();
 	for(int i = 0; i < mVariables.size(); ++i) {
 		if(mVariables[i]->exists() && first.find(mVariables[i]) != first.end()) {
-			float diff = mVariables[i]->eval() - first[mVariables[i]];
+			float diff = mVariables[i]->val() - first[mVariables[i]];
 			if(diff != 0.0f)
-				delta.push_back(VarDualState(mVariables[i], mVariables[i]->eval(), first[mVariables[i]]));
+				delta.push_back(ParamDualState(mVariables[i], mVariables[i]->val(), first[mVariables[i]]));
 		}
 	}
 }
 
-ConstraintsSystem::ConstraintGraph::ConstraintGraph(std::vector<Constraint_abstr*>& constrs, std::vector<var_ptr>& vars):
+ConstraintsSystem::ConstraintGraph::ConstraintGraph(std::vector<Constraint_abstr*>& constrs, std::vector<Param*>& vars):
 	mNum_Constrs(0),
 	mNum_Vars(0)
 {
-	std::map<var_ptr, int> v2i; // A variable to index map, the index is the index in the vertex vector 
+	std::map<Param*, int> v2i; // A variable to index map, the index is the index in the vertex vector 
 	
 	// Variables AND constraints are in the same graph
 	// Constraints are at the begining of the vector and variables after
@@ -221,8 +221,8 @@ ConstraintsSystem::ConstraintGraph::ConstraintGraph(std::vector<Constraint_abstr
 
 	// Create the mappings from variables to constraints and constraint to variables
 	for(int c = 0; c < constrs.size(); ++c) {
-		for(int v = 0; v < constrs[c]->n_vars(); ++v) {
-			var_ptr var = constrs[c]->var(v); // A variable that is part of the constraint
+		for(int v = 0; v < constrs[c]->n_params(); ++v) {
+			Param* var = constrs[c]->param(v); // A variable that is part of the constraint
 			int vind = v2i[var]; // Retrieve the graph index of the variable
 			mVertToVert[c].push_back(vind); // The constraint is linked to the variable
 			mVertToVert[vind].push_back(c); // The variable is also linked to the constraint

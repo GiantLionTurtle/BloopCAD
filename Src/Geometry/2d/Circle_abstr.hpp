@@ -29,22 +29,16 @@ public:
 class Circle : public Circle_abstr<Circle> {
 private:
 	Geom2d::Point mCenter;
-	ExpVar mRadius;
-	double* mParams[3];
+	Param mRadius;
 public:
 	Circle(glm::vec2 c, float r);
 	Circle();
 
 	glm::vec2 center_pos_impl() { return mCenter.pos(); }
-	float radius_val_impl() { return mRadius.eval(); }
+	double radius_val_impl() { return mRadius.val(); }
 
 	Geom2d::Point* center() { return &mCenter; }
-	ExpVar* radius() { return &mRadius; }
-
-	int n_params() { return 3; }
-	double** params() { return &mParams[0]; }
-private:
-	void init_params();
+	Param* radius() { return &mRadius; }
 };
 
 #include "Circle_abstr.cpp"

@@ -4,7 +4,7 @@
 
 #include "Geom2d_abstr.hpp"
 
-#include <ConstraintsSolver/Expression.hpp>
+#include <Utils/Param.hpp>
 
 #include <glm/glm.hpp>
 #include <glm/gtx/norm.hpp>
@@ -31,24 +31,18 @@ static bool point_within(glm::vec2 pt, glm::vec2 top_left, glm::vec2 bottom_righ
 
 class Point : public Point_abstr<Point> {
 private:
-	ExpVar mX, mY;
-	double* mParams[2];
+	Param mX, mY;
 public:
 	Point(glm::vec2 pt);
 	Point();
 
 	glm::vec2 pos_impl();
 
-	ExpVar& x() { return mX; }
-	ExpVar& y() { return mY; }
+	Param* x() { return &mX; }
+	Param* y() { return &mY; }
 
-	double* x_raw() { return mX.val_ptr(); }
-	double* y_raw() { return mY.val_ptr(); }
-
-	int n_params() { return 2; }
-	double** params() { return &mParams[0]; }
-private:
-	void init_params();
+	double* x_raw() { return &mX.val_raw(); }
+	double* y_raw() { return &mY.val_raw(); }
 };
 
 #include "Point_abstr.cpp"

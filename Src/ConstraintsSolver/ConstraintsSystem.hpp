@@ -6,6 +6,8 @@
 #include "Constraint_abstr.hpp"
 #include "Expression.hpp"
 
+#include <Utils/Param.hpp>
+
 #include <map>
 #include <set>
 
@@ -16,7 +18,7 @@
 class ConstraintsSystem {
 protected:
 	std::vector<Constraint_abstr*> mConstraints; 	// All constraints that are handled by the system
-	std::vector<var_ptr> mVariables;				// All variables that are handled by the system
+	std::vector<Param*> mVariables;				// All variables that are handled by the system
 	std::vector<EquationsCluster*> mClusters;		// Clusters of equations and variables used internally to solve the system
 
 	bool mBrokenDown;	// If there are new variables/constraints that must be taken into account
@@ -110,21 +112,21 @@ public:
 		@param ind The index of the requested variable
 		@return The requested variable if the index is not out of bounds
 	*/
-	var_ptr var(size_t ind) { return mVariables[ind]; }
+	Param* var(size_t ind) { return mVariables[ind]; }
 	/*
 		@function varState pulls the variables states in a linear fashion
 
 		@param state The vector into which to drop the variables states
 		@note A variable state is a tupple struct of a var_ptr and a value [float]
 	*/
-	void varState(std::vector<VarState>& state);
+	void varState(std::vector<ParamState>& state);
 	/*
 		@function varState pulls the variables states in a mapped fashion
 
 		@param state The map into which to drop the variables states
 		@note A variable state is a tupple struct of a var_ptr and a value [float]
 	*/
-	void varState(std::map<var_ptr, float>& state);
+	void varState(std::map<Param*, float>& state);
 	/*
 		@function varDelta pulls combines variables states and variables current state in a linear fashion
 
@@ -132,7 +134,7 @@ public:
 		@param delta The vector into which to drop the variables states
 		@note A variable dual state is a tupple struct of a var_ptr and two values [float] (presumably before and after an event)
 	*/
-	void varDelta(std::map<var_ptr, float> first, std::vector<VarDualState>& delta);
+	void varDelta(std::map<Param*, float> first, std::vector<ParamDualState>& delta);
 
 	/*
 		@function updatedSystem sets the brokenDown flag to false, it is used to notify the system of 
@@ -175,7 +177,7 @@ private:
 		/*
 			@constructor ConstraintGraph creates the association map
 		*/
-		ConstraintGraph(std::vector<Constraint_abstr*>& constrs, std::vector<var_ptr>& vars);
+		ConstraintGraph(std::vector<Constraint_abstr*>& constrs, std::vector<Param*>& vars);
 
 		/*
 			@function connected_clusters sorts vertices (constraints and variables into clusters and give a cluster ID

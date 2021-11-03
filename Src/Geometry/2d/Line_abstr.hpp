@@ -57,11 +57,6 @@ public:
 
 	Geom2d::Point* ptA() { return mA; }
 	Geom2d::Point* ptB() { return mB; }
-
-	int n_params() { return 4; }
-	double** params() { return &mParams[0]; }
-private:
-	void init_params();
 };
 
 #include "Line_abstr.cpp"

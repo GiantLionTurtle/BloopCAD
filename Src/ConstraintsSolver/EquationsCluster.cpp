@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-EquationsCluster::EquationsCluster(std::vector<equ_ptr> equs, std::set<var_ptr> vars, int solver_algo):
+EquationsCluster::EquationsCluster(std::vector<equ_ptr> equs, std::set<Param*> vars, int solver_algo):
 	mEqus(equs),
 	mVars(vars),
 	mId(0),
@@ -38,7 +38,7 @@ void EquationsCluster::add_equ(equ_ptr equ)
 
 	mEqus.push_back(equ);
 }
-void EquationsCluster::add_var(var_ptr var)
+void EquationsCluster::add_var(Param* var)
 {
 	DEBUG_ASSERT(var, "Attempted to add null equation");
 
@@ -109,7 +109,7 @@ int EquationsCluster::solve_numeric(int algo, int tag, bool activeVars_only)
 void EquationsCluster::substitutions()
 {
 	for(auto equ : mEqus) {
-		var_ptr a, b;
+		Param* a, b;
 		if(equ->can_substitute()) {
 			equ->get_substitution_vars(a, b); // Get both variables of the equations (there can only be two for the moment)
 
@@ -178,7 +178,7 @@ int EquationsCluster::n_activeVars()
 	}
 	return n_vars_active;
 }
-bool EquationsCluster::active(var_ptr var)
+bool EquationsCluster::active(Param* var)
 {
 	return !var->dragged() && !var->is_substituted();
 }

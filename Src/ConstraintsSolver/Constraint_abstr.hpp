@@ -11,6 +11,8 @@
 
 #include <array>
 
+#include <Utils/Param.hpp>
+
 #define CONSTR_SATISFACTION_TRESHOLD 1e-12
 
 /*
@@ -75,13 +77,13 @@ public:
 
 		@param ind Is the index of the wanted variable
 	*/
-	virtual ExpVar* var(size_t ind) = 0;
+	virtual Param* param(int ind) = 0;
 	/*
 		@function n_equs
 
 		@return The number of equations contained (most times it will be 0)		
 	*/
-	virtual size_t n_vars() = 0;
+	virtual int n_params() = 0;
 
 #ifndef RELEASE_MODE
 	/*
@@ -106,15 +108,22 @@ public:
 
 	void substitute();
 
-	int n_params();
+	Param* param(int ind);
+	inline int n_params() { return 2; }
 
 };
-class SkLine_horizontality : public Constraint_abstr {
+class Line_horizontality : public Constraint_abstr {
 private:
-	SkLineCurve* mLine; // Handles to the geometry involved, not used yet but might get handy
+	Geom2d::Line* mLine; // Handles to the geometry involved, not used yet but might get handy
 public:
-	SkLine_horizontality(Geom3d::Plane_abstr* baseplane_, SkLineCurve* l);
-	std::string name() { return "SkLine_horizontality"; }
+	Line_horizontality(Geom2d::Line* l);
+
+	double error();
+
+	void substitute();
+
+	Param* param(int ind);
+	inline int n_params() { return 2; }
 };
 
 // /* ---------- Verticality ---------- */

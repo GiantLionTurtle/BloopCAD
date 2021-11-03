@@ -1,121 +1,281 @@
-
 #ifndef CONSTRGRAPH_HPP_
 #define CONSTRGRAPH_HPP_
 
+#include "Constraint_abstr.hpp"
+#include <Utils/Param.hpp>
+
 #include <vector>
-#include <set>
 #include <stack>
-#include <map>
 #include <algorithm>
+#include <map>
+#include <iostream>
+#include <set>
+
 
 struct Graph {
 	struct Vertex {
-		int index { -1 };
-		int lowLink { -1 };
-		bool onStack { false };
+		int data;
+		int metacluster { 0 }, cluster { -1 };
 	};
+	std::vector<Vertex> C, V;
 
-	struct Edge {
-		Vertex& a;
-		Vertex& b;
-	};
+	std::map<int, std::vector<int>> C_to_V, V_to_C, C_to_V_inv, V_to_C_inv;
 
-	int mIndex { 0 };
-	std::vector<Vertex> mV;
-	std::vector<Edge> mE;
-	std::stack<Vertex&> mS;
-
-	std::vector<std::set<Vertex>> tarjan()
+	Graph() = default;
+	Graph(int nC, int nV)
 	{
-		mIndex = 0;
-		while(!mS.empty()) {
-			mS.pop();
-		}
-		std::vector<std::set<Vertex>> output;
+		C.reserve(nC);
+		V.reserve(nV);
+	}
 
-		for(auto v : mV) {
-			if(v.index == -1) {
-				strongConnect(v, output);
+	void add_constr(int c)
+	{
+		C.push_back({c, 0, -1});
+	}
+	void add_var(int v)
+	{
+		V.push_back({v, 0, -1});
+	}
+	void add_c_to_v_ind(int c, int v)
+	{
+		C_to_V[c].push_back(v);
+		C_to_V_inv[v].push_back(c);
+	}
+	void add_v_to_c_ind(int v, int c)
+	{
+		V_to_C[v].push_back(c);
+		V_to_C_inv[c].push_back(v);
+	}
+	int constr(int c)
+	{
+		if(c < 0 || c >= C.size())
+			return -1;
+		return C[c].data;
+	}
+	int var(int v)
+	{
+		if(v < 0 || v >= V.size())
+			return -1;
+		return V[v].data;
+	}
+
+
+	void tarjan(int metacluster, int& cluster)
+	{
+		int index = 0;
+
+		int cumul_size = C.size() + V.size();
+		std::vector<int> indices(cumul_size), lowLinks(cumul_size);
+		std::vector<bool> onStack(cumul_size);
+
+		std::stack<int> S;
+
+		std::fill(indices.begin(), indices.end(), -1);
+		std::fill(lowLinks.begin(), lowLinks.end(), -1);
+		std::fill(onStack.begin(), onStack.end(), false);
+
+		for(int v = 0; v < cumul_size; ++v) {
+			if(indices[v] == -1) {
+				strongConnect(v, index, metacluster, cluster, indices, lowLinks, onStack, S);
 			}
 		}
 	}
 
-	void strongConnect(Vertex& v, std::vector<std::set<Vertex>>& out)
+	void strongConnect(	int i, int& index, int metacluster, int& cluster, std::vector<int>& indices, std::vector<int>& lowLinks, 
+						std::vector<bool>& onStack, std::stack<int>& S)
 	{
+		// If the target node is not in the right metacluster
+		if(((i < C.size() && C[i].metacluster != metacluster) || (i >= C.size() && V[i-C.size()].metacluster != metacluster))) {
+			return;
+		}
 		// Set the depth index for v to the smallest unused index
-		v.index = mIndex;
-		v.lowLink = mIndex;
-		mIndex++;
-		mS.push(v);
-		v.onStack = true;
+		indices[i] = index;
+		lowLinks[i] = index;
+		index++;
+		S.push(i);
+		onStack[i] = true;
 
-		// Consider successors of v
-		for(auto e : mE) {
-			if(e.a.index != v.index) // Edge doesnt go from v to something else
-				continue;
-			Vertex& w = e.b;
+		std::vector<int> connect_list = i >= C.size() ? V_to_C[i-C.size()] : C_to_V[i];
+		for(int w : connect_list) {
+			int w_lin = -1;
 			
-			if(w.index == -1) {
-			   // Successor w has not yet been visited; recurse on it
-				strongConnect(w, out);
-				v.lowLink = std::min(v.lowLink, w.lowLink);
-			} else if(w.onStack) {
+			if(i >= C.size()) { // i is a variable, w is a constraint
+				w_lin = w;
+				if(C[w].metacluster != metacluster)
+					continue;
+			} else {
+				w_lin = w + C.size();
+				if(V[w].metacluster != metacluster)
+					continue;
+			}
+
+			if(indices[w_lin] == -1) {
+				// Successor w has not yet been visited; recurse on it
+				strongConnect(w_lin, index, metacluster, cluster, indices, lowLinks, onStack, S);
+				lowLinks[i] = std::min(lowLinks[i], lowLinks[w_lin]);
+			} else if (onStack[w_lin]) {
 				// Successor w is in stack S and hence in the current SCC
 				// If w is not on stack, then (v, w) is an edge pointing to an SCC already found and must be ignored
 				// Note: The next line may look odd - but is correct.
 				// It says w.index not w.lowlink; that is deliberate and from the original paper
-				v.lowLink = std::min(v.lowLink, w.index);
+				lowLinks[i] = std::min(lowLinks[i], indices[w_lin]);
 			}
 		}
 
 		// If v is a root node, pop the stack and generate an SCC
-		if(v.lowLink == v.index) {
-			out.push_back(std::set<Vertex>());
+		if(lowLinks[i] == indices[i]) {
 			int w_ind = -1;
-			while(w_ind != v.index) {
-				Vertex& w = mS.top();
-				mS.pop();
-				w.onStack = false;
-				out.back().insert(w);
+			while(w_ind != indices[i]) {
+				int w = S.top();
+				S.pop();
+				onStack[w] = false;
+				if(w >= C.size()) {
+					V[w-C.size()].cluster = cluster;
+				} else {
+					C[w].cluster = cluster;
+				}
+				w_ind = indices[w];
 			}
+			cluster++;
 		}
 	}
-};
 
-struct BipartiteGraph {
-	// https://www.geeksforgeeks.org/maximum-bipartite-matching/?ref=lbp
-	int nLeft, nRight;
-	std::map<int, std::vector<int>> linksList;
-	std::vector<bool> seenList;
-	std::vector<int> matchList;
- 
 	// Return if a matching is possible for vertex u
-	bool matching(int u)
+	bool matching(int c, std::vector<bool>& seenList, std::vector<int>& matchList)
 	{		
-		std::vector<int> links = linksList.at(u);
+		std::vector<int> links = C_to_V.at(c);
 
-		for(int v = 0; v < links.size(); ++v) {
-			if(seenList[u])
+		for(int v : links) {
+			if(seenList[v])
 				continue;
-			seenList[u] = true;
+			seenList[v] = true;
 
-			if(matchList[u] == -1 || 
-			matching(matchList[u])) {
-				matchList[v] = u;
+			if(matchList[v] == -1 || 
+			matching(matchList[v], seenList, matchList)) {
+				matchList[v] = c;
 				return true;
 			}
 		}
 		return false;
 	}
-	void maxMatching()
+	std::vector<int> maxMatching()
 	{
+		std::vector<bool> seenList(V.size());
+		std::vector<int> matchList(V.size());
 		std::fill(matchList.begin(), matchList.end(), -1);
 
-		for(int u = 0; u < nLeft; ++u) {
+		for(int c = 0; c < C.size(); ++c) {
 			std::fill(seenList.begin(), seenList.end(), false);
-			matching(u);
+			matching(c, seenList, matchList);
+		}
+		return matchList;
+	}
+
+	void make_bidirectionnal(std::vector<int> matching)
+	{
+		for(int i = 0; i < matching.size(); ++i) {
+			if(matching[i] == -1)
+				continue;
+			add_v_to_c_ind(i, matching[i]);
 		}
 	}
+
+	void mark_ancestors_v(int v, int metacluster)
+	{
+		if(C_to_V_inv.find(v) == C_to_V_inv.end())
+			return;
+		for(int i = 0; i < C_to_V_inv[v].size(); ++i) {
+			int ancestor_ind = C_to_V_inv[v][i];
+			if(C[ancestor_ind].metacluster != metacluster) {
+				C[ancestor_ind].metacluster = metacluster;
+				mark_ancestors_c(ancestor_ind, metacluster);
+			}
+		}
+	}
+	void mark_ancestors_c(int c, int metacluster)
+	{
+		if(V_to_C_inv.find(c) == V_to_C_inv.end())
+			return;
+		for(int i = 0; i < V_to_C_inv[c].size(); ++i) {
+			int ancestor_ind = V_to_C_inv[c][i];
+			if(V[ancestor_ind].metacluster != metacluster) {
+				V[ancestor_ind].metacluster = metacluster;
+				mark_ancestors_v(ancestor_ind, metacluster);
+			}
+		}
+	}
+	void mark_descendant_c(int c, int metacluster)
+	{
+		if(C_to_V.find(c) == C_to_V.end())
+			return;
+		for(int i = 0; i < C_to_V[c].size(); ++i) {
+			int descendant_ind = C_to_V[c][i];
+			if(V[descendant_ind].metacluster != metacluster) {
+				V[descendant_ind].metacluster = metacluster;
+				mark_descendant_v(descendant_ind, metacluster);
+			}
+		}
+	}
+	void mark_descendant_v(int v, int metacluster)
+	{
+		if(V_to_C.find(v) == V_to_C.end())
+			return;
+		for(int i = 0; i < V_to_C[v].size(); ++i) {
+			int descendant_ind = V_to_C[v][i];
+			if(C[descendant_ind].metacluster != metacluster) {
+				C[descendant_ind].metacluster = metacluster;
+				mark_descendant_c(descendant_ind, metacluster);
+			}
+		}		
+	}
+
+	int mark_Gs(std::vector<int> matching)
+	{
+		std::vector<bool> saturated_C(C.size(), false);
+		for(int i = 0; i < matching.size(); ++i) {
+			if(matching[i] == -1) {
+				V[i].metacluster = 2;	
+				mark_ancestors_v(i, 2);
+				continue;
+			}
+			saturated_C[matching[i]] = true;
+		}
+		for(int i = 0; i < saturated_C.size(); ++i) {
+			if(saturated_C[i])
+				continue;
+			C[i].metacluster = 1;
+			mark_descendant_c(i, 1);
+		}
+
+		int clusterID = 0;
+		tarjan(0, clusterID);
+		tarjan(1, clusterID);
+		tarjan(2, clusterID);
+		return clusterID;
+	}
 };
+
+Graph bipartiteGraph_from_constraints(std::vector<Constraint_abstr*>& constrs, std::vector<Param*>& params)
+{
+	Graph G(constrs.size(), params.size());
+	std::map<Param*, int> param_to_ind;
+	for(int i = 0; i < params.size(); ++i) {
+		param_to_ind[params[i]] = i;
+		G.add_var(i);
+	}
+
+	int n_params = 0;
+	for(int i = 0; i < constrs.size(); ++i) {
+		G.add_constr(i);
+		for(int j = 0; j < constrs[i]->n_params(); ++i) {
+			Param* p = constrs[i]->param(i);
+			if(param_to_ind.find(p) != param_to_ind.end()) { // This var has never been seen
+				continue;
+			}
+			G.add_c_to_v_ind(i, param_to_ind[p]);
+		}
+	}
+	return G;
+}
 
 #endif
