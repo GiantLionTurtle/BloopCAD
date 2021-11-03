@@ -161,8 +161,8 @@ void Test_EventsManager::do_test()
 		// 	break;
 		case 4:
 			mBloopWindow->sketchWorkspace()->perpendicularity()->init();
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[0]->curve());
-			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[1]->curve());
+			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[0]);
+			mBloopWindow->sketchWorkspace()->perpendicularity()->add_geom(mLines[1]);
 			mBloopWindow->sketchWorkspace()->perpendicularity()->add_constraint();
 			mBloopWindow->sketchWorkspace()->perpendicularity()->finish();
 			mTestStep = 4;

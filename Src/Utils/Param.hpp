@@ -32,10 +32,17 @@ public:
 	inline bool substituted() { return mSubstitution != nullptr; }
 
 	inline void set_substitution(Param* subst) { mSubstitution = subst; }
-	inline void apply_substitution() { set(mSubstitution->val()); }
+	inline void apply_substitution() { if(substituted()) set(mSubstitution->val()); }
 	inline void delete_substitution() { mSubstitution = nullptr; }
 
 	inline int weight() { return substituted() + 2 * frozen(); }
+};
+
+
+class ParamIterator {
+public:
+	virtual int n_params() { return 0; }
+	virtual Param* param(int ind) { return nullptr; }
 };
 
 /*

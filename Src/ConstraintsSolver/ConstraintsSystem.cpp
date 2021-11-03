@@ -40,10 +40,11 @@ void ConstraintsSystem::add_variable(Param* v)
 	// if(std::find(mVariables.begin(), mVariables.end(), v) != mVariables.end())
 		mVariables.push_back(v);
 }
-void ConstraintsSystem::add_variables(std::vector<Param*> vars)
+void ConstraintsSystem::add_variables(ParamIterator* it)
 {
-	for(auto v : vars)
-		add_variable(v);
+	for(int i = 0; i < it->n_params(); ++i) {
+		add_variable(it->param(i));
+	}
 }
 
 void ConstraintsSystem::toggle_constraint(Constraint_abstr* constr, bool enable)
@@ -79,9 +80,9 @@ int ConstraintsSystem::solve()
 	// Check if there was an active drag point and remove it (should it only do it if solve fails?)
 	bool had_dragged = false;
 	for(auto var : mVariables) {
-		if(!had_dragged && var->dragged())
+		if(!had_dragged && var->frozen() == 1)
 			had_dragged = true;
-		var->set_dragged(false);
+		var->set_frozen(0);
 	}
 
 	// Try resolving the cluster without the drag point if it failed with one

@@ -7,7 +7,6 @@
 #include <Workspaces/TestFramework_eventsManager.hpp>
 
 #include <Drawables/Sk/SkLine.hpp>
-#include <Drawables/Sk/SkConstraint.hpp>
 #include <ConstraintsSolver/SolverState.hpp>
 
 #include <Bloop.hpp>
@@ -60,46 +59,46 @@
 
 int main()
 {
-	glm::vec2 A(0.0f, -1.0f), B(0.5f, -1.0f), C(1.0f, 0.0f);
-	Geom3d::Plane_abstr* pl = new Geom3d::Plane_abstr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	// glm::vec2 A(0.0f, -1.0f), B(0.5f, -1.0f), C(1.0f, 0.0f);
+	// Geom3d::Plane_abstr* pl = new Geom3d::Plane_abstr(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-	SkLine* l1 = new SkLine(A, B, pl);
-	SkLine* l2 = new SkLine(B, C, pl);
+	// SkLine* l1 = new SkLine(A, B, pl);
+	// SkLine* l2 = new SkLine(B, C, pl);
 
-	ConstraintsSystem system;
+	// ConstraintsSystem system;
 	
-	system.add_variables(l1->all_vars());
-	system.add_variables(l2->all_vars());
-	system.add_constraint(new SkPointPoint_coincidence(pl, l1->ptB(), l2->ptA()));
-	system.add_constraint(new SkLineLinePerpendicularity(pl, l1->curve(), l2->curve()));
-	system.solve();
-	std::mt19937_64 rng;
-    // initialize the random number generator with time-dependent seed
-    uint64_t timeSeed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-    rng.seed(42); // Keep this seed intact please
-    // initialize a uniform distribution between -2 and 2
-    std::uniform_real_distribution<double> unif(-2, 2);
-    // ready to generate random numbers
+	// system.add_variables(l1->all_vars());
+	// system.add_variables(l2->all_vars());
+	// system.add_constraint(new SkPointPoint_coincidence(pl, l1->ptB(), l2->ptA()));
+	// system.add_constraint(new SkLineLinePerpendicularity(pl, l1->curve(), l2->curve()));
+	// system.solve();
+	// std::mt19937_64 rng;
+    // // initialize the random number generator with time-dependent seed
+    // uint64_t timeSeed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    // rng.seed(42); // Keep this seed intact please
+    // // initialize a uniform distribution between -2 and 2
+    // std::uniform_real_distribution<double> unif(-2, 2);
+    // // ready to generate random numbers
 
-    const int nSimulations = 1000000;
-	int fails = 0;
-	auto start = std::chrono::steady_clock::now();
-    for (int i = 0; i < nSimulations; i++)
-    {
-		l1->ptA()->set(glm::vec2(unif(rng), unif(rng)));
-		if(system.solve() != SolverState::solveOutput::SUCCESS)
-			fails++;
+    // const int nSimulations = 1000000;
+	// int fails = 0;
+	// auto start = std::chrono::steady_clock::now();
+    // for (int i = 0; i < nSimulations; i++)
+    // {
+	// 	l1->ptA()->set(glm::vec2(unif(rng), unif(rng)));
+	// 	if(system.solve() != SolverState::solveOutput::SUCCESS)
+	// 		fails++;
 
-		l1->ptB()->set(glm::vec2(unif(rng), unif(rng)));
-		if(system.solve() != SolverState::solveOutput::SUCCESS)
-			fails++;
+	// 	l1->ptB()->set(glm::vec2(unif(rng), unif(rng)));
+	// 	if(system.solve() != SolverState::solveOutput::SUCCESS)
+	// 		fails++;
 
-		l2->ptB()->set(glm::vec2(unif(rng), unif(rng)));
-		if(system.solve() != SolverState::solveOutput::SUCCESS)
-			fails++;
-    }
-	auto end = std::chrono::steady_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-	std::cout<<nSimulations * 3<<" simulations took "<<duration<<" ms which averages to "<<duration / ((double)nSimulations*3.0)<<" ms per solve\n";
-	std::cout<<"It failed "<<fails<<" times which gives a fail percentage of "<<(double)fails / ((double)nSimulations*3.0) * 100.0<<" %\n";
+	// 	l2->ptB()->set(glm::vec2(unif(rng), unif(rng)));
+	// 	if(system.solve() != SolverState::solveOutput::SUCCESS)
+	// 		fails++;
+    // }
+	// auto end = std::chrono::steady_clock::now();
+	// auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+	// std::cout<<nSimulations * 3<<" simulations took "<<duration<<" ms which averages to "<<duration / ((double)nSimulations*3.0)<<" ms per solve\n";
+	// std::cout<<"It failed "<<fails<<" times which gives a fail percentage of "<<(double)fails / ((double)nSimulations*3.0) * 100.0<<" %\n";
 }

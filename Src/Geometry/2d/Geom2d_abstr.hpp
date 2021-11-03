@@ -8,18 +8,14 @@
 
 namespace Geom2d {
 
-class Point;
-class Line;
-class Circle;
-
 enum GeomTypes { POINT, LINE, CIRCLE };
 
-template<typename Geom>
+template<class Geom>
 class Geom2d_abstr {
 private:
 	GeomTypes mType;
 public:
-	Geom2d_abstr(GeomTypes type);
+	Geom2d_abstr(GeomTypes type) : mType(type) {}
 	GeomTypes type() { return mType; }
 
 	glm::vec2 at(float t);

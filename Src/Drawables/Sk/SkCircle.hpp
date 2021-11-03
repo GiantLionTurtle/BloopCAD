@@ -16,14 +16,14 @@ public:
 	SkPoint* center() { return handle(0); }
 	glm::vec2 center_pos() { return handle(0)->pos(); }
 	void set_center(glm::vec2 pos) { center()->set(pos); }
-    ExpVar* radius() { return mGeom->radius(); }
-	float radius_val() { return radius()->eval(); }
+    Param* radius() { return mGeom->radius(); }
+	float radius_val() { return radius()->val(); }
 	void set_radius(float val) { radius()->drag(val); update(); }
 
 	virtual void release()
 	{
 		center()->release();
-		radius()->set_dragged(false);
+		radius()->set_frozen(false);
 	}
 
 	int selection_rank() { return 5; }

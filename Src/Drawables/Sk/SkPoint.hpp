@@ -20,8 +20,8 @@ public:
 	SkPoint(Geom2d::Point* pt, Geom3d::Plane_abstr* pl, bool fixed_);
 	virtual ~SkPoint();
 
-	ExpVar* x() { return &mGeom->x(); }
-	ExpVar* y() { return &mGeom->y(); }
+	Param* x() { return mGeom->x(); }
+	Param* y() { return mGeom->y(); }
 
 	glm::vec2 pos() { return mGeom->pos(); }
 	SelPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);

@@ -14,11 +14,12 @@
 template<typename HI, typename MC> // Handles Indexer & Mathematical Curve
 class SkCurve : virtual public Collection_abstr<HI>, virtual public SkPrimitiveGeometry<MC>  {
 protected:
-	static float kSelDist2;
+	float kSelDist2;
 public:
 	SkCurve(Geom3d::Plane_abstr* pl, bool fixed_):
 		SkPrimitiveGeometry<MC>(pl, fixed_)
 	{
+		kSelDist2 = 25;
 		this->mType |= Drawable_types::CURVE;
 	}
 
@@ -53,8 +54,8 @@ public:
 	{
 		for(int i = 0; i < n_handles(); ++i) {
 			auto h_tmp = handle(i);
-			h_tmp->x()->set_dragged(false);
-			h_tmp->y()->set_dragged(false);
+			h_tmp->x()->set_frozen(false);
+			h_tmp->y()->set_frozen(false);
 		}
 	}
 	virtual std::vector<var_ptr> all_vars()

@@ -51,13 +51,13 @@ public:
 
 		@param v The variable to add to the system
 	*/	
-	void add_variable(var_ptr v);
+	void add_variable(Param* v);
 	/*
 		@function add_variables adds multiple variables to be managed and sets the brokenUp flag to false
 
 		@param v The variables to add to the system
 	*/		
-	void add_variables(std::vector<var_ptr> v);
+	void add_variables(ParamIterator* it);
 	/*
 		@function toggle_constraint sets a constraint's existence to a specific state and set the brokenUp flag to false
 
@@ -117,14 +117,14 @@ public:
 		@function varState pulls the variables states in a linear fashion
 
 		@param state The vector into which to drop the variables states
-		@note A variable state is a tupple struct of a var_ptr and a value [float]
+		@note A variable state is a tupple struct of a Param* and a value [float]
 	*/
 	void varState(std::vector<ParamState>& state);
 	/*
 		@function varState pulls the variables states in a mapped fashion
 
 		@param state The map into which to drop the variables states
-		@note A variable state is a tupple struct of a var_ptr and a value [float]
+		@note A variable state is a tupple struct of a Param* and a value [float]
 	*/
 	void varState(std::map<Param*, float>& state);
 	/*
@@ -132,7 +132,7 @@ public:
 
 		@param first The initial states of the variables in a mapped fashion
 		@param delta The vector into which to drop the variables states
-		@note A variable dual state is a tupple struct of a var_ptr and two values [float] (presumably before and after an event)
+		@note A variable dual state is a tupple struct of a Param* and two values [float] (presumably before and after an event)
 	*/
 	void varDelta(std::map<Param*, float> first, std::vector<ParamDualState>& delta);
 

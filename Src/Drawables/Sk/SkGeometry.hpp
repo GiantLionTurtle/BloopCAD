@@ -10,7 +10,7 @@
 
 #include <vector>
 
-class SkGeometry : public SkIntDrawable {
+class SkGeometry : public SkIntDrawable, public ParamIterator {
 protected:
 	std::vector<SkSprite*> mAnnots;
 	bool mFixed;

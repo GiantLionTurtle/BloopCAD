@@ -2,7 +2,7 @@
 #ifndef EQUATIONSCLUSTER_HPP_
 #define EQUATIONSCLUSTER_HPP_
 
-#include "Expression_forward.hpp"
+#include <Utils/Param.hpp>
 
 #include <vector>
 #include <set>
@@ -18,7 +18,6 @@ class Constraint_abstr;
 class EquationsCluster {
 private:
 	std::vector<Constraint_abstr*> mConstrs;
-	std::vector<equ_ptr> mEqus; // All equations to solve
 	std::set<Param*> mVars;	// Variables that must be tweaked, they are an ordered set to ensure that there is no dupplicate 
 
 	int const mMaxIt_LM = 1000, mMaxIt_DL = 1000; // Max iterations of Levenberg-Marquardt and DogLeg algorithms (in practice it rarely exeeds 5)
@@ -33,16 +32,15 @@ public:
 		@param vars The variables in the cluster
 		@param solver_algo The numerical solver to use [None = 0, DogLeg = 1, LevenbergMarquardt = 2]
 	*/
-	EquationsCluster(std::vector<equ_ptr> equs, std::set<Param*> vars, int solver_algo);
+	EquationsCluster(std::vector<Constraint_abstr*> constrs, std::set<Param*> vars, int solver_algo);
 	~EquationsCluster();	
 
-	void add_constr(Constraint_abstr* constr);
 	/*
-		@function add_equ adds an equation to the cluster
+		@function add_constr adds a constraint to the cluster
 
-		@param equ Equation to add
+		@param contr Constraint to add
 	*/
-	void add_equ(equ_ptr equ);
+	void add_constr(Constraint_abstr* constr);
 	/*
 		@function add_var adds a variable to the variable set
 

@@ -82,12 +82,12 @@ void Constraint_tool::add_geom(SkDrawable* geom)
 }
 void Constraint_tool::add_constraint()
 {
-	SkConstraint* constr = nullptr;
+	Constraint_abstr* constr = nullptr;
 	SkDrawable* priority_ent = nullptr;
 	
 	create_constraint(constr, priority_ent);
 
-	std::map<var_ptr, float> snp = mEnv->target()->snapshot();
+	std::map<Param*, float> snp = mEnv->target()->snapshot();
 	mEnv->target()->add_constraint(constr, priority_ent);
 	mEnv->state()->doc->push_action(std::shared_ptr<Parallel_action>(new Parallel_action({
 		std::make_shared<ApplySnapshot_action>(mEnv->target(), mEnv->target()->deltaSnapshot(snp), true),

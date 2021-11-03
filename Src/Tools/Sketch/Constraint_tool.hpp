@@ -25,7 +25,7 @@ public:
 	virtual void add_geom(SkDrawable* geom);
 	void add_constraint();
 	void clear_geometries();
-	virtual void create_constraint(SkConstraint*& constr, SkDrawable*& priority_ent) = 0;
+	virtual void create_constraint(Constraint_abstr*& constr, SkDrawable*& priority_ent) = 0;
 
 	// TODO: Inline these thingies?
 	static bool is_point(SkDrawable* ent);

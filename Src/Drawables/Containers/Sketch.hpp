@@ -8,9 +8,9 @@
 #include <ConstraintsSolver/ConstraintsSystem.hpp>
 #include <Drawables/Sk/SkDrawable.hpp>
 #include <Drawables/Sk/SkGeometry.hpp>
-#include <Drawables/Sk/SkConstraint.hpp>
 #include <Drawables/Sk/SkConstrAnnot.hpp>
 #include <Actions/Common/Serial_action.hpp>
+#include <Drawables/Sk/SkConstrAnnot.hpp>
 
 #include <memory>
 #include <vector>
@@ -18,7 +18,7 @@
 class SkIndexer : public Indexer_abstr {
 private:
 	std::vector<SkGeometry*> mGeometries;
-	std::vector<SkConstraint*> mAnnotations;
+	std::vector<SkConstrAnnot*> mAnnotations;
 	int mInitInd_geom, mInitInd_constr;
 public:
 	SkIndexer(Drawable* driven):
@@ -40,24 +40,24 @@ public:
 		if(ind < n_geom()) {
 			return mGeometries.at(ind);
 		} else {
-			return mConstraints.at(ind - n_geom());
+			return mAnnotations.at(ind - n_geom());
 		}
 	}
 
-	bool has_newElems() { return mInitInd_geom < mGeometries.size() || mInitInd_constr < mConstraints.size(); }
+	bool has_newElems() { return mInitInd_geom < mGeometries.size() || mInitInd_constr < mAnnotations.size(); }
 	void init_newElems()
 	{
 		init_newElems_stat(mGeometries, mInitInd_geom, driven());
-		init_newElems_stat(mConstraints, mInitInd_constr, driven());
+		init_newElems_stat(mAnnotations, mInitInd_constr, driven());
 	}
 
 	size_t n_geom() { return mGeometries.size(); }
 	SkGeometry* geom(size_t ind) { return mGeometries.at(ind); }
 	void add_geom(SkGeometry* g) { mGeometries.push_back(g); mDriven->update(); }
 
-	size_t n_constr() { return mConstraints.size(); }
-	SkConstraint* constr(size_t ind) { return mConstraints.at(ind); }
-	void add_constr(SkConstraint* c) { mConstraints.push_back(c); mDriven->update(); }
+	size_t n_constr() { return mAnnotations.size(); }
+	SkConstrAnnot* constr(size_t ind) { return mAnnotations.at(ind); }
+	void add_constr(SkConstrAnnot* c) { mAnnotations.push_back(c); mDriven->update(); }
 };
 
 
@@ -122,15 +122,15 @@ public:
 	// Folder* origin() const { return mOrigin; }
 
 	// DraggedPoint<2>* dragConstr() { return mConstrSystem.dragConstr(); }
-	bool add_constraint(SkConstraint* constr, SkDrawable* immovable_hint = nullptr);
-	bool toggle_constraint(SkConstraint* constr, bool enable);
+	bool add_constraint(Constraint_abstr* constr, SkDrawable* immovable_hint = nullptr);
+	bool toggle_constraint(Constraint_abstr* constr, bool enable);
 	bool update_constraints(bool safeUpdate, bool update_on_solveFail);
 
-	std::map<var_ptr, float> snapshot();
-	std::vector<VarDualState> deltaSnapshot(std::map<var_ptr, float> first);
-	void apply_snapshot(std::map<var_ptr, float> shot);
-	void apply_snapshot(std::vector<VarState> shot);
-	void apply_deltaSnapshot(std::vector<VarDualState> deltaShot, bool first);
+	std::map<Param*, float> snapshot();
+	std::vector<ParamDualState> deltaSnapshot(std::map<Param*, float> first);
+	void apply_snapshot(std::map<Param*, float> shot);
+	void apply_snapshot(std::vector<ParamState> shot);
+	void apply_deltaSnapshot(std::vector<ParamDualState> deltaShot, bool first);
 	void backup_system();
 	void revert_system_to_backup();
 

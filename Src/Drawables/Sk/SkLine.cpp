@@ -5,6 +5,11 @@
 #include <Graphics_utils/GLCall.hpp>
 #include <Utils/Debug_util.hpp>
 
+bool SkLine::kFisrstInst = true;
+glm::vec3 SkLine::kColor = glm::vec3(0.0); 
+glm::vec3 SkLine::kColorHovered = glm::vec3(0.0);
+glm::vec3 SkLine::kColorSelected = glm::vec3(0.0);
+
 SkLine::SkLine(glm::vec2 ptA_, glm::vec2 ptB_, Geom3d::Plane_abstr* pl, bool fixed_)
 	: SkCurve<LinearFixed_indexer<SkPoint*, 2>, Geom2d::Line>(pl, fixed_)
 {
@@ -105,27 +110,27 @@ void SkLine::graphicUpdate_impl()
 
 void SkLine::internalUpdate_impl()
 {
-	ExpVar* Ax = ptA()->x();
-	ExpVar* Ay = ptA()->y();
-	ExpVar* Bx = ptB()->x();
-	ExpVar* By = ptB()->y();
+	// Param* Ax = ptA()->x();
+	// Param* Ay = ptA()->y();
+	// Param* Bx = ptB()->x();
+	// Param* By = ptB()->y();
 	
-	verbose(VERBOSE_INNERSTEPS, "Lineupdate drag: "<<Ax->dragged()<<",  "<<
-	Ay->dragged()<<" : "<<Bx->dragged()<<",  "<<By->dragged())
+	// verbose(VERBOSE_INNERSTEPS, "Lineupdate drag: "<<Ax->dragged()<<",  "<<
+	// Ay->dragged()<<" : "<<Bx->dragged()<<",  "<<By->dragged())
 
-	if(Ax->dragged() && !Bx->dragged()) {
-		Bx->set_dragged(true);
-		verbose(VERBOSE_INNERSTEPS, "Set ptbx");
-	} else if(!Ax->dragged() && Bx->dragged()) {
-		Ax->set_dragged(true);
-		verbose(VERBOSE_INNERSTEPS, "Set ptax");
-	}
+	// if(Ax->dragged() && !Bx->dragged()) {
+	// 	Bx->set_dragged(true);
+	// 	verbose(VERBOSE_INNERSTEPS, "Set ptbx");
+	// } else if(!Ax->dragged() && Bx->dragged()) {
+	// 	Ax->set_dragged(true);
+	// 	verbose(VERBOSE_INNERSTEPS, "Set ptax");
+	// }
 
-	if(Ay->dragged() && !By->dragged()) {
-		By->set_dragged(true);
-		verbose(VERBOSE_INNERSTEPS, "Set ptby");
-	} else if(!Ay->dragged() && By->dragged()) {
-		Ay->set_dragged(true);
-		verbose(VERBOSE_INNERSTEPS, "Set ptay");
-	}
+	// if(Ay->dragged() && !By->dragged()) {
+	// 	By->set_dragged(true);
+	// 	verbose(VERBOSE_INNERSTEPS, "Set ptby");
+	// } else if(!Ay->dragged() && By->dragged()) {
+	// 	Ay->set_dragged(true);
+	// 	verbose(VERBOSE_INNERSTEPS, "Set ptay");
+	// }
 }
