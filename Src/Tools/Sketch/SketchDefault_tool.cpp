@@ -109,8 +109,8 @@ bool SketchDefault_tool::manage_button_release(GdkEventButton* event)
 	if(mMode == modes::NORMAL && !mDragCandidate.ent) {
 		mEnv->target()->unselect_all(); // Clear selection if the user clicks an empty space
 	} else if(mMode == modes::DRAGGING) {
-		mEnv->state()->doc->push_action(std::make_shared<ApplySnapshot_action>(mEnv->target(), mEnv->target()->deltaSnapshot(mStartSnapshot), true));
-		mEnv->target()->dragConstr()->clear();
+		// mEnv->state()->doc->push_action(std::make_shared<ApplySnapshot_action>(mEnv->target(), mEnv->target()->deltaSnapshot(mStartSnapshot), true));
+		// mEnv->target()->dragConstr()->clear();
 	} else if(mMode == modes::AREASELECT) {
 		mEnv->state()->doc->clear_toolPreview(); // Clear the selection rectangle
 	}
@@ -131,7 +131,7 @@ bool SketchDefault_tool::manage_mouse_move(GdkEventMotion* event)
 		if(sk->n_selected() == 1 && mDragCandidate.ent) {
 			mDragCandidate.ent->move_selected(plPos - mLastPlPos);
 			mDragCandidate.ent->release();
-			sk->dragConstr()->dragTo(plPos);
+			// sk->dragConstr()->dragTo(plPos);
 			sk->update_constraints(false, true);
 		} else {
 			sk->move_selected(plPos - mLastPlPos);
@@ -139,9 +139,9 @@ bool SketchDefault_tool::manage_mouse_move(GdkEventMotion* event)
 	} else if(mMode == modes::AREASELECT) {
 		areaSelect(plPos, cursorPos.x);
 	} else if(mMode == modes::NORMAL && event->state & GDK_BUTTON1_MASK && mDragCandidate.ent) {
-		mStartSnapshot = sk->snapshot();
+		// mStartSnapshot = sk->snapshot();
 		if(sk->n_selected() == 1) {
-			sk->dragConstr()->set_equality(mDragCandidate.pt, mDragCandidate.ent->all_vars());
+			// sk->dragConstr()->set_equality(mDragCandidate.pt, mDragCandidate.ent->all_vars());
 		}
 		mMode = modes::DRAGGING;
 	}

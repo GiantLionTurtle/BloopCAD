@@ -20,7 +20,6 @@
 #include <Drawables/Sk/SkPoint.hpp>
 #include <Drawables/Sk/SkLine.hpp>
 #include <Drawables/Sk/SkCircle.hpp>
-#include <Drawables/Sk/SkConstraint.hpp>
 #include <Actions/Sketch/ToggleConstraint_action.hpp>
 #include <Workspaces/Document.hpp>
 
@@ -47,7 +46,7 @@ int Coincidence_tool::could_add_geom(SkDrawable* geom)
 	}
 }
 
-void Coincidence_tool::create_constraint(SkConstraint*& constr, SkDrawable*& priority_ent)
+void Coincidence_tool::create_constraint(Constraint_abstr*& constr, SkDrawable*& priority_ent)
 {
 	DEBUG_ASSERT(mEntA && mEntB, "Attempting to add incomplete constraint.");
 
@@ -62,14 +61,14 @@ void Coincidence_tool::create_constraint(SkConstraint*& constr, SkDrawable*& pri
 	}
 
 	if(is_line(curve)) {
-		constr = new SkPointLine_coincidence(mEnv->target()->basePlane(), pt, static_cast<SkLineCurve*>(curve));
+		// constr = new SkPointLine_coincidence(mEnv->target()->basePlane(), pt, static_cast<SkLineCurve*>(curve));
 		priority_ent = curve;
 	} else if(is_curve(curve)) {
-		constr = new SkPointCircle_coincidence(mEnv->target()->basePlane(), pt, static_cast<SkCircleCurve*>(curve));
+		// constr = new SkPointCircle_coincidence(mEnv->target()->basePlane(), pt, static_cast<SkCircleCurve*>(curve));
 		// constr = pointCircle_distance::make(pt, static_cast<sketchCircle>(curve));
 		priority_ent = curve;
 	} else {
-		constr = new SkPointPoint_coincidence(mEnv->target()->basePlane(), pt, static_cast<SkPoint*>(curve));
+		// constr = new SkPointPoint_coincidence(mEnv->target()->basePlane(), pt, static_cast<SkPoint*>(curve));
 		priority_ent = mEntB;
 	}
 }

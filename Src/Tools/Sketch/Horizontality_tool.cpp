@@ -44,7 +44,7 @@ int Horizontality_tool::could_add_geom(SkDrawable* geom)
 	return add_states::COULDNT_ADD;
 }
 
-void Horizontality_tool::create_constraint(SkConstraint*& constr, SkDrawable*& priority_ent)
+void Horizontality_tool::create_constraint(Constraint_abstr*& constr, SkDrawable*& priority_ent)
 {
 	if(!mEntA && !mEntB) {
 		LOG_WARNING("Attempting to add incomplete constraint.");
@@ -52,9 +52,9 @@ void Horizontality_tool::create_constraint(SkConstraint*& constr, SkDrawable*& p
 	}
 
 	if(!mEntB) {
-		constr = new SkLine_horizontality(mEnv->target()->basePlane(), static_cast<SkLineCurve*>(mEntA));
+		// constr = new SkLine_horizontality(mEnv->target()->basePlane(), static_cast<SkLineCurve*>(mEntA));
 	} else {
-		constr = new SkPointPoint_horizontality(mEnv->target()->basePlane(), static_cast<SkPoint*>(mEntA), static_cast<SkPoint*>(mEntB));
+		// constr = new SkPointPoint_horizontality(mEnv->target()->basePlane(), static_cast<SkPoint*>(mEntA), static_cast<SkPoint*>(mEntB));
 		priority_ent = mEntA;
 	}
 }

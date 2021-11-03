@@ -81,8 +81,8 @@ void SkPoint::set_annotOffset(SkSprite* sp, int ind)
 
 void SkPoint::set(glm::vec2 pt)
 {
-	mGeom->x().drag(pt.x);
-	mGeom->y().drag(pt.y);
+	mGeom->x()->drag(pt.x);
+	mGeom->y()->drag(pt.y);
 	notify_parent(SkNotifiers::SET);
 }
 
@@ -92,8 +92,8 @@ std::vector<var_ptr> SkPoint::all_vars()
 }
 void SkPoint::release()
 {
-	mGeom->x().set_dragged(false);
-	mGeom->y().set_dragged(false);
+	mGeom->x()->set_frozen(false);
+	mGeom->y()->set_frozen(false);
 }
 
 void SkPoint::init_impl()

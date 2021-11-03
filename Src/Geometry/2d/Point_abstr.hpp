@@ -27,32 +27,59 @@
 
 namespace Geom2d {
 
-template <typename Impl>
+bool point_within(glm::vec2 pt, glm::vec2 top_left, glm::vec2 bottom_right);
+
+template <class Impl>
 class Point_abstr : public Geom2d_abstr<Point_abstr<Impl>> {
 public:
-	Point_abstr();
+	Point_abstr()
+		: Geom2d_abstr<Point_abstr<Impl>>(POINT)
+	{
 
-	glm::vec2 pos();
+	}
+	glm::vec2 pos()
+	{
+		return static_cast<Impl*>(this)->pos_impl();
+	}
 
 	glm::vec2 at_geom(float t) { return pos(); }
-	bool within_geom(glm::vec2 top_left, glm::vec2 bottom_right, bool contained);
-
+	bool within_geom(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
+	{
+		return point_within(pos(), top_left, bottom_right);
+	}
 	float closest_to_point_interp_geom(glm::vec2 const& pt) { return 0.0f; }
 	glm::vec2 closest_to_point_geom(glm::vec2 const& pt) { return pos(); }
-	float dist_to_point_geom(glm::vec2 const& pt);
-	float dist_to_point_2(glm::vec2 const& pt);
+	float dist_to_point_geom(glm::vec2 const& pt)
+	{
+		return glm::distance(pos(), pt);
+	}
+	float dist_to_point_2(glm::vec2 const& pt)
+	{
+		return glm::distance2(pos(), pt);
+	}
 };
-
-static bool point_within(glm::vec2 pt, glm::vec2 top_left, glm::vec2 bottom_right);
 
 class Point : public Point_abstr<Point> {
 private:
 	Param mX, mY;
 public:
-	Point(glm::vec2 pt);
-	Point();
+	Point(glm::vec2 pt)
+		: mX(pt.x)
+		, mY(pt.y)
+	{
 
-	glm::vec2 pos_impl();
+	}
+	Point()
+		: mX(0.0)
+		, mY(0.0)
+	{
+
+	}
+
+	glm::vec2 pos_impl()
+	{
+		return glm::vec2(mX.val(), mY.val());
+	}
 
 	Param* x() { return &mX; }
 	Param* y() { return &mY; }
@@ -61,7 +88,7 @@ public:
 	double* y_raw() { return &mY.val_raw(); }
 };
 
-#include "Point_abstr.cpp"
+// #include "Point_abstr.cpp"
 
 } // !Geom2d
 

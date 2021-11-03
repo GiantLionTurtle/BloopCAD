@@ -33,6 +33,11 @@ struct circleData {
 	glm::vec3 v, w;
 };
 
+bool SkCircle::kFisrstInst = true;
+glm::vec3 SkCircle::kColor = glm::vec3(0.0); 
+glm::vec3 SkCircle::kColorHovered = glm::vec3(0.0);
+glm::vec3 SkCircle::kColorSelected = glm::vec3(0.0);
+
 SkCircle::SkCircle(glm::vec2 center_, float radius_, Geom3d::Plane_abstr* pl, bool fixed_)
 	: SkCurve<LinearFixed_indexer<SkPoint*, 1>, Geom2d::Circle>(pl, fixed_)
 {

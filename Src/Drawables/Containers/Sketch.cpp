@@ -153,7 +153,7 @@ void Sketch::add_geometry(SkGeometry* geom)
 	}
 	set_need_redraw();
 	if(!geom->fixed())
-		mConstrSystem.add_variables(geom->all_vars());
+		mConstrSystem.add_variables(geom);
 	mDrawList.add_geom(geom);	
 }
 
@@ -165,11 +165,11 @@ bool Sketch::can_delete(SkDrawable* ent)
 	return false;
 }
 
-bool Sketch::add_constraint(SkConstraint* constr, SkDrawable* immovable_hint) 
+bool Sketch::add_constraint(Constraint_abstr* constr, SkDrawable* immovable_hint) 
 {
 	if(!constr)
 		return false;
-	mDrawList.add_constr(constr);
+	// mDrawList.add_constr(constr);
 	mConstrSystem.add_constraint(constr);
 	// constr->set_parent(this);
 	// mHandle->update_name(mName + "(" + std::to_string(mConstrSystem.n_constraints()) + ",  " + std::to_string(mConstrSystem.n_variables()) + ")");
@@ -190,7 +190,7 @@ bool Sketch::add_constraint(SkConstraint* constr, SkDrawable* immovable_hint)
 	return false;
 }
 
-bool Sketch::toggle_constraint(SkConstraint* constr, bool enable)
+bool Sketch::toggle_constraint(Constraint_abstr* constr, bool enable)
 {
 	if(!constr)
 		return false;
@@ -220,33 +220,33 @@ bool Sketch::update_constraints(bool safeUpdate, bool update_on_solveFail)
 	return solve_out == SolverState::SUCCESS;
 }
 
-std::map<var_ptr, float> Sketch::snapshot()
+std::map<Param*, float> Sketch::snapshot()
 {
-	std::map<var_ptr, float> shot;
-	mConstrSystem.varState(shot);
+	std::map<Param*, float> shot;
+	// mConstrSystem.varState(shot);
 	return shot;
 }
-std::vector<VarDualState> Sketch::deltaSnapshot(std::map<var_ptr, float> first)
+std::vector<ParamDualState> Sketch::deltaSnapshot(std::map<Param*, float> first)
 {
-	std::vector<VarDualState> delta;
-	mConstrSystem.varDelta(first, delta);
+	std::vector<ParamDualState> delta;
+	// mConstrSystem.varDelta(first, delta);
 	return delta;
 }
-void Sketch::apply_snapshot(std::map<var_ptr, float> shot)
+void Sketch::apply_snapshot(std::map<Param*, float> shot)
 {
 	for(auto it = shot.begin(); it != shot.end(); ++it) {
 		it->first->set(it->second);
 	}
 	update(true);
 }
-void Sketch::apply_snapshot(std::vector<VarState> shot)
+void Sketch::apply_snapshot(std::vector<ParamState> shot)
 {
 	for(auto vst : shot) {
 		vst.var->set(vst.st);
 	}
 	update(true);
 }
-void Sketch::apply_deltaSnapshot(std::vector<VarDualState> deltaShot, bool first)
+void Sketch::apply_deltaSnapshot(std::vector<ParamDualState> deltaShot, bool first)
 {
 	for(auto vst : deltaShot) {
 		vst.var->set(first ? vst.st1 : vst.st2);
@@ -256,11 +256,11 @@ void Sketch::apply_deltaSnapshot(std::vector<VarDualState> deltaShot, bool first
 
 void Sketch::backup_system()
 {
-	mConstrSystem.varState(mConstrSystemBackup);
+	// mConstrSystem.varState(mConstrSystemBackup);
 }
 void Sketch::revert_system_to_backup()
 {
-	apply_snapshot(mConstrSystemBackup);
+	// apply_snapshot(mConstrSystemBackup);
 }
 
 void Sketch::invoke_workspace(Document* doc)

@@ -28,7 +28,7 @@ public:
 // protected:
 	int could_add_geom(SkDrawable* geom);
 
-	void create_constraint(SkConstraint*& constr, SkDrawable*& priority_ent);
+	void create_constraint(Constraint_abstr*& constr, SkDrawable*& priority_ent);
 };
 
 #endif

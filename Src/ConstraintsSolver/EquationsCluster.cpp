@@ -25,8 +25,8 @@
 
 #include <iostream>
 
-EquationsCluster::EquationsCluster(std::vector<equ_ptr> equs, std::set<Param*> vars, int solver_algo):
-	mEqus(equs),
+EquationsCluster::EquationsCluster(std::vector<Constraint_abstr*> constrs, std::set<Param*> vars, int solver_algo):
+	mConstrs(constrs),
 	mVars(vars),
 	mId(0),
 	mAlgorithm(solver_algo),
@@ -44,15 +44,6 @@ void EquationsCluster::add_constr(Constraint_abstr* constr)
 	DEBUG_ASSERT(constr, "Attempted to add a null constraint");
 
 	mConstrs.push_back(constr);
-	for(int i = 0; i < constr->n_equs(); ++i) {
-		mEqus.push_back(constr->equ(i));
-	}
-}
-void EquationsCluster::add_equ(equ_ptr equ)
-{
-	DEBUG_ASSERT(equ, "Attempted to add null equation");
-
-	mEqus.push_back(equ);
 }
 void EquationsCluster::add_var(Param* var)
 {
@@ -65,8 +56,8 @@ bool EquationsCluster::satisfied()
 {
 	// TOOD make this 1e-12 less arbitrary... it is maintened by 
 	// multiple sources throughout (sometimes squared to 1e-24)
-	for(auto equ : mEqus) {
-		if(std::abs(equ->eval()) > 1e-12) // TODO: remove magic number and make it more formal
+	for(auto constr : mConstrs) {
+		if(!constr->satisfied())
 			return false;
 	}
 	return true;
@@ -77,31 +68,30 @@ int EquationsCluster::solve()
 	mLastOutput = SolverState::FAILURE;
 
 	// clear_substitutions(); // Fresh start for substitutions
-	clear_tags(); 
-	substitutions(); // Create substitutions
+	// clear_tags(); 
+	// substitutions(); // Create substitutions
 
-	int single_tag = 1; // > 0, tag=0 are for equations not solved individually
-	for(auto equ : mEqus) {
-		auto var = equ->get_single_var(); // Fetch a substituted/lonely variable from equation
-		if(var) {
-			equ->set_tag(single_tag); // Now this is the only equation with this tag in the cluster, it will be solved alone
-			if(equ->eval() <= 1e-12)
-				continue;
-			mLastOutput = solve_numeric(mAlgorithm, single_tag, true); // Solve with tag
+	// int single_tag = 1; // > 0, tag=0 are for equations not solved individually
+	// for(auto equ : mEqus) {
+	// 	auto var = equ->get_single_var(); // Fetch a substituted/lonely variable from equation
+	// 	if(var) {
+	// 		equ->set_tag(single_tag); // Now this is the only equation with this tag in the cluster, it will be solved alone
+	// 		if(equ->eval() <= 1e-12)
+	// 			continue;
+	// 		mLastOutput = solve_numeric(mAlgorithm, single_tag, true); // Solve with tag
 
-			if(mLastOutput != SolverState::SUCCESS) { // If it fails here, no need to continue, it might be useful in the future to try to recover tho
-				verbose(VERBOSE_INNERSTEPS, "Failed early at single tag "<<single_tag);
-				mLastOutput = SolverState::FAILURE;
-				return mLastOutput;
-			}
-			single_tag++; // Create new unique tag
-		}
-	}
-
-	verbose(VERBOSE_INNERSTEPS, "Solved "<<single_tag-1<<(single_tag < 2 ? "equation" : "equations")<<" alone");
+	// 		if(mLastOutput != SolverState::SUCCESS) { // If it fails here, no need to continue, it might be useful in the future to try to recover tho
+	// 			verbose(VERBOSE_INNERSTEPS, "Failed early at single tag "<<single_tag);
+	// 			mLastOutput = SolverState::FAILURE;
+	// 			return mLastOutput;
+	// 		}
+	// 		single_tag++; // Create new unique tag
+	// 	}
+	// }
+	// verbose(VERBOSE_INNERSTEPS, "Solved "<<single_tag-1<<(single_tag < 2 ? "equation" : "equations")<<" alone");
 	
 	mLastOutput = solve_numeric(mAlgorithm, 0, true); // Solve the rest of the equations
-	apply_substitutions();  // This needs to be here to not lose solve result on substituted variables, 
+	// apply_substitutions();  // This needs to be here to not lose solve result on substituted variables, 
 							// TODO: check if previous apply_substitutions is also needed
 	return mLastOutput;
 }
@@ -124,22 +114,22 @@ int EquationsCluster::solve_numeric(int algo, int tag, bool activeVars_only)
 
 void EquationsCluster::substitutions()
 {
-	for(auto equ : mEqus) {
-		Param* a, b;
-		if(equ->can_substitute()) {
-			equ->get_substitution_vars(a, b); // Get both variables of the equations (there can only be two for the moment)
+	// for(auto equ : mEqus) {
+	// 	Param* a, b;
+	// 	if(equ->can_substitute()) {
+	// 		equ->get_substitution_vars(a, b); // Get both variables of the equations (there can only be two for the moment)
 
-			// if(mVars.find(a) == mVars.end() || mVars.find(b) == mVars.end()) // Check if variable is in cluster (TODO: really useful???)
-				// continue;
+	// 		// if(mVars.find(a) == mVars.end() || mVars.find(b) == mVars.end()) // Check if variable is in cluster (TODO: really useful???)
+	// 			// continue;
 
-			// Check which variable is gonna drive, TODO: check edge case where both variables are dragged??
-			if(a->weight() > b->weight()) {
-				b->substitute(a);
-			} else {
-				a->substitute(b);
-			}
-		}
-	}
+	// 		// Check which variable is gonna drive, TODO: check edge case where both variables are dragged??
+	// 		if(a->weight() > b->weight()) {
+	// 			b->substitute(a);
+	// 		} else {
+	// 			a->substitute(b);
+	// 		}
+	// 	}
+	// }
 }
 
 void EquationsCluster::compute_errors(Eigen::VectorXd& errors, int tag)
@@ -150,9 +140,8 @@ void EquationsCluster::compute_errors(Eigen::VectorXd& errors, int tag)
 void EquationsCluster::compute_errors_no_resize(Eigen::VectorXd& errors, int tag)
 {
 	int e = 0;
-	for(auto equ : mEqus) { // Range useful because e doesn't increment at each loop
-		if(equ->tag() == tag)
-			errors(e++) = equ->eval(); // Error is just evaluation of the equation (which is a substraction)
+	for(auto constr : mConstrs) { // Range useful because e doesn't increment at each loop
+		errors(e++) = constr->error(); // Error is just evaluation of the equation (which is a substraction)
 	}
 }
 void EquationsCluster::compute_jacobi(Eigen::MatrixXd& jacobi, int tag, bool activeVars_only)
@@ -163,12 +152,12 @@ void EquationsCluster::compute_jacobi(Eigen::MatrixXd& jacobi, int tag, bool act
 void EquationsCluster::compute_jacobi_no_resize(Eigen::MatrixXd& jacobi, int tag, bool activeVars_only)
 {
 	int e = 0, v = 0;
-	for(auto equ : mEqus) { // Range useful because e does not increment at each loop (sometimes skipped by 'continue')
-		if(equ->tag() != tag) 
-			continue;
+	for(auto constr : mConstrs) { // Range useful because e does not increment at each loop (sometimes skipped by 'continue')
+		// if(equ->tag() != tag) 
+		// 	continue;
 		for(auto var : mVars) { // Similar to e for range
 			if(!activeVars_only || active(var)) {
-				double val = equ->derivative_eval(var); // Gets partial derivative with respect to variable
+				double val = constr->derivative(var); // Gets partial derivative with respect to variable
 				jacobi(e, v++) = val;
 			}
 		}
@@ -178,12 +167,12 @@ void EquationsCluster::compute_jacobi_no_resize(Eigen::MatrixXd& jacobi, int tag
 }
 int EquationsCluster::n_taggedEqus(int tag)
 {
-	int n_equs_tagged = 0;
-	for(auto equ : mEqus) {
-		if(equ->tag() == tag)
-			n_equs_tagged++;
-	}
-	return n_equs_tagged;
+	// int n_equs_tagged = 0;
+	// for(auto equ : mEqus) {
+	// 	if(equ->tag() == tag)
+	// 		n_equs_tagged++;
+	// }
+	// return n_equs_tagged;
 }
 int EquationsCluster::n_activeVars()
 {
@@ -196,7 +185,7 @@ int EquationsCluster::n_activeVars()
 }
 bool EquationsCluster::active(Param* var)
 {
-	return !var->dragged() && !var->is_substituted();
+	return !var->frozen() && !var->substituted();
 }
 
 void EquationsCluster::incr_variables(Eigen::VectorXd const& delta, bool activeVars_only) 
@@ -204,7 +193,7 @@ void EquationsCluster::incr_variables(Eigen::VectorXd const& delta, bool activeV
 	int v = 0;
 	for(auto var : mVars) {
 		if(!activeVars_only || active(var))
-			var->set(var->eval() + delta(v++));
+			var->set(var->val() + delta(v++));
 	}
 }
 
@@ -222,14 +211,14 @@ void EquationsCluster::retrieve_variables(Eigen::VectorXd& container, bool activ
 	int v = 0;
 	for(auto var : mVars) {
 		if(!activeVars_only || active(var))
-			container(v++) = var->eval();
+			container(v++) = var->val();
 	}
 }
 
 void EquationsCluster::clear()
 {
 	// Reset everything
-	mEqus.clear();
+	mConstrs.clear();
 	mVars.clear();
 	mId = 0;
 	mLastOutput = SolverState::solveOutput::INVALID;
@@ -237,14 +226,14 @@ void EquationsCluster::clear()
 }
 void EquationsCluster::clear_tags()
 {
-	for(auto equ : mEqus) {
-		equ->set_tag(0);
-	}
+	// for(auto equ : mEqus) {
+	// 	equ->set_tag(0);
+	// }
 }
 void EquationsCluster::clear_substitutions()
 {
 	for(auto var : mVars) {
-		var->clear_substitution();
+		var->delete_substitution();
 	}
 }
 void EquationsCluster::apply_substitutions()

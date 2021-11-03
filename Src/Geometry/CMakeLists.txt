@@ -16,6 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 set(Geom_source_files
+	2d/Point_abstr.cpp
+
 	3d/Geom3d_abstr.cpp
 	3d/Plane_abstr.cpp
 	3d/Point_abstr.cpp

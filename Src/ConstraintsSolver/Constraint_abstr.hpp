@@ -78,11 +78,11 @@ public:
 		@param from_eq  [defaults to 0]		The index of the equation that must be derived
 		@note @param from_eq defaults to 0 because most constraint have 1 equation
 	*/
-	virtual double derivative(ExpVar* withRespectTo);
+	virtual double derivative(Param* withRespectTo);
 	/*
 		@function d Is a wrapper for @function derivative
 	*/
-	inline double d(ExpVar* withRespectTo) { return derivative(withRespectTo); }
+	inline double d(Param* withRespectTo) { return derivative(withRespectTo); }
 
 	virtual bool is_linePoints() { return false; } // If all constraints in a cluster act on lines and points only
 

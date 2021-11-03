@@ -42,14 +42,14 @@ int Perpendicularity_tool::could_add_geom(SkDrawable* geom)
 	}
 	return add_states::COULDNT_ADD;
 }
-void Perpendicularity_tool::create_constraint(SkConstraint*& constr, SkDrawable*& priority_ent)
+void Perpendicularity_tool::create_constraint(Constraint_abstr*& constr, SkDrawable*& priority_ent)
 {
 	if(!mEntA || !mEntB) {
 		LOG_WARNING("Attempting to add incomplete constraint.");
 		return;
 	}
 
-	constr = new SkLineLinePerpendicularity(mEnv->target()->basePlane(), 
-		static_cast<SkLineCurve*>(mEntA), static_cast<SkLineCurve*>(mEntB));
+	// constr = new SkLineLinePerpendicularity(mEnv->target()->basePlane(), 
+		// static_cast<SkLineCurve*>(mEntA), static_cast<SkLineCurve*>(mEntB));
 	priority_ent = nullptr;
 }
