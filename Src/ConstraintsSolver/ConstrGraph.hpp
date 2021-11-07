@@ -11,8 +11,7 @@
 #include <iostream>
 #include <set>
 
-
-struct Graph {
+struct ConstrGraph {
 	struct Vertex {
 		int data;
 		int metacluster { 0 }, cluster { -1 };
@@ -21,8 +20,8 @@ struct Graph {
 
 	std::map<int, std::vector<int>> C_to_V, V_to_C, C_to_V_inv, V_to_C_inv;
 
-	Graph() = default;
-	Graph(int nC, int nV)
+	ConstrGraph() = default;
+	ConstrGraph(int nC, int nV)
 	{
 		C.reserve(nC);
 		V.reserve(nV);
@@ -60,7 +59,7 @@ struct Graph {
 	}
 
 
-	void tarjan(int metacluster, int& cluster)
+	int tarjan(int metacluster, int& cluster)
 	{
 		int index = 0;
 
@@ -74,11 +73,13 @@ struct Graph {
 		std::fill(lowLinks.begin(), lowLinks.end(), -1);
 		std::fill(onStack.begin(), onStack.end(), false);
 
+		int n_clusters = cluster;
 		for(int v = 0; v < cumul_size; ++v) {
 			if(indices[v] == -1) {
 				strongConnect(v, index, metacluster, cluster, indices, lowLinks, onStack, S);
 			}
 		}
+		return cluster - n_clusters;
 	}
 
 	void strongConnect(	int i, int& index, int metacluster, int& cluster, std::vector<int>& indices, std::vector<int>& lowLinks, 
@@ -171,7 +172,7 @@ struct Graph {
 		return matchList;
 	}
 
-	void make_bidirectionnal(std::vector<int> matching)
+	void make_bidirectionnal(std::vector<int> const& matching)
 	{
 		for(int i = 0; i < matching.size(); ++i) {
 			if(matching[i] == -1)
@@ -229,7 +230,7 @@ struct Graph {
 		}		
 	}
 
-	int mark_Gs(std::vector<int> matching)
+	int mark_Gs(std::vector<int> const& matching, int& nG1, int& nG2, int& nG3)
 	{
 		std::vector<bool> saturated_C(C.size(), false);
 		for(int i = 0; i < matching.size(); ++i) {
@@ -248,34 +249,11 @@ struct Graph {
 		}
 
 		int clusterID = 0;
-		tarjan(0, clusterID);
-		tarjan(1, clusterID);
-		tarjan(2, clusterID);
+		nG1 = tarjan(0, clusterID);
+		nG2 = tarjan(1, clusterID);
+		nG3 = tarjan(2, clusterID);
 		return clusterID;
 	}
 };
-
-Graph bipartiteGraph_from_constraints(std::vector<Constraint_abstr*>& constrs, std::vector<Param*>& params)
-{
-	Graph G(constrs.size(), params.size());
-	std::map<Param*, int> param_to_ind;
-	for(int i = 0; i < params.size(); ++i) {
-		param_to_ind[params[i]] = i;
-		G.add_var(i);
-	}
-
-	int n_params = 0;
-	for(int i = 0; i < constrs.size(); ++i) {
-		G.add_constr(i);
-		for(int j = 0; j < constrs[i]->n_params(); ++i) {
-			Param* p = constrs[i]->param(i);
-			if(param_to_ind.find(p) != param_to_ind.end()) { // This var has never been seen
-				continue;
-			}
-			G.add_c_to_v_ind(i, param_to_ind[p]);
-		}
-	}
-	return G;
-}
 
 #endif
