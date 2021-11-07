@@ -70,7 +70,8 @@ public:
 
 	virtual bool is_linePoints() { return false; } // If all constraints in a cluster act on lines and points only
 
-	virtual void substitute() { }
+	virtual bool substitutionConstraint() { return false; }
+	virtual bool substitute() { return false; }
 
 	/*
 		@function var is a getter to access variables of the constraint
