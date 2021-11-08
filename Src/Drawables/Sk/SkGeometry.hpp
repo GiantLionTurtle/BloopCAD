@@ -111,6 +111,7 @@ public:
 		expunge(mVA);
 		expunge(mVB);
 	}
+	inline Geom* geom() { return mGeom; }
 
 	void select_within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
 	{

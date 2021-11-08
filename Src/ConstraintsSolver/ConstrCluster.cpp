@@ -11,10 +11,14 @@ int ConstrCluster::solve()
 
 	clear_drag();
 
-	if(out != SolverState::solveOutput::SUCCESS)
+	if(out != SolverState::solveOutput::SUCCESS) {
+		substitute();
 		out = solve_numeric();
+	}
 	
 	clear_substitutions();
+	
+	return out;
 }
 
 int ConstrCluster::solve_numeric()

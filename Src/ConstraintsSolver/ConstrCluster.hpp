@@ -5,7 +5,7 @@
 #include <Utils/Param.hpp>
 #include "Constraint_abstr.hpp"
 
-#include <Eigen>
+#include <Eigen/Eigen>
 
 #include <vector>
 

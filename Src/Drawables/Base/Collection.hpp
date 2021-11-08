@@ -59,8 +59,9 @@ public:
 
 	virtual bool active() const { return true; }
 
-	size_t n_children() { return mDrawList.size(); }
-	Drawable* child(size_t ind) { return mDrawList.at(ind); }
+	inline size_t n_children() { return mDrawList.size(); }
+	inline Drawable* child(size_t ind) { return mDrawList.at(ind); }
+	inline containerType& drawList() { return mDrawList; }
 
 	void select_within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
 	{

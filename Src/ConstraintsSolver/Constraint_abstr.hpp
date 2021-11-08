@@ -27,14 +27,15 @@ private:
 	std::string mName;
 #endif
 	bool mExists;
+	bool mCanSubstitute;
 	double mLastError;
 public:
 #ifndef RELEASE_MODE
-	Constraint_abstr(std::string name_);
+	Constraint_abstr(std::string name_, bool can_substitute = false);
 #else
-	Constraint_abstr();
+	Constraint_abstr(bool can_substitute = false);
 #endif
-	~Constraint_abstr();
+	virtual ~Constraint_abstr();
 
 	bool exists() const { return mExists; }
 	void set_exists(bool ex) { mExists = ex; } // TODO: Check if it should iterate over all variable to set their existence status
@@ -45,7 +46,7 @@ public:
 		@oaram ind The index of the equation from which to pull the error
 		@return The error at this index
 	*/
-	virtual double error();
+	virtual double error() = 0;
 
 	inline virtual double stepScale(double lastError) { return 1.0f; }
 
@@ -62,7 +63,7 @@ public:
 		@param from_eq  [defaults to 0]		The index of the equation that must be derived
 		@note @param from_eq defaults to 0 because most constraint have 1 equation
 	*/
-	virtual double derivative(Param* withRespectTo);
+	virtual double derivative(Param* withRespectTo) = 0;
 	/*
 		@function d Is a wrapper for @function derivative
 	*/
@@ -70,8 +71,8 @@ public:
 
 	virtual bool is_linePoints() { return false; } // If all constraints in a cluster act on lines and points only
 
-	virtual bool substitutionConstraint() { return false; }
-	virtual bool substitute() { return false; }
+	inline bool substitutionConstraint() { return mCanSubstitute; }
+	virtual void substitute() { }
 
 	/*
 		@function var is a getter to access variables of the constraint
@@ -107,6 +108,8 @@ public:
 
 	double error();
 
+	double derivative(Param* withRespectTo) { return 0.0; }
+
 	void substitute();
 
 	Param* param(int ind);
@@ -120,6 +123,8 @@ public:
 	Line_horizontality(Geom2d::Line* l);
 
 	double error();
+
+	double derivative(Param* withRespectTo) { return 0.0; }
 
 	void substitute();
 

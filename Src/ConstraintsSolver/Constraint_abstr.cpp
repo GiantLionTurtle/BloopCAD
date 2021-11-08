@@ -5,15 +5,17 @@
 
 
 #ifndef RELEASE_MODE
-Constraint_abstr::Constraint_abstr(std::string name_)
+Constraint_abstr::Constraint_abstr(std::string name_, bool can_substitute)
 	: mExists(true)
+	, mCanSubstitute(can_substitute)
 	, mName(name_)
 {
 
 }
 #else
-Constraint_abstr::Constraint_abstr()
+Constraint_abstr::Constraint_abstr(bool can_substitute)
 	: mExists(true)
+	, mCanSubstitute(can_substitute)
 {
 
 }
@@ -29,9 +31,9 @@ bool Constraint_abstr::satisfied()
 
 PointPoint_horizontality::PointPoint_horizontality(Geom2d::Point* p1, Geom2d::Point* p2)
 #ifndef RELEASE_MODE
-	: Constraint_abstr("PointPoint_horizontality")
+	: Constraint_abstr("PointPoint_horizontality", true)
 #else
-	: Constraint_abstr()
+	: Constraint_abstr(true)
 #endif
 	, mP1(p1)
 	, mP2(p2)
@@ -46,7 +48,7 @@ double PointPoint_horizontality::error()
 
 void PointPoint_horizontality::substitute()
 {
-	if(mP1->y()->weight() > mP2->y()->weight()) {
+	if(mP1->y()->weight() >= mP2->y()->weight()) {
 		mP2->y()->set_substitution(mP1->y());
 	} else if(mP1->y()->weight() < mP2->y()->weight()) {
 		mP1->y()->set_substitution(mP2->y());
@@ -65,9 +67,9 @@ Param* PointPoint_horizontality::param(int ind)
 
 Line_horizontality::Line_horizontality(Geom2d::Line* l)
 #ifndef RELEASE_MODE
-	: Constraint_abstr("PointPoint_horizontality")
+	: Constraint_abstr("PointPoint_horizontality", true)
 #else
-	: Constraint_abstr()
+	: Constraint_abstr(true)
 #endif
 	, mLine(l)
 {
