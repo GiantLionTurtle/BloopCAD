@@ -113,7 +113,7 @@ public:
 	Drawable();
 	virtual ~Drawable();
 
-	void init();
+	virtual void init();
 	virtual void draw(Camera* cam, int frame, draw_type type = draw_type::ALL);
 	/*
 		@function internalUpdate is used to update internal states
@@ -122,7 +122,7 @@ public:
 		@note This update does not propagate
 		@note This update must be quick and non-blocking
 	*/
-	void internalUpdate();
+	virtual void internalUpdate();
 	/*
 		@function graphicUpdate is used to update opengl states
 		eg. update a vertex buffer,
@@ -132,7 +132,7 @@ public:
 		@note This update propagates from top to bottom, all children are updated if
 		the parent updates
 	*/
-	void graphicUpdate(bool force = false);
+	virtual void graphicUpdate(bool force = false);
 	/*
 		@function update does an internal update then schedules a graphic update
 	*/

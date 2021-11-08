@@ -32,9 +32,10 @@
 #include <vector>
 
 template<typename HI, typename MC> // Handles Indexer & Mathematical Curve
-class SkCurve : virtual public Collection_abstr<HI>, virtual public SkPrimitiveGeometry<MC>  {
+class SkCurve : public SkPrimitiveGeometry<MC>  {
 protected:
 	float kSelDist2;
+	Collection_abstr<HI> mInnerCollection;
 public:
 	SkCurve(Geom3d::Plane_abstr* pl, bool fixed_):
 		SkPrimitiveGeometry<MC>(pl, fixed_)
@@ -43,8 +44,29 @@ public:
 		this->mType |= Drawable_types::CURVE;
 	}
 
-	int n_handles() { return this->mDrawList.size(); }
-	SkPoint*& handle(size_t ind) { return this->mDrawList.at(ind); }
+	void init()
+	{
+		mInnerCollection.init();
+		Drawable::init();
+	}
+	void draw_impl(Camera* cam, int frame, Drawable::draw_type type = Drawable::draw_type::ALL)
+	{
+		mInnerCollection.draw(cam, frame, type);
+		Drawable::draw(cam, frame, type);
+	}
+	void internalUpdate_impl()
+	{
+		mInnerCollection.internalUpdate();
+		Drawable::internalUpdate();
+	}
+	void graphicUpdate_impl()
+	{
+		mInnerCollection.graphicUpdate();
+		Drawable::graphicUpdate();
+	}
+
+	int n_handles() { return mInnerCollection.drawList().size(); }
+	SkPoint*& handle(size_t ind) { return mInnerCollection.drawList().at(ind); }
 
 	SelPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 	{
@@ -67,7 +89,7 @@ public:
 	}
 	void select_within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
 	{
-		Collection_abstr<HI>::select_within(top_left, bottom_right, contained);
+		mInnerCollection.select_within(top_left, bottom_right, contained);
 		SkPrimitiveGeometry<MC>::select_within(top_left, bottom_right, contained);
 	}
 	virtual void release()
