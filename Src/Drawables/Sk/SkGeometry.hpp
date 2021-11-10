@@ -114,9 +114,6 @@ public:
 protected:
 	void exists_impl(bool ex)
 	{
-		for(auto v : all_vars()) {
-			v->set_exists(ex);
-		}
 		for(auto a : mAnnots) {
 			a->set_exists(ex);
 		}

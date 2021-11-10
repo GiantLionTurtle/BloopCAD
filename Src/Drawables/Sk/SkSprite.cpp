@@ -37,25 +37,30 @@ SkSprite::~SkSprite()
 	}
 }
 
-SelPoint SkSprite::closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+bool SkSprite::closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 {
 	if(mType & filter) {
 		glm::vec3 worldPos = mBasePlane->to_worldPos(pos());
 		glm::vec2 screenPos = cam->world_to_screen(worldPos);
-		if(std::abs(screenPos.x - cursorPos.x) <= mDimensions.x && std::abs(screenPos.y - cursorPos.y) <= mDimensions.y)
-			return { this, glm::distance(cam->pos(), worldPos) };
+		if(std::abs(screenPos.x - cursorPos.x) <= mDimensions.x && std::abs(screenPos.y - cursorPos.y) <= mDimensions.y) {
+			selP.ent = this;
+			selP.dist_to_cam = glm::distance(cam->pos(), worldPos);
+			return true;
+		}
 	}
-	return SelPoint();
+	return false;
 }
-SkExpSelPoint SkSprite::closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+bool SkSprite::closest_2d_draggable(SkExpSelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 {
 	if(mType & filter) {
 		glm::vec3 worldPos = mBasePlane->to_worldPos(pos());
 		glm::vec2 screenPos = cam->world_to_screen(worldPos);
-		if(std::abs(screenPos.x - cursorPos.x) <= mDimensions.x && std::abs(screenPos.y - cursorPos.y) <= mDimensions.y)
-			return SkExpSelPoint(this);//, { mPos[0], mPos[1] });
+		if(std::abs(screenPos.x - cursorPos.x) <= mDimensions.x && std::abs(screenPos.y - cursorPos.y) <= mDimensions.y) {
+			selP.ent = this;
+			return true;
+		}
 	}
-	return SkExpSelPoint();
+	return false;
 }
 
 void SkSprite::move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move)

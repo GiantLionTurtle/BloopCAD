@@ -58,24 +58,37 @@ public:
 	SkPoint*& handle(size_t ind) { return mInnerCollection.drawList().at(ind); }
 
 
-	SelPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+	bool closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 	{
+		for(int i = 0; i < n_handles(); ++i) {
+			if(handle(i)->closest_2d(selP, planePos, cam, cursorPos, filter))
+				return true;
+		}
 		if(this->mType & filter) {
 			glm::vec3 worldpos = this->mBasePlane->to_worldPos(this->mGeom->closest_to_point(planePos));
-			if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
-				return { this, glm::distance(cam->pos(), worldpos) };
+			if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2) {
+				selP.ent = this;
+				selP.dist_to_cam = glm::distance(cam->pos(), worldpos);
+				return true;
+			}
 		}
-		return SelPoint();
+		return false;
 	}	
-	SkExpSelPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+	bool closest_2d_draggable(SkExpSelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 	{
+		for(int i = 0; i < n_handles(); ++i) {
+			if(handle(i)->closest_2d_draggable(selP, planePos, cam, cursorPos, filter))
+				return true;
+		}
 		if(this->type() & filter) {
 			float t = this->mGeom->closest_to_point_interp(planePos);
 			glm::vec3 worldpos = this->mBasePlane->to_worldPos(this->mGeom->at(t));
-			if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
-				return SkExpSelPoint(this);//, atExp(t));
+			if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2) {
+				selP.ent = this;
+				return true;
+			}
 		}
-		return SkExpSelPoint();
+		return false;
 	}
 	void select_within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
 	{
@@ -90,21 +103,26 @@ public:
 			h_tmp->y()->set_frozen(false);
 		}
 	}
-	virtual std::vector<var_ptr> all_vars()
+	void move_selected(glm::vec2 delta)
 	{
-		// std::vector<var_ptr> out(mHandles.size() * 2);
-		// for(int i = 0; i < mHandles.size(); ++i) {
-		// 	out[2*i] = pt(i)->x();
-		// 	out[2*i+1] = pt(i)->y();
-		// }
-		// return out;
-		return {};
+		if(Drawable::selected()) {
+			for(int i = 0; i < n_handles(); ++i) {
+				handle(i)->move(delta);
+			}
+		} else {
+			for(int i = 0; i < n_handles(); ++i) {
+				if(handle(i)->selected())
+					handle(i)->move(delta);
+			}
+		}
 	}
 protected:
-	void move_impl(glm::vec2 delta)
+	void select_impl(bool sel)
 	{
-		for(int i = 0; i < n_handles(); ++i) {
-			handle(i)->move(delta);
+		if(!sel) {
+			for(int i = 0; i < n_handles(); ++i) {
+				handle(i)->unselect();
+			}
 		}
 	}
 };

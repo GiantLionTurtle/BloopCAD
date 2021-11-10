@@ -67,8 +67,6 @@ int main()
 
 	// ConstraintsSystem system;
 	
-	// system.add_variables(l1->all_vars());
-	// system.add_variables(l2->all_vars());
 	// system.add_constraint(new SkPointPoint_coincidence(pl, l1->ptB(), l2->ptA()));
 	// system.add_constraint(new SkLineLinePerpendicularity(pl, l1->curve(), l2->curve()));
 	// system.solve();
