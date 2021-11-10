@@ -31,7 +31,11 @@ class Geom2d_abstr {
 private:
 	GeomTypes mType;
 public:
-	Geom2d_abstr(GeomTypes type) : mType(type) {}
+	Geom2d_abstr(GeomTypes type)
+		: mType(type) 
+	{
+
+	}
 	GeomTypes type() { return mType; }
 
 	glm::vec2 at(float t);

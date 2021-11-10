@@ -54,7 +54,7 @@ void Horizontality_tool::create_constraint(Constraint_abstr*& constr, SkDrawable
 	if(!mEntB) {
 		constr = new Line_horizontality(static_cast<SkLine*>(mEntA)->geom());
 	} else {
-		// constr = new SkPointPoint_horizontality(mEnv->target()->basePlane(), static_cast<SkPoint*>(mEntA), static_cast<SkPoint*>(mEntB));
+		constr = new PointPoint_horizontality(static_cast<SkPoint*>(mEntA)->geom(), static_cast<SkPoint*>(mEntB)->geom());
 		priority_ent = mEntA;
 	}
 }

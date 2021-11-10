@@ -22,7 +22,6 @@
 #include <Drawables/Base/Collection.hpp>
 
 #include "SkPoint.hpp"
-
 #include <Utils/Expunge.hpp>
 #include <Graphics_utils/Camera.hpp>
 #include <Graphics_utils/VertexBuffer.hpp>
@@ -37,8 +36,8 @@ protected:
 	float kSelDist2;
 	Collection_abstr<HI> mInnerCollection;
 public:
-	SkCurve(Geom3d::Plane_abstr* pl, bool fixed_):
-		SkPrimitiveGeometry<MC>(pl, fixed_)
+	SkCurve(Geom3d::Plane_abstr* pl, bool fixed_, MC* mathcurve):
+		SkPrimitiveGeometry<MC>(pl, fixed_, mathcurve)
 	{
 		kSelDist2 = 25;
 		this->mType |= Drawable_types::CURVE;
@@ -47,26 +46,38 @@ public:
 	void init()
 	{
 		mInnerCollection.init();
+		for(int i = 0; i < n_handles(); ++i) {
+			handle(i)->set_parent(this);
+		}
 		Drawable::init();
 	}
-	void draw_impl(Camera* cam, int frame, Drawable::draw_type type = Drawable::draw_type::ALL)
+	void draw(Camera* cam, int frame, Drawable::draw_type type = Drawable::draw_type::ALL)
 	{
-		mInnerCollection.draw(cam, frame, type);
 		Drawable::draw(cam, frame, type);
+		mInnerCollection.draw(cam, frame, type);
 	}
-	void internalUpdate_impl()
+	void internalUpdate()
 	{
 		mInnerCollection.internalUpdate();
 		Drawable::internalUpdate();
 	}
-	void graphicUpdate_impl()
+	void graphicUpdate(bool force = false)
 	{
-		mInnerCollection.graphicUpdate();
-		Drawable::graphicUpdate();
+		Drawable::graphicUpdate(force);
+		mInnerCollection.graphicUpdate(force);
+	}
+
+	void notify(Drawable* who, int msg, bool child)
+	{
+		if(msg == SkDrawable::SkNotifiers::SET) {
+			Drawable::set_need_graphicUpdate(true);
+			mInnerCollection.set_need_graphicUpdate(true);
+		}
 	}
 
 	int n_handles() { return mInnerCollection.drawList().size(); }
 	SkPoint*& handle(size_t ind) { return mInnerCollection.drawList().at(ind); }
+
 
 	SelPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 	{
