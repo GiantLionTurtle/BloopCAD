@@ -59,8 +59,8 @@ public:
 	int selection_rank() { return -1; }
 
 	// These should not be called
-	virtual SelPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return SelPoint(); }
-	virtual SkExpSelPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return SkExpSelPoint(); }
+	virtual bool closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return SelPoint(); }
+	virtual bool closest_2d_draggable(SkExpSelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return SkExpSelPoint(); }
 protected:	
 	void init_impl();
 	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL);

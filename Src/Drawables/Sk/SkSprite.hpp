@@ -53,9 +53,9 @@ public:
 	SkSprite(Geom3d::Plane_abstr* basePlane_, glm::vec2 dims, std::string const& texturePath);
 	~SkSprite();
 	
-	SelPoint closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
+	bool closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	// will have to find another way to drag then the geometry drag, I think it would be ridiculous to solve a system for this (the solve would be fast but still)
-	SkExpSelPoint closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
+	bool closest_2d_draggable(SkExpSelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	int selection_rank() { return 1; }
 	void move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move);
 

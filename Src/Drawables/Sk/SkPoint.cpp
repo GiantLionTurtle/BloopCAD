@@ -53,23 +53,28 @@ SkPoint::~SkPoint()
 	}
 }
 
-SelPoint SkPoint::closest_2d(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+bool SkPoint::closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 {
 	if(mType & filter) {
 		glm::vec3 worldpos = mBasePlane->to_worldPos(pos());
-		if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
-			return { this, glm::distance(cam->pos(), worldpos) };
+		if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2) {
+			selP.ent = this;
+			selP.dist_to_cam = glm::distance(cam->pos(), worldpos);
+			return true;
+		}
 	}
-	return SelPoint();
+	return false;
 }
-SkExpSelPoint SkPoint::closest_2d_draggable(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+bool SkPoint::closest_2d_draggable(SkExpSelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 {
 	if(mType & filter) {
 		glm::vec3 worldpos = mBasePlane->to_worldPos(pos());
-		if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2)
-			return SkExpSelPoint(this);//, ExpVec2<Expression_abstr>({x(), y()}));
+		if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2) {
+			selP.ent = this;
+			return true;
+		}
 	}
-	return SkExpSelPoint();
+	return false;
 }
 
 void SkPoint::set_annotOffset(SkSprite* sp, int ind)
@@ -87,10 +92,6 @@ void SkPoint::set(glm::vec2 pt)
 	notify_parent(SkNotifiers::SET);
 }
 
-std::vector<var_ptr> SkPoint::all_vars()
-{
-	return {};//{ x(), y() };
-}
 void SkPoint::release()
 {
 	mGeom->x()->set_frozen(false);

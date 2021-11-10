@@ -80,12 +80,8 @@ SelPoint Sketch::closest(glm::vec2 cursor, Camera* cam, int filter)
 	SelPoint selPt;
 	for(size_t i = 0; i < mDrawList.size(); ++i) {
 		auto ch = mDrawList.at(i);
-		if(ch->visible() && ch->selection_rank() > maxpriority) {
-			SelPoint tmpSelPt = ch->closest_2d(planepos, cam, cursor, filter);
-			if(tmpSelPt.ent) {
-				selPt = tmpSelPt;
-				maxpriority = tmpSelPt.ent->selection_rank();
-			}
+		if(ch->visible() && ch->selection_rank() > maxpriority && ch->closest_2d(selPt, planepos, cam, cursor, filter)) {
+			maxpriority = selPt.ent->selection_rank();
 		}
 	}
 	return selPt;
@@ -98,12 +94,8 @@ SkExpSelPoint Sketch::closest_draggable(glm::vec2 cursor, Camera* cam, int filte
 	SkExpSelPoint selPt;
 	for(size_t i = 0; i < mDrawList.size(); ++i) {
 		auto ch = mDrawList.at(i);
-		if(ch->visible() && ch->selection_rank() > maxpriority) {
-			SkExpSelPoint tmpSelPt = ch->closest_2d_draggable(planepos, cam, cursor, filter);
-			if(tmpSelPt) {
-				selPt = std::move(tmpSelPt);
-				maxpriority = selPt.ent->selection_rank();
-			}
+		if(ch->visible() && ch->selection_rank() > maxpriority && ch->closest_2d_draggable(selPt, planepos, cam, cursor, filter)) {
+			maxpriority = selPt.ent->selection_rank();
 		}
 	}
 	return selPt;
