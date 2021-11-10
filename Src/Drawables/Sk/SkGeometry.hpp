@@ -78,18 +78,9 @@ protected:
 	VertexBuffer* mVB;
 	Shader* mShader;
 public:
-	SkPrimitiveGeometry(Geom3d::Plane_abstr* pl, bool fixed_)
+	SkPrimitiveGeometry(Geom3d::Plane_abstr* pl, bool fixed_, Geom* gm)
 		: SkGeometry(pl, fixed_)
-		, mGeom(nullptr)
-		, mVA(nullptr)
-		, mVB(nullptr)
-		, mShader(nullptr)
-	{
-
-	}
-	SkPrimitiveGeometry(Geom* g, Geom3d::Plane_abstr* pl, bool fixed_)
-		: SkGeometry(pl, fixed_)
-		, mGeom(nullptr)
+		, mGeom(gm)
 		, mVA(nullptr)
 		, mVB(nullptr)
 		, mShader(nullptr)
@@ -103,7 +94,7 @@ public:
 		, mVB(nullptr)
 		, mShader(nullptr)
 	{
-
+		
 	}
 	~SkPrimitiveGeometry()
 	{

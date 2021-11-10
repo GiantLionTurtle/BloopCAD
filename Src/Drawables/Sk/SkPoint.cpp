@@ -13,16 +13,16 @@ glm::vec3 SkPoint::kColorHovered = glm::vec3(0.0);
 glm::vec3 SkPoint::kColorSelected = glm::vec3(0.0);
 
 SkPoint::SkPoint(glm::vec2 pos, Geom3d::Plane_abstr* pl, bool fixed_)
-	: SkPrimitiveGeometry<Geom2d::Point>(pl, fixed_)
+	: SkPrimitiveGeometry<Geom2d::Point>(pl, fixed_, new Geom2d::Point(pos))
 {
-	mGeom = new Geom2d::Point(pos);
 	mType |= Drawable_types::POINT;
 	set_name("SkPoint");
 }
 SkPoint::SkPoint(Geom2d::Point* pt, Geom3d::Plane_abstr* pl, bool fixed_)
-	: SkPrimitiveGeometry<Geom2d::Point>(pl, fixed_)
+	: SkPrimitiveGeometry<Geom2d::Point>(pl, fixed_, pt)
 {
-
+	mType |= Drawable_types::POINT;
+	set_name("SkPoint");
 }
 
 SkPoint::~SkPoint()
@@ -63,6 +63,7 @@ void SkPoint::set(glm::vec2 pt)
 {
 	mGeom->x()->drag(pt.x);
 	mGeom->y()->drag(pt.y);
+	set_need_graphicUpdate();
 	notify_parent(SkNotifiers::SET);
 }
 

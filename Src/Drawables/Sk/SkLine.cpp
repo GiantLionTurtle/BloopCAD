@@ -11,12 +11,12 @@ glm::vec3 SkLine::kColorHovered = glm::vec3(0.0);
 glm::vec3 SkLine::kColorSelected = glm::vec3(0.0);
 
 SkLine::SkLine(glm::vec2 ptA_, glm::vec2 ptB_, Geom3d::Plane_abstr* pl, bool fixed_)
-	: SkCurve<LinearFixed_indexer<SkPoint*, 2>, Geom2d::Line>(pl, fixed_)
+	: SkCurve<LinearFixed_indexer<SkPoint*, 2>, Geom2d::Line>(pl, fixed_, new Geom2d::Line(ptA_, ptB_))
 {
-	mGeom = new Geom2d::Line(ptA_, ptB_);
 	handle(0) = new SkPoint(mGeom->ptA(), pl, fixed_);
 	handle(1) = new SkPoint(mGeom->ptB(), pl, fixed_);
 	set_name("SkLine");
+	mType |= Drawable_types::AXIS;
 }
 
 void SkLine::set_annotOffset(SkSprite* sp, int ind)
@@ -32,11 +32,8 @@ void SkLine::set_annotOffset(SkSprite* sp, int ind)
 
 void SkLine::init_impl()
 {
-	// asvecExp = *ptA() - *ptB();
 	mNeed_graphicUpdate = false;
 	
-	// mLength2 = (pow(mA->x()-mB->x(), 2.0) + pow(mA->y()-mB->y(), 2.0));
-
 	mVA = new VertexArray();
 	VertexBufferLayout layout;
 	layout.add_proprety_float(3);

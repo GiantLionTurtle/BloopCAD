@@ -18,9 +18,8 @@ glm::vec3 SkCircle::kColorHovered = glm::vec3(0.0);
 glm::vec3 SkCircle::kColorSelected = glm::vec3(0.0);
 
 SkCircle::SkCircle(glm::vec2 center_, float radius_, Geom3d::Plane_abstr* pl, bool fixed_)
-	: SkCurve<LinearFixed_indexer<SkPoint*, 1>, Geom2d::Circle>(pl, fixed_)
+	: SkCurve<LinearFixed_indexer<SkPoint*, 1>, Geom2d::Circle>(pl, fixed_, new Geom2d::Circle(center_, radius_))
 {
-	mGeom = new Geom2d::Circle(center_, radius_);
 	handle(0) = new SkPoint(mGeom->center(), pl, fixed_);
 	set_name("SkCircle");
 }
