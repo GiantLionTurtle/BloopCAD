@@ -143,10 +143,12 @@ struct ConstrGraph {
 
 	// Return if a matching is possible for vertex u
 	bool matching(int c, std::vector<bool>& seenList, std::vector<int>& matchList)
-	{		
-		std::vector<int> links = C_to_V.at(c);
+	{
+		auto links = C_to_V.find(c);
+		if(links == C_to_V.end())
+			return false;
 
-		for(int v : links) {
+		for(int v : links->second) {
 			if(seenList[v])
 				continue;
 			seenList[v] = true;
@@ -235,7 +237,8 @@ struct ConstrGraph {
 		std::vector<bool> saturated_C(C.size(), false);
 		for(int i = 0; i < matching.size(); ++i) {
 			if(matching[i] == -1) {
-				V[i].metacluster = 2;	
+				V[i].metacluster = 2;
+				nG3 = 1;
 				mark_ancestors_v(i, 2);
 				continue;
 			}
@@ -251,7 +254,17 @@ struct ConstrGraph {
 		int clusterID = 0;
 		nG1 = tarjan(0, clusterID);
 		nG2 = tarjan(1, clusterID);
-		nG3 = tarjan(2, clusterID);
+		// nG3 = tarjan(2, clusterID);
+		for(int i = 0; i < V.size(); ++i) {
+			if(V[i].metacluster == 2)
+				V[i].cluster = clusterID;
+		}
+		for(int i = 0; i < C.size(); ++i) {
+			if(C[i].metacluster == 2)
+				C[i].cluster = clusterID;
+		}
+		if(nG2)
+			clusterID++;
 		return clusterID;
 	}
 };

@@ -59,18 +59,36 @@ public:
 		draw_impl(cam, frame, type);
 	}
 
-	virtual void graphicUpdate_impl()
+	// virtual void graphicUpdate_impl()
+	// {
+	// 	if(mDrawList.has_newElems()) {
+	// 		mDrawList.init_newElems();
+	// 	}
+
+	// 	for(size_t i = 0; i < n_children(); ++i) {
+	// 		auto ch = child(i);
+	// 		ch->graphicUpdate(linked || need_graphicUpdate() == 2);
+	// 	}
+	// 	if(notif_on_update())
+	// 		notify_parent(UPDATED);
+	// }
+
+	void graphicUpdate(bool force = false)
 	{
+		if(!(need_graphicUpdate() || force) || !exists())
+			return;
+		
 		if(mDrawList.has_newElems()) {
 			mDrawList.init_newElems();
 		}
 
 		for(size_t i = 0; i < n_children(); ++i) {
 			auto ch = child(i);
-			ch->graphicUpdate(linked || need_graphicUpdate() == 2);
+			ch->graphicUpdate(linked || force || need_graphicUpdate() == 2);
 		}
 		if(notif_on_update())
-			notify_parent(UPDATED);
+			notify_parent(Drawable::UPDATED);
+		mNeed_graphicUpdate = 0;
 	}
 
 	virtual bool active() const { return true; }

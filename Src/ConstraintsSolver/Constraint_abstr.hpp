@@ -37,7 +37,7 @@
 
 	@parent BaseObject
 */
-class Constraint_abstr : virtual public BaseObject {
+class Constraint_abstr : virtual public BaseObject, public ParamIterator {
 private:
 #ifndef RELEASE_MODE // The name of the variable if not planned to be revealed to the user
 	std::string mName;
@@ -89,20 +89,6 @@ public:
 
 	inline bool substitutionConstraint() { return mCanSubstitute; }
 	virtual void substitute() { }
-
-	/*
-		@function var is a getter to access variables of the constraint
-
-		@param ind Is the index of the wanted variable
-	*/
-	virtual Param* param(int ind) = 0;
-	/*
-		@function n_equs
-
-		@return The number of equations contained (most times it will be 0)		
-	*/
-	virtual int n_params() = 0;
-
 #ifndef RELEASE_MODE
 	/*
 		@function name
@@ -127,6 +113,7 @@ public:
 	double derivative(Param* withRespectTo) { return 0.0; }
 
 	void substitute();
+	static void substitute(Param* a, Param* b);
 
 	Param* param(int ind);
 	inline int n_params() { return 2; }

@@ -34,7 +34,7 @@
 
 Sketch::Sketch(Geom3d::Plane_abstr* base_plane)
 	: mBasePlane(base_plane)
-	, mConstrSystem()//this),
+	, mConstrSystem(SolverState::algorithm::DogLeg)//this),
 	, mSolve_allowed(true)
 {
 	set_name("Sketch");
@@ -61,7 +61,7 @@ void Sketch::notify(Drawable* who, int msg, bool child)
 	switch(msg) {
 	case DELETED:
 	case RESURRECTED:
-		mConstrSystem.updatedSystem();
+		mConstrSystem.force_decomposition();
 		break;
 	default:
 		break;
@@ -69,7 +69,7 @@ void Sketch::notify(Drawable* who, int msg, bool child)
 }
 void Sketch::dragUpdate()
 {
-	mConstrSystem.updatedSystem();
+	mConstrSystem.force_decomposition();
 	update();
 }
 
@@ -144,8 +144,6 @@ void Sketch::add_geometry(SkGeometry* geom)
 		return;
 	}
 	set_need_redraw();
-	if(!geom->fixed())
-		mConstrSystem.add_variables(geom);
 	mDrawList.add_geom(geom);	
 }
 
@@ -162,7 +160,7 @@ bool Sketch::add_constraint(Constraint_abstr* constr, SkDrawable* immovable_hint
 	if(!constr)
 		return false;
 	// mDrawList.add_constr(constr);
-	mConstrSystem.add_constraint(constr);
+	mConstrSystem.add_constr(constr);
 	// constr->set_parent(this);
 	// mHandle->update_name(mName + "(" + std::to_string(mConstrSystem.n_constraints()) + ",  " + std::to_string(mConstrSystem.n_variables()) + ")");
 
@@ -187,7 +185,7 @@ bool Sketch::toggle_constraint(Constraint_abstr* constr, bool enable)
 	if(!constr)
 		return false;
 	constr->set_exists(enable);
-	mConstrSystem.toggle_constraint(constr, enable);
+	// mConstrSystem.toggle_constraint(constr, enable);
 	// mHandle->update_name(mName + "(" + std::to_string(mConstrSystem.n_constraints()) + ",  " + std::to_string(mConstrSystem.n_variables()) + ")");
 
 	if(update_constraints(true, false))

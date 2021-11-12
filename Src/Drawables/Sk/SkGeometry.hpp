@@ -63,7 +63,7 @@ public:
 
 	virtual void add_annot(SkSprite* sp)
 	{
-		if(!sp) 
+		if(!sp)
 			return;
 		mAnnots.push_back(sp);
 		sp->set_hidden(!selected());
