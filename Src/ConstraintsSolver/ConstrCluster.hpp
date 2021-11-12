@@ -17,7 +17,7 @@ private:
 
 	Eigen::VectorXd mErrors;
 	int mAlgorithm { 0 };
-	double mMaxError;
+	double mMaxError { 1e-12 };
 	const int mMaxIt_LM { 50 }, mMaxIt_DL { 50 };
 public:
 	ConstrCluster() = default;
