@@ -50,7 +50,7 @@ int ConstrSyst::create_clusters()
 	for(int i = 0; i < nActiveClusters && i < mClusters.size(); ++i) {
 		mClusters[i].clear();
 	}
-	for(int i = mClusters.size() - 1; i < nActiveClusters; ++i) {
+	for(int i = mClusters.size(); i < nActiveClusters; ++i) {
 		mClusters.push_back(ConstrCluster(mAlgorithm));
 	}
 	

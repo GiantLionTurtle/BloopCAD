@@ -13,7 +13,7 @@
 
 struct ConstrGraph {
 	struct Vertex {
-		int data;
+		int data { -1 };
 		int metacluster { 0 }, cluster { -1 };
 	};
 	std::vector<Vertex> C, V;
@@ -59,7 +59,7 @@ struct ConstrGraph {
 	}
 
 
-	int tarjan(int metacluster, int& cluster)
+	int connectedClusters_tarjan(int metacluster, int& cluster)
 	{
 		int index = 0;
 
@@ -183,7 +183,7 @@ struct ConstrGraph {
 		}
 	}
 
-	void mark_ancestors_v(int v, int metacluster)
+	void mark_ancestors_v(int v, int metacluster, int cluster)
 	{
 		if(C_to_V_inv.find(v) == C_to_V_inv.end())
 			return;
@@ -191,11 +191,12 @@ struct ConstrGraph {
 			int ancestor_ind = C_to_V_inv[v][i];
 			if(C[ancestor_ind].metacluster != metacluster) {
 				C[ancestor_ind].metacluster = metacluster;
-				mark_ancestors_c(ancestor_ind, metacluster);
+				C[ancestor_ind].cluster = cluster;
+				mark_ancestors_c(ancestor_ind, metacluster, cluster);
 			}
 		}
 	}
-	void mark_ancestors_c(int c, int metacluster)
+	void mark_ancestors_c(int c, int metacluster, int cluster)
 	{
 		if(V_to_C_inv.find(c) == V_to_C_inv.end())
 			return;
@@ -203,7 +204,8 @@ struct ConstrGraph {
 			int ancestor_ind = V_to_C_inv[c][i];
 			if(V[ancestor_ind].metacluster != metacluster) {
 				V[ancestor_ind].metacluster = metacluster;
-				mark_ancestors_v(ancestor_ind, metacluster);
+				V[ancestor_ind].cluster = cluster;
+				mark_ancestors_v(ancestor_ind, metacluster, cluster);
 			}
 		}
 	}
@@ -234,12 +236,14 @@ struct ConstrGraph {
 
 	int mark_Gs(std::vector<int> const& matching, int& nG1, int& nG2, int& nG3)
 	{
+		int clusterID = 0;
 		std::vector<bool> saturated_C(C.size(), false);
 		for(int i = 0; i < matching.size(); ++i) {
 			if(matching[i] == -1) {
 				V[i].metacluster = 2;
-				nG3 = 1;
-				mark_ancestors_v(i, 2);
+				V[i].cluster = clusterID;
+				nG3++;
+				mark_ancestors_v(i, 2, clusterID++);
 				continue;
 			}
 			saturated_C[matching[i]] = true;
@@ -251,20 +255,9 @@ struct ConstrGraph {
 			mark_descendant_c(i, 1);
 		}
 
-		int clusterID = 0;
-		nG1 = tarjan(0, clusterID);
-		nG2 = tarjan(1, clusterID);
-		// nG3 = tarjan(2, clusterID);
-		for(int i = 0; i < V.size(); ++i) {
-			if(V[i].metacluster == 2)
-				V[i].cluster = clusterID;
-		}
-		for(int i = 0; i < C.size(); ++i) {
-			if(C[i].metacluster == 2)
-				C[i].cluster = clusterID;
-		}
-		if(nG2)
-			clusterID++;
+		nG1 = connectedClusters_tarjan(0, clusterID);
+		nG2 = connectedClusters_tarjan(1, clusterID);
+		// nG3 = connectedClusters_tarjan(2, clusterID);
 		return clusterID;
 	}
 };

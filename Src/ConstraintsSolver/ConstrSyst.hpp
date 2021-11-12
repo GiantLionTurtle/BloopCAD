@@ -16,7 +16,7 @@ private:
 	std::map<Param*, int> mParam_to_ind;
 	std::vector<Constraint_abstr*> mConstrs;
 	std::vector<ConstrCluster> mClusters;
-	int nActiveClusters { 0 }, nG1, nG2, nG3;
+	int nActiveClusters { 0 }, nG1 { 0 }, nG2 { 0 }, nG3 { 0 };
 	int mAlgorithm { 0 };
 
 	bool mDecompUpToDate  { false };
