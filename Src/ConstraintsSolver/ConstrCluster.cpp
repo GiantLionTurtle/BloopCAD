@@ -3,6 +3,12 @@
 #include "SolverState.hpp"
 #include <Utils/Debug_util.hpp>
 
+ConstrCluster::ConstrCluster(int algo)
+	: mAlgorithm(algo)
+{
+
+}
+
 int ConstrCluster::solve()
 {
 	substitute();
@@ -193,9 +199,11 @@ int ConstrCluster::solve_DL()
 	
 	if(n_constrs  == 0) {
 		verbose(VERBOSE_STEPS, "Returning early, no equation to solve.");
+		update_substitution();
 		return SolverState::SUCCESS;
 	} else if(n_params == 0) {
 		verbose(VERBOSE_STEPS, "Returning early, no variable to solve for.");
+		update_substitution();
 		return SolverState::SUCCESS;
 	}
 	Eigen::VectorXd P(n_params), P_new(n_params), // Variables values, candidate variables values
@@ -329,12 +337,21 @@ void ConstrCluster::substitute()
 	for(auto constr : mConstrsSubst) {
 		constr->substitute();
 	}
+	for(auto p : mParams) {
+		if(p->substituted()) {
+			mParamsSubst.push_back(p);
+		} else {
+			mParamsDriving.push_back(p);
+		}
+	}
 }
 void ConstrCluster::clear_substitutions()
 {
 	for(auto p : mParamsSubst) {
 		p->delete_substitution();
 	}
+	mParamsDriving.clear();
+	mParamsSubst.clear();
 }
 void ConstrCluster::clear_drag()
 {
@@ -402,26 +419,27 @@ void ConstrCluster::update_substitution()
 	{
 		int n = (mParamsSubst.size()+7) / 8;
 		Param** substP = &mParamsSubst.front();
-
+		if(n == 0)
+			return;
 		switch(mParamsSubst.size() % 8) {
-			case 0: (*substP--)->apply_substitution();
-			case 7: (*substP--)->apply_substitution();
-			case 6: (*substP--)->apply_substitution();
-			case 5: (*substP--)->apply_substitution();
-			case 4: (*substP--)->apply_substitution();
-			case 3: (*substP--)->apply_substitution();
-			case 2: (*substP--)->apply_substitution();
-			case 1: (*substP--)->apply_substitution();
+			case 0: (*substP++)->apply_substitution();
+			case 7: (*substP++)->apply_substitution();
+			case 6: (*substP++)->apply_substitution();
+			case 5: (*substP++)->apply_substitution();
+			case 4: (*substP++)->apply_substitution();
+			case 3: (*substP++)->apply_substitution();
+			case 2: (*substP++)->apply_substitution();
+			case 1: (*substP++)->apply_substitution();
 		}
 		while(--n > 0) {
-			(*substP--)->apply_substitution();
-			(*substP--)->apply_substitution();
-			(*substP--)->apply_substitution();
-			(*substP--)->apply_substitution();
-			(*substP--)->apply_substitution();
-			(*substP--)->apply_substitution();
-			(*substP--)->apply_substitution();
-			(*substP--)->apply_substitution();
+			(*substP++)->apply_substitution();
+			(*substP++)->apply_substitution();
+			(*substP++)->apply_substitution();
+			(*substP++)->apply_substitution();
+			(*substP++)->apply_substitution();
+			(*substP++)->apply_substitution();
+			(*substP++)->apply_substitution();
+			(*substP++)->apply_substitution();
 		}
 	}
 }

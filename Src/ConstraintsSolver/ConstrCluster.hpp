@@ -16,11 +16,12 @@ private:
 	std::vector<Constraint_abstr*> mConstrsSubst { }, mConstrsEval;
 
 	Eigen::VectorXd mErrors;
-	int mAlgorithm;
+	int mAlgorithm { 0 };
 	double mMaxError;
 	const int mMaxIt_LM { 50 }, mMaxIt_DL { 50 };
 public:
 	ConstrCluster() = default;
+	ConstrCluster(int algo);
 
 	inline int algorithm() { return mAlgorithm; }
 	inline void set_algorithm(int algo) { mAlgorithm = algo; }

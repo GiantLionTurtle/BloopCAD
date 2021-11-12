@@ -30,6 +30,8 @@ public:
 	virtual void set_annotPos(SkSprite* sp) { sp->set(pos()); }
 	void set_annotOffset(SkSprite* sp, int ind);
 
+	void append_params(std::vector<Param*>& params);
+
 	void set(glm::vec2 pt);
 
 	virtual void release();

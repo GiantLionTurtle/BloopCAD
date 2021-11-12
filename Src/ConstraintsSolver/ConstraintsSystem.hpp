@@ -58,6 +58,7 @@ public:
 		@param v The variables to add to the system
 	*/		
 	void add_variables(ParamIterator* it);
+
 	/*
 		@function toggle_constraint sets a constraint's existence to a specific state and set the brokenUp flag to false
 

@@ -48,13 +48,17 @@ double PointPoint_horizontality::error()
 
 void PointPoint_horizontality::substitute()
 {
-	if(mP1->y()->weight() >= mP2->y()->weight()) {
-		mP2->y()->set_substitution(mP1->y());
-	} else if(mP1->y()->weight() < mP2->y()->weight()) {
-		mP1->y()->set_substitution(mP2->y());
-	}
-	// No substitution could be done
+	substitute(mP1->y(), mP2->y());
 }
+void PointPoint_horizontality::substitute(Param* a, Param* b)
+{
+	if(a->weight() >= b->weight()) {
+		b->set_substitution(a);
+	} else if(a->weight() < b->weight()) {
+		a->set_substitution(b);
+	}
+}
+
 Param* PointPoint_horizontality::param(int ind)
 {
 	switch(ind) {
@@ -67,7 +71,7 @@ Param* PointPoint_horizontality::param(int ind)
 
 Line_horizontality::Line_horizontality(Geom2d::Line* l)
 #ifndef RELEASE_MODE
-	: Constraint_abstr("PointPoint_horizontality", true)
+	: Constraint_abstr("Line_horizontality", true)
 #else
 	: Constraint_abstr(true)
 #endif
@@ -83,13 +87,13 @@ double Line_horizontality::error()
 
 void Line_horizontality::substitute()
 {
-
+	PointPoint_horizontality::substitute(mLine->ptA()->y(), mLine->ptB()->y());
 }
 Param* Line_horizontality::param(int ind)
 {
 	switch(ind) {
 	case 0: return mLine->ptA()->y();
-	case 1: return mLine->ptA()->y();
+	case 1: return mLine->ptB()->y();
 	}
 	return nullptr;
 }

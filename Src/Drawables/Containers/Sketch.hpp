@@ -11,6 +11,7 @@
 #include <Drawables/Sk/SkConstrAnnot.hpp>
 #include <Actions/Common/Serial_action.hpp>
 #include <Drawables/Sk/SkConstrAnnot.hpp>
+#include <ConstraintsSolver/ConstrSyst.hpp>
 
 #include <memory>
 #include <vector>
@@ -72,7 +73,7 @@ private:
 
 	// Folder* mOrigin;
 	// DragEnabled_ConstraintsSystem<2> mConstrSystem;
-	ConstraintsSystem mConstrSystem;
+	ConstrSyst mConstrSystem;
 	std::map<Constraint_abstr*, Drawable*> mConstr2Annot;
 	std::vector<VarState> mConstrSystemBackup;
 

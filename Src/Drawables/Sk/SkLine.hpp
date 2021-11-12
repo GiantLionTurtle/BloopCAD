@@ -27,6 +27,8 @@ public:
 
 	void set_annotPos(SkSprite* sp) { sp->set((posA() + posB()) / 2.0f); }
 	void set_annotOffset(SkSprite* sp, int ind);
+
+	void append_params(std::vector<Param*>& params);
 protected:
 	void init_impl();
 	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL);
