@@ -35,30 +35,30 @@ public:
 				to not cause overhead in other parts of the code (checking for nullptr)
 				and to simplify debugging
 	*/
-	size_t size() { return n_geom() + n_constr(); }
+	size_t size() { return n_geoms() + n_annots(); }
 	SkIntDrawable* at(size_t ind)
 	{
-		if(ind < n_geom()) {
+		if(ind < n_geoms()) {
 			return mGeometries.at(ind);
 		} else {
-			return mAnnotations.at(ind - n_geom());
+			return mAnnotations.at(ind - n_geoms());
 		}
 	}
 
-	bool has_newElems() { return mInitInd_geom < mGeometries.size() || mInitInd_constr < mAnnotations.size(); }
+	bool has_newElems() { return mInitInd_geom < n_geoms() || mInitInd_constr < n_annots(); }
 	void init_newElems()
 	{
 		init_newElems_stat(mGeometries, mInitInd_geom, driven());
 		init_newElems_stat(mAnnotations, mInitInd_constr, driven());
 	}
 
-	size_t n_geom() { return mGeometries.size(); }
+	size_t n_geoms() { return mGeometries.size(); }
 	SkGeometry* geom(size_t ind) { return mGeometries.at(ind); }
 	void add_geom(SkGeometry* g) { mGeometries.push_back(g); mDriven->update(); }
 
-	size_t n_constr() { return mAnnotations.size(); }
-	SkConstrAnnot* constr(size_t ind) { return mAnnotations.at(ind); }
-	void add_constr(SkConstrAnnot* c) { mAnnotations.push_back(c); mDriven->update(); }
+	size_t n_annots() { return mAnnotations.size(); }
+	SkConstrAnnot* annot(size_t ind) { return mAnnotations.at(ind); }
+	void add_annot(SkConstrAnnot* c) { mAnnotations.push_back(c); mDriven->update(); }
 };
 
 
@@ -123,6 +123,7 @@ public:
 	// Folder* origin() const { return mOrigin; }
 
 	// DraggedPoint<2>* dragConstr() { return mConstrSystem.dragConstr(); }
+	void add_annot(SkConstrAnnot* annot);
 	bool add_constraint(Constraint_abstr* constr, SkDrawable* immovable_hint = nullptr);
 	bool toggle_constraint(Constraint_abstr* constr, bool enable);
 	bool update_constraints(bool safeUpdate, bool update_on_solveFail);

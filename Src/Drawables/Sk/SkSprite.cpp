@@ -41,8 +41,8 @@ bool SkSprite::closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::
 {
 	if(mType & filter) {
 		glm::vec3 worldPos = mBasePlane->to_worldPos(pos());
-		glm::vec2 screenPos = cam->world_to_screen(worldPos);
-		if(std::abs(screenPos.x - cursorPos.x) <= mDimensions.x && std::abs(screenPos.y - cursorPos.y) <= mDimensions.y) {
+		glm::vec2 screenPos = cam->world_to_screen(worldPos) + mPixelOffset;
+		if(std::abs(screenPos.x - cursorPos.x) <= mDimensions.x / 2.0 && std::abs(screenPos.y - cursorPos.y) <= mDimensions.y / 2.0) {
 			selP.ent = this;
 			selP.dist_to_cam = glm::distance(cam->pos(), worldPos);
 			return true;

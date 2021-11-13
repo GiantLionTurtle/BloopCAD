@@ -122,6 +122,7 @@ void Drawable::set_hidden(bool hide, bool parent_silent)
 	if(!exists())
 		return;
 	if(hidden() != hide) {
+		hidden_impl(hide);
 		set_need_redraw();
 		if(hide) {
 			mState |= BLOOP_ENTITY_HIDDEN_FLAG;
@@ -131,7 +132,6 @@ void Drawable::set_hidden(bool hide, bool parent_silent)
 		if(!parent_silent && notif_on_hidden())
 			notify_parent(hide ? HIDEN : UNHIDEN);
 	}
-	hidden_impl(hide);
 }
 void Drawable::hide(bool parent_silent)
 {
@@ -155,13 +155,13 @@ bool Drawable::visible() const
 void Drawable::set_exists(bool exists_, bool parent_silent) 
 {
 	if(exists() != exists_) {
+		exists_impl(exists_);
 		set_need_redraw();
 		if(exists_) {
 			mState |= BLOOP_ENTITY_EXISTS_FLAG;
 		} else {
 			mState &= ~BLOOP_ENTITY_EXISTS_FLAG;
 		}
-		exists_impl(exists_);
 		if(!parent_silent && notif_on_exists())
 			notify_parent(exists_ ? RESURRECTED : DELETED);
 	}

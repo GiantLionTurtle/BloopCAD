@@ -119,6 +119,7 @@ public:
 protected:
 	void select_impl(bool sel)
 	{
+		SkGeometry::select_impl(sel);
 		if(!sel) {
 			for(int i = 0; i < n_handles(); ++i) {
 				handle(i)->unselect();
