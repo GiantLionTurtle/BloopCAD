@@ -7,24 +7,23 @@
 #include <ConstraintsSolver/Expression.hpp>
 
 class SkIntDrawable;
+class SkGeometry;
 
-struct SkExpSelPoint {
-	SkExpSelPoint():
-		ent(nullptr)
+struct SkGeomDragPoint {
+	SkGeomDragPoint()
+		: geom(nullptr)
 	{
 
 	}
-	SkExpSelPoint(SkIntDrawable* dr)//, ExpVec2<Expression_abstr> p):
-		: ent(dr)//,
-		// pt(p)
+	SkGeomDragPoint(SkGeometry* dr)
+		: geom(dr)
 	{
 		
 	}
 
-	operator bool() { return ent; }
+	operator bool() { return geom; }
 
-	SkIntDrawable* ent;
-	// ExpVec2<Expression_abstr> pt;
+	SkGeometry* geom;
 };
 
 class SkDrawable : virtual public Drawable {
@@ -52,7 +51,6 @@ public:
 		
 	}
 	virtual bool closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
-	virtual bool closest_2d_draggable(SkExpSelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
 	virtual void move_selected(glm::vec2 delta) { if(selected()) move(delta); }
 	virtual void move(glm::vec2 delta) {}
 	virtual void release() {}

@@ -10,11 +10,11 @@
 #include <Actions/Common/Parallel_action.hpp>
 #include <Tools/Sketch/Coincidence_tool.hpp>
 
-Line_tool::Line_tool(Sketch_ws* env):
-	tool(env),
-	mEndPos(nullptr),
-	mLinePreview(nullptr),
-	mLastAdded(nullptr)
+Line_tool::Line_tool(Sketch_ws* env)
+	: tool(env)
+	, mEndPos(nullptr)
+	, mLinePreview(nullptr)
+	, mLastAdded(nullptr)
 {
 	DEBUG_ASSERT(mEnv, "No valid Workspace_abstr.");
 }
@@ -83,8 +83,9 @@ SkPoint* Line_tool::add_point(glm::vec2 pt)
 		if(mEndPos) {
 			mEnv->coincidence()->add_geom(mEndPos);
 			mEnv->coincidence()->add_geom(mLinePreview->ptA());
-			SkDrawable* trash = nullptr;
-			mEnv->coincidence()->create_constraint(constr, trash);
+			SkGeometry* trash = nullptr;
+			Action_ptr annotAct = nullptr;
+			mEnv->coincidence()->create_constraint(constr, trash, annotAct);
 			
 			mEnv->coincidence()->clear_geometries();
 			hingeConstraintAction = std::make_shared<ToggleConstraint_action>(mEnv->target(), constr, true, true);

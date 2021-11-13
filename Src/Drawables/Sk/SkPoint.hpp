@@ -25,7 +25,7 @@ public:
 
 	glm::vec2 pos() { return mGeom->pos(); }
 	bool closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
-	bool closest_2d_draggable(SkExpSelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
+	bool closest_2d_draggable(SkGeomDragPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	int selection_rank() { return 5; }
 	virtual void set_annotPos(SkSprite* sp) { sp->set(pos()); }
 	void set_annotOffset(SkSprite* sp, int ind);

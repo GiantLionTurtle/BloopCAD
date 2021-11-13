@@ -71,18 +71,17 @@ SelPoint Sketch::closest(glm::vec2 cursor, Camera* cam, int filter)
 	return selPt;
 }
 
-SkExpSelPoint Sketch::closest_draggable(glm::vec2 cursor, Camera* cam, int filter)
+bool Sketch::closest_draggable(SkGeomDragPoint& selP, glm::vec2 cursor, Camera* cam, int filter)
 {
 	glm::vec2 planepos = mBasePlane->to_planePos(mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor)));
 	int maxpriority = -1;
-	SkExpSelPoint selPt;
-	for(size_t i = 0; i < mDrawList.size(); ++i) {
-		auto ch = mDrawList.at(i);
-		if(ch->visible() && ch->selection_rank() > maxpriority && ch->closest_2d_draggable(selPt, planepos, cam, cursor, filter)) {
-			maxpriority = selPt.ent->selection_rank();
+	for(size_t i = 0; i < mDrawList.n_geom(); ++i) {
+		SkGeometry* ch = mDrawList.geom(i);
+		if(ch->visible() && ch->selection_rank() > maxpriority && ch->closest_2d_draggable(selP, planepos, cam, cursor, filter)) {
+			maxpriority = selP.geom->selection_rank();
 		}
 	}
-	return selPt;
+	return maxpriority != -1; // Success if maxpriority has been updated
 }
 
 void Sketch::move_selected(glm::vec2 delta)

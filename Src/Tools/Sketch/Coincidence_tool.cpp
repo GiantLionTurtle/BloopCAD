@@ -8,13 +8,13 @@
 #include <Workspaces/Document.hpp>
 
 
-Coincidence_tool::Coincidence_tool(Sketch_ws* env):
-	Constraint_tool(env, CURVE | POINT | SKDRAWABLE)
+Coincidence_tool::Coincidence_tool(Sketch_ws* env)
+	: Constraint_tool(env, CURVE | POINT | SKDRAWABLE)
 {
 	load_icon("Resources/Textures/Images/Icons/Sketch/Cursors/Coincidence_cursor.png");
 }
 
-int Coincidence_tool::could_add_geom(SkDrawable* geom)
+int Coincidence_tool::could_add_geom(SkGeometry* geom)
 {
 	if(!geom) {
 		return add_states::COULDNT_ADD;
@@ -30,11 +30,11 @@ int Coincidence_tool::could_add_geom(SkDrawable* geom)
 	}
 }
 
-void Coincidence_tool::create_constraint(Constraint_abstr*& constr, SkDrawable*& priority_ent)
+void Coincidence_tool::create_constraint(Constraint_abstr*& constr, SkGeometry*& priority_ent, Action_ptr& annotAct)
 {
 	DEBUG_ASSERT(mEntA && mEntB, "Attempting to add incomplete constraint.");
 
-	SkDrawable* curve;
+	SkGeometry* curve;
 	SkPoint* pt;
 	if(is_point(mEntA)) {
 		pt = static_cast<SkPoint*>(mEntA);
