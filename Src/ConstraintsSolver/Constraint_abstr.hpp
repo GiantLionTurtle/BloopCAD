@@ -37,7 +37,7 @@
 
 	@parent BaseObject
 */
-class Constraint_abstr : virtual public BaseObject, public ParamIterator {
+class Constraint_abstr : virtual public BaseObject, public ParamIterator, public UI_Core_Link {
 private:
 #ifndef RELEASE_MODE // The name of the variable if not planned to be revealed to the user
 	std::string mName;
@@ -54,8 +54,10 @@ public:
 	virtual ~Constraint_abstr();
 
 	bool exists() const { return mExists; }
-	void set_exists(bool ex) { mExists = ex; } // TODO: Check if it should iterate over all variable to set their existence status
+	void set_exists(bool ex);
 
+	void receive(int msg, UI_Core_Link* sender);
+	
 	/*
 		@function error gives an indexed error
 

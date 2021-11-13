@@ -91,7 +91,7 @@ bool Sketch::closest_draggable(SkGeomDragPoint& selP, glm::vec2 cursor, Camera* 
 {
 	glm::vec2 planepos = mBasePlane->to_planePos(mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor)));
 	int maxpriority = -1;
-	for(size_t i = 0; i < mDrawList.n_geom(); ++i) {
+	for(size_t i = 0; i < mDrawList.n_geoms(); ++i) {
 		SkGeometry* ch = mDrawList.geom(i);
 		if(ch->visible() && ch->selection_rank() > maxpriority && ch->closest_2d_draggable(selP, planepos, cam, cursor, filter)) {
 			maxpriority = selP.geom->selection_rank();
@@ -154,6 +154,11 @@ bool Sketch::can_delete(SkDrawable* ent)
 	return false;
 }
 
+void Sketch::add_annot(SkConstrAnnot* annot)
+{
+	mDrawList.add_annot(annot);
+	set_need_redraw();
+}
 bool Sketch::add_constraint(Constraint_abstr* constr, SkDrawable* immovable_hint) 
 {
 	if(!constr)

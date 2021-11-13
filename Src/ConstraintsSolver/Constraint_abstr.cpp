@@ -40,10 +40,33 @@ Constraint_abstr::~Constraint_abstr()
 {
 
 }
+
+void Constraint_abstr::set_exists(bool ex)
+{
+	if(ex != ex) {
+		for(int i = 0; i < n_params(); ++i) {
+			param(i)->set_exists(ex);
+		}
+		send(ex ? UI_Core_Link::LNK_ALIVE : UI_Core_Link::LNK_DEAD);
+	}
+}
+void Constraint_abstr::receive(int msg, UI_Core_Link* sender)
+{
+	switch(msg) {
+	case UI_Core_Link::LNK_ALIVE:
+		set_exists(true);
+		break;
+	case UI_Core_Link::LNK_DEAD:
+		set_exists(false);
+		break;
+	}
+}
+
 bool Constraint_abstr::satisfied()
 {
 	return (error() < CONSTR_SATISFACTION_TRESHOLD);
 }
+
 
 PointPoint_horizontality::PointPoint_horizontality(Geom2d::Point* p1, Geom2d::Point* p2)
 #ifndef RELEASE_MODE
