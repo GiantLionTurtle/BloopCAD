@@ -65,12 +65,12 @@ bool SkPoint::closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::v
 	}
 	return false;
 }
-bool SkPoint::closest_2d_draggable(SkExpSelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+bool SkPoint::closest_2d_draggable(SkGeomDragPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 {
 	if(mType & filter) {
 		glm::vec3 worldpos = mBasePlane->to_worldPos(pos());
 		if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2) {
-			selP.ent = this;
+			selP.geom = this;
 			return true;
 		}
 	}

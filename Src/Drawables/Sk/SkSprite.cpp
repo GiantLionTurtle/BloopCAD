@@ -70,18 +70,6 @@ bool SkSprite::closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::
 	}
 	return false;
 }
-bool SkSprite::closest_2d_draggable(SkExpSelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
-{
-	if(mType & filter) {
-		glm::vec3 worldPos = mBasePlane->to_worldPos(pos());
-		glm::vec2 screenPos = cam->world_to_screen(worldPos);
-		if(std::abs(screenPos.x - cursorPos.x) <= mDimensions.x && std::abs(screenPos.y - cursorPos.y) <= mDimensions.y) {
-			selP.ent = this;
-			return true;
-		}
-	}
-	return false;
-}
 
 void SkSprite::move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move)
 {

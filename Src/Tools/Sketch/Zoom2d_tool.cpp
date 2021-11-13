@@ -20,8 +20,8 @@
 #include <Workspaces/Document.hpp>
 #include <Geometry/3d/Plane_abstr.hpp>
 
-Zoom2d_tool::Zoom2d_tool(Sketch_ws* env): 
-	tool(env)
+Zoom2d_tool::Zoom2d_tool(Sketch_ws* env)
+	: tool(env)
 {
 	// Attempt to load the cursor icon
 	try {

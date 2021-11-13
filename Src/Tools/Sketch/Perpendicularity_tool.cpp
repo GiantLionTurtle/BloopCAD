@@ -22,13 +22,13 @@
 #include <Workspaces/Workspace_abstr.hpp>
 #include <Workspaces/Document.hpp>
 
-Perpendicularity_tool::Perpendicularity_tool(Sketch_ws* env):
-	Constraint_tool(env)
+Perpendicularity_tool::Perpendicularity_tool(Sketch_ws* env)
+	: Constraint_tool(env)
 {
 	load_icon("Resources/Textures/Images/Icons/Sketch/Cursors/Perpendicularity_cursor.png");
 }
 
-int Perpendicularity_tool::could_add_geom(SkDrawable* geom)
+int Perpendicularity_tool::could_add_geom(SkGeometry* geom)
 {
 	if(!geom) {
 		return add_states::COULDNT_ADD;
@@ -42,7 +42,7 @@ int Perpendicularity_tool::could_add_geom(SkDrawable* geom)
 	}
 	return add_states::COULDNT_ADD;
 }
-void Perpendicularity_tool::create_constraint(Constraint_abstr*& constr, SkDrawable*& priority_ent)
+void Perpendicularity_tool::create_constraint(Constraint_abstr*& constr, SkGeometry*& priority_ent, Action_ptr& annotAct)
 {
 	if(!mEntA || !mEntB) {
 		LOG_WARNING("Attempting to add incomplete constraint.");

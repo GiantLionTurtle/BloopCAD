@@ -39,6 +39,8 @@ public:
 	}
 	virtual ~SkGeometry() {}
 
+	virtual bool closest_2d_draggable(SkGeomDragPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
+
 	void move_selected(glm::vec2 delta)
 	{
 		if(!fixed())

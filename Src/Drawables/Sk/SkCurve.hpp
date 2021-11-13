@@ -95,7 +95,7 @@ public:
 		}
 		return false;
 	}	
-	bool closest_2d_draggable(SkExpSelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
+	bool closest_2d_draggable(SkGeomDragPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter)
 	{
 		for(int i = 0; i < n_handles(); ++i) {
 			if(handle(i)->closest_2d_draggable(selP, planePos, cam, cursorPos, filter))
@@ -105,7 +105,7 @@ public:
 			float t = this->mGeom->closest_to_point_interp(planePos);
 			glm::vec3 worldpos = this->mBasePlane->to_worldPos(this->mGeom->at(t));
 			if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2) {
-				selP.ent = this;
+				selP.geom = this;
 				return true;
 			}
 		}

@@ -22,13 +22,13 @@
 #include <Actions/Sketch/ToggleConstraint_action.hpp>
 #include <Workspaces/Document.hpp>
 
-Verticality_tool::Verticality_tool(Sketch_ws* env):
-	Constraint_tool(env)
+Verticality_tool::Verticality_tool(Sketch_ws* env)
+	: Constraint_tool(env)
 {
 	load_icon("Resources/Textures/Images/Icons/Sketch/Cursors/Verticality_cursor.png");
 }
 
-int Verticality_tool::could_add_geom(SkDrawable* geom)
+int Verticality_tool::could_add_geom(SkGeometry* geom)
 {
 	if(!geom) {
 		return add_states::COULDNT_ADD;
@@ -45,7 +45,7 @@ int Verticality_tool::could_add_geom(SkDrawable* geom)
 	return add_states::COULDNT_ADD;
 }
 
-void Verticality_tool::create_constraint(Constraint_abstr*& constr, SkDrawable*& priority_ent)
+void Verticality_tool::create_constraint(Constraint_abstr*& constr, SkGeometry*& priority_ent, Action_ptr& annotAct)
 {
 	if(!mEntA && !mEntB) {
 		LOG_WARNING("Attempting to add incomplete constraint.");

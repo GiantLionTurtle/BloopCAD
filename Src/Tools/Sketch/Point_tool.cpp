@@ -21,8 +21,8 @@
 #include <Drawables/Containers/Sketch.hpp>
 #include <Actions/Common/ToggleBaseObject_action.hpp>
 
-Point_tool::Point_tool(Sketch_ws* env):
-	tool(env)
+Point_tool::Point_tool(Sketch_ws* env)
+	: tool(env)
 {
 	DEBUG_ASSERT(mEnv, "No valid Workspace_abstr.");
 }

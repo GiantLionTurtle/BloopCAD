@@ -22,7 +22,7 @@
 class SketchDefault_tool : public tool<Sketch_ws> {
 private:   
 	SkSelRect* mSelArea;
-	SkExpSelPoint mDragCandidate;
+	SkGeomDragPoint mDragCandidate;
 	Drawable* mCurrentHover;
 
 	enum modes { NORMAL, DRAGGING, AREASELECT };

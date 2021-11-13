@@ -20,14 +20,15 @@
 #include <Actions/Common/Parallel_action.hpp>
 #include <Actions/Sketch/ToggleConstraint_action.hpp>
 #include <Actions/Sketch/ApplySnapshot_action.hpp>
+#include <Actions/Common/ToggleBaseObject_action.hpp>
 #include <Workspaces/Document.hpp>
 
-Constraint_tool::Constraint_tool(Sketch_ws* env, int filter):
-	tool<Sketch_ws>(env),
-	mEntA(nullptr),
-	mEntB(nullptr),
-	mCurrentHover(nullptr),
-	mFilter(filter)
+Constraint_tool::Constraint_tool(Sketch_ws* env, int filter)
+	: tool<Sketch_ws>(env)
+	, mEntA(nullptr)
+	, mEntB(nullptr)
+	, mCurrentHover(nullptr)
+	, mFilter(filter)
 {
 	DEBUG_ASSERT(mEnv, "No valid Workspace_abstr.");
 }
@@ -52,12 +53,15 @@ void Constraint_tool::finish()
 bool Constraint_tool::manage_button_press(GdkEventButton* event)
 {
 	glm::vec2 screenPos = glm::vec2(event->x, event->y);
-	SkDrawable* ent = mEnv->target()->closest_draggable(screenPos, mEnv->state()->cam, mFilter).ent;
-	
-	int ent_state = could_add_geom(ent);
+	SkGeomDragPoint gdpt;
+	if(!mEnv->target()->closest_draggable(gdpt, screenPos, mEnv->state()->cam, mFilter))
+		return true;
+
+	SkGeometry* geom = gdpt.geom;	
+	int ent_state = could_add_geom(geom);
 	if(ent_state > add_states::COULDNT_ADD) {
-		add_geom(ent);
-		ent->select();
+		add_geom(geom);
+		geom->select();
 		if(ent_state == add_states::WOULD_BE_COMPLETE) {
 			add_constraint();
 			if(mEntA)
@@ -73,22 +77,22 @@ bool Constraint_tool::manage_button_press(GdkEventButton* event)
 bool Constraint_tool::manage_mouse_move(GdkEventMotion* event)
 {
 	glm::vec2 screenPos = glm::vec2(event->x, event->y);
-	auto draggablePt = mEnv->target()->closest_draggable(screenPos, mEnv->state()->cam, mFilter);
-	SkDrawable* ent = draggablePt ? draggablePt.ent : nullptr;
-
-	if(ent != mCurrentHover) {
+	SkGeomDragPoint gdpt;
+	SkGeometry* geom = mEnv->target()->closest_draggable(gdpt, screenPos, mEnv->state()->cam, mFilter) ? gdpt.geom : nullptr;
+	
+	if(geom != mCurrentHover) {
 		if(mCurrentHover) {
 			mCurrentHover->set_hover(false);
 		}
-		if(could_add_geom(ent)) {
-			ent->set_hover(true);
+		if(could_add_geom(geom)) {
+			geom->set_hover(true);
 		}
-		mCurrentHover = ent;
+		mCurrentHover = geom;
 	}
 	return true;
 }
 
-void Constraint_tool::add_geom(SkDrawable* geom)
+void Constraint_tool::add_geom(SkGeometry* geom)
 {
 	if(!mEntA) {
 		mEntA = geom;
@@ -99,15 +103,17 @@ void Constraint_tool::add_geom(SkDrawable* geom)
 void Constraint_tool::add_constraint()
 {
 	Constraint_abstr* constr = nullptr;
-	SkDrawable* priority_ent = nullptr;
-	
-	create_constraint(constr, priority_ent);
+	SkGeometry* priority_ent = nullptr;
+	Action_ptr annotAct = nullptr;
+
+	create_constraint(constr, priority_ent, annotAct);
 
 	std::map<Param*, float> snp = mEnv->target()->snapshot();
 	mEnv->target()->add_constraint(constr, priority_ent);
 	mEnv->state()->doc->push_action(std::shared_ptr<Parallel_action>(new Parallel_action({
 		std::make_shared<ApplySnapshot_action>(mEnv->target(), mEnv->target()->deltaSnapshot(snp), true),
-		std::make_shared<ToggleConstraint_action>(mEnv->target(), constr, true, true)
+		std::make_shared<ToggleConstraint_action>(mEnv->target(), constr, true, true)//,
+		// annotAct
 	})));
 	// mEnv->target()->update(true);
 	clear_geometries();
@@ -119,19 +125,19 @@ void Constraint_tool::clear_geometries()
 	mEntB = nullptr;
 }
 
-bool Constraint_tool::is_point(SkDrawable* drw)
+bool Constraint_tool::is_point(SkGeometry* geom)
 {
-	return drw->type() & Drawable_types::POINT;
+	return geom->type() & Drawable_types::POINT;
 }
-bool Constraint_tool::is_line(SkDrawable* drw)
+bool Constraint_tool::is_line(SkGeometry* geom)
 {
-	return drw->type() & Drawable_types::AXIS;
+	return geom->type() & Drawable_types::AXIS;
 }
-bool Constraint_tool::is_curve(SkDrawable* drw)
+bool Constraint_tool::is_curve(SkGeometry* geom)
 {
-	return is_line(drw) || drw->type() & Drawable_types::CURVE;
+	return is_line(geom) || geom->type() & Drawable_types::CURVE;
 }
-bool Constraint_tool::is_point_or_curve(SkDrawable* drw)
+bool Constraint_tool::is_point_or_curve(SkGeometry* geom)
 {
-	return is_point(drw) || is_curve(drw);
+	return is_point(geom) || is_curve(geom);
 }

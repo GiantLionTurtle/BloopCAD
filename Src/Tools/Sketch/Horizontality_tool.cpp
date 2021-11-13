@@ -21,13 +21,13 @@
 #include <Workspaces/Workspace_abstr.hpp>
 #include <Workspaces/Document.hpp>
 
-Horizontality_tool::Horizontality_tool(Sketch_ws* env):
-	Constraint_tool(env)
+Horizontality_tool::Horizontality_tool(Sketch_ws* env)
+	: Constraint_tool(env)
 {
 	load_icon("Resources/Textures/Images/Icons/Sketch/Cursors/Horizontality_cursor.png");
 }
 
-int Horizontality_tool::could_add_geom(SkDrawable* geom)
+int Horizontality_tool::could_add_geom(SkGeometry* geom)
 {
 	if(!geom) {
 		return add_states::COULDNT_ADD;
@@ -44,7 +44,7 @@ int Horizontality_tool::could_add_geom(SkDrawable* geom)
 	return add_states::COULDNT_ADD;
 }
 
-void Horizontality_tool::create_constraint(Constraint_abstr*& constr, SkDrawable*& priority_ent)
+void Horizontality_tool::create_constraint(Constraint_abstr*& constr, SkGeometry*& priority_ent, Action_ptr& annotAct)
 {
 	if(!mEntA && !mEntB) {
 		LOG_WARNING("Attempting to add incomplete constraint.");
