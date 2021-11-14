@@ -36,8 +36,8 @@ protected:
 	float kSelDist2;
 	Collection_abstr<HI> mInnerCollection;
 public:
-	SkCurve(Geom3d::Plane_abstr* pl, bool fixed_, MC* mathcurve):
-		SkPrimitiveGeometry<MC>(pl, fixed_, mathcurve)
+	SkCurve(Geom3d::Plane_abstr* pl, bool fixed_, MC* mathcurve)
+		: SkPrimitiveGeometry<MC>(pl, fixed_, mathcurve)
 	{
 		kSelDist2 = 25;
 		this->mType |= Drawable_types::CURVE;

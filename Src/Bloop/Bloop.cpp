@@ -33,13 +33,13 @@ Bloop::Bloop()
 	show_all();
 }
 
-Bloop::Bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder) :
-	Gtk::Window(cobject),
-	mDocumentIndexer(nullptr),
-	mHomePage(nullptr),
-	mUI_upperBar(nullptr),
-	mHome(nullptr),
-	mIcon(nullptr)
+Bloop::Bloop(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
+	: Gtk::Window(cobject)
+	, mDocumentIndexer(nullptr)
+	, mHomePage(nullptr)
+	, mUI_upperBar(nullptr)
+	, mHome(nullptr)
+	, mIcon(nullptr)
 {
 	maximize(); // Go maximized, it deserves it
 

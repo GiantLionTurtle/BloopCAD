@@ -48,9 +48,9 @@ struct selection {
 		@param ent_ : 	The selected entity
 		@param camSt_ : The Camera state during selection
 	*/
-	selection(Drawable* ent_, CameraState camSt_) :
-		ent(ent_),
-		camSt(camSt_)
+	selection(Drawable* ent_, CameraState camSt_)
+		: ent(ent_)
+		, camSt(camSt_)
 	{}
 };
 

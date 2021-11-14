@@ -21,9 +21,9 @@
 
 #include <glm/glm.hpp>
 
-Orbit3d_tool::Orbit3d_tool(Workspace_abstr* env):
-	tool(env, Gdk::Cursor::create(Gdk::CROSSHAIR)), // CROSSHAIR is the closest cursor if it can't load the icon
-	is_moving(false)
+Orbit3d_tool::Orbit3d_tool(Workspace_abstr* env)
+	: tool(env, Gdk::Cursor::create(Gdk::CROSSHAIR)) // CROSSHAIR is the closest cursor if it can't load the icon
+	, is_moving(false)
 {
 	// Load the cursor icon
 	try {

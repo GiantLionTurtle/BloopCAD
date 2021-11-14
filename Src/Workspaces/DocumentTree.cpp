@@ -20,11 +20,11 @@
 #include <Utils/Expunge.hpp>
 #include "Document.hpp"
 
-DocumentNode::DocumentNode(std::string label, bool collapsed):
-	mTree(nullptr),
-	mParent(nullptr),
-	mCollapsed(collapsed),
-	mLevel(0)
+DocumentNode::DocumentNode(std::string label, bool collapsed)
+	: mTree(nullptr)
+	, mParent(nullptr)
+	, mCollapsed(collapsed)
+	, mLevel(0)
 {
 	set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -216,15 +216,15 @@ void DocumentNode::set_tree(DocumentTree* tree_)
 
 /* DRAWABLE NODES */
 
-DocumentDrawableNode::DocumentDrawableNode(std::string str, Drawable* drw, bool collapsed):
-	DocumentNode(str, collapsed),
-	mDrw(drw)
+DocumentDrawableNode::DocumentDrawableNode(std::string str, Drawable* drw, bool collapsed)
+	: DocumentNode(str, collapsed)
+	, mDrw(drw)
 {
 	mDrw->set_handle(this);
 }
-DocumentDrawableNode::DocumentDrawableNode(Drawable* drw, bool collapsed):
-	DocumentNode(drw->name(), collapsed),
-	mDrw(drw)
+DocumentDrawableNode::DocumentDrawableNode(Drawable* drw, bool collapsed)
+	: DocumentNode(drw->name(), collapsed)
+	, mDrw(drw)
 {
 	mDrw->set_handle(this);
 }
@@ -260,9 +260,9 @@ void DocumentDrawableNode::notify_select(bool sel)
 }
 
 
-DocumentTree::DocumentTree(Document* doc_):
-	mRoot(doc_->name()),
-	mDoc(doc_)
+DocumentTree::DocumentTree(Document* doc_)
+	: mRoot(doc_->name())
+	, mDoc(doc_)
 {
 	mRoot.set_tree(this);
 

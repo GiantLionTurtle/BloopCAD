@@ -21,9 +21,9 @@
 #include <Workspaces/Document.hpp>
 #include <Bloop/Bloop.hpp>
 
-EnterPart_action::EnterPart_action(bool set_camera):
-	SwitchWorkspace_action(Bloop::PART, set_camera),
-	mTarget(nullptr) // Target will be determined when do_work is called since every document has only one part.. this might change
+EnterPart_action::EnterPart_action(bool set_camera)
+	: SwitchWorkspace_action(Bloop::PART, set_camera)
+	, mTarget(nullptr) // Target will be determined when do_work is called since every document has only one part.. this might change
 {
 
 }

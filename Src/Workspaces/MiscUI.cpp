@@ -32,8 +32,8 @@ TabButton::TabButton(std::string const& label_)
 }
 
 
-StatusBar::StatusBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder):
-	Gtk::Box(cobject)
+StatusBar::StatusBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
+	: Gtk::Box(cobject)
 {
 	builder->get_widget("status_workspace", workspaceName);
 	builder->get_widget("status_tool", toolName);

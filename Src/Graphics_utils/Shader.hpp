@@ -35,9 +35,9 @@ struct ShaderSource {
 		@param source_ 	The data that the object contains
 		@param type_ 	The openGL Shader type
 	*/
-	ShaderSource(std::string const& source_, unsigned int type_):
-		source(source_),
-		type(type_)
+	ShaderSource(std::string const& source_, unsigned int type_)
+		: source(source_)
+		, type(type_)
 	{}
 	std::string source; // The source code or path to source code of the Shader
 	unsigned int type; // The type of Shader (vertex, geometry, tesseleration, fragment, etc..)

@@ -20,8 +20,8 @@
 #include <Workspaces/Document.hpp>
 #include <Drawables/Containers/Part.hpp>
 
-QuitPart_action::QuitPart_action():
-	mTarget(nullptr) // Target is determined when do_work is first called
+QuitPart_action::QuitPart_action()
+	: mTarget(nullptr) // Target is determined when do_work is first called
 {
 
 }

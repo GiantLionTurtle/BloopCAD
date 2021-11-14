@@ -43,8 +43,8 @@ std::shared_ptr<ExpConst> ExpConst::pi2(new ExpConst(M_PI_2));
 
 int Expression_abstr::n_exp = 0;
 
-Expression_abstr::Expression_abstr():
-	mID(n_exp++) // ID for debug purposes
+Expression_abstr::Expression_abstr()
+	: mID(n_exp++) // ID for debug purposes
 {
 
 }
@@ -59,8 +59,8 @@ exp_ptr Expression_abstr::d()
 }
 
 
-Expression::Expression():
-	mDerivative(nullptr)
+Expression::Expression()
+	: mDerivative(nullptr)
 {
 
 }
@@ -75,26 +75,26 @@ exp_ptr Expression::derivative()
 	return mDerivative;
 }
 
-UnaryExp::UnaryExp():
-	mOperand(nullptr)
+UnaryExp::UnaryExp()
+	: mOperand(nullptr)
 {
 
 }
-UnaryExp::UnaryExp(exp_ptr operand):
-	mOperand(operand)
+UnaryExp::UnaryExp(exp_ptr operand)
+	: mOperand(operand)
 {
 
 }
 
-BinaryExp::BinaryExp():
-	mLeft(nullptr),
-	mRight(nullptr)
+BinaryExp::BinaryExp()
+	: mLeft(nullptr)
+	, mRight(nullptr)
 {
 
 }
-BinaryExp::BinaryExp(exp_ptr left, exp_ptr right):
-	mLeft(left),
-	mRight(right)
+BinaryExp::BinaryExp(exp_ptr left, exp_ptr right)
+	: mLeft(left)
+	, mRight(right)
 {
 
 }
@@ -252,8 +252,8 @@ std::string ExpConst::to_string()
 /* -------------- End coefficient length -------------- */
 
 /* -------------- Variable -------------- */
-ExpVarDerivative::ExpVarDerivative(ExpVar* var):
-	mVar(var)
+ExpVarDerivative::ExpVarDerivative(ExpVar* var)
+	: mVar(var)
 {
 
 }
@@ -270,15 +270,15 @@ exp_ptr ExpVarDerivative::generate_derivative()
 }
 
 
-ExpVar::ExpVar(double val, bool fixed_):
-	mVal(val),
-	mExists(true),
-	mAs_coeff(true),
-	mIs_substituted(false),
-	mIs_dragged(false),
-	mFrozen(fixed_ ? 2 : 0),
-	mSubstituant(nullptr),
-	mDerivative(std::make_shared<ExpVarDerivative>(this))
+ExpVar::ExpVar(double val, bool fixed_)
+	: mVal(val)
+	, mExists(true)	
+	, mAs_coeff(true)
+	, mIs_substituted(false)
+	, mIs_dragged(false)
+	, mFrozen(fixed_ ? 2 : 0)
+	, mSubstituant(nullptr)
+	, mDerivative(std::make_shared<ExpVarDerivative>(this))
 {
 	
 }
@@ -412,8 +412,8 @@ var_ptr ExpVar::driving(var_ptr a, var_ptr b)
 
 
 /* -------------- Plus -------------- */
-ExpPlus::ExpPlus(exp_ptr operand):
-	UnaryExp(operand)
+ExpPlus::ExpPlus(exp_ptr operand)
+	: UnaryExp(operand)
 {
 
 }
@@ -434,8 +434,8 @@ std::string ExpPlus::to_string()
 /* -------------- End plus -------------- */
 
 /* -------------- Minus -------------- */
-ExpMinus::ExpMinus(exp_ptr operand):
-	UnaryExp(operand)
+ExpMinus::ExpMinus(exp_ptr operand)
+	: UnaryExp(operand)
 {
 
 }
@@ -456,8 +456,8 @@ std::string ExpMinus::to_string()
 /* -------------- End minus -------------- */
 
 /* -------------- Sin -------------- */
-ExpSin::ExpSin(exp_ptr operand):
-	UnaryExp(operand)
+ExpSin::ExpSin(exp_ptr operand)
+	: UnaryExp(operand)
 {
 
 }
@@ -477,8 +477,8 @@ std::string ExpSin::to_string()
 }
 /* -------------- End sin -------------- */
 /* -------------- Asin -------------- */
-ExpAsin::ExpAsin(exp_ptr operand):
-	UnaryExp(operand)
+ExpAsin::ExpAsin(exp_ptr operand)
+	: UnaryExp(operand)
 {
 
 }
@@ -498,8 +498,8 @@ std::string ExpAsin::to_string()
 }
 /* -------------- End asin -------------- */
 /* -------------- Csc -------------- */
-ExpCsc::ExpCsc(exp_ptr operand):
-	UnaryExp(operand)
+ExpCsc::ExpCsc(exp_ptr operand)
+	: UnaryExp(operand)
 {
 
 }
@@ -520,8 +520,8 @@ std::string ExpCsc::to_string()
 /* -------------- End asin -------------- */
 
 /* -------------- Cos -------------- */
-ExpCos::ExpCos(exp_ptr operand):
-	UnaryExp(operand)
+ExpCos::ExpCos(exp_ptr operand)
+	: UnaryExp(operand)
 {
 
 }
@@ -541,8 +541,8 @@ std::string ExpCos::to_string()
 }
 /* -------------- End cos -------------- */
 /* -------------- Acos -------------- */
-ExpAcos::ExpAcos(exp_ptr operand):
-	UnaryExp(operand)
+ExpAcos::ExpAcos(exp_ptr operand)
+	: UnaryExp(operand)
 {
 
 }
@@ -562,8 +562,8 @@ std::string ExpAcos::to_string()
 }
 /* -------------- End acos -------------- */
 /* -------------- Sec -------------- */
-ExpSec::ExpSec(exp_ptr operand):
-	UnaryExp(operand)
+ExpSec::ExpSec(exp_ptr operand)
+	: UnaryExp(operand)
 {
 
 }
@@ -584,8 +584,8 @@ std::string ExpSec::to_string()
 /* -------------- End sec -------------- */
 
 /* -------------- Tan -------------- */
-ExpTan::ExpTan(exp_ptr operand):
-	UnaryExp(operand)
+ExpTan::ExpTan(exp_ptr operand)
+	: UnaryExp(operand)
 {
 
 }
@@ -605,8 +605,8 @@ std::string ExpTan::to_string()
 }
 /* -------------- End tan -------------- */
 /* -------------- Atan2 -------------- */
-ExpAtan2::	ExpAtan2(exp_ptr left, exp_ptr right):
-	BinaryExp(left, right)
+ExpAtan2::ExpAtan2(exp_ptr left, exp_ptr right)
+	: BinaryExp(left, right)
 {
 
 }
@@ -626,8 +626,8 @@ std::string ExpAtan2::to_string()
 }
 /* -------------- End atan2 -------------- */
 /* -------------- Cot -------------- */
-ExpCot::ExpCot(exp_ptr operand):
-	UnaryExp(operand)
+ExpCot::ExpCot(exp_ptr operand)
+	: UnaryExp(operand)
 {
 
 }
@@ -647,8 +647,8 @@ std::string ExpCot::to_string()
 }
 /* -------------- End cot -------------- */
 /* -------------- Abs -------------- */
-ExpAbsDerivative::ExpAbsDerivative(ExpAbs* var):
-	mAbs(var)
+ExpAbsDerivative::ExpAbsDerivative(ExpAbs* var)
+	: mAbs(var)
 {
 
 }
@@ -665,8 +665,8 @@ exp_ptr ExpAbsDerivative::generate_derivative()
 	return ExpConst::zero; // Not true but it should not be reached..
 }
 
-ExpAbs::ExpAbs(exp_ptr operand):
-	UnaryExp(operand)
+ExpAbs::ExpAbs(exp_ptr operand)
+	: UnaryExp(operand)
 {
 
 }
@@ -686,9 +686,9 @@ std::string ExpAbs::to_string()
 }
 /* -------------- End abs -------------- */
 /* -------------- Mod -------------- */
-ExpMod::ExpMod(exp_ptr operand, double modulo):
-	UnaryExp(operand),
-	mMod(modulo)
+ExpMod::ExpMod(exp_ptr operand, double modulo)
+	: UnaryExp(operand)
+	, mMod(modulo)
 {
 
 }
@@ -709,8 +709,8 @@ std::string ExpMod::to_string()
 /* -------------- End mod -------------- */
 
 /* -------------- Add -------------- */
-ExpAdd::ExpAdd(exp_ptr left, exp_ptr right):
-	BinaryExp(left, right)
+ExpAdd::ExpAdd(exp_ptr left, exp_ptr right)
+	: BinaryExp(left, right)
 {
 
 }
@@ -731,8 +731,8 @@ std::string ExpAdd::to_string()
 /* -------------- End add -------------- */
 
 /* -------------- Substr -------------- */
-ExpSubstr::ExpSubstr(exp_ptr left, exp_ptr right):
-	BinaryExp(left, right)
+ExpSubstr::ExpSubstr(exp_ptr left, exp_ptr right)
+	: BinaryExp(left, right)
 {
 
 }
@@ -754,8 +754,8 @@ std::string ExpSubstr::to_string()
 
 
 /* -------------- Mult -------------- */
-ExpMult::ExpMult(exp_ptr left, exp_ptr right):
-	BinaryExp(left, right)
+ExpMult::ExpMult(exp_ptr left, exp_ptr right)
+	: BinaryExp(left, right)
 {
 
 }
@@ -776,8 +776,8 @@ std::string ExpMult::to_string()
 /* -------------- End mult -------------- */
 
 /* -------------- Div -------------- */
-ExpDiv::ExpDiv(exp_ptr left, exp_ptr right):
-	BinaryExp(left, right)
+ExpDiv::ExpDiv(exp_ptr left, exp_ptr right)
+	: BinaryExp(left, right)
 {
 
 }
@@ -801,8 +801,8 @@ std::string ExpDiv::to_string()
 /* -------------- End div -------------- */
 
 /* -------------- Pow -------------- */
-ExpPow::ExpPow(exp_ptr base, exp_ptr power):
-	BinaryExp(base, power)
+ExpPow::ExpPow(exp_ptr base, exp_ptr power)
+	: BinaryExp(base, power)
 {
 
 }
@@ -823,9 +823,9 @@ std::string ExpPow::to_string()
 /* -------------- End pow -------------- */
 
 /* -------------- Equation -------------- */
-ExpEqu::ExpEqu(exp_ptr left, exp_ptr right):
-	ExpSubstr(left, right),
-	mTag(0)
+ExpEqu::ExpEqu(exp_ptr left, exp_ptr right)
+	: ExpSubstr(left, right)
+	, mTag(0)
 {
 
 }

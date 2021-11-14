@@ -17,15 +17,15 @@
 
 #include "Serial_action.hpp"
 
-Serial_action::Serial_action(std::vector<Action_ptr> actions):
-	mActions(actions),
-	mCurrentInd(0) // Actions are assumed not done, so the execution id is 0
+Serial_action::Serial_action(std::vector<Action_ptr> actions)
+	: mActions(actions)
+	, mCurrentInd(0) // Actions are assumed not done, so the execution id is 0
 {
 
 }
-Serial_action::Serial_action():
-	mActions({}),
-	mCurrentInd(0) // Actions are assumed not done, so the execution id is 0
+Serial_action::Serial_action()
+	: mActions({})
+	, mCurrentInd(0) // Actions are assumed not done, so the execution id is 0
 {
 
 }

@@ -34,16 +34,16 @@
 bool SkSprite::kFisrstInst = true;
 glm::vec3 SkSprite::kColorHovered = glm::vec3(0.0f);
 
-SkSprite::SkSprite(Geom3d::Plane_abstr* basePlane_, glm::vec2 dims, std::string const& texturePath):
-    SkIntDrawable(basePlane_),
-    mTexture(nullptr),
-    mDimensions(dims),
-    mTexturePath(texturePath),
-    mPixelOffset(0.0f, 0.0f),
-	mPos({ExpVar::make(0.0f), ExpVar::make(0.0f)}),
-    mVA(nullptr),
-    mVB(nullptr),
-    mShader(nullptr)
+SkSprite::SkSprite(Geom3d::Plane_abstr* basePlane_, glm::vec2 dims, std::string const& texturePath)
+	: SkIntDrawable(basePlane_)
+	, mTexture(nullptr)
+	, mDimensions(dims)
+	, mTexturePath(texturePath)
+	, mPixelOffset(0.0f, 0.0f)
+	, mPos({ExpVar::make(0.0f), ExpVar::make(0.0f)})
+	, mVA(nullptr)
+	, mVB(nullptr)
+	, mShader(nullptr)
 {
 	mType != ANNOTATION;
 	set_name("SkSprite");

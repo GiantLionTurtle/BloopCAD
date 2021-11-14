@@ -55,15 +55,15 @@ struct ParamState {
 		@param v The variable to set
 		@param s The value tupled with the variable
 	*/
-	ParamState(Param* v, float s):
-		var(v),
-		st(s)
+	ParamState(Param* v, float s)
+		: var(v)
+		, st(s)
 	{
 		
 	}
-	ParamState():
-		var(nullptr),
-		st(0.0f)
+	ParamState()
+		: var(nullptr)
+		, st(0.0f)
 	{
 
 	}

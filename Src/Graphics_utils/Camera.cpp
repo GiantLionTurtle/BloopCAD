@@ -42,37 +42,37 @@ bool operator ==(CameraState const& st1, CameraState const& st2)
 	return st1.pos == st2.pos && st1.right == st2.right && st1.up == st2.up;
 }
 
-Camera::Camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float FOV_, glm::vec2 viewport_):
-	mInternalPos(cartesianCoords),
-	mInternalTarget(target),
-	mOrientation(glm::vec3(0.0f, 0.0f, 0.0f)),
-	mZoom(1.0f),
-	mFOV(FOV_),
-	mNearPlane(0.1),
-	mFarPlane(100),
-	mViewport(viewport_),
-	mInternalFront(0.0f, 0.0f, -1.0f),
-	mTransformation{glm::vec3(0.0f, 0.0f, 0.0f)/*No translation*/, 
-		glm::vec3(1.0f, 1.0f, 1.0f)/*Scale of 100%*/, 
-		glm::quat(1.0f, 0.0f, 0.0f, 0.0f)/*No rotation with unit quaternion*/},
-	mNeed_update(false)
+Camera::Camera(glm::vec3 const& cartesianCoords, glm::vec3 const& target, float FOV_, glm::vec2 viewport_)
+	: mInternalPos(cartesianCoords)
+	, mInternalTarget(target)
+	, mOrientation(glm::vec3(0.0f, 0.0f, 0.0f))
+	, mZoom(1.0f)
+	, mFOV(FOV_)
+	, mNearPlane(0.1)
+	, mFarPlane(100)
+	, mViewport(viewport_)
+	, mInternalFront(0.0f, 0.0f, -1.0f)
+	, mTransformation{glm::vec3(0.0f, 0.0f, 0.0f)/*No translation*/,
+		glm::vec3(1.0f, 1.0f, 1.0f)/*Scale of 100%*/,
+		glm::quat(1.0f, 0.0f, 0.0f, 0.0f)/*No rotation with unit quaternion*/}
+	, mNeed_update(false)
 {
 
 }
-Camera::Camera():
-	mInternalPos(glm::vec3(0.0)),
-	mInternalTarget(glm::vec3(0.0)),
-	mOrientation(glm::vec3(0.0f, 0.0f, 0.0f)),
-	mZoom(1.0f),
-	mFOV(0.0f),
-	mNearPlane(0.1),
-	mFarPlane(100),
-	mViewport(glm::vec2(0.0)),
-	mInternalFront(0.0f, 0.0f, -1.0f),
-	mTransformation{glm::vec3(0.0f, 0.0f, 0.0f)/*No translation*/, 
+Camera::Camera()
+	: mInternalPos(glm::vec3(0.0))
+	, mInternalTarget(glm::vec3(0.0))
+	, mOrientation(glm::vec3(0.0f, 0.0f, 0.0f))
+	, mZoom(1.0f)
+	, mFOV(0.0f)
+	, mNearPlane(0.1)
+	, mFarPlane(100)
+	, mViewport(glm::vec2(0.0))
+	, mInternalFront(0.0f, 0.0f, -1.0f)
+	, mTransformation{glm::vec3(0.0f, 0.0f, 0.0f)/*No translation*/, 
 		glm::vec3(1.0f, 1.0f, 1.0f)/*Scale of 100%*/, 
-		glm::quat(1.0f, 0.0f, 0.0f, 0.0f)/*No rotation with unit quaternion*/},
-	mNeed_update(false)
+		glm::quat(1.0f, 0.0f, 0.0f, 0.0f)/*No rotation with unit quaternion*/}
+	, mNeed_update(false)
 {
 
 }

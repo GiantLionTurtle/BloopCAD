@@ -26,11 +26,11 @@
 #include <Graphics_utils/IndexBuffer.hpp>
 #include <Graphics_utils/Camera.hpp>
 
-Plane::Plane(Plane_abstr const& plane_):
-	Plane_abstr(plane_),
-	mVA(nullptr),
-	mVB(nullptr),
-	mShader(nullptr)
+Plane::Plane(Plane_abstr const& plane_)
+	: Plane_abstr(plane_)
+	, mVA(nullptr)
+	, mVB(nullptr)
+	, mShader(nullptr)
 {
 	mType |= Drawable_types::PLANE;
 	set_name("plane");

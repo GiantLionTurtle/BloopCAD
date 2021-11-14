@@ -21,8 +21,8 @@
 #include <Utils/Maths_util.hpp>
 #include <Geometry/3d/Plane_abstr.hpp>
 
-Zoom3d_tool::Zoom3d_tool(Workspace_abstr* env): 
-	tool(env)
+Zoom3d_tool::Zoom3d_tool(Workspace_abstr* env)
+	: tool(env)
 {
 	// Attempt to load the cursor icon
 	try {

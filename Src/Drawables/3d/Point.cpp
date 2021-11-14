@@ -27,10 +27,10 @@
 #include <Graphics_utils/Shader.hpp>
 #include <Graphics_utils/Camera.hpp>
 
-Point::Point(glm::vec3 const& basePoint):
-	mVB(nullptr),
-	mVA(nullptr),
-	mShader(nullptr)
+Point::Point(glm::vec3 const& basePoint)
+	: mVB(nullptr)
+	, mVA(nullptr)
+	, mShader(nullptr)
 {
 	// glm::vec3 pos = basePoint.pos();
 	mX = ExpVar::make(basePoint.x);

@@ -19,10 +19,10 @@
 
 #include <Drawables/Containers/Sketch.hpp>
 
-ApplySnapshot_action::ApplySnapshot_action(Sketch* sk, std::vector<ParamDualState> deltas, bool done_at_creation):
-	mDeltas(deltas),
-	mDone(done_at_creation),
-	mSketch(sk)
+ApplySnapshot_action::ApplySnapshot_action(Sketch* sk, std::vector<ParamDualState> deltas, bool done_at_creation)
+	: mDeltas(deltas)
+	, mDone(done_at_creation)
+	, mSketch(sk)
 {
 
 }

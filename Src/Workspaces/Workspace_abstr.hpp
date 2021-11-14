@@ -45,10 +45,10 @@ struct WorkspaceState {
 	Tool_abstract* currentTool; // The tool being used by the workspace in the doc
 	int workspaceName; // The name of the workspace it is describing
 
-	WorkspaceState():
-		doc(nullptr),
-		cam(nullptr),
-		currentTool(nullptr)
+	WorkspaceState()
+		: doc(nullptr)
+		, cam(nullptr)
+		, currentTool(nullptr)
 	{
 
 	}

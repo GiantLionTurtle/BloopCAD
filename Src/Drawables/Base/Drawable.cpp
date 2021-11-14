@@ -22,16 +22,16 @@
 
 int Drawable::nDrawable = 0;
 
-Drawable::Drawable(): 
-	mState(BLOOP_ENTITY_EXISTS_FLAG),
-	mStdNotifs(0),
-	mParent(nullptr),
-	mUILink(nullptr),
-	mNeed_redraw(true),
-	mNeed_graphicUpdate(false),
-	mInited(false),
-	mType(0),
-	mID(nDrawable++)
+Drawable::Drawable()
+	: mState(BLOOP_ENTITY_EXISTS_FLAG)
+	, mStdNotifs(0)
+	, mParent(nullptr)
+	, mUILink(nullptr)
+	, mNeed_redraw(true)
+	, mNeed_graphicUpdate(false)
+	, mInited(false)
+	, mType(0)
+	, mID(nDrawable++)
 {
 	mType |= Drawable_types::DRAWABLE;
 }

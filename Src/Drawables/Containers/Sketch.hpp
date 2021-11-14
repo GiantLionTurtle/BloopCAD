@@ -37,10 +37,10 @@ private:
 	std::vector<SkConstrAnnot*> mAnnotations;
 	int mInitInd_geom, mInitInd_constr;
 public:
-	SkIndexer(Drawable* driven):
-		Indexer_abstr(driven),
-		mInitInd_geom(0),
-		mInitInd_constr(0)
+	SkIndexer(Drawable* driven)
+		: Indexer_abstr(driven)
+		, mInitInd_geom(0)
+		, mInitInd_constr(0)
 	{
 
 	}

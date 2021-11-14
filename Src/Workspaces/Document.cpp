@@ -25,21 +25,21 @@
 
 #include <glm/glm.hpp>
 
-Document::Document(EventsManager* manager):
-	mParentBloop(),
-	mEventsManager(manager),
-	mCurrentWorkspaceState(nullptr),
-	mBackgroundColor(0.0f, 0.0f, 0.0f),
-	mFrameId(1),
-	mActionStackSize(0),
-	mActionInd(0),
-	mCurrentActionNum(0),
-	mNeed_redraw(false),
-	mUseSelectionBuffer(true),
-	mName("Unamed doc"),
-	mPart(nullptr),
-	mToolPreview(nullptr),
-	mVerboseLevel(0)
+Document::Document(EventsManager* manager)
+	: mParentBloop()
+	, mEventsManager(manager)
+	, mCurrentWorkspaceState(nullptr)
+	, mBackgroundColor(0.0f, 0.0f, 0.0f)
+	, mFrameId(1)
+	, mActionStackSize(0)
+	, mActionInd(0)
+	, mCurrentActionNum(0)
+	, mNeed_redraw(false)
+	, mUseSelectionBuffer(true)
+	, mName("Unamed doc")
+	, mPart(nullptr)
+	, mToolPreview(nullptr)
+	, mVerboseLevel(0)
 {
 	if(!mEventsManager) {
 		mEventsManager = new stimuli_EventsManager();
