@@ -33,6 +33,7 @@
 
 bool SkSprite::kFisrstInst = true;
 glm::vec3 SkSprite::kColorHovered = glm::vec3(0.0f);
+glm::vec3 SkSprite::kColorSelected = glm::vec3(0.0f);
 
 SkSprite::SkSprite(Geom3d::Plane_abstr* basePlane_, glm::vec2 dims, std::string const& texturePath)
 	: SkIntDrawable(basePlane_)
@@ -40,7 +41,8 @@ SkSprite::SkSprite(Geom3d::Plane_abstr* basePlane_, glm::vec2 dims, std::string 
 	, mDimensions(dims)
 	, mTexturePath(texturePath)
 	, mPixelOffset(0.0f, 0.0f)
-	, mPos({ExpVar::make(0.0f), ExpVar::make(0.0f)})
+	, mWorldOffset(0.0f, 0.0f)
+	, mPos(0.0f, 0.0f)
 	, mVA(nullptr)
 	, mVB(nullptr)
 	, mShader(nullptr)
@@ -61,8 +63,7 @@ bool SkSprite::closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::
 {
 	if(mType & filter) {
 		glm::vec3 worldPos = mBasePlane->to_worldPos(pos());
-		glm::vec2 screenPos = cam->world_to_screen(worldPos) + mPixelOffset;
-		if(std::abs(screenPos.x - cursorPos.x) <= mDimensions.x / 2.0 && std::abs(screenPos.y - cursorPos.y) <= mDimensions.y / 2.0) {
+		if(inbound_internal(worldPos, cam, cursorPos)) {
 			selP.ent = this;
 			selP.dist_to_cam = glm::distance(cam->pos(), worldPos);
 			return true;
@@ -70,16 +71,20 @@ bool SkSprite::closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::
 	}
 	return false;
 }
-
-void SkSprite::move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move)
+bool SkSprite::inbound(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos)
 {
-	set(to);
+	glm::vec3 worldPos = mBasePlane->to_worldPos(pos());
+	return inbound_internal(worldPos, cam, cursorPos);
 }
 
+void SkSprite::move(glm::vec2 delta)
+{
+	mWorldOffset += delta;
+	update();
+}
 void SkSprite::set(glm::vec2 pos_)
 {
-	mPos[0]->set(pos_.x);
-	mPos[1]->set(pos_.y);
+	mPos = pos_;
 	update();
 }
 void SkSprite::set_pixelOffset(glm::vec2 offset)
@@ -120,6 +125,9 @@ void SkSprite::init_impl()
 		kColorHovered = Preferences::get_instance().get_vec3("sketchEntityColorHovered");
 		Preferences::get_instance().add_callback("sketchEntityColorHovered", 
 		std::function<void(glm::vec3)>([this](glm::vec3 val) { kColorHovered = val; }));
+		kColorSelected = Preferences::get_instance().get_vec3("sketchEntityColorSelected");
+		Preferences::get_instance().add_callback("sketchEntityColorSelected", 
+		std::function<void(glm::vec3)>([this](glm::vec3 val) { kColorSelected = val; }));
 		kFisrstInst = false;
 	}
 }
@@ -129,8 +137,12 @@ void SkSprite::draw_impl(Camera* cam, int frame, draw_type type)
 	mShader->bind();
 
 	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);
-	if(hovered()) 
+	
+	if(selected()) {
+		color = kColorSelected;
+	} else if(hovered()) {
 		color = kColorHovered;
+	}
 
 	mShader->setUniform3f("u_Color", color);
 	mShader->setUniform1f("u_Width", mDimensions.x);
@@ -161,4 +173,10 @@ void SkSprite::graphicUpdate_impl()
 	mVB->bind();
 	mVB->set(&tmpPos, sizeof(pos_offseted));
 	mVB->unbind();
+}
+
+bool SkSprite::inbound_internal(glm::vec3 worldPos, Camera* cam, glm::vec2 cursorPos)
+{
+	glm::vec2 screenPos = cam->world_to_screen(worldPos) + mPixelOffset;
+	return std::abs(screenPos.x - cursorPos.x) <= mDimensions.x / 2.0 && std::abs(screenPos.y - cursorPos.y) <= mDimensions.y / 2.0;
 }

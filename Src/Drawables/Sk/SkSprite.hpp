@@ -37,7 +37,7 @@ struct pos_offseted {
 class SkSprite : public SkIntDrawable {
 private:
 	static bool kFisrstInst;
-	static glm::vec3 kColorHovered;
+	static glm::vec3 kColorHovered, kColorSelected;
 
 	std::string mTexturePath;
 	Texture* mTexture;
@@ -45,7 +45,7 @@ private:
 	glm::vec2 mPixelOffset; // A sprite has a position in the world as well
 			 				// as a screen offset that stays constant regardless of zoom
 
-	std::array<var_ptr, 2> mPos;
+	glm::vec2 mPos, mWorldOffset;
 	VertexArray* mVA;
 	VertexBuffer* mVB;
 	Shader* mShader;
@@ -54,19 +54,22 @@ public:
 	~SkSprite();
 	
 	bool closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
+	bool inbound(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos);
 	// will have to find another way to drag then the geometry drag, I think it would be ridiculous to solve a system for this (the solve would be fast but still)
 	int selection_rank() { return 1; }
-	void move(glm::vec2 from, glm::vec2 to, glm::vec2 pixel_move);
+	void move(glm::vec2 delta);
 
 	glm::vec2 pixelOffset() { return mPixelOffset; }
 	void set_pixelOffset(glm::vec2 offset);
 
-	glm::vec2 pos() { return { mPos[0]->eval(), mPos[1]->eval() }; }
+	glm::vec2 pos() { return mPos + mWorldOffset; }
 	void set(glm::vec2 pos_);
 protected:
 	void init_impl();
 	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL);
 	void graphicUpdate_impl();
+
+	bool inbound_internal(glm::vec3 worldPos, Camera* cam, glm::vec2 cursorPos);
 };
 
 #endif

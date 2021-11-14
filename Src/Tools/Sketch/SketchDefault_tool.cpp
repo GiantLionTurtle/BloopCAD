@@ -36,6 +36,7 @@ SketchDefault_tool::SketchDefault_tool(Sketch_ws* env)
 	, mMode(modes::NORMAL)
 	, mSelArea(nullptr)
 	, mCurrentHover(nullptr)
+	, mAnnot(nullptr)
 {
 	mSelArea = new SkSelRect(glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0), nullptr);
 }
@@ -83,10 +84,14 @@ bool SketchDefault_tool::manage_button_press(GdkEventButton* event)
 	glm::vec2 screenPos = glm::vec2(event->x, event->y);
 	glm::vec2 plPos = mEnv->state()->cam->screen_to_plane(screenPos, mEnv->target()->basePlane());
 
+	update_annot(screenPos);
 	update_dragCandidate(screenPos);
-	
-	if(mDragCandidate.geom) {
-		mLastPlPos = plPos;
+	mLastCursorPos = screenPos;
+	mLastPlPos = plPos;
+
+	if(mAnnot) {
+		mAnnot->select();
+	} else if(mDragCandidate.geom) {
 		if(!(event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK) && !mDragCandidate.geom->selected())
 			mEnv->target()->unselect_all();
 		mDragCandidate.geom->select();
@@ -108,7 +113,7 @@ bool SketchDefault_tool::manage_button_release(GdkEventButton* event)
 
 	if(mMode == modes::NORMAL && !mDragCandidate.geom) {
 		mEnv->target()->unselect_all(); // Clear selection if the user clicks an empty space
-	} else if(mMode == modes::DRAGGING) {
+	} else if(mMode == modes::GEOMDRAG) {
 		// mEnv->state()->doc->push_action(std::make_shared<ApplySnapshot_action>(mEnv->target(), mEnv->target()->deltaSnapshot(mStartSnapshot), true));
 		// mEnv->target()->dragConstr()->clear();
 	} else if(mMode == modes::AREASELECT) {
@@ -126,7 +131,7 @@ bool SketchDefault_tool::manage_mouse_move(GdkEventMotion* event)
 	update_hover(cursorPos);
 
 
-	if(mMode == modes::DRAGGING) {
+	if(mMode == modes::GEOMDRAG) {
 		// Move drawables
 		if(sk->n_selected() == 1 && mDragCandidate.geom) {
 			mDragCandidate.geom->move_selected(plPos - mLastPlPos);
@@ -136,20 +141,36 @@ bool SketchDefault_tool::manage_mouse_move(GdkEventMotion* event)
 		} else {
 			sk->move_selected(plPos - mLastPlPos);
 		}
+	} else if(mMode == modes::ANNOTDRAG) {
+		mAnnot->move(plPos - mLastPlPos);
 	} else if(mMode == modes::AREASELECT) {
 		areaSelect(plPos, cursorPos.x);
-	} else if(mMode == modes::NORMAL && event->state & GDK_BUTTON1_MASK && mDragCandidate.geom) {
-		// mStartSnapshot = sk->snapshot();
-		if(sk->n_selected() == 1) {
-			// sk->dragConstr()->set_equality(mDragCandidate.pt, mDragCandidate.geom->all_vars());
+	} else if(mMode == modes::NORMAL && event->state & GDK_BUTTON1_MASK) {
+		if(mDragCandidate.geom) {
+			mMode = modes::GEOMDRAG;
+			// mStartSnapshot = sk->snapshot();
+		} else if(mAnnot) {
+			mMode = modes::ANNOTDRAG;
 		}
-		mMode = modes::DRAGGING;
 	}
 	mLastPlPos = plPos;
 
 	return true;
 }
 
+void SketchDefault_tool::update_annot(glm::vec2 cursorPos)
+{
+	SkConstrAnnot* candidateAnnot = nullptr;
+	Camera* cam = mEnv->state()->cam;
+	Sketch* sk = mEnv->target();
+	if(cursorPos != mLastCursorPos && !sk->need_graphicUpdate() && !cam->need_update()) { // Prevent recomputing the same thing multiple times
+		candidateAnnot = sk->closest_annot(cursorPos, cam);
+	}
+	if(candidateAnnot != mAnnot && mAnnot) {
+		mAnnot->unselect();
+	}
+	mAnnot = candidateAnnot;
+}
 void SketchDefault_tool::update_dragCandidate(glm::vec2 cursorPos)
 {
 	Camera* cam = mEnv->state()->cam;
@@ -157,7 +178,6 @@ void SketchDefault_tool::update_dragCandidate(glm::vec2 cursorPos)
 	if(cursorPos != mLastCursorPos && !sk->need_graphicUpdate() && !cam->need_update()) { // Prevent recomputing the same thing multiple times
 		if(!sk->closest_draggable(mDragCandidate, cursorPos, cam, DRAWABLE))
 			mDragCandidate.geom = nullptr;
-		mLastCursorPos = cursorPos;
 	}
 }
 void SketchDefault_tool::update_hover(glm::vec2 cursorPos)

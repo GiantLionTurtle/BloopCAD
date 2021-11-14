@@ -21,11 +21,12 @@
 
 class SketchDefault_tool : public tool<Sketch_ws> {
 private:   
-	SkSelRect* mSelArea;
+	SkSelRect* mSelArea { nullptr };
 	SkGeomDragPoint mDragCandidate;
-	Drawable* mCurrentHover;
+	SkConstrAnnot* mAnnot { nullptr };
+	Drawable* mCurrentHover { nullptr };
 
-	enum modes { NORMAL, DRAGGING, AREASELECT };
+	enum modes { NORMAL, GEOMDRAG, ANNOTDRAG, AREASELECT };
 	int mMode;
 
 	std::map<var_ptr, float> mStartSnapshot; // Used to creat move actions
@@ -45,6 +46,7 @@ public:
 	bool manage_button_release(GdkEventButton* event);
 	bool manage_mouse_move(GdkEventMotion* event);
 
+	void update_annot(glm::vec2 cursorPos);
 	void update_dragCandidate(glm::vec2 cursorPos);
 	void update_hover(glm::vec2 cursorPos);
 	void areaSelect(glm::vec2 plPos, float cursorX);
