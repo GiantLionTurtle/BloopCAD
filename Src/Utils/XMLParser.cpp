@@ -77,13 +77,13 @@ void print_tabs(int tabs)
 	}
 }
 
-XML_node::XML_node():
-	mDocument(nullptr), // Everything shall be
-	mPrevNode(nullptr), // set to nullptr
-	mNextNode(nullptr),
-	mFirstChild(nullptr),
-	mLastChild(nullptr),
-	mParent(nullptr)
+XML_node::XML_node()
+	: mDocument(nullptr) // Everything shall be
+	, mPrevNode(nullptr) // set to nullptr
+	, mNextNode(nullptr)
+	, mFirstChild(nullptr)
+	, mLastChild(nullptr)
+	, mParent(nullptr)
 {
 	
 }
@@ -187,40 +187,40 @@ char* XML_node::create_classifiedNode(char* it, XML_node** node)
 }
 
 
-XML_attribute::XML_attribute():
-	mPrevAttr(nullptr), // Nullptr for the win!
-	mNextAttr(nullptr)
+XML_attribute::XML_attribute()
+	: mPrevAttr(nullptr) // Nullptr for the win!
+	, mNextAttr(nullptr)
 {
 
 }
-XML_attribute::XML_attribute(std::string const& name_, std::string const& value_):
-	mPrevAttr(nullptr),
-	mNextAttr(nullptr),
-	mName(name_),
-	mValue(value_)
+XML_attribute::XML_attribute(std::string const& name_, std::string const& value_)
+	: mPrevAttr(nullptr)
+	, mNextAttr(nullptr)
+	, mName(name_)
+	, mValue(value_)
 {
 
 }
 
-XML_element::XML_element():
-	mFirstAttrib(nullptr),
-	mLastAttrib(nullptr),
-	mContent(""),
-	mName("unamednode"),
-	mClosingType(OPENED),
-	mStartString("<"), // Simple opening sequence
-	mSelfCloseString("/>") // Simple closing sequence
+XML_element::XML_element()
+	: mFirstAttrib(nullptr)
+	, mLastAttrib(nullptr)
+	, mContent("")
+	, mName("unamednode")
+	, mClosingType(OPENED)
+	, mStartString("<") // Simple opening sequence
+	, mSelfCloseString("/>") // Simple closing sequence
 {
 
 }
-XML_element::XML_element(std::string const& name_):
-	mFirstAttrib(nullptr),
-	mLastAttrib(nullptr),
-	mContent(""),
-	mName(name_),
-	mClosingType(OPENED),
-	mStartString("<"), // Simple opening sequence
-	mSelfCloseString("/>") // Simple closing sequence
+XML_element::XML_element(std::string const& name_)
+	: mFirstAttrib(nullptr)
+	, mLastAttrib(nullptr)
+	, mContent("")
+	, mName(name_)
+	, mClosingType(OPENED)
+	, mStartString("<") // Simple opening sequence
+	, mSelfCloseString("/>") // Simple closing sequence
 {
 
 }
@@ -504,9 +504,9 @@ std::string XML_comment::to_xml(int level)
 	return level_str + "<!--" + mContent + "-->"; // Kind of wack for multiline comments but alright
 }
 
-XML_document::XML_document():
-	mFirstChild(nullptr),
-	mLastChild(nullptr)
+XML_document::XML_document()
+	: mFirstChild(nullptr)
+	, mLastChild(nullptr)
 {
 
 }

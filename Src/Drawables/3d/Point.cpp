@@ -7,10 +7,10 @@
 #include <Graphics_utils/ShadersPool.hpp>
 #include <Utils/Maths_util.hpp>
 
-Point::Point(glm::vec3 const& basePoint):
-	mVB(nullptr),
-	mVA(nullptr),
-	mShader(nullptr)
+Point::Point(glm::vec3 const& basePoint)
+	: mVB(nullptr)
+	, mVA(nullptr)
+	, mShader(nullptr)
 {
 	// glm::vec3 pos = basePoint.pos();
 	mX = ExpVar::make(basePoint.x);

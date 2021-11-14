@@ -1,8 +1,8 @@
 
 #include "FrameBuffer.hpp"
 
-FrameBuffer::FrameBuffer(unsigned int width, unsigned int height):
-	mTexture(width, height, GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST, 4) // No need to get fancy with interpolation, it will likely be the exact same size as the screen
+FrameBuffer::FrameBuffer(unsigned int width, unsigned int height)
+	: mTexture(width, height, GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST, 4) // No need to get fancy with interpolation, it will likely be the exact same size as the screen
 {
 #ifdef BLOOP_TEST_SELCTIONCOLORS_ON_MAINBUFFER
 #warning "Selection colors will be drawn on main buffer" // Do nothing to keeep it on the main frame buffer (screen)

@@ -48,13 +48,13 @@ enum Drawable_types {
 };
 
 struct SelPoint {
-	SelPoint():
-		ent(nullptr),
-		dist_to_cam(0.0f)
+	SelPoint()
+		: ent(nullptr)
+		, dist_to_cam(0.0f)
 	{}
-	SelPoint(Drawable* d, float dist):
-		ent(d),
-		dist_to_cam(dist)
+	SelPoint(Drawable* d, float dist)
+		: ent(d)
+		, dist_to_cam(dist)
 	{}
 
 	operator bool() { return ent; }

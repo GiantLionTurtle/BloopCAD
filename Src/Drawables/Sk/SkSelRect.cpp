@@ -5,14 +5,14 @@
 #include <Graphics_utils/GLCall.hpp>
 #include <Graphics_utils/ShadersPool.hpp>
 
-SkSelRect::SkSelRect(glm::vec2 start, glm::vec2 end, Geom3d::Plane_abstr* basePlane_):
-	SkDrawable(basePlane_),
-	mStartPt(start),
-	mEndPt(end),
-	mMode(TOUCH),
-	mVA(nullptr),
-	mVB(nullptr),
-	mShader(nullptr)
+SkSelRect::SkSelRect(glm::vec2 start, glm::vec2 end, Geom3d::Plane_abstr* basePlane_)
+	: SkDrawable(basePlane_)
+	, mStartPt(start)
+	, mEndPt(end)
+	, mMode(TOUCH)
+	, mVA(nullptr)
+	, mVB(nullptr)
+	, mShader(nullptr)
 {
 	set_name("selection");
 }

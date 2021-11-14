@@ -5,19 +5,20 @@
 
 #include <stb_image.h>
 
-Texture::Texture() :
-	mRendererID(0),
-	mLocalBuffer(nullptr),
-	mWidth(0),
-	mHeight(0),
-	mBPP(0)
+Texture::Texture()
+	: mRendererID(0)
+	, mLocalBuffer(nullptr)
+	, mWidth(0)
+	, mHeight(0)
+	, mBPP(0)
 {
 	GLCall(glGenTextures(1, &mRendererID));
 }
-Texture::Texture(int width, int height, unsigned int wrap_s, unsigned int wrap_t, unsigned int min_filter, unsigned int mag_filter, unsigned int channels):
-	mLocalBuffer(nullptr),
-	mWidth(width),
-	mHeight(height)
+Texture::Texture(int width, int height, unsigned int wrap_s, unsigned int wrap_t, 
+				unsigned int min_filter, unsigned int mag_filter, unsigned int channels)
+	: mLocalBuffer(nullptr)
+	, mWidth(width)
+	, mHeight(height)
 {
 	// Create the texture
 	GLCall(glGenTextures( 1, &mRendererID ));

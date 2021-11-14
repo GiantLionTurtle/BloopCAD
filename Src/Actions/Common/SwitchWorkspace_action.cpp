@@ -3,9 +3,9 @@
 #include <Utils/Debug_util.hpp>
 #include <Workspaces/Document.hpp>
 
-SwitchWorkspace_action::SwitchWorkspace_action(int workspaceName, bool set_camera):
-	mTargetWorkspaceName(workspaceName),
-	mSet_Camera(set_camera)
+SwitchWorkspace_action::SwitchWorkspace_action(int workspaceName, bool set_camera)
+	: mTargetWorkspaceName(workspaceName)
+	, mSet_Camera(set_camera)
 {
 
 }

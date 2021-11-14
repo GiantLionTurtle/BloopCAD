@@ -10,10 +10,10 @@
 #include <Tools/Sketch/Horizontality_tool.hpp>
 #include <Tools/Sketch/Perpendicularity_tool.hpp>
 
-Test_EventsManager::Test_EventsManager():
-	mTestStep(-1),
-	mTestStepDone(0),
-	mLastAction(std::chrono::steady_clock::now())
+Test_EventsManager::Test_EventsManager()
+	: mTestStep(-1)
+	, mTestStepDone(0)
+	, mLastAction(std::chrono::steady_clock::now())
 {
 
 }

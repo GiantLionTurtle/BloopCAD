@@ -15,8 +15,8 @@ protected:
 	containerType mDrawList;	// List of Drawables that must be rendered/updated
 								// they will likely be duplicate of more precise types
 public:
-	Collection_abstr():
-		mDrawList(this)
+	Collection_abstr()
+		: mDrawList(this)
 	{
 		
 	}
@@ -93,8 +93,8 @@ class Indexer_abstr {
 protected:
 	Drawable* mDriven; // The collection that uses this indexer
 public:
-	Indexer_abstr(Drawable* driven_):
-		mDriven(driven_)
+	Indexer_abstr(Drawable* driven_)
+		: mDriven(driven_)
 	{
 
 	}
@@ -112,17 +112,17 @@ protected:
 	cT mList;
 	int mInitInd;
 public:
-	Linear_indexer(Drawable* driven_, cT l):
-		Indexer_abstr(driven_),
-		mList(l),
-		mInitInd(0)
+	Linear_indexer(Drawable* driven_, cT l)
+		: Indexer_abstr(driven_)
+		, mList(l)
+		, mInitInd(0)
 	{
 		static_assert(std::is_pointer<eT>::value, "eT must be pointer type!");
 	}
-	Linear_indexer(Drawable* driven_):
-		Indexer_abstr(driven_),
-		mList(),
-		mInitInd(0)
+	Linear_indexer(Drawable* driven_)
+		: Indexer_abstr(driven_)
+		, mList()
+		, mInitInd(0)
 	{
 
 	}
@@ -154,13 +154,13 @@ using LinearFixed_indexer = Linear_indexer<std::array<eT, sz>, eT>;
 template<typename eT>
 class LinearResizable_indexer : public Linear_indexer<std::vector<eT>, eT> {
 public:
-	LinearResizable_indexer(Drawable* driven_, std::vector<eT> list):
-		Linear_indexer<std::vector<eT>, eT>(driven_, list)
+	LinearResizable_indexer(Drawable* driven_, std::vector<eT> list)
+		: Linear_indexer<std::vector<eT>, eT>(driven_, list)
 	{
 
 	}
-	LinearResizable_indexer(Drawable* driven_):
-		Linear_indexer<std::vector<eT>, eT>(driven_)
+	LinearResizable_indexer(Drawable* driven_)
+		: Linear_indexer<std::vector<eT>, eT>(driven_)
 	{
 
 	}

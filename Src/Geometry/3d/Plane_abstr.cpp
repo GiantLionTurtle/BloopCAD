@@ -5,11 +5,11 @@
 
 namespace Geom3d {
 
-Plane_abstr::Plane_abstr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed) :
-	mOrigin(origin),
-	mV(v),
-	mW(w),
-	mDir(reversed ? -1.0f : 1.0f)
+Plane_abstr::Plane_abstr(glm::vec3 const& origin, glm::vec3 const& v, glm::vec3 const& w, bool reversed)
+	: mOrigin(origin)
+	, mV(v)
+	, mW(w)
+	, mDir(reversed ? -1.0f : 1.0f)
 {
 
 }

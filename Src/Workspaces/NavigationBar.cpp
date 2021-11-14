@@ -4,9 +4,9 @@
 #include <Utils/Expunge.hpp>
 #include <Tools/Tools_forward.hpp>
 
-NavigationBar::NavigationBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder) :
-	Gtk::Box(cobject),
-	mCurrentWorkspace(nullptr)
+NavigationBar::NavigationBar(BaseObjectType* cobject, Glib::RefPtr<Gtk::Builder> const& builder)
+	: Gtk::Box(cobject)
+	, mCurrentWorkspace(nullptr)
 {
 	// Ask the builder to create all buttons
 	builder->get_widget("orbit_btn", mOrbitButton);

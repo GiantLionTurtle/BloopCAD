@@ -20,8 +20,8 @@
 #include <Utils/XMLParser.hpp>
 #include <Bloop.hpp>
 
-Sketch_ws::Sketch_ws(Glib::RefPtr<Gtk::Builder> const& builder, Bloop* parent) :
-	Workspace_abstr("Sketch_ws_upperBar", builder, parent) // Create base workspace with upper bar
+Sketch_ws::Sketch_ws(Glib::RefPtr<Gtk::Builder> const& builder, Bloop* parent)
+	: Workspace_abstr("Sketch_ws_upperBar", builder, parent) // Create base workspace with upper bar
 {	
 	// Create all the tools used in this workspace
 	mPan3d_tool 					= new Pan2d_tool(this);

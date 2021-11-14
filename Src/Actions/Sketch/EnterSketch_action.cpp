@@ -3,9 +3,9 @@
 #include <Workspaces/Document.hpp>
 #include <Bloop.hpp>
 
-EnterSketch_action::EnterSketch_action(Sketch* target, bool set_camera):
-	SwitchWorkspace_action(Bloop::workspace_types::SKETCH, set_camera),
-	mTarget(target)
+EnterSketch_action::EnterSketch_action(Sketch* target, bool set_camera)
+	: SwitchWorkspace_action(Bloop::workspace_types::SKETCH, set_camera)
+	, mTarget(target)
 {
 
 }

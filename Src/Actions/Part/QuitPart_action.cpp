@@ -2,8 +2,8 @@
 #include "QuitPart_action.hpp"
 #include <Workspaces/Document.hpp>
 
-QuitPart_action::QuitPart_action():
-	mTarget(nullptr) // Target is determined when do_work is first called
+QuitPart_action::QuitPart_action()
+	: mTarget(nullptr) // Target is determined when do_work is first called
 {
 
 }

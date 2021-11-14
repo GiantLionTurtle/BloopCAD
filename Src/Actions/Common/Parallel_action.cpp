@@ -2,15 +2,15 @@
 #include "Parallel_action.hpp"
 #include <algorithm>
 
-Parallel_action::Parallel_action(std::vector<Action_ptr> actions):
-	mActions(actions),
-	mActions_done(actions.size(), false) // No action is done at this point
+Parallel_action::Parallel_action(std::vector<Action_ptr> actions)
+	: mActions(actions)
+	, mActions_done(actions.size(), false) // No action is done at this point
 {
 
 }
-Parallel_action::Parallel_action():
-	mActions({}),
-	mActions_done({})
+Parallel_action::Parallel_action()
+	: mActions({})
+	, mActions_done({})
 {
 
 }

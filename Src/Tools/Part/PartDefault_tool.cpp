@@ -4,8 +4,8 @@
 #include <Utils/Debug_util.hpp>
 #include <Workspaces/Document.hpp>
 
-PartDefault_tool::PartDefault_tool(Part_ws* env):
-	SimpleSelector_tool(env)
+PartDefault_tool::PartDefault_tool(Part_ws* env)
+	: SimpleSelector_tool(env)
 {
 	if(!mEnv) {
 		LOG_ERROR("Null environnement in tool.");

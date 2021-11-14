@@ -27,9 +27,9 @@ public:
 
 		@param val : The initial value of the variable
 	*/
-	Animatable(eT val):
-		mVal(val),
-		mAnimationEnded(true)
+	Animatable(eT val)
+		: mVal(val)
+		, mAnimationEnded(true)
 	{}
 	/*
 		@function set simply sets the variable's value, without animation 

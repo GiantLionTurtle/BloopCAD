@@ -3,8 +3,8 @@
 
 #include "GLCall.hpp"
 
-VertexBuffer::VertexBuffer(void const* data, unsigned int size_):
-	mSize(size_)
+VertexBuffer::VertexBuffer(void const* data, unsigned int size_)
+	: mSize(size_)
 {
 	// Create the buffer
 	GLCall(glGenBuffers(1, &mRendererID));

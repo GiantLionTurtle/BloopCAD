@@ -422,13 +422,13 @@ struct VarState {
 		@param v The variable to set
 		@param s The value tupled with the variable
 	*/
-	VarState(var_ptr v, float s):
-		var(v),
-		st(s)
+	VarState(var_ptr v, float s)
+		: var(v)
+		, st(s)
 	{}
-	VarState():
-		var(nullptr),
-		st(0.0f)
+	VarState()
+		: var(nullptr)
+		, st(0.0f)
 	{}
 	var_ptr var; // Variable
 	float st;	// State
@@ -445,15 +445,15 @@ struct VarDualState {
 		@param s1 	The "before" value
 		@param s2 	The "after" value
 	*/
-	VarDualState(var_ptr v, float s1, float s2):
-		var(v),
-		st1(s1),
-		st2(s2)
+	VarDualState(var_ptr v, float s1, float s2)
+		: var(v)
+		, st1(s1)
+		, st2(s2)
 	{}
-	VarDualState():
-		var(nullptr),
-		st1(0.0f),
-		st2(0.0f)
+	VarDualState()
+		: var(nullptr)
+		, st1(0.0f)
+		, st2(0.0f)
 	{}
 	var_ptr var; // Variable
 	float st1, st2; // Both states of the variable

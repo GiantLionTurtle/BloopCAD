@@ -6,8 +6,8 @@
 #include <Drawables/3d/Plane.hpp>
 #include <Workspaces/DocumentTree.hpp>
 
-Part::Part():
-	Drawable()
+Part::Part()
+	: Drawable()
 {
 	set_name("Part");
 	// init();

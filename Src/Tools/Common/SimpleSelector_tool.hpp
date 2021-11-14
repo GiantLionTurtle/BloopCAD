@@ -20,10 +20,10 @@ public:
 
 		@param env : The workspace owning the tool
 	*/
-	SimpleSelector_tool(wst* env): 
-		tool<wst>(env),
-		mCurrentHover(nullptr), // No entity is under the mouse
-		mFilter(DRAWABLE)
+	SimpleSelector_tool(wst* env)
+		: tool<wst>(env)
+		, mCurrentHover(nullptr) // No entity is under the mouse
+		, mFilter(DRAWABLE)
 	{
 		
 	}

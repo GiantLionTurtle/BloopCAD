@@ -9,8 +9,8 @@
 
 #include <memory>
 
-Part_ws::Part_ws(Glib::RefPtr<Gtk::Builder> const& builder, Bloop* parent) :
-	Workspace_abstr("Part_ws_upperBar", builder, parent) // Create base workspace with ui upper bar
+Part_ws::Part_ws(Glib::RefPtr<Gtk::Builder> const& builder, Bloop* parent)
+	: Workspace_abstr("Part_ws_upperBar", builder, parent) // Create base workspace with ui upper bar
 {
 	// Creat all the tools used in this workspace
 	mPartDefault_tool 		= new PartDefault_tool(this);

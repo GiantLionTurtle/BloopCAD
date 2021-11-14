@@ -4,8 +4,8 @@
 
 #include <stb_image.h>
 
-Image::Image(std::string const& filePath):
-	mFilePath(filePath)
+Image::Image(std::string const& filePath)
+	: mFilePath(filePath)
 {
 	// Load the image using stbi_image
 	stbi_set_flip_vertically_on_load(true);

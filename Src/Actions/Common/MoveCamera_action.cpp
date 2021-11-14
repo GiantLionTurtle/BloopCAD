@@ -8,16 +8,16 @@
 
 #include <glm/gtx/vector_angle.hpp>
 
-MoveCamera_action::MoveCamera_action(Camera* cam, CameraState target, long duration_ms):
-	mCamera(cam),
-	mTargetState({target.pos, glm::normalize(target.right), glm::normalize(target.up)}), // Sanitize input, maybe not necessary 
-	mStarted(false),
-	mDuration(duration_ms),
+MoveCamera_action::MoveCamera_action(Camera* cam, CameraState target, long duration_ms)
+	: mCamera(cam)
+	, mTargetState({target.pos, glm::normalize(target.right), glm::normalize(target.up)}) // Sanitize input, maybe not necessary 
+	, mStarted(false)
+	, mDuration(duration_ms)
 
 	// Alright defaults but should be overwriten before anything happens anyway..
-	mRotation(glm::quat()),
-	mTranslation(glm::vec3()),
-	mScale(glm::vec3(1.0f))
+	, mRotation(glm::quat())
+	, mTranslation(glm::vec3())
+	, mScale(glm::vec3(1.0f))
 {
 
 }

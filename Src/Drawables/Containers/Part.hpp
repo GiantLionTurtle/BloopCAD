@@ -20,10 +20,10 @@ private:
 
 	int mInitInd_sk, mInitInd_origin;
 public:
-	PartIndexer(Drawable* driven):
-		Indexer_abstr(driven),
-		mInitInd_sk(0),
-		mInitInd_origin(0)
+	PartIndexer(Drawable* driven)
+		: Indexer_abstr(driven)
+		, mInitInd_sk(0)
+		, mInitInd_origin(0)
 	{
 
 	}

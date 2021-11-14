@@ -4,8 +4,8 @@
 #include <Utils/Expunge.hpp>
 #include <Bloop.hpp>
 
-Home_ws::Home_ws(Glib::RefPtr<Gtk::Builder> const& builder, Bloop* parent) :
-	Workspace_abstr("Home_ws_upperBar", builder, parent)
+Home_ws::Home_ws(Glib::RefPtr<Gtk::Builder> const& builder, Bloop* parent)
+	: Workspace_abstr("Home_ws_upperBar", builder, parent)
 {
 	// Create empty buttons
 	mButtons["new"]     = std::make_pair<Gtk::Button*, Gtk::Image*>(nullptr, nullptr);

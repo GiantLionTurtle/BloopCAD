@@ -15,9 +15,9 @@ protected:
 	std::vector<SkSprite*> mAnnots;
 	bool mFixed;
 public:
-	SkGeometry(Geom3d::Plane_abstr* pl, bool fixed_):
-		SkIntDrawable(pl),
-		mFixed(fixed_)
+	SkGeometry(Geom3d::Plane_abstr* pl, bool fixed_)
+		: SkIntDrawable(pl)
+		, mFixed(fixed_)
 	{
 
 	}
