@@ -93,25 +93,16 @@ public:
 
 	SelPoint closest(glm::vec2 cursor, Camera* cam, int filter);
 	bool closest_draggable(SkGeomDragPoint& selP, glm::vec2 cursor, Camera* cam, int filter);
+	SkConstrAnnot* closest_annot(glm::vec2 cursor, Camera* cam);
 	void move_selected(glm::vec2 delta);
 	std::shared_ptr<Serial_action> delete_selected(); 
 	void unselect_all();
 	size_t n_selected();
 
 	void add_geometry(SkGeometry* geom);
-	
-	// void add_toolPreview(Drawable* ent);
-	// void clear_toolPreview();
-
-	// void add_selectedGeometry(sketchEntity* ent);
-	// void remove_selectedGeometry(sketchEntity* ent);
-	// void clear_selectedGeometries();
-	// size_t n_selectedGeometries() { return mSelectedEntities.size(); }
 
 	// BLOOPBLOOPWACK
 	bool can_delete(SkDrawable* ent);
-
-	// void toggle_selection_from_area(glm::vec2 a, glm::vec2 b, bool contained);
 
 	/*
 		@function basePlane
@@ -122,7 +113,6 @@ public:
 
 	// Folder* origin() const { return mOrigin; }
 
-	// DraggedPoint<2>* dragConstr() { return mConstrSystem.dragConstr(); }
 	void add_annot(SkConstrAnnot* annot);
 	bool add_constraint(Constraint_abstr* constr, SkDrawable* immovable_hint = nullptr);
 	bool toggle_constraint(Constraint_abstr* constr, bool enable);
