@@ -17,12 +17,22 @@ SkPoint::SkPoint(glm::vec2 pos, Geom3d::Plane_abstr* pl, bool fixed_)
 {
 	mType |= Drawable_types::POINT;
 	set_name("SkPoint");
+
+	if(fixed_) {
+		mGeom->x()->set_frozen(2);
+		mGeom->y()->set_frozen(2);
+	}
 }
 SkPoint::SkPoint(Geom2d::Point* pt, Geom3d::Plane_abstr* pl, bool fixed_)
 	: SkPrimitiveGeometry<Geom2d::Point>(pl, fixed_, pt)
 {
 	mType |= Drawable_types::POINT;
 	set_name("SkPoint");
+	
+	if(fixed_) {
+		mGeom->x()->set_frozen(2);
+		mGeom->y()->set_frozen(2);
+	}
 }
 
 SkPoint::~SkPoint()

@@ -80,6 +80,7 @@ public:
 
 	inline bool substitutionConstraint() { return mCanSubstitute; }
 	virtual void substitute() { }
+	static void substitute(Param* a, Param* b);
 #ifndef RELEASE_MODE
 	/*
 		@function name
@@ -100,15 +101,11 @@ public:
 	PointPoint_horizontality(Geom2d::Point* p1, Geom2d::Point* p2);
 
 	double error();
-
 	double derivative(Param* withRespectTo) { return 0.0; }
-
 	void substitute();
-	static void substitute(Param* a, Param* b);
 
 	Param* param(int ind);
 	inline int n_params() { return 2; }
-
 };
 class Line_horizontality : public Constraint {
 private:
@@ -117,14 +114,45 @@ public:
 	Line_horizontality(Geom2d::Line* l);
 
 	double error();
-
 	double derivative(Param* withRespectTo) { return 0.0; }
-
 	void substitute();
 
 	Param* param(int ind);
 	inline int n_params() { return 2; }
 };
+
+/* ---------- Coincidence ---------- */
+class PointPoint_coincidence : public Constraint {
+private:
+	Geom2d::Point* mP1, *mP2;
+public:
+	PointPoint_coincidence(Geom2d::Point* p1, Geom2d::Point* p2);
+
+	double error();
+	double derivative(Param* withRespectTo) { return 0.0; }
+	void substitute();
+
+	Param* param(int ind);
+	inline int n_params() { return 4; }
+};
+
+// class SkPointLine_coincidence : public SkSprite_constraint<1> {
+// private:
+// 	SkPoint* mPoint;
+// 	SkLineCurve* mLine;
+// public:
+// 	SkPointLine_coincidence(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkLineCurve* l);
+// 	std::string name() { return "SkPointLine_coincidence"; }
+// };
+// class SkPointCircle_coincidence : public SkSprite_constraint<1> {
+// private:
+// 	SkPoint* mPoint;
+// 	SkCircleCurve* mCircle;
+// public:
+// 	SkPointCircle_coincidence(Geom3d::Plane_abstr* baseplane_, SkPoint* p, SkCircleCurve* c);
+// 	std::string name() { return "SkPointCircle_coincidence"; }
+// };
+
 
 // /* ---------- Verticality ---------- */
 // class SkPointPoint_verticality : public SkSprite_constraint<2> {

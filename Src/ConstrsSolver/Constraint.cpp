@@ -55,6 +55,16 @@ bool Constraint::satisfied()
 	return (error() < CONSTR_SATISFACTION_TRESHOLD);
 }
 
+void Constraint::substitute(Param* a, Param* b)
+{
+	if(a->weight() >= b->weight()) {
+		b->set_substitution(a);
+	} else if(a->weight() < b->weight()) {
+		a->set_substitution(b);
+	}
+}
+
+
 
 PointPoint_horizontality::PointPoint_horizontality(Geom2d::Point* p1, Geom2d::Point* p2)
 #ifndef RELEASE_MODE
@@ -75,17 +85,8 @@ double PointPoint_horizontality::error()
 
 void PointPoint_horizontality::substitute()
 {
-	substitute(mP1->y(), mP2->y());
+	Constraint::substitute(mP1->y(), mP2->y());
 }
-void PointPoint_horizontality::substitute(Param* a, Param* b)
-{
-	if(a->weight() >= b->weight()) {
-		b->set_substitution(a);
-	} else if(a->weight() < b->weight()) {
-		a->set_substitution(b);
-	}
-}
-
 Param* PointPoint_horizontality::param(int ind)
 {
 	switch(ind) {
@@ -114,7 +115,7 @@ double Line_horizontality::error()
 
 void Line_horizontality::substitute()
 {
-	PointPoint_horizontality::substitute(mLine->ptA()->y(), mLine->ptB()->y());
+	Constraint::substitute(mLine->ptA()->y(), mLine->ptB()->y());
 }
 Param* Line_horizontality::param(int ind)
 {
@@ -125,6 +126,38 @@ Param* Line_horizontality::param(int ind)
 	return nullptr;
 }
 
+PointPoint_coincidence::PointPoint_coincidence(Geom2d::Point* p1, Geom2d::Point* p2)
+#ifndef RELEASE_MODE
+	: Constraint("PointPoint_coincidence", true)
+#else
+	: Constraint(true)
+#endif
+	, mP1(p1)
+	, mP2(p2)
+{
+
+}
+
+double PointPoint_coincidence::error()
+{
+	return (mP1->y()->val() - mP2->y()->val()) + (mP1->x()->val() - mP2->x()->val());
+}
+
+void PointPoint_coincidence::substitute()
+{
+	Constraint::substitute(mP1->x(), mP2->x());
+	Constraint::substitute(mP1->y(), mP2->y());
+}
+Param* PointPoint_coincidence::param(int ind)
+{
+	switch(ind) {
+	case 0: return mP1->x();
+	case 1: return mP1->y();
+	case 2: return mP2->x();
+	case 3: return mP2->y();
+	}
+	return nullptr;
+}
 
 // SkPointPoint_verticality::SkPointPoint_verticality(Geom3d::Plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2):
 // 	SkSprite_constraint<2>(baseplane_, { }, { p1->x() ^= p2->x() },

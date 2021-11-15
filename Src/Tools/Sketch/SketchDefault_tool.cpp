@@ -120,7 +120,7 @@ bool SketchDefault_tool::manage_mouse_move(GdkEventMotion* event)
 		// Move drawables
 		if(sk->n_selected() == 1 && mDragCandidate.geom) {
 			mDragCandidate.geom->move_selected(plPos - mLastPlPos);
-			mDragCandidate.geom->release();
+			// mDragCandidate.geom->release();
 			// sk->dragConstr()->dragTo(plPos);
 			sk->update_constraints(false, true);
 		} else {

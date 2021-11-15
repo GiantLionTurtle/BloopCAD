@@ -23,6 +23,7 @@ int ConstrCluster::solve()
 	}
 	
 	clear_substitutions();
+	clear_drag();
 	
 	return out;
 }
@@ -355,7 +356,7 @@ void ConstrCluster::clear_substitutions()
 }
 void ConstrCluster::clear_drag()
 {
-	for(auto p : mParamsStandBy) {
+	for(auto p : mParams) {
 		p->set_frozen(false);
 	}
 }

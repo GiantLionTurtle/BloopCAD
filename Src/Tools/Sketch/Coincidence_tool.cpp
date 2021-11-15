@@ -52,7 +52,15 @@ void Coincidence_tool::create_constraint(Constraint*& constr, SkGeometry*& prior
 		// constr = pointCircle_distance::make(pt, static_cast<sketchCircle>(curve));
 		priority_ent = curve;
 	} else {
-		// constr = new SkPointPoint_coincidence(mEnv->target()->basePlane(), pt, static_cast<SkPoint*>(curve));
+		constr = new PointPoint_coincidence(static_cast<SkPoint*>(mEntA)->geom(), static_cast<SkPoint*>(mEntB)->geom());
+
+		SkConstrAnnot* annot = nullptr;
+		SkConstrAnnot::make_single_annot(annot, constr, mEnv->target()->basePlane(), 
+		"Resources/Textures/Images/Icons/Sketch/Constraints/Horizontality.png");
+		mEnv->target()->add_annot(annot);
+		mEntA->add_annot(annot, true);
+		mEntB->add_annot(annot, false);
+
 		priority_ent = mEntB;
 	}
 }

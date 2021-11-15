@@ -12,7 +12,7 @@
 
 class SkGeometry : public SkIntDrawable, public ParamIterator {
 protected:
-	std::vector<SkSprite*> mAnnots;
+	std::vector<std::pair<SkSprite*, bool>> mAnnots; // Annotation and if it's position has to be updated 
 	bool mFixed;
 public:
 	SkGeometry(Geom3d::Plane_abstr* pl, bool fixed_)
@@ -40,22 +40,26 @@ public:
 	void update_annots()
 	{
 		for(int i = 0; i < mAnnots.size(); ++i) {
-			set_annotPos(mAnnots[i]);
-			set_annotOffset(mAnnots[i], i+1);
+			if(!mAnnots[i].second)
+				continue;
+			set_annotPos(mAnnots[i].first);
+			set_annotOffset(mAnnots[i].first, i+1);
 		}
 	}
 
 	virtual bool fixed() { return mFixed; }
 
-	virtual void add_annot(SkSprite* sp)
+	virtual void add_annot(SkSprite* sp, bool update_pos = true)
 	{
 		if(!sp)
 			return;
-		mAnnots.push_back(sp);
+		mAnnots.push_back(std::make_pair(sp, update_pos));
 		sp->set_hidden(!selected());
-		
-		set_annotPos(sp);
-		set_annotOffset(sp, mAnnots.size());
+
+		if(update_pos) {
+			set_annotPos(sp);
+			set_annotOffset(sp, mAnnots.size());
+		}
 	}
 	virtual void set_annotPos(SkSprite* sp) = 0;
 	virtual void set_annotOffset(SkSprite* sp, int ind) = 0;
@@ -63,7 +67,7 @@ protected:
 	virtual void select_impl(bool sel)
 	{
 		for(int i = 0; i < mAnnots.size(); ++i) {
-			mAnnots[i]->set_hidden(!sel);
+			mAnnots[i].first->set_hidden(!sel);
 		}		
 	}
 
@@ -117,7 +121,7 @@ protected:
 	void exists_impl(bool ex)
 	{
 		for(auto a : mAnnots) {
-			a->set_exists(ex);
+			a.first->set_exists(ex);
 		}
 	}
 };
