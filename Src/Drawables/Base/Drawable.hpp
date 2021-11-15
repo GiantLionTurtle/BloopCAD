@@ -91,7 +91,6 @@ protected:
 	static int nDrawable;
 	int mID;
 	int mState;	// The state of the entity, described by the above flags
-	int mStdNotifs; // Standard notifications sent by a child to it's parent
 	int mType;
 	bool mInited;
 	bool mNeed_redraw;
@@ -232,23 +231,6 @@ public:
 	int state() const { return mState; }
 	int type() const { return mType; }
 	void print_state();
-
-	bool notif_on_selected();
-	void set_notif_on_selected(bool do_);
-
-	bool notif_on_hover();
-	void set_notif_on_hover(bool do_);
-	
-	bool notif_on_hidden();
-	void set_notif_on_hidden(bool do_);
-	
-	bool notif_on_exists();
-	void set_notif_on_exists(bool do_);
-
-	bool notif_on_update();
-	void set_notif_on_update(bool do_);
-
-	bool notifications() const { return mStdNotifs; }
 
 	virtual bool translucid() { return false; }
 

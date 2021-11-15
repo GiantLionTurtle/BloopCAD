@@ -24,7 +24,6 @@ int Drawable::nDrawable = 0;
 
 Drawable::Drawable()
 	: mState(BLOOP_ENTITY_EXISTS_FLAG)
-	, mStdNotifs(0)
 	, mParent(nullptr)
 	, mUILink(nullptr)
 	, mNeed_redraw(true)
@@ -90,8 +89,6 @@ void Drawable::set_selected(bool select_, bool parent_silent, bool ui_silent)
 			mState &= ~BLOOP_ENTITY_SELECTED_FLAG;
 		}
 		set_need_redraw();
-		if(!parent_silent && notif_on_selected())
-			notify_parent(select_ ? SELECTED : UNSELECTED);
 		if(mUILink && !ui_silent)
 			mUILink->notify_select(select_);
 	}
@@ -120,8 +117,6 @@ void Drawable::set_hover(bool hover, bool parent_silent, bool ui_silent)
 		} else {
 			mState &= ~BLOOP_ENTITY_HOVERED_FLAG;
 		}
-		if(!parent_silent && notif_on_hover())
-			notify_parent(hover ? HOVERED : UNHOVERED);
 		hover_impl(hover);
 		set_need_redraw();
 		if(mUILink && !ui_silent)
@@ -145,8 +140,6 @@ void Drawable::set_hidden(bool hide, bool parent_silent)
 		}
 		hidden_impl(hide);
 		set_need_redraw();
-		if(!parent_silent && notif_on_hidden())
-			notify_parent(hide ? HIDEN : UNHIDEN);
 	}
 }
 void Drawable::hide(bool parent_silent)
@@ -176,10 +169,9 @@ void Drawable::set_exists(bool exists_, bool parent_silent)
 			mState |= BLOOP_ENTITY_EXISTS_FLAG;
 		} else {
 			mState &= ~BLOOP_ENTITY_EXISTS_FLAG;
+			set_hover(false);
 		}
 		exists_impl(exists_);
-		if(!parent_silent && notif_on_exists())
-			notify_parent(exists_ ? RESURRECTED : DELETED);
 	}
 }
 bool Drawable::exists() const
@@ -198,71 +190,6 @@ void Drawable::print_state()
 								<<"Selected:\t"<<selected()<<"\n"
 								<<"Hovered:\t"<<hovered()<<"\n"
 								<<"Hidden:\t\t"<<hidden()<<"\n";
-}
-
-bool Drawable::notif_on_selected()
-{
-	return mStdNotifs & BLOOP_ENTITY_SELECTED_NOTIF;
-}
-void Drawable::set_notif_on_selected(bool do_)
-{
-	if(do_) {
-		mStdNotifs |= BLOOP_ENTITY_SELECTED_NOTIF;
-	} else {
-		mStdNotifs &= ~BLOOP_ENTITY_SELECTED_NOTIF;
-	}
-}
-
-bool Drawable::notif_on_hover()
-{
-	return mStdNotifs & BLOOP_ENTITY_HOVERED_NOTIF;
-}
-void Drawable::set_notif_on_hover(bool do_)
-{
-	if(do_) {
-		mStdNotifs |= BLOOP_ENTITY_HOVERED_NOTIF;
-	} else {
-		mStdNotifs &= ~BLOOP_ENTITY_HOVERED_NOTIF;
-	}
-}
-
-bool Drawable::notif_on_hidden()
-{
-	return mStdNotifs & BLOOP_ENTITY_HIDDEN_NOTIF;
-}
-void Drawable::set_notif_on_hidden(bool do_)
-{
-	if(do_) {
-		mStdNotifs |= BLOOP_ENTITY_HIDDEN_NOTIF;
-	} else {
-		mStdNotifs &= ~BLOOP_ENTITY_HIDDEN_NOTIF;
-	}
-}
-
-bool Drawable::notif_on_exists()
-{
-	return mStdNotifs & BLOOP_ENTITY_EXISTS_NOTIF;
-}
-void Drawable::set_notif_on_exists(bool do_)
-{
-	if(do_) {
-		mStdNotifs |= BLOOP_ENTITY_EXISTS_NOTIF;
-	} else {
-		mStdNotifs &= ~BLOOP_ENTITY_EXISTS_NOTIF;
-	}
-}
-
-bool Drawable::notif_on_update()
-{
-	return mStdNotifs & BLOOP_ENTITY_UPDATED_NOTIF;
-}
-void Drawable::set_notif_on_update(bool do_)
-{
-	if(do_) {
-		mStdNotifs |= BLOOP_ENTITY_UPDATED_NOTIF;
-	} else {
-		mStdNotifs &= ~BLOOP_ENTITY_UPDATED_NOTIF;
-	}
 }
 
 void Drawable::set_need_redraw()
