@@ -20,7 +20,7 @@
 
 #include <Drawables/Base/Drawable.hpp>
 #include <Geometry/3d/Plane_abstr.hpp>
-#include <ConstraintsSolver/Expression.hpp>
+#include <ConstrsSolver/Expression.hpp>
 
 class SkIntDrawable;
 class SkGeometry;

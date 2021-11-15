@@ -95,7 +95,7 @@ SkPoint* Line_tool::add_point(glm::vec2 pt)
 	} else {
 
 		std::shared_ptr<ToggleConstraint_action> hingeConstraintAction = nullptr;
-		Constraint_abstr* constr = nullptr;
+		Constraint* constr = nullptr;
 		if(mEndPos) {
 			mEnv->coincidence()->add_geom(mEndPos);
 			mEnv->coincidence()->add_geom(mLinePreview->ptA());

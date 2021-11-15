@@ -20,13 +20,12 @@
 
 #include <Drawables/Base/Collection.hpp>
 #include <Geometry/3d/Plane_abstr.hpp>
-#include <ConstraintsSolver/ConstraintsSystem.hpp>
 #include <Drawables/Sk/SkDrawable.hpp>
 #include <Drawables/Sk/SkGeometry.hpp>
 #include <Drawables/Sk/SkConstrAnnot.hpp>
 #include <Actions/Common/Serial_action.hpp>
 #include <Drawables/Sk/SkConstrAnnot.hpp>
-#include <ConstraintsSolver/ConstrSyst.hpp>
+#include <ConstrsSolver/ConstrSyst.hpp>
 
 #include <memory>
 #include <vector>
@@ -89,7 +88,7 @@ private:
 	// Folder* mOrigin;
 	// DragEnabled_ConstraintsSystem<2> mConstrSystem;
 	ConstrSyst mConstrSystem;
-	std::map<Constraint_abstr*, Drawable*> mConstr2Annot;
+	std::map<Constraint*, Drawable*> mConstr2Annot;
 	std::vector<VarState> mConstrSystemBackup;
 
 	bool mSolve_allowed; // THIS IS FOR DEBUG IT SHOULD GO AWAY
@@ -129,8 +128,8 @@ public:
 	// Folder* origin() const { return mOrigin; }
 
 	void add_annot(SkConstrAnnot* annot);
-	bool add_constraint(Constraint_abstr* constr, SkDrawable* immovable_hint = nullptr);
-	bool toggle_constraint(Constraint_abstr* constr, bool enable);
+	bool add_constraint(Constraint* constr, SkDrawable* immovable_hint = nullptr);
+	bool toggle_constraint(Constraint* constr, bool enable);
 	bool update_constraints(bool safeUpdate, bool update_on_solveFail);
 
 	std::map<Param*, float> snapshot();

@@ -312,7 +312,7 @@ double ConstrCluster::stepScale()
 	return scale;
 }
 
-void ConstrCluster::add_constr(Constraint_abstr* constr)
+void ConstrCluster::add_constr(Constraint* constr)
 {
 	if(constr->substitutionConstraint()) { 
 		mConstrsSubst.push_back(constr);

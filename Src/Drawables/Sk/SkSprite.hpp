@@ -20,7 +20,7 @@
 
 #include "SkDrawable.hpp"
 #include <Geometry/2d/Point_abstr.hpp>
-#include <ConstraintsSolver/Expression_forward.hpp>
+#include <ConstrsSolver/Expression_forward.hpp>
 #include <Graphics_utils/Texture.hpp>
 
 #include <map>

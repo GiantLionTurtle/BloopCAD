@@ -45,7 +45,7 @@ int Verticality_tool::could_add_geom(SkGeometry* geom)
 	return add_states::COULDNT_ADD;
 }
 
-void Verticality_tool::create_constraint(Constraint_abstr*& constr, SkGeometry*& priority_ent, Action_ptr& annotAct)
+void Verticality_tool::create_constraint(Constraint*& constr, SkGeometry*& priority_ent, Action_ptr& annotAct)
 {
 	if(!mEntA && !mEntB) {
 		LOG_WARNING("Attempting to add incomplete constraint.");

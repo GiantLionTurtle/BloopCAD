@@ -36,5 +36,5 @@ add_library(Drawables ${Drawables_source_files})
 target_link_libraries(Drawables
 	Geom
 	Graphics_utils
-	ConstraintsSolver
+	ConstrsSolver
 )

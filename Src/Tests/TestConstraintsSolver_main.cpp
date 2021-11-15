@@ -2,12 +2,11 @@
 #include <Utils/Debug_util.hpp>
 #include <Utils/Preferences.hpp>
 #include <Utils/Conversions_util.hpp>
-#include <ConstraintsSolver/Constraint_abstr.hpp>
-#include <ConstraintsSolver/ConstraintsSystem.hpp>
+#include <ConstrsSolver/Constraint.hpp>
 #include <Workspaces/TestFramework_eventsManager.hpp>
 
 #include <Drawables/Sk/SkLine.hpp>
-#include <ConstraintsSolver/SolverState.hpp>
+#include <ConstrsSolver/SolverState.hpp>
 
 #include <Bloop.hpp>
 #include "Workspaces/Part_ws.hpp"

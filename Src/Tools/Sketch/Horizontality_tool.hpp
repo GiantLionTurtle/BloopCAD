@@ -28,7 +28,7 @@ public:
 // protected:
 	int could_add_geom(SkGeometry* geom);
 
-	void create_constraint(Constraint_abstr*& constr, SkGeometry*& priority_ent, Action_ptr& annotAct);
+	void create_constraint(Constraint*& constr, SkGeometry*& priority_ent, Action_ptr& annotAct);
 };
 
 #endif

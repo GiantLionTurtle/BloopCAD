@@ -1,7 +1,7 @@
 #ifndef CONSTRGRAPH_HPP_
 #define CONSTRGRAPH_HPP_
 
-#include "Constraint_abstr.hpp"
+#include "Constraint.hpp"
 #include <Utils/Param.hpp>
 
 #include <vector>

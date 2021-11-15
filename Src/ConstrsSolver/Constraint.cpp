@@ -15,14 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "Constraint_abstr.hpp"
+#include "Constraint.hpp"
 
 #include "Expression.hpp"
 #include "ConstrSyst.hpp"
 
 
 #ifndef RELEASE_MODE
-Constraint_abstr::Constraint_abstr(std::string name_, bool can_substitute)
+Constraint::Constraint(std::string name_, bool can_substitute)
 	: mExists(true)
 	, mCanSubstitute(can_substitute)
 	, mName(name_)
@@ -30,19 +30,19 @@ Constraint_abstr::Constraint_abstr(std::string name_, bool can_substitute)
 
 }
 #else
-Constraint_abstr::Constraint_abstr(bool can_substitute)
+Constraint::Constraint(bool can_substitute)
 	: mExists(true)
 	, mCanSubstitute(can_substitute)
 {
 
 }
 #endif
-Constraint_abstr::~Constraint_abstr()
+Constraint::~Constraint()
 {
 
 }
 
-void Constraint_abstr::set_exists(bool ex)
+void Constraint::set_exists(bool ex)
 {
 	if(ex != exists()) {
 		mExists = ex;
@@ -54,7 +54,7 @@ void Constraint_abstr::set_exists(bool ex)
 		send(ex ? UI_Core_Link::LNK_ALIVE : UI_Core_Link::LNK_DEAD);
 	}
 }
-void Constraint_abstr::receive(int msg, UI_Core_Link* sender)
+void Constraint::receive(int msg, UI_Core_Link* sender)
 {
 	switch(msg) {
 	case UI_Core_Link::LNK_ALIVE:
@@ -66,7 +66,7 @@ void Constraint_abstr::receive(int msg, UI_Core_Link* sender)
 	}
 }
 
-bool Constraint_abstr::satisfied()
+bool Constraint::satisfied()
 {
 	return (error() < CONSTR_SATISFACTION_TRESHOLD);
 }
@@ -74,9 +74,9 @@ bool Constraint_abstr::satisfied()
 
 PointPoint_horizontality::PointPoint_horizontality(Geom2d::Point* p1, Geom2d::Point* p2)
 #ifndef RELEASE_MODE
-	: Constraint_abstr("PointPoint_horizontality", true)
+	: Constraint("PointPoint_horizontality", true)
 #else
-	: Constraint_abstr(true)
+	: Constraint(true)
 #endif
 	, mP1(p1)
 	, mP2(p2)
@@ -114,9 +114,9 @@ Param* PointPoint_horizontality::param(int ind)
 
 Line_horizontality::Line_horizontality(Geom2d::Line* l)
 #ifndef RELEASE_MODE
-	: Constraint_abstr("Line_horizontality", true)
+	: Constraint("Line_horizontality", true)
 #else
-	: Constraint_abstr(true)
+	: Constraint(true)
 #endif
 	, mLine(l)
 {

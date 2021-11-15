@@ -18,7 +18,7 @@
 #ifndef LINE_ABSTR2_HPP_
 #define LINE_ABSTR2_HPP_
 
-#include <ConstraintsSolver/Expression.hpp>
+#include <ConstrsSolver/Expression.hpp>
 
 #include "Point_abstr.hpp"
 #include <glm/glm.hpp>

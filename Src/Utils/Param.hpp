@@ -4,7 +4,7 @@
 
 #include <BaseObject.hpp>
 
-class Constraint_abstr;
+class Constraint;
 
 class Param : public DefaultBaseObject {
 private:
@@ -12,7 +12,7 @@ private:
 	int mFrozen { 0 };
 	Param* mSubstitution { nullptr };
 public:
-	friend class Constraint_abstr;
+	friend class Constraint;
 
 	Param(double val)
 		: mVal(val)
