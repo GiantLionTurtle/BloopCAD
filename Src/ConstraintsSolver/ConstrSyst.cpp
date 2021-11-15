@@ -25,6 +25,7 @@ void ConstrSyst::add_constr(Constraint_abstr* c)
 {
 	mDecompUpToDate  = false;
 	mConstrs.push_back(c);
+	c->set_syst(this);
     add_params(c);
 }
 
@@ -36,14 +37,15 @@ int ConstrSyst::solve()
 
 	// Good place to do some simple multithreading??
 	int out = SolverState::solveOutput::SUCCESS;
-	for(auto clust : mClusters) {
-		out = std::max(out, clust.solve());
+	for(int i = 0; i < nActiveClusters; ++i) {
+		out = std::max(out, mClusters[i].solve());
 	}
 	return out;
 }
 
 int ConstrSyst::create_clusters()
 {
+	mDecompUpToDate = true;
 	ConstrGraph G = create_graph();
 
 	// Clear clusters and resize if needed

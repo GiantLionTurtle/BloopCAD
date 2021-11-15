@@ -31,6 +31,8 @@
 
 #define CONSTR_SATISFACTION_TRESHOLD 1e-12
 
+class ConstrSyst;
+
 /*
 	@class Constraint_abstr represents a constraint that is a collection of at least one
 	equation
@@ -45,6 +47,7 @@ private:
 	bool mExists;
 	bool mCanSubstitute;
 	double mLastError;
+	ConstrSyst* mSyst { nullptr };
 public:
 #ifndef RELEASE_MODE
 	Constraint_abstr(std::string name_, bool can_substitute = false);
@@ -56,6 +59,8 @@ public:
 	bool exists() const { return mExists; }
 	void set_exists(bool ex);
 
+	void set_syst(ConstrSyst* syst) { mSyst = syst; }
+	
 	void receive(int msg, UI_Core_Link* sender);
 	
 	/*

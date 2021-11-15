@@ -18,6 +18,7 @@
 #include "Constraint_abstr.hpp"
 
 #include "Expression.hpp"
+#include "ConstrSyst.hpp"
 
 
 #ifndef RELEASE_MODE
@@ -43,7 +44,10 @@ Constraint_abstr::~Constraint_abstr()
 
 void Constraint_abstr::set_exists(bool ex)
 {
-	if(ex != ex) {
+	if(ex != exists()) {
+		mExists = ex;
+		if(mSyst)
+			mSyst->force_decomposition();
 		for(int i = 0; i < n_params(); ++i) {
 			param(i)->set_exists(ex);
 		}

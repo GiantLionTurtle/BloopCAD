@@ -90,6 +90,7 @@ bool SketchDefault_tool::manage_button_press(GdkEventButton* event)
 	mLastPlPos = plPos;
 
 	if(mAnnot) {
+		mEnv->target()->unselect_all();
 		mAnnot->select();
 	} else if(mDragCandidate.geom) {
 		if(!(event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK) && !mDragCandidate.geom->selected())
@@ -111,7 +112,7 @@ bool SketchDefault_tool::manage_button_release(GdkEventButton* event)
 		return true;
 	update_dragCandidate(glm::vec2(event->x, event->y));
 
-	if(mMode == modes::NORMAL && !mDragCandidate.geom) {
+	if(mMode == modes::NORMAL && (!mDragCandidate.geom && !mAnnot)) {
 		mEnv->target()->unselect_all(); // Clear selection if the user clicks an empty space
 	} else if(mMode == modes::GEOMDRAG) {
 		// mEnv->state()->doc->push_action(std::make_shared<ApplySnapshot_action>(mEnv->target(), mEnv->target()->deltaSnapshot(mStartSnapshot), true));

@@ -84,12 +84,12 @@ void Drawable::set_selected(bool select_, bool parent_silent, bool ui_silent)
 	if(!exists())
 		return; 	
 	if(selected() != select_) {
-		set_need_redraw();
 		if(select_) {
 			mState |= BLOOP_ENTITY_SELECTED_FLAG;
 		} else {
 			mState &= ~BLOOP_ENTITY_SELECTED_FLAG;
 		}
+		set_need_redraw();
 		if(!parent_silent && notif_on_selected())
 			notify_parent(select_ ? SELECTED : UNSELECTED);
 		if(mUILink && !ui_silent)
@@ -115,7 +115,6 @@ void Drawable::set_hover(bool hover, bool parent_silent, bool ui_silent)
 	if(!exists())
 		return;
 	if(hovered() != hover) {
-		set_need_redraw();
 		if(hover) {
 			mState |= BLOOP_ENTITY_HOVERED_FLAG;
 		} else {
@@ -124,6 +123,7 @@ void Drawable::set_hover(bool hover, bool parent_silent, bool ui_silent)
 		if(!parent_silent && notif_on_hover())
 			notify_parent(hover ? HOVERED : UNHOVERED);
 		hover_impl(hover);
+		set_need_redraw();
 		if(mUILink && !ui_silent)
 			mUILink->notify_hover(hover);
 	}
@@ -138,13 +138,13 @@ void Drawable::set_hidden(bool hide, bool parent_silent)
 	if(!exists())
 		return;
 	if(hidden() != hide) {
-		hidden_impl(hide);
-		set_need_redraw();
 		if(hide) {
 			mState |= BLOOP_ENTITY_HIDDEN_FLAG;
 		} else {
 			mState &= ~BLOOP_ENTITY_HIDDEN_FLAG;
 		}
+		hidden_impl(hide);
+		set_need_redraw();
 		if(!parent_silent && notif_on_hidden())
 			notify_parent(hide ? HIDEN : UNHIDEN);
 	}
@@ -171,13 +171,13 @@ bool Drawable::visible() const
 void Drawable::set_exists(bool exists_, bool parent_silent) 
 {
 	if(exists() != exists_) {
-		exists_impl(exists_);
 		set_need_redraw();
 		if(exists_) {
 			mState |= BLOOP_ENTITY_EXISTS_FLAG;
 		} else {
 			mState &= ~BLOOP_ENTITY_EXISTS_FLAG;
 		}
+		exists_impl(exists_);
 		if(!parent_silent && notif_on_exists())
 			notify_parent(exists_ ? RESURRECTED : DELETED);
 	}
