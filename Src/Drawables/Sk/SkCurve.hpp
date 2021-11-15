@@ -117,6 +117,12 @@ public:
 		}
 	}
 protected:
+	void exists_impl(bool ex)
+	{
+		for(int i = 0; i < n_handles(); ++i) {
+			handle(i)->set_exists(ex);
+		}
+	}
 	void select_impl(bool sel)
 	{
 		SkGeometry::select_impl(sel);
