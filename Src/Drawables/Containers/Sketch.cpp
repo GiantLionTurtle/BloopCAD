@@ -1,7 +1,7 @@
 
 #include "Sketch.hpp"
 
-#include <ConstraintsSolver/SolverState.hpp>
+#include <ConstrsSolver/SolverState.hpp>
 #include <Drawables/Sk/SkPoint.hpp>
 #include <Drawables/Sk/SkLine.hpp>
 
@@ -152,7 +152,7 @@ void Sketch::add_annot(SkConstrAnnot* annot)
 	mDrawList.add_annot(annot);
 	set_need_redraw();
 }
-bool Sketch::add_constraint(Constraint_abstr* constr, SkDrawable* immovable_hint) 
+bool Sketch::add_constraint(Constraint* constr, SkDrawable* immovable_hint) 
 {
 	if(!constr)
 		return false;
@@ -177,7 +177,7 @@ bool Sketch::add_constraint(Constraint_abstr* constr, SkDrawable* immovable_hint
 	return false;
 }
 
-bool Sketch::toggle_constraint(Constraint_abstr* constr, bool enable)
+bool Sketch::toggle_constraint(Constraint* constr, bool enable)
 {
 	if(!constr)
 		return false;

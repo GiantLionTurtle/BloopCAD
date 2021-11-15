@@ -3,7 +3,7 @@
 #define CONSTRCLUSTER_HPP_
 
 #include <Utils/Param.hpp>
-#include "Constraint_abstr.hpp"
+#include "Constraint.hpp"
 
 #include <Eigen/Eigen>
 
@@ -13,7 +13,7 @@ class ConstrCluster {
 private:
 	std::vector<Param*> mParams { }, mParamsSubst { }, mParamsDriving { }, mParamsStandBy;
 
-	std::vector<Constraint_abstr*> mConstrsSubst { }, mConstrsEval;
+	std::vector<Constraint*> mConstrsSubst { }, mConstrsEval;
 
 	Eigen::VectorXd mErrors;
 	int mAlgorithm { 0 };
@@ -51,7 +51,7 @@ public:
 
 	double stepScale();
 
-	void add_constr(Constraint_abstr* constr);
+	void add_constr(Constraint* constr);
 	void add_param(Param* param);
 	void clear();
 

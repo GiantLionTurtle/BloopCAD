@@ -26,7 +26,7 @@ int Perpendicularity_tool::could_add_geom(SkGeometry* geom)
 	}
 	return add_states::COULDNT_ADD;
 }
-void Perpendicularity_tool::create_constraint(Constraint_abstr*& constr, SkGeometry*& priority_ent, Action_ptr& annotAct)
+void Perpendicularity_tool::create_constraint(Constraint*& constr, SkGeometry*& priority_ent, Action_ptr& annotAct)
 {
 	if(!mEntA || !mEntB) {
 		LOG_WARNING("Attempting to add incomplete constraint.");

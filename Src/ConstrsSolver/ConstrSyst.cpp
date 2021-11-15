@@ -21,7 +21,7 @@ void ConstrSyst::add_params(ParamIterator* ps)
 		add_param(ps->param(i));
 	}
 }
-void ConstrSyst::add_constr(Constraint_abstr* c)
+void ConstrSyst::add_constr(Constraint* c)
 {
 	mDecompUpToDate  = false;
 	mConstrs.push_back(c);

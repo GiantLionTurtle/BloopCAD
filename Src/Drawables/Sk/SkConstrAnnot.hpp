@@ -2,7 +2,7 @@
 #ifndef SKCONSTRANNOT_HPP_
 #define SKCONSTRANNOT_HPP_
 
-#include <ConstraintsSolver/Constraint_abstr.hpp>
+#include <ConstrsSolver/Constraint.hpp>
 #include <Drawables/Base/Drawable.hpp>
 #include <Drawables/Base/Collection.hpp>
 #include "SkSprite.hpp"
@@ -50,7 +50,7 @@ public:
 			mTwin->mBlockSend = false;
 		}
 	}
-	static void make_single_annot(	SkConstrAnnot*& annot, Constraint_abstr* constr, 
+	static void make_single_annot(	SkConstrAnnot*& annot, Constraint* constr, 
 									Geom3d::Plane_abstr* pl, std::string const& spritePath)
 	{
 		annot = new SkConstrAnnot(pl, spritePath);
@@ -58,7 +58,7 @@ public:
 		annot->set_linkTo(constr);
 		constr->set_linkTo(annot);
 	}
-	static void make_dual_annot(SkConstrAnnot*& annot_a, SkConstrAnnot*& annot_b, Constraint_abstr* constr, 
+	static void make_dual_annot(SkConstrAnnot*& annot_a, SkConstrAnnot*& annot_b, Constraint* constr, 
 								Geom3d::Plane_abstr* pl, std::string const& spritePath)
 	{
 		annot_a = new SkConstrAnnot(pl, spritePath);

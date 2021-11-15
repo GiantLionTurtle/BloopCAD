@@ -5,7 +5,7 @@
 #include <Actions/Action.hpp>
 
 #include <Drawables/Containers/Sketch.hpp>
-#include <ConstraintsSolver/Constraint_abstr.hpp>
+#include <ConstrsSolver/Constraint.hpp>
 
 /*
 	@class ToggleConstraint_action enables and disables a constraint and ensure constraint system
@@ -16,7 +16,7 @@
 class ToggleConstraint_action : public Action {
 private:
 	Sketch* mSketch_parent;     // Sketch that contains the constraint system (which contains the constraint)
-	Constraint_abstr* mConstraint;  // Constraint to toggle
+	Constraint* mConstraint;  // Constraint to toggle
 	bool mToggle_to, mDone;     // State it is in when the Action is created and if it is already in the right state at creation
 public:
 	/*
@@ -26,7 +26,7 @@ public:
 		@param constr           Constraint to toggle
 		@param toggle_to        State to toggle to on do (True: exists, False: doesn't exist)
 	*/
-	ToggleConstraint_action(Sketch* parent_sketch, Constraint_abstr* constr, bool toggle_to, bool done_at_creation);
+	ToggleConstraint_action(Sketch* parent_sketch, Constraint* constr, bool toggle_to, bool done_at_creation);
 
 	/*
 		@function do_work toggles the constraint to mToggle_to state and 

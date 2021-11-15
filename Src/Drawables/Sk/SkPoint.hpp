@@ -3,7 +3,7 @@
 #define SKPOINT_HPP_
 
 #include "SkGeometry.hpp"
-#include <ConstraintsSolver/Expression.hpp>
+#include <ConstrsSolver/Expression.hpp>
 #include <Geometry/2d/Point_abstr.hpp>
 
 #include <Graphics_utils/VertexArray.hpp>

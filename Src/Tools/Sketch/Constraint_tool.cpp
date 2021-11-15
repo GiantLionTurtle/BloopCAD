@@ -86,7 +86,7 @@ void Constraint_tool::add_geom(SkGeometry* geom)
 }
 void Constraint_tool::add_constraint()
 {
-	Constraint_abstr* constr = nullptr;
+	Constraint* constr = nullptr;
 	SkGeometry* priority_ent = nullptr;
 	Action_ptr annotAct = nullptr;
 

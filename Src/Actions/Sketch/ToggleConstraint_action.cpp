@@ -3,7 +3,7 @@
 #include <Utils/Debug_util.hpp>
 #include <Workspaces/Document.hpp>
 
-ToggleConstraint_action::ToggleConstraint_action(Sketch* parent_sketch, Constraint_abstr* constr, bool toggle_to, bool done_at_creation)
+ToggleConstraint_action::ToggleConstraint_action(Sketch* parent_sketch, Constraint* constr, bool toggle_to, bool done_at_creation)
 	: mSketch_parent(parent_sketch)
 	, mConstraint(constr)
 	, mToggle_to(toggle_to)

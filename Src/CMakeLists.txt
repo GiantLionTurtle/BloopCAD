@@ -6,7 +6,7 @@ add_subdirectory(Drawables)
 add_subdirectory(Actions)
 add_subdirectory(Tools)
 add_subdirectory(Workspaces)
-add_subdirectory(ConstraintsSolver)
+add_subdirectory(ConstrsSolver)
 
 # add_subdirectory(Tests)
 

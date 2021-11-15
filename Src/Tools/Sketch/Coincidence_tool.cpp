@@ -30,7 +30,7 @@ int Coincidence_tool::could_add_geom(SkGeometry* geom)
 	}
 }
 
-void Coincidence_tool::create_constraint(Constraint_abstr*& constr, SkGeometry*& priority_ent, Action_ptr& annotAct)
+void Coincidence_tool::create_constraint(Constraint*& constr, SkGeometry*& priority_ent, Action_ptr& annotAct)
 {
 	DEBUG_ASSERT(mEntA && mEntB, "Attempting to add incomplete constraint.");
 

@@ -18,12 +18,12 @@
 class ConstrSyst;
 
 /*
-	@class Constraint_abstr represents a constraint that is a collection of at least one
+	@class Constraint represents a constraint that is a collection of at least one
 	equation
 
 	@parent BaseObject
 */
-class Constraint_abstr : virtual public BaseObject, public ParamIterator, public UI_Core_Link {
+class Constraint : virtual public BaseObject, public ParamIterator, public UI_Core_Link {
 private:
 #ifndef RELEASE_MODE // The name of the variable if not planned to be revealed to the user
 	std::string mName;
@@ -34,11 +34,11 @@ private:
 	ConstrSyst* mSyst { nullptr };
 public:
 #ifndef RELEASE_MODE
-	Constraint_abstr(std::string name_, bool can_substitute = false);
+	Constraint(std::string name_, bool can_substitute = false);
 #else
-	Constraint_abstr(bool can_substitute = false);
+	Constraint(bool can_substitute = false);
 #endif
-	virtual ~Constraint_abstr();
+	virtual ~Constraint();
 
 	bool exists() const { return mExists; }
 	void set_exists(bool ex);
@@ -92,7 +92,7 @@ public:
 };
 
 /* ---------- Horizontality ---------- */
-class PointPoint_horizontality : public Constraint_abstr {
+class PointPoint_horizontality : public Constraint {
 private:
 	Geom2d::Point* mP1, *mP2; // handles to the geometries involved, not used yet but might get handy
 	int mSubstitute_state;
@@ -110,7 +110,7 @@ public:
 	inline int n_params() { return 2; }
 
 };
-class Line_horizontality : public Constraint_abstr {
+class Line_horizontality : public Constraint {
 private:
 	Geom2d::Line* mLine; // Handles to the geometry involved, not used yet but might get handy
 public:

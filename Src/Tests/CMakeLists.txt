@@ -1,8 +1,8 @@
-add_executable(ConstraintsSolverTest
-    TestConstraintsSolver_main.cpp
+add_executable(ConstrsSolverTest
+    TestConstrsSolver_main.cpp
 	../Bloop.cpp
 	)
-target_link_libraries(ConstraintsSolverTest
+target_link_libraries(ConstrsSolverTest
 	vendor
 	Utils
 	Graphics_utils
