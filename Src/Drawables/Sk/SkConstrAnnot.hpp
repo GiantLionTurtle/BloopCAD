@@ -9,12 +9,17 @@
 
 class SkConstrAnnot : public SkSprite, public UI_Core_Link {
 private:
-	UI_Core_Link* mLast_hover_request { nullptr };
+	SkConstrAnnot* mTwin { nullptr };
+	bool mBlockSend;
 public:
 	SkConstrAnnot(Geom3d::Plane_abstr* pl, std::string spritePath)
 		: SkSprite(pl, glm::vec2(40, 40), spritePath)
 	{
 
+	}
+	void set_twin(SkConstrAnnot* tw)
+	{
+		mTwin = tw;
 	}
 	void receive(int msg, UI_Core_Link* sender)
 	{
@@ -25,27 +30,25 @@ public:
 		case UI_Core_Link::LNK_DEAD:
 			set_exists(false);
 			break;
-		case UI_Core_Link::LNK_HOVER:
-			set_hover(true);
-			set_hidden(false);
-			mLast_hover_request = sender;
-			break;
-		case UI_Core_Link::LNK_UNHOVER:
-			set_hover(false);
-			set_hidden(true);
-			mLast_hover_request = sender;
-			break;
 		}
 	}
 	void exists_impl(bool ex)
 	{
+		if(mTwin && !mBlockSend) {
+			mTwin->mBlockSend = true;
+			mTwin->set_exists(ex);
+			mTwin->mBlockSend = false;		
+		}
 		send(ex ? UI_Core_Link::LNK_ALIVE : UI_Core_Link::LNK_DEAD);
 	}
 	void hover_impl(bool hov)
 	{
-		if(mLast_hover_request != mLinkTo)
-			send(hov ? UI_Core_Link::LNK_HOVER : UI_Core_Link::LNK_UNHOVER);
-		mLast_hover_request = nullptr;
+		if(mTwin && !mBlockSend) {
+			mTwin->mBlockSend = true;
+			mTwin->set_hover(hov);
+			mTwin->set_hidden(!hov);
+			mTwin->mBlockSend = false;
+		}
 	}
 	static void make_single_annot(	SkConstrAnnot*& annot, Constraint_abstr* constr, 
 									Geom3d::Plane_abstr* pl, std::string const& spritePath)
@@ -61,8 +64,10 @@ public:
 		annot_a = new SkConstrAnnot(pl, spritePath);
 		annot_b = new SkConstrAnnot(pl, spritePath);
 
-		annot_a->set_linkTo(annot_b);
-		annot_b->set_linkTo(annot_a);
+		annot_a->set_twin(annot_b);
+		annot_b->set_twin(annot_a);
+
+		annot_a->set_linkTo(constr);
 		constr->set_linkTo(annot_a);
 	}
 };
