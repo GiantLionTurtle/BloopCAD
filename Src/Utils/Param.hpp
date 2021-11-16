@@ -27,9 +27,9 @@ public:
 		return mVal;
 	}
 	inline double& val_raw() { return mVal; }	
-	inline void set(double val) { mVal = val; }
+	inline void set(double val) { if(frozen() != 2) mVal = val; }
 
-	inline void drag(double val) { set_frozen(1); set(val); }
+	inline void drag(double val) { set(val); set_frozen(1); }
 
 	inline int frozen() { return mFrozen; }
 	inline void set_frozen(int frozen) { if(mFrozen != 2) mFrozen = frozen; }
