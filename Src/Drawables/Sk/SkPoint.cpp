@@ -162,7 +162,7 @@ void SkPoint::graphicUpdate_impl()
 	mVB->unbind();
 }
 
-void SkPoint::move_impl(glm::vec2 delta)
+void SkPoint::move(glm::vec2 delta)
 {
 	set(pos() + delta);
 }

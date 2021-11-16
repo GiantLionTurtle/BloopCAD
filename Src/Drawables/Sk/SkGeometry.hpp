@@ -25,18 +25,6 @@ public:
 
 	virtual bool closest_2d_draggable(SkGeomDragPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
 
-	void move_selected(glm::vec2 delta)
-	{
-		if(!fixed())
-			move_selected_impl(delta);
-	}
-	void move(glm::vec2 delta) 
-	{
-		if(!fixed())
-			move_impl(delta);
-	}
-
-
 	void update_annots()
 	{
 		for(int i = 0; i < mAnnots.size(); ++i) {
@@ -70,9 +58,6 @@ protected:
 			mAnnots[i].first->set_hidden(!sel);
 		}		
 	}
-
-	virtual void move_selected_impl(glm::vec2 delta) { if(selected()) move(delta); }
-	virtual void move_impl(glm::vec2 delta) {}
 };
 
 template<typename Geom>
