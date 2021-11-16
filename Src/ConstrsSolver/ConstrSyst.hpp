@@ -16,6 +16,7 @@ private:
 	std::map<Param*, int> mParam_to_ind;
 	std::vector<Constraint*> mConstrs;
 	std::vector<ConstrCluster> mClusters;
+	ConstrGraph mG;
 	int nActiveClusters { 0 }, nG1 { 0 }, nG2 { 0 }, nG3 { 0 };
 	int mAlgorithm { 0 };
 
@@ -36,7 +37,7 @@ public:
 
 	int create_clusters();
 private:
-	ConstrGraph create_graph();
+	void create_graph();
 	void fix_overConstrained() {}
 };
 

@@ -15,6 +15,14 @@ struct ConstrGraph {
 	struct Vertex {
 		int data { -1 };
 		int metacluster { 0 }, cluster { -1 };
+
+		Vertex() = default;
+	};
+	struct Tarjan_helperStruct {
+		int index { -1 }, lowLink { -1 };
+		bool onStack { false };
+
+		Tarjan_helperStruct() = default;
 	};
 	std::vector<Vertex> C, V;
 
@@ -25,6 +33,16 @@ struct ConstrGraph {
 	{
 		C.reserve(nC);
 		V.reserve(nV);
+	}
+
+	void clear()
+	{
+		C.clear();
+		V.clear();
+		C_to_V.clear();
+		V_to_C.clear();
+		C_to_V_inv.clear();
+		V_to_C_inv.clear();
 	}
 
 	void add_constr(int c)
@@ -64,37 +82,31 @@ struct ConstrGraph {
 		int index = 0;
 
 		int cumul_size = C.size() + V.size();
-		std::vector<int> indices(cumul_size), lowLinks(cumul_size);
-		std::vector<bool> onStack(cumul_size);
-
+		std::vector<Tarjan_helperStruct> tarjanData(cumul_size);
 		std::stack<int> S;
-
-		std::fill(indices.begin(), indices.end(), -1);
-		std::fill(lowLinks.begin(), lowLinks.end(), -1);
-		std::fill(onStack.begin(), onStack.end(), false);
 
 		int n_clusters = cluster;
 		for(int v = 0; v < cumul_size; ++v) {
-			if(indices[v] == -1) {
-				strongConnect(v, index, metacluster, cluster, indices, lowLinks, onStack, S);
+			if(tarjanData[v].index == -1) {
+				strongConnect(v, index, metacluster, cluster, tarjanData, S);
 			}
 		}
 		return cluster - n_clusters;
 	}
 
-	void strongConnect(	int i, int& index, int metacluster, int& cluster, std::vector<int>& indices, std::vector<int>& lowLinks, 
-						std::vector<bool>& onStack, std::stack<int>& S)
+	void strongConnect(	int i, int& index, int metacluster, int& cluster, 
+						std::vector<Tarjan_helperStruct>& tarjanData, std::stack<int>& S)
 	{
 		// If the target node is not in the right metacluster
 		if(((i < C.size() && C[i].metacluster != metacluster) || (i >= C.size() && V[i-C.size()].metacluster != metacluster))) {
 			return;
 		}
 		// Set the depth index for v to the smallest unused index
-		indices[i] = index;
-		lowLinks[i] = index;
+		tarjanData[i].index = index;
+		tarjanData[i].lowLink = index;
 		index++;
 		S.push(i);
-		onStack[i] = true;
+		tarjanData[i].onStack = true;
 
 		std::vector<int> connect_list = i >= C.size() ? V_to_C[i-C.size()] : C_to_V[i];
 		for(int w : connect_list) {
@@ -110,32 +122,32 @@ struct ConstrGraph {
 					continue;
 			}
 
-			if(indices[w_lin] == -1) {
+			if(tarjanData[w_lin].index == -1) {
 				// Successor w has not yet been visited; recurse on it
-				strongConnect(w_lin, index, metacluster, cluster, indices, lowLinks, onStack, S);
-				lowLinks[i] = std::min(lowLinks[i], lowLinks[w_lin]);
-			} else if (onStack[w_lin]) {
+				strongConnect(w_lin, index, metacluster, cluster, tarjanData, S);
+				tarjanData[i].lowLink = std::min(tarjanData[i].lowLink, tarjanData[w_lin].lowLink);
+			} else if (tarjanData[w_lin].onStack) {
 				// Successor w is in stack S and hence in the current SCC
 				// If w is not on stack, then (v, w) is an edge pointing to an SCC already found and must be ignored
 				// Note: The next line may look odd - but is correct.
 				// It says w.index not w.lowlink; that is deliberate and from the original paper
-				lowLinks[i] = std::min(lowLinks[i], indices[w_lin]);
+				tarjanData[i].lowLink = std::min(tarjanData[i].lowLink, tarjanData[w_lin].index);
 			}
 		}
 
 		// If v is a root node, pop the stack and generate an SCC
-		if(lowLinks[i] == indices[i]) {
+		if(tarjanData[i].lowLink == tarjanData[i].index) {
 			int w_ind = -1;
-			while(w_ind != indices[i]) {
+			while(w_ind != tarjanData[i].index) {
 				int w = S.top();
 				S.pop();
-				onStack[w] = false;
+				tarjanData[w].onStack = false;
 				if(w >= C.size()) {
 					V[w-C.size()].cluster = cluster;
 				} else {
 					C[w].cluster = cluster;
 				}
-				w_ind = indices[w];
+				w_ind = tarjanData[w].index;
 			}
 			cluster++;
 		}

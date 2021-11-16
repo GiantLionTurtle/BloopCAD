@@ -20,7 +20,12 @@ public:
 	{}
 	Param() = default;
 
-	inline double val() { return mVal; }
+	inline double val()
+	{
+		if(substituted()) 
+			return mSubstitution->val();
+		return mVal;
+	}
 	inline double& val_raw() { return mVal; }	
 	inline void set(double val) { mVal = val; }
 
@@ -31,7 +36,12 @@ public:
 
 	inline bool substituted() { return mSubstitution != nullptr; }
 
-	inline void set_substitution(Param* subst) { mSubstitution = subst; }
+	inline void set_substitution(Param* subst) 
+	{
+		if(substituted())
+			mSubstitution->set_substitution(this);
+		mSubstitution = subst;
+	}
 	inline void apply_substitution() { if(substituted()) set(mSubstitution->val()); }
 	inline void delete_substitution() { mSubstitution = nullptr; }
 
