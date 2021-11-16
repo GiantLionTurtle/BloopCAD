@@ -56,7 +56,7 @@ void Coincidence_tool::create_constraint(Constraint*& constr, SkGeometry*& prior
 
 		SkConstrAnnot* annot = nullptr;
 		SkConstrAnnot::make_single_annot(annot, constr, mEnv->target()->basePlane(), 
-		"Resources/Textures/Images/Icons/Sketch/Constraints/Horizontality.png");
+		"Resources/Textures/Images/Icons/Sketch/Constraints/Coincidence.png");
 		mEnv->target()->add_annot(annot);
 		mEntA->add_annot(annot, true);
 		mEntB->add_annot(annot, false);

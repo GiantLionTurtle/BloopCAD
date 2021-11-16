@@ -46,7 +46,7 @@ int ConstrSyst::solve()
 int ConstrSyst::create_clusters()
 {
 	mDecompUpToDate = true;
-	ConstrGraph G = create_graph();
+	create_graph();
 
 	// Clear clusters and resize if needed
 	for(int i = 0; i < nActiveClusters && i < mClusters.size(); ++i) {
@@ -57,28 +57,28 @@ int ConstrSyst::create_clusters()
 	}
 	
 
-	for(int i = 0; i < G.V.size(); ++i) {
-		if(G.V[i].metacluster == 1) // Overconstrained
+	for(int i = 0; i < mG.V.size(); ++i) {
+		if(mG.V[i].metacluster == 1) // Overconstrained
 			continue;
-		mClusters[G.V[i].cluster].add_param(mParams[G.V[i].data]);
+		mClusters[mG.V[i].cluster].add_param(mParams[mG.V[i].data]);
 	}
-	for(int i = 0; i < G.C.size(); ++i) {
-		if(G.C[i].metacluster == 1) // Overconstrained
+	for(int i = 0; i < mG.C.size(); ++i) {
+		if(mG.C[i].metacluster == 1) // Overconstrained
 			continue; 
-		mClusters[G.C[i].cluster].add_constr(mConstrs[G.C[i].data]);
+		mClusters[mG.C[i].cluster].add_constr(mConstrs[mG.C[i].data]);
 	}
 
 	return nG3 > 0 ? SolverState::graphState::OVER_CONSTRAINED : SolverState::graphState::WELL_CONSTRAINED;
 }
 
-ConstrGraph ConstrSyst::create_graph()
+void ConstrSyst::create_graph()
 {
-	ConstrGraph G;
+	mG.clear();
 	int p = 0;
 	for(auto param : mParams) {
 		if(!param->exists() || param->frozen() == 2)
 			continue;
-		G.add_var(p);
+		mG.add_var(p);
 		p++;
 	}
 
@@ -86,24 +86,22 @@ ConstrGraph ConstrSyst::create_graph()
 	for(auto constr : mConstrs) {
 		if(!constr->exists())
 			continue;
-		G.add_constr(c);
+		mG.add_constr(c);
 		for(int j = 0; j < constr->n_params(); ++j) {
 			Param* param = constr->param(j);
 			if(mParam_to_ind.find(param) == mParam_to_ind.end()) { // This var has never been seen
 				continue;
 			}
-			G.add_c_to_v_ind(c, mParam_to_ind[param]);
+			mG.add_c_to_v_ind(c, mParam_to_ind[param]);
 		}
 		c++; // hehe
 	}
 	
-	std::vector<int> match = G.maxMatching();
-	G.make_bidirectionnal(match);
-	nActiveClusters = G.mark_Gs(match, nG1, nG2, nG3);
+	std::vector<int> match = mG.maxMatching();
+	mG.make_bidirectionnal(match);
+	nActiveClusters = mG.mark_Gs(match, nG1, nG2, nG3);
 
 	if(nG2) {
 		fix_overConstrained();
 	}
-
-	return G;
 }
