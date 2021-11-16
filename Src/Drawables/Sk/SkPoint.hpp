@@ -39,6 +39,8 @@ public:
 	Param* x() { return mGeom->x(); }
 	Param* y() { return mGeom->y(); }
 
+	void move(glm::vec2 delta);
+
 	glm::vec2 pos() { return mGeom->pos(); }
 	bool closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
 	bool closest_2d_draggable(SkGeomDragPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);
@@ -55,8 +57,6 @@ protected:
 	void init_impl();
 	void draw_impl(Camera* cam, int frame, draw_type type = draw_type::ALL);
 	void graphicUpdate_impl();
-
-	void move_impl(glm::vec2 delta);
 };
 
 #endif
