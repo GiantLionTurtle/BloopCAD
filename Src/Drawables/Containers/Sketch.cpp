@@ -109,7 +109,7 @@ SkConstrAnnot* Sketch::closest_annot(glm::vec2 cursor, Camera* cam)
 	}
 	return nullptr;
 }
-void Sketch::move_selected(glm::vec2 delta)
+void Sketch::move_selGeom(glm::vec2 delta)
 {
 	for(size_t i = 0; i < mDrawList.size(); ++i) {
 		auto ch = mDrawList.at(i);
@@ -135,7 +135,7 @@ void Sketch::unselect_all()
 		ch->unselect();
 	}
 }
-size_t Sketch::n_selected()
+size_t Sketch::n_selGeom()
 {
 	size_t running_sum = 0;
 	for(size_t i = 0; i < mDrawList.size(); ++i) {
