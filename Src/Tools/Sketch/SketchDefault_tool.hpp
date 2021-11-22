@@ -10,7 +10,7 @@ private:
 	SkConstrAnnot* mAnnot { nullptr };
 	Drawable* mCurrentHover { nullptr };
 
-	enum modes { NORMAL, GEOMDRAG, ANNOTDRAG, AREASELECT };
+	enum modes { NORMAL, SINGLEGEOMDRAG, GEOMDRAG, ANNOTDRAG, AREASELECT };
 	int mMode;
 
 	std::map<var_ptr, float> mStartSnapshot; // Used to creat move actions

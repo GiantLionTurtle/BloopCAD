@@ -22,7 +22,7 @@ struct SkGeomDragPoint {
 	}
 
 	operator bool() { return geom; }
-
+	
 	SkGeometry* geom;
 };
 

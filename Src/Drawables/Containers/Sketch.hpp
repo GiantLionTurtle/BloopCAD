@@ -93,10 +93,10 @@ public:
 	SelPoint closest(glm::vec2 cursor, Camera* cam, int filter);
 	bool closest_draggable(SkGeomDragPoint& selP, glm::vec2 cursor, Camera* cam, int filter);
 	SkConstrAnnot* closest_annot(glm::vec2 cursor, Camera* cam);
-	void move_selected(glm::vec2 delta);
+	void move_selGeom(glm::vec2 delta);
 	std::shared_ptr<Serial_action> delete_selected(); 
 	void unselect_all();
-	size_t n_selected();
+	size_t n_selGeom();
 
 	void add_geometry(SkGeometry* geom);
 

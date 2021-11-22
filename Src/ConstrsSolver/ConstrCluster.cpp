@@ -391,24 +391,24 @@ void ConstrCluster::update_params(double* vals)
 		Param** validP = &mParamsDriving.front();
 
 		switch(mParamsDriving.size() % 8) {
-			case 0: (*validP++)->set(*vals++);
-			case 7: (*validP++)->set(*vals++);
-			case 6: (*validP++)->set(*vals++);
-			case 5: (*validP++)->set(*vals++);
-			case 4: (*validP++)->set(*vals++);
-			case 3: (*validP++)->set(*vals++);
-			case 2: (*validP++)->set(*vals++);
-			case 1: (*validP++)->set(*vals++);
+			case 0: (*validP++)->val_raw() = (*vals++);
+			case 7: (*validP++)->val_raw() = (*vals++);
+			case 6: (*validP++)->val_raw() = (*vals++);
+			case 5: (*validP++)->val_raw() = (*vals++);
+			case 4: (*validP++)->val_raw() = (*vals++);
+			case 3: (*validP++)->val_raw() = (*vals++);
+			case 2: (*validP++)->val_raw() = (*vals++);
+			case 1: (*validP++)->val_raw() = (*vals++);
 		}
 		while(--n > 0) {
-			(*validP++)->set(*vals++);
-			(*validP++)->set(*vals++);
-			(*validP++)->set(*vals++);
-			(*validP++)->set(*vals++);
-			(*validP++)->set(*vals++);
-			(*validP++)->set(*vals++);
-			(*validP++)->set(*vals++);
-			(*validP++)->set(*vals++);
+			(*validP++)->val_raw() = (*vals++);
+			(*validP++)->val_raw() = (*vals++);
+			(*validP++)->val_raw() = (*vals++);
+			(*validP++)->val_raw() = (*vals++);
+			(*validP++)->val_raw() = (*vals++);
+			(*validP++)->val_raw() = (*vals++);
+			(*validP++)->val_raw() = (*vals++);
+			(*validP++)->val_raw() = (*vals++);
 		}
 	}
 	update_substitution();

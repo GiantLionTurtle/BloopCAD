@@ -56,8 +56,10 @@ bool SketchDefault_tool::manage_key_press(GdkEventKey* event)
 
 bool SketchDefault_tool::manage_button_press(GdkEventButton* event)
 {
-	if(event->type == GDK_DOUBLE_BUTTON_PRESS) // Double click are not handled yet
+	if(event->type == GDK_DOUBLE_BUTTON_PRESS) { // Double click are not handled yet
+		mMode = modes::NORMAL;
 		return true;
+	}
 
 	if(event->button != 1) // Not a rule or anything but it is the only button used currently
 		return true;
@@ -115,24 +117,18 @@ bool SketchDefault_tool::manage_mouse_move(GdkEventMotion* event)
 	glm::vec2 plPos = mEnv->state()->cam->screen_to_plane(cursorPos, mEnv->target()->basePlane());
 	update_hover(cursorPos);
 
-
-	if(mMode == modes::GEOMDRAG) {
-		// Move drawables
-		if(sk->n_selected() == 1 && mDragCandidate.geom) {
-			mDragCandidate.geom->move_selected(plPos - mLastPlPos);
-			// mDragCandidate.geom->release();
-			// sk->dragConstr()->dragTo(plPos);
-			sk->update_constraints(false, true);
-		} else {
-			sk->move_selected(plPos - mLastPlPos);
-		}
+	if(mMode == modes::SINGLEGEOMDRAG) {
+		mDragCandidate.geom->move_selected(plPos - mLastPlPos);
+		sk->update_constraints(false, true);
+	} else if(mMode == modes::GEOMDRAG) {
+		sk->move_selGeom(plPos - mLastPlPos);
 	} else if(mMode == modes::ANNOTDRAG) {
 		mAnnot->move(plPos - mLastPlPos);
 	} else if(mMode == modes::AREASELECT) {
 		areaSelect(plPos, cursorPos.x);
 	} else if(mMode == modes::NORMAL && event->state & GDK_BUTTON1_MASK) {
 		if(mDragCandidate.geom) {
-			mMode = modes::GEOMDRAG;
+			mMode = sk->n_selGeom() == 1 ? modes::SINGLEGEOMDRAG : modes::GEOMDRAG;
 			// mStartSnapshot = sk->snapshot();
 		} else if(mAnnot) {
 			mMode = modes::ANNOTDRAG;
