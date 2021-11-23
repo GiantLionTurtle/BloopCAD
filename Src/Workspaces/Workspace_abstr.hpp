@@ -2,7 +2,6 @@
 #ifndef WORKSPACE_HPP_
 #define WORKSPACE_HPP_
 
-#include <Forward_bloop.hpp>
 #include <Graphics_utils/Camera.hpp>
 #include <Tools/Tool.hpp>
 #include <Graphics_utils/FrameBuffer.hpp>
@@ -15,6 +14,8 @@
 #include <map>
 #include <string>
 #include <memory>
+
+class Bloop;
 
 /*
 	@struct WorkspaceState describes the state of a given workspace within a specific Document

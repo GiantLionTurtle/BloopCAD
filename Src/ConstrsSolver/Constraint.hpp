@@ -3,7 +3,7 @@
 #define CONSTRAINT_ABSTR_HPP_
 
 #include "Expression_forward.hpp"
-#include <BaseObject.hpp>
+#include <Bloop/BaseObject.hpp>
 
 #include <Geometry/2d/Point_abstr.hpp>
 #include <Geometry/2d/Line_abstr.hpp>

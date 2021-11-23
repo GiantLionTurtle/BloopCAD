@@ -2,7 +2,7 @@
 #include "Home_ws.hpp"
 
 #include <Utils/Expunge.hpp>
-#include <Bloop.hpp>
+#include <Bloop/Bloop.hpp>
 
 Home_ws::Home_ws(Glib::RefPtr<Gtk::Builder> const& builder, Bloop* parent) :
 	Workspace_abstr("Home_ws_upperBar", builder, parent)

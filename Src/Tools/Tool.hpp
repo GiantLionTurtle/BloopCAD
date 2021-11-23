@@ -2,7 +2,6 @@
 #ifndef TOOL_HPP_
 #define TOOL_HPP_
 
-#include <Forward_bloop.hpp>
 #include <Drawables/Base/Drawable.hpp>
 
 #include <glm/glm.hpp>
@@ -10,6 +9,7 @@
 
 #include <memory>
 
+class Bloop;
 class Workspace_abstr; // Forward declaration necesary for pointer declaration
 
 /*

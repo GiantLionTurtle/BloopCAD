@@ -2,7 +2,6 @@
 #ifndef DOCUMENT_HPP_
 #define DOCUMENT_HPP_
 
-#include <Forward_bloop.hpp>
 #include <Workspaces/Workspace_abstr.hpp>
 #include <Workspaces/EventsManager.hpp>
 #include <Tools/Tool.hpp>
@@ -38,6 +37,8 @@ struct selection {
 		camSt(camSt_)
 	{}
 };
+
+class Bloop;
 
 /*
 	@class Document represents a Document that the user is working with

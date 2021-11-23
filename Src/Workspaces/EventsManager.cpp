@@ -1,7 +1,7 @@
 
 #include "EventsManager.hpp"
 
-#include <Bloop.hpp>
+#include <Bloop/Bloop.hpp>
 #include <Workspaces/Document.hpp>
 
 EventsManager::EventsManager()

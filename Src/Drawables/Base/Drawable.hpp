@@ -8,8 +8,7 @@
 #include <Graphics_utils/IndexBuffer.hpp>
 #include <Graphics_utils/Shader.hpp>
 #include <Graphics_utils/Camera.hpp>
-#include <BaseObject.hpp>
-#include <Forward_bloop.hpp>
+#include <Bloop/BaseObject.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -19,8 +18,9 @@
 #include <functional>
 #include <tuple>
 
-class Document;
 
+class Bloop;
+class Document;
 class Drawable;
 
 /*

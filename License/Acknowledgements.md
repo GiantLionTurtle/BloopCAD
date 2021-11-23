@@ -14,5 +14,8 @@ Found at https://github.com/g-truc/glm
 stb_image is an image loader
 Found at https://github.com/nothings/stb
 
+* Catch2
+Catch2 is a unit testing framework with micro-benchmarking features and BDD macros
+Found at https://github.com/catchorg/Catch2
 
 

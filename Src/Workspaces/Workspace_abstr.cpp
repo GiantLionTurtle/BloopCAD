@@ -1,7 +1,7 @@
 
 #include "Workspace_abstr.hpp"
 #include <Utils/Debug_util.hpp>
-#include <Bloop.hpp>
+#include <Bloop/Bloop.hpp>
 #include <Tools/Navigation3d/Navigation3d.hpp>
 
 

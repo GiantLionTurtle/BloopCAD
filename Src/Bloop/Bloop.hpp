@@ -2,7 +2,6 @@
 #ifndef BLOOP_HPP_
 #define BLOOP_HPP_
 
-#include "Forward_bloop.hpp"
 #include <Workspaces/Document.hpp>
 #include <Tools/Tool.hpp>
 #include <Workspaces/Workspace_abstr.hpp>

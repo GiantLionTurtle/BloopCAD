@@ -13,7 +13,7 @@
 
 #include <Utils/Debug_util.hpp>
 #include <Utils/Maths_util.hpp>
-#include <Bloop.hpp>
+#include <Bloop/Bloop.hpp>
 #include <Workspaces/Document.hpp>
 
 Sketch::Sketch(Geom3d::Plane_abstr* base_plane):

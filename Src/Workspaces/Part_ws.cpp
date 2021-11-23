@@ -2,7 +2,7 @@
 #include "Part_ws.hpp"
 
 #include <Utils/Expunge.hpp>
-#include <Bloop.hpp>
+#include <Bloop/Bloop.hpp>
 #include <Tools/Part/PartDefault_tool.hpp>
 #include <Tools/Part/StartSketch_tool.hpp>
 #include <Tools/Navigation3d/Navigation3d.hpp>

@@ -1,4 +1,5 @@
 
+add_subdirectory(Bloop)
 add_subdirectory(Utils)
 add_subdirectory(Graphics_utils)
 add_subdirectory(Geometry)
@@ -11,8 +12,8 @@ add_subdirectory(ConstraintsSolver)
 add_subdirectory(Tests)
 
 add_executable(BloopCAD
-	Bloop.cpp
-	Main.cpp)
+	Main.cpp
+)
 
 target_link_libraries(BloopCAD
 	vendor
@@ -21,6 +22,8 @@ target_link_libraries(BloopCAD
 	Drawables
 	Tools
 	Workspaces
+	Bloop
 	${GTKMM_LIBRARIES}
-	${CMAKE_DL_LIBS} epoxy)
+	${CMAKE_DL_LIBS} epoxy
+)
 

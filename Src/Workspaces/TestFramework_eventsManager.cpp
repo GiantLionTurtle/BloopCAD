@@ -1,7 +1,7 @@
 
 #include "TestFramework_eventsManager.hpp"
 
-#include <Bloop.hpp>
+#include <Bloop/Bloop.hpp>
 #include <Workspaces/Document.hpp>
 
 #include <Tools/Part/StartSketch_tool.hpp>

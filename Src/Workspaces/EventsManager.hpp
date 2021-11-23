@@ -2,11 +2,10 @@
 #ifndef EVENTSMANAGER_HPP_
 #define EVENTSMANAGER_HPP_
 
-#include <Forward_bloop.hpp>
-
 #include <gtkmm.h>
-
 #include <chrono>
+
+class Bloop;
 
 class EventsManager {
 protected:

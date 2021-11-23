@@ -3,7 +3,7 @@
 #include <Utils/Preferences.hpp>
 #include <Utils/Conversions_util.hpp>
 
-#include "Bloop.hpp"
+#include <Bloop/Bloop.hpp>
 #include "Workspaces/Part_ws.hpp"
 
 #include <gtkmm.h>

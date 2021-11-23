@@ -1,7 +1,7 @@
 
 #include "EnterPart_action.hpp"
 #include <Workspaces/Document.hpp>
-#include <Bloop.hpp>
+#include <Bloop/Bloop.hpp>
 
 EnterPart_action::EnterPart_action(bool set_camera):
 	SwitchWorkspace_action(Bloop::PART, set_camera),
