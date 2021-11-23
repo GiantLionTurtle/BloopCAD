@@ -3,9 +3,10 @@
 #define ENTERPARTHDESIGN_ACTION_HPP_
 
 #include <Actions/Common/SwitchWorkspace_action.hpp>
-#include <Drawables/Containers/Part.hpp>
 
 #include <memory>
+
+class Part;
 
 /*
 	@class EnterPart_action enters the Part workspace with a Part target

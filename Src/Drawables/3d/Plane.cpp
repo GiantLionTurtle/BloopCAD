@@ -4,6 +4,11 @@
 #include <Utils/Expunge.hpp>
 #include <Graphics_utils/GLCall.hpp>
 #include <Graphics_utils/ShadersPool.hpp>
+#include <Graphics_utils/VertexArray.hpp>
+#include <Graphics_utils/VertexBuffer.hpp>
+#include <Graphics_utils/Shader.hpp>
+#include <Graphics_utils/IndexBuffer.hpp>
+#include <Graphics_utils/Camera.hpp>
 
 Plane::Plane(Plane_abstr const& plane_):
 	Plane_abstr(plane_),

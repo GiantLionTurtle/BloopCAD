@@ -3,9 +3,10 @@
 #define QUITPARTDESIGN_ACTION_HPP_
 
 #include <Actions/Action.hpp>
-#include <Drawables/Containers/Part.hpp>
 
 #include <memory>
+
+class Part;
 
 /*
 	@class QuitPart_action cleans up the Part workspace and Part target before another workspace is activated

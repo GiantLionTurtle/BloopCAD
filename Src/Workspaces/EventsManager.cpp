@@ -4,6 +4,8 @@
 #include <Bloop/Bloop.hpp>
 #include <Workspaces/Document.hpp>
 
+#include <glm/glm.hpp>
+
 EventsManager::EventsManager()
 {
 

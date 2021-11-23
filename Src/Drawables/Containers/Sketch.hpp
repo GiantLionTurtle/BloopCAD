@@ -4,7 +4,6 @@
 
 #include <Drawables/Base/Collection.hpp>
 #include <Geometry/3d/Plane_abstr.hpp>
-#include <Drawables/Containers//Folder.hpp>
 #include <ConstraintsSolver/ConstraintsSystem.hpp>
 #include <Drawables/Sk/SkDrawable.hpp>
 #include <Drawables/Sk/SkGeometry.hpp>

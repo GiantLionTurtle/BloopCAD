@@ -2,9 +2,9 @@
 #include <Utils/Debug_util.hpp>
 #include <Utils/Preferences.hpp>
 #include <Utils/Conversions_util.hpp>
-
 #include <Bloop/Bloop.hpp>
-#include "Workspaces/Part_ws.hpp"
+#include <Workspaces/Part_ws.hpp>
+#include <Workspaces/Document.hpp>
 
 #include <gtkmm.h>
 #include <fontconfig/fontconfig.h>

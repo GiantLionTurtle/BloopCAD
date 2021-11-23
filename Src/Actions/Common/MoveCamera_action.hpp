@@ -3,9 +3,13 @@
 #define MOVECAMERA_ACTION_HPP_
 
 #include <Actions/Action.hpp>
-#include <Graphics_utils/Camera.hpp>
+#include <Graphics_utils/CameraState.hpp>
 #include <Utils/Animatable.hpp>
-#include <Geometry/3d/Plane_abstr.hpp>
+
+namespace Geom3d {
+	class Plane_abstr;
+}
+class Camera;
 
 /*
 	@class MoveCamera_action moves the camera from a state to another over 

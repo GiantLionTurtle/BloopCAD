@@ -2,6 +2,10 @@
 #include "SkPoint.hpp"
 
 #include <Utils/Expunge.hpp>
+#include <Graphics_utils/Camera.hpp>
+#include <Graphics_utils/VertexBuffer.hpp>
+#include <Graphics_utils/VertexBufferLayout.hpp>
+#include <Graphics_utils/VertexArray.hpp>
 #include <Graphics_utils/ShadersPool.hpp>
 #include <Utils/Preferences.hpp>
 #include <Graphics_utils/GLCall.hpp>

@@ -5,6 +5,9 @@
 #include <Utils/Preferences.hpp>
 #include <Bloop/Bloop.hpp>
 #include "Graphics_utils/GLCall.hpp"
+#include "Part_ws.hpp"
+
+#include <glm/glm.hpp>
 
 Document::Document(EventsManager* manager):
 	mParentBloop(),

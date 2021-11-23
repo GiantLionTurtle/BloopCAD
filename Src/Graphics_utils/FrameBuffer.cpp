@@ -1,6 +1,8 @@
 
 #include "FrameBuffer.hpp"
 
+#include <Graphics_utils/GLCall.hpp>
+
 FrameBuffer::FrameBuffer(unsigned int width, unsigned int height):
 	mTexture(width, height, GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST, 4) // No need to get fancy with interpolation, it will likely be the exact same size as the screen
 {

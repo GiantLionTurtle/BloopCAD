@@ -2,19 +2,22 @@
 #ifndef BLOOP_HPP_
 #define BLOOP_HPP_
 
-#include <Workspaces/Document.hpp>
-#include <Tools/Tool.hpp>
-#include <Workspaces/Workspace_abstr.hpp>
-#include <Workspaces/NavigationBar.hpp>
-#include <Workspaces/Part_ws.hpp>
-#include <Workspaces/Sketch_ws.hpp>
-#include <Workspaces/Home_ws.hpp>
 #include <Workspaces/MiscUI.hpp>
 
 #include <gtkmm.h>
+#include <glm/glm.hpp>
+
 #include <string>
 #include <tuple>
 #include <memory>
+
+class Part_ws;
+class Sketch_ws;
+class Home_ws;
+class NavigationBar;
+class Workspace_abstr;
+class WorkspaceState;
+class Document;
 
 /*
 	@class Bloop describes a window containing the whole cad software

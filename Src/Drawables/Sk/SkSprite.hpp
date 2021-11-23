@@ -10,6 +10,10 @@
 #include <map>
 #include <string>
 
+class VertexArray;
+class VertexBuffer;
+class Shader;
+
 struct pos_offseted {
 	glm::vec3 pos;
 	glm::vec2 pixelOffset;

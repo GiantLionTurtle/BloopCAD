@@ -6,11 +6,11 @@
 #include <Geometry/3d/Point_abstr.hpp>
 #include <ConstraintsSolver/Expression.hpp>
 
-#include <Graphics_utils/VertexArray.hpp>
-#include <Graphics_utils/VertexBuffer.hpp>
-#include <Graphics_utils/Shader.hpp>
-
 #include <glm/glm.hpp>
+
+class VertexArray;
+class VertexBuffer;
+class Shader;
 
 class Point : public Drawable, public Geom3d::Point_abstr {
 private:

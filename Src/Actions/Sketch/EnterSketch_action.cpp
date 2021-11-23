@@ -1,6 +1,9 @@
 
 #include "EnterSketch_action.hpp"
+
 #include <Workspaces/Document.hpp>
+#include <Drawables/Containers/Sketch.hpp>
+#include <Workspaces/Sketch_ws.hpp>
 #include <Bloop/Bloop.hpp>
 
 EnterSketch_action::EnterSketch_action(Sketch* target, bool set_camera):

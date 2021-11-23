@@ -1,6 +1,13 @@
 
 #include "Bloop.hpp"
+
 #include <Utils/Debug_util.hpp>
+#include <Workspaces/Document.hpp>
+#include <Workspaces/Workspace_abstr.hpp>
+#include <Workspaces/NavigationBar.hpp>
+#include <Workspaces/Part_ws.hpp>
+#include <Workspaces/Sketch_ws.hpp>
+#include <Workspaces/Home_ws.hpp>
 
 Bloop::Bloop()
 {

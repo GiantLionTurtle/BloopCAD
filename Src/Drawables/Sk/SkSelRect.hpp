@@ -5,6 +5,11 @@
 #include "SkDrawable.hpp"
 #include <Geometry/3d/Plane_abstr.hpp>
 
+class VertexArray;
+class VertexBuffer;
+class IndexBuffer;
+class Shader;
+
 class SkSelRect : public SkDrawable {
 public:
 	enum mode_types { TOUCH, COVER };

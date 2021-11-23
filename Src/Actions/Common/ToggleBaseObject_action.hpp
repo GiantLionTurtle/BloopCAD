@@ -3,7 +3,8 @@
 #define TOGGLEBASEOBJECT_ACTION_HPP_
 
 #include <Actions/Action.hpp>
-#include <Bloop/BaseObject.hpp>
+
+class BaseObject;
 
 /*
 	@class ToggleBaseObject_action toggles the existence of an object

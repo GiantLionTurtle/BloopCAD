@@ -1,5 +1,7 @@
 
 #include "EnterPart_action.hpp"
+
+#include <Drawables/Containers/Part.hpp>
 #include <Workspaces/Document.hpp>
 #include <Bloop/Bloop.hpp>
 

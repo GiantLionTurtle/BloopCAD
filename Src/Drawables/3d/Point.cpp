@@ -6,6 +6,10 @@
 #include <Graphics_utils/GLCall.hpp>
 #include <Graphics_utils/ShadersPool.hpp>
 #include <Utils/Maths_util.hpp>
+#include <Graphics_utils/VertexArray.hpp>
+#include <Graphics_utils/VertexBuffer.hpp>
+#include <Graphics_utils/Shader.hpp>
+#include <Graphics_utils/Camera.hpp>
 
 Point::Point(glm::vec3 const& basePoint):
 	mVB(nullptr),

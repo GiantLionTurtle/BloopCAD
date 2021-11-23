@@ -5,6 +5,10 @@
 #include "SkGeometry.hpp"
 
 #include <Utils/Expunge.hpp>
+#include <Graphics_utils/Camera.hpp>
+#include <Graphics_utils/VertexBuffer.hpp>
+#include <Graphics_utils/VertexBufferLayout.hpp>
+#include <Graphics_utils/VertexArray.hpp>
 
 #include <vector>
 

@@ -15,6 +15,11 @@
 #include <string>
 #include <iostream>
 
+class VertexArray;
+class VertexBuffer;
+class IndexBuffer;
+class Shader;
+
 /*
 	@class plane describes a plane drawn on screen
 	@parent : entity

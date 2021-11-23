@@ -1,9 +1,10 @@
 
 #include "Workspace_abstr.hpp"
+
 #include <Utils/Debug_util.hpp>
 #include <Bloop/Bloop.hpp>
 #include <Tools/Navigation3d/Navigation3d.hpp>
-
+#include "Document.hpp"
 
 Workspace_abstr::Workspace_abstr(std::string const& upperBarID, Glib::RefPtr<Gtk::Builder> const& builder, Bloop* parent) :
 	mParentBloop(parent),

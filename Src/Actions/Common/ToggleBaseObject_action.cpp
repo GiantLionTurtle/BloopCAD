@@ -1,7 +1,9 @@
 
 #include "ToggleBaseObject_action.hpp"
+
 #include <Utils/Debug_util.hpp>
 #include <Workspaces/Document.hpp>
+#include <Bloop/BaseObject.hpp>
 
 ToggleBaseObject_action::ToggleBaseObject_action(BaseObject* obj, bool toggle_to):
 	mObj(obj),
