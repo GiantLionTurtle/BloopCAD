@@ -2,7 +2,7 @@
 #ifndef PARAM_HPP_
 #define PARAM_HPP_
 
-#include <BaseObject.hpp>
+#include <Bloop/BaseObject.hpp>
 
 class Constraint;
 

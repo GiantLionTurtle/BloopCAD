@@ -17,7 +17,6 @@
 
 #include "Part.hpp"
 
-#include <Utils/Debug_util.hpp>
 #include <Drawables/3d/Point.hpp>
 #include <Drawables/3d/Plane.hpp>
 #include <Workspaces/DocumentTree.hpp>

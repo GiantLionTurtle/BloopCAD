@@ -19,7 +19,7 @@ add_executable(Misc_tests
     Misc_tests.cpp
 )
 target_link_libraries(Misc_tests
-	vendor
+	Vendor
 	Utils
 	Graphics_utils
 	Drawables

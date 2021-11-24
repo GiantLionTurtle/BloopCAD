@@ -15,9 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "SkCircleCurve.hpp"
+#include "SkCircle.hpp"
 
-#include <ConstraintsSolver/Expression.hpp>
 #include <Graphics_utils/Camera.hpp>
 #include <Graphics_utils/VertexBuffer.hpp>
 #include <Graphics_utils/VertexBufferLayout.hpp>

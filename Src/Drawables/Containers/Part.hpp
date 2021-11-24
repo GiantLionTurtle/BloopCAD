@@ -19,6 +19,7 @@
 #define PART_HPP_
 
 #include <Drawables/Base/Collection.hpp>
+#include <Utils/Debug_util.hpp>
 #include "Folder.hpp"
 #include "Sketch.hpp"
 

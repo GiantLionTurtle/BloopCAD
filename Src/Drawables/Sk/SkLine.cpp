@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "SkLineCurve.hpp"
+#include "SkLine.hpp"
 
 #include <Graphics_utils/ShadersPool.hpp>
 #include <Utils/Preferences.hpp>

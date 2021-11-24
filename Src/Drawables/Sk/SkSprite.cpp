@@ -25,7 +25,6 @@
 #include <Utils/Debug_util.hpp>
 #include <Utils/Maths_util.hpp>
 #include <Utils/Preferences.hpp>
-#include <ConstraintsSolver/Expression.hpp>
 #include <Graphics_utils/Camera.hpp>
 #include <Graphics_utils/VertexBuffer.hpp>
 #include <Graphics_utils/VertexBufferLayout.hpp>

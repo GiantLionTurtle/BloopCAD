@@ -25,14 +25,12 @@ add_subdirectory(Tools)
 add_subdirectory(Workspaces)
 add_subdirectory(ConstrsSolver)
 
-# add_subdirectory(Tests)
-
 add_executable(BloopCAD
 	Main.cpp
 )
 
 target_link_libraries(BloopCAD
-	vendor
+	Vendor
 	Utils
 	Graphics_utils
 	Drawables
