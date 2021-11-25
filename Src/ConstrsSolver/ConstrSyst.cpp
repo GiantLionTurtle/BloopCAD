@@ -40,8 +40,13 @@ void ConstrSyst::add_params(ParamIterator* ps)
 }
 void ConstrSyst::add_constr(Constraint* c)
 {
-	mDecompUpToDate  = false;
-	mConstrs.push_back(c);
+	if(c->substitutionConstraint()) {
+		mConstrsSubst.push_back(c);
+	} else {
+		mDecompUpToDate  = false;
+		mConstrsEval.push_back(c);
+	}
+
 	c->set_syst(this);
     add_params(c);
 }
@@ -52,18 +57,56 @@ int ConstrSyst::solve()
 		create_clusters();
 	}
 
+	substitute();
+
 	// Good place to do some simple multithreading??
 	int out = SolverState::solveOutput::SUCCESS;
 	for(int i = 0; i < nActiveClusters; ++i) {
-		out = std::max(out, mClusters[i].solve());
+		out = std::max(out, mClusters[i].solve_numeric());
 	}
+
+	clear_substitutions();
+	clear_drag();
+
+	if(out == SolverState::solveOutput::SUCCESS)
+		return out;
+	
+	substitute();
+	for(int i = 0; i < nActiveClusters; ++i) {
+		if(mClusters[i].output() == SolverState::solveOutput::SUCCESS)
+			continue;
+		out = std::max(out, mClusters[i].solve_numeric());
+	}
+
+	clear_substitutions();
 	return out;
+}
+
+void ConstrSyst::substitute()
+{
+	for(auto constr : mConstrsSubst) {
+		constr->substitute();
+	}
+}
+void ConstrSyst::clear_substitutions()
+{
+	for(auto p : mParams) {
+		p->apply_substitution();
+		p->delete_substitution();
+	}
+}
+void ConstrSyst::clear_drag()
+{
+	for(auto p : mParams) {
+		p->set_frozen(false);
+	}
 }
 
 int ConstrSyst::create_clusters()
 {
 	mDecompUpToDate = true;
-	create_graph();
+	if(!create_graph())
+		return SolverState::graphState::INVALID_GRAPH;
 
 	// Clear clusters and resize if needed
 	for(int i = 0; i < nActiveClusters && i < mClusters.size(); ++i) {
@@ -73,7 +116,6 @@ int ConstrSyst::create_clusters()
 		mClusters.push_back(ConstrCluster(mAlgorithm));
 	}
 	
-
 	for(int i = 0; i < mG.V.size(); ++i) {
 		if(mG.V[i].metacluster == 1) // Overconstrained
 			continue;
@@ -82,25 +124,27 @@ int ConstrSyst::create_clusters()
 	for(int i = 0; i < mG.C.size(); ++i) {
 		if(mG.C[i].metacluster == 1) // Overconstrained
 			continue; 
-		mClusters[mG.C[i].cluster].add_constr(mConstrs[mG.C[i].data]);
+		mClusters[mG.C[i].cluster].add_constr(mConstrsEval[mG.C[i].data]);
 	}
 
 	return nG3 > 0 ? SolverState::graphState::OVER_CONSTRAINED : SolverState::graphState::WELL_CONSTRAINED;
 }
 
-void ConstrSyst::create_graph()
+bool ConstrSyst::create_graph()
 {
 	mG.clear();
 	int p = 0;
 	for(auto param : mParams) {
-		if(!param->exists() || param->frozen() == 2)
+		if(!param->exists())
 			continue;
 		mG.add_var(p);
 		p++;
 	}
+	if(p == 0) // No variable in the graph
+		return false;
 
 	int c = 0;
-	for(auto constr : mConstrs) {
+	for(auto constr : mConstrsEval) {
 		if(!constr->exists())
 			continue;
 		mG.add_constr(c);
@@ -113,7 +157,9 @@ void ConstrSyst::create_graph()
 		}
 		c++; // hehe
 	}
-	
+	if(c == 0) // No Constraint in the graph
+		return false;
+
 	std::vector<int> match = mG.maxMatching();
 	mG.make_bidirectionnal(match);
 	nActiveClusters = mG.mark_Gs(match, nG1, nG2, nG3);
@@ -121,4 +167,5 @@ void ConstrSyst::create_graph()
 	if(nG2) {
 		fix_overConstrained();
 	}
+	return true;
 }

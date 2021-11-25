@@ -30,7 +30,7 @@ class ConstrSyst {
 private:
 	std::vector<Param*> mParams;
 	std::map<Param*, int> mParam_to_ind;
-	std::vector<Constraint*> mConstrs;
+	std::vector<Constraint*> mConstrsEval { }, mConstrsSubst { };
 	std::vector<ConstrCluster> mClusters;
 	ConstrGraph mG;
 	int nActiveClusters { 0 }, nG1 { 0 }, nG2 { 0 }, nG3 { 0 };
@@ -51,9 +51,13 @@ public:
 
 	int solve();
 
+	void substitute();
+	void clear_substitutions();
+	void clear_drag();
+
 	int create_clusters();
 private:
-	void create_graph();
+	bool create_graph();
 	void fix_overConstrained() {}
 };
 

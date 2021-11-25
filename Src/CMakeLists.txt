@@ -24,6 +24,7 @@ add_subdirectory(Actions)
 add_subdirectory(Tools)
 add_subdirectory(Workspaces)
 add_subdirectory(ConstrsSolver)
+add_subdirectory(Tests)
 
 add_executable(BloopCAD
 	Main.cpp

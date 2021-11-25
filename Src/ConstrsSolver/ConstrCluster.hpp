@@ -27,12 +27,13 @@
 
 class ConstrCluster {
 private:
-	std::vector<Param*> mParams { }, mParamsSubst { }, mParamsDriving { }, mParamsStandBy;
+	std::vector<Param*> mParams { };
 
-	std::vector<Constraint*> mConstrsSubst { }, mConstrsEval;
+	std::vector<Constraint*> mConstrs { };
 
 	Eigen::VectorXd mErrors;
 	int mAlgorithm { 0 };
+	int mOutput { 0 };
 	double mMaxError { CONSTR_SATISFACTION_TRESHOLD };
 	const int mMaxIt_LM { 50 }, mMaxIt_DL { 50 };
 public:
@@ -45,7 +46,7 @@ public:
 	inline double maxError() { return mMaxError; }
 	inline void set_maxError(double err) { mMaxError = err; }
 
-	int solve();
+	inline int output() { return mOutput; }
 
 	/*
 		@function solve_numeric solves some of the equations with some of the variables 
@@ -71,15 +72,10 @@ public:
 	void add_param(Param* param);
 	void clear();
 
-	void substitute();
-	void clear_substitutions();
-	void clear_drag();
-
-	void order_params();
-	void order_constrs();
 	void update_params(double* vals);
 	void update_substitution();
 
+	int n_driving();
 	bool satisfied();
 
 	void retrieve_params(Eigen::VectorXd& P);

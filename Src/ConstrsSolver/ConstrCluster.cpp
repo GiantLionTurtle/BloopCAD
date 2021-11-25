@@ -25,39 +25,21 @@ ConstrCluster::ConstrCluster(int algo)
 
 }
 
-int ConstrCluster::solve()
-{
-	substitute();
-
-	int out = solve_numeric();
-
-	clear_drag();
-
-	if(out != SolverState::solveOutput::SUCCESS) {
-		substitute();
-		out = solve_numeric();
-	}
-	
-	clear_substitutions();
-	clear_drag();
-	
-	return out;
-}
-
 int ConstrCluster::solve_numeric()
 {
 	switch(mAlgorithm) {
 		case SolverState::DogLeg:
-			return solve_DL();
+			mOutput = solve_DL();
 			break;
 		case SolverState::LevenbergMarquardt:
-			return solve_LM();
+			mOutput = solve_LM();
 			break;
 		default: // Grrrrr
 			LOG_WARNING("Unknown solver " + std::to_string(mAlgorithm));
-			return SolverState::FAILURE;
+			mOutput = SolverState::FAILURE;
 			break;
 	}
+	return mOutput;
 }
 
 int ConstrCluster::solve_LM()
@@ -66,8 +48,8 @@ int ConstrCluster::solve_LM()
 	// Taken from http://www2.imm.dtu.dk/pubdb/edoc/imm3215.pdf
 
 	verbose(VERBOSE_STEPS, "LM solver...");
-	int n_params = mParamsDriving.size();		// Number of variables in the system
-	int n_constrs  = mConstrsEval.size();;	// Number of equations in the system
+	int n_params = n_driving();		// Number of variables in the system
+	int n_constrs  = mConstrs.size();;	// Number of equations in the system
 
 	if(n_constrs  == 0) {
 		verbose(VERBOSE_STEPS, "Returning early, no equation to solve.");
@@ -210,8 +192,8 @@ int ConstrCluster::solve_DL()
 	// DogLeg combines Stepest Descent and Gauss Newton with a trust region (or trust radius)
 
 	verbose(VERBOSE_STEPS, "DL solver...");
-	int n_params = mParamsDriving.size();		// Number of variables in the system
-	int n_constrs  = mConstrsEval.size();	// Number of equations in the system
+	int n_params = n_driving();		// Number of variables in the system
+	int n_constrs  = mConstrs.size();	// Number of equations in the system
 	verbose(VERBOSE_INNERSTEPS,	"Num tagged: "<<n_constrs );
 	
 	if(n_constrs  == 0) {
@@ -323,19 +305,15 @@ int ConstrCluster::solve_DL()
 double ConstrCluster::stepScale()
 {
 	double scale = 1.0;
-	for(int i = 0; i < mConstrsEval.size(); ++i) {
-		scale = std::min(scale, mConstrsEval[i]->stepScale(mErrors(i)));
+	for(int i = 0; i < mConstrs.size(); ++i) {
+		scale = std::min(scale, mConstrs[i]->stepScale(mErrors(i)));
 	}
 	return scale;
 }
 
 void ConstrCluster::add_constr(Constraint* constr)
 {
-	if(constr->substitutionConstraint()) { 
-		mConstrsSubst.push_back(constr);
-	} else {
-		mConstrsEval.push_back(constr);
-	}
+	mConstrs.push_back(constr);
 }
 void ConstrCluster::add_param(Param* param)
 {
@@ -345,148 +323,68 @@ void ConstrCluster::add_param(Param* param)
 void ConstrCluster::clear()
 {
 	mParams.clear();
-	mConstrsSubst.clear();
-	mConstrsEval.clear();
-}
-
-void ConstrCluster::substitute()
-{
-	for(auto constr : mConstrsSubst) {
-		constr->substitute();
-	}
-	for(auto p : mParams) {
-		if(p->substituted()) {
-			mParamsSubst.push_back(p);
-		} else {
-			mParamsDriving.push_back(p);
-		}
-	}
-}
-void ConstrCluster::clear_substitutions()
-{
-	for(auto p : mParamsSubst) {
-		p->delete_substitution();
-	}
-	mParamsDriving.clear();
-	mParamsSubst.clear();
-}
-void ConstrCluster::clear_drag()
-{
-	for(auto p : mParams) {
-		p->set_frozen(false);
-	}
-}
-void ConstrCluster::order_params()
-{
-	mParamsDriving.clear();
-	mParamsSubst.clear();
-	mParamsStandBy.clear();
-
-	for(int i = 0; i < mParams.size(); ++i) {
-		if(mParams[i]->substituted()) {
-			mParamsSubst.push_back(mParams[i]);
-		} else if(!mParams[i]->frozen()) {
-			mParamsDriving.push_back(mParams[i]);
-		} else {
-			mParamsStandBy.push_back(mParams[i]);
-		}
-	}
-	// There might be a hole in the middle of the array for frozen parameters
-	// Anyway those don't matter for the solve
+	mConstrs.clear();
 }
 
 void ConstrCluster::update_params(double* vals)
 {
-	// Don't know if all this unrolling is that necessary, just found out about
-	// Duff's device and wanted to try 
-	// https://en.wikipedia.org/wiki/Duff's_device
-
-	// Set the values of the valid parameters (not dragged nor substituted parameters)
-	{
-		int n = (mParamsDriving.size()+7) / 8;
-		Param** validP = &mParamsDriving.front();
-
-		switch(mParamsDriving.size() % 8) {
-			case 0: (*validP++)->val_raw() = (*vals++);
-			case 7: (*validP++)->val_raw() = (*vals++);
-			case 6: (*validP++)->val_raw() = (*vals++);
-			case 5: (*validP++)->val_raw() = (*vals++);
-			case 4: (*validP++)->val_raw() = (*vals++);
-			case 3: (*validP++)->val_raw() = (*vals++);
-			case 2: (*validP++)->val_raw() = (*vals++);
-			case 1: (*validP++)->val_raw() = (*vals++);
-		}
-		while(--n > 0) {
-			(*validP++)->val_raw() = (*vals++);
-			(*validP++)->val_raw() = (*vals++);
-			(*validP++)->val_raw() = (*vals++);
-			(*validP++)->val_raw() = (*vals++);
-			(*validP++)->val_raw() = (*vals++);
-			(*validP++)->val_raw() = (*vals++);
-			(*validP++)->val_raw() = (*vals++);
-			(*validP++)->val_raw() = (*vals++);
-		}
+	for(auto p : mParams) {
+		if(p->substituted())
+			continue;
+		p->set(*vals++);
 	}
 	update_substitution();
 }
-
 void ConstrCluster::update_substitution()
 {
-	// Set the substitutions of substituted parameters
-	{
-		int n = (mParamsSubst.size()+7) / 8;
-		Param** substP = &mParamsSubst.front();
-		if(n == 0)
-			return;
-		switch(mParamsSubst.size() % 8) {
-			case 0: (*substP++)->apply_substitution();
-			case 7: (*substP++)->apply_substitution();
-			case 6: (*substP++)->apply_substitution();
-			case 5: (*substP++)->apply_substitution();
-			case 4: (*substP++)->apply_substitution();
-			case 3: (*substP++)->apply_substitution();
-			case 2: (*substP++)->apply_substitution();
-			case 1: (*substP++)->apply_substitution();
-		}
-		while(--n > 0) {
-			(*substP++)->apply_substitution();
-			(*substP++)->apply_substitution();
-			(*substP++)->apply_substitution();
-			(*substP++)->apply_substitution();
-			(*substP++)->apply_substitution();
-			(*substP++)->apply_substitution();
-			(*substP++)->apply_substitution();
-			(*substP++)->apply_substitution();
-		}
+	for(auto p : mParams) {
+		if(!p->substituted())
+			continue;
+		p->apply_substitution();
 	}
 }
 
+int ConstrCluster::n_driving()
+{
+	int count = 0;
+	for(auto p : mParams) {
+		if(!p->substituted())
+			count++;
+	}
+	return count;
+}
 bool ConstrCluster::satisfied()
 {
-	for(auto c : mConstrsEval) {
+	for(auto c : mConstrs) {
 		if(!c->satisfied())
 			return false;
 	}
 	return true;
 }
 
-void ConstrCluster::retrieve_params(Eigen::VectorXd& P)
+void ConstrCluster::retrieve_params(Eigen::VectorXd& P_out)
 {
-	for(int i = 0; i < mParamsDriving.size(); ++i) {
-		P(i) = mParamsDriving[i]->val();
+	int i = 0;
+	for(auto p : mParams) {
+		if(p->substituted())
+			continue;
+		P_out(i++) = p->val();
 	}
 }
 void ConstrCluster::compute_jacobi(Eigen::MatrixXd& J)
 {
-	for(int i = 0; i < mConstrsEval.size(); ++i) {
-		for(int j = 0; j < mParamsDriving.size(); ++j) {
-			J(i, j) = mConstrsEval[i]->derivative(mParamsDriving[j]);
+	int j = 0;
+	for(int i = 0; i < mConstrs.size(); ++i) {
+		for(auto p : mParams) {
+			if(p->substituted())
+				continue;
+			J(i, j++) = mConstrs[i]->derivative(p);
 		}
 	}
 }
 void ConstrCluster::compute_errors(Eigen::VectorXd& e)
 {
-	for(int i = 0; i < mConstrsEval.size(); ++i) {
-		e(i) = mConstrsEval[i]->error();
+	for(int i = 0; i < mConstrs.size(); ++i) {
+		e(i) = mConstrs[i]->error();
 	}
 }
