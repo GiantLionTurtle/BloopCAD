@@ -39,8 +39,8 @@ SkPoint::SkPoint(glm::vec2 pos, Geom3d::Plane_abstr* pl, bool fixed_)
 	set_name("SkPoint");
 
 	if(fixed_) {
-		mGeom->x()->set_frozen(2);
-		mGeom->y()->set_frozen(2);
+		mGeom->x()->set_frozen(Param::Frozen_levels::FIXED);
+		mGeom->y()->set_frozen(Param::Frozen_levels::FIXED);
 	}
 }
 SkPoint::SkPoint(Geom2d::Point* pt, Geom3d::Plane_abstr* pl, bool fixed_)
@@ -50,8 +50,8 @@ SkPoint::SkPoint(Geom2d::Point* pt, Geom3d::Plane_abstr* pl, bool fixed_)
 	set_name("SkPoint");
 	
 	if(fixed_) {
-		mGeom->x()->set_frozen(2);
-		mGeom->y()->set_frozen(2);
+		mGeom->x()->set_frozen(Param::Frozen_levels::FIXED);
+		mGeom->y()->set_frozen(Param::Frozen_levels::FIXED);
 	}
 }
 

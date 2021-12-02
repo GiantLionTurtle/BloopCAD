@@ -45,6 +45,7 @@ private:
 	glm::vec2 mPixelOffset; // A sprite has a position in the world as well
 			 				// as a screen offset that stays constant regardless of zoom
 
+	glm::vec2 mDragStart_pos;
 	glm::vec2 mPos, mWorldOffset;
 	VertexArray* mVA;
 	VertexBuffer* mVB;
@@ -57,7 +58,8 @@ public:
 	bool inbound(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos);
 	// will have to find another way to drag then the geometry drag, I think it would be ridiculous to solve a system for this (the solve would be fast but still)
 	int selection_rank() { return 1; }
-	void dragTo(glm::vec2 pos);
+	void dragTo(glm::vec2 pos_);
+	void start_drag(glm::vec2 pos_);
 
 	glm::vec2 pixelOffset() { return mPixelOffset; }
 	void set_pixelOffset(glm::vec2 offset);
