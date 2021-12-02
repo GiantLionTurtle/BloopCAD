@@ -22,12 +22,14 @@
 SubstBlob::SubstBlob(Param* p)
 	: mParams({p})
 {
-
+	p->set_blob(this);
 }
 SubstBlob::SubstBlob(std::vector<Param*> const& params)
 	: mParams(params)
 {
-
+	for(auto p : mParams) {
+		p->set_blob(this);
+	}
 }
 SubstBlob::SubstBlob(SubstBlob const& rhs)
 {
@@ -41,6 +43,7 @@ SubstBlob::SubstBlob(SubstBlob const& rhs)
 SubstBlob& SubstBlob::operator=(SubstBlob const& rhs)
 {
 	BLOOP_MARKER;
+	release();
 	clear();
 	mParams = rhs.mParams;
 
@@ -52,10 +55,13 @@ SubstBlob& SubstBlob::operator=(SubstBlob const& rhs)
 
 void SubstBlob::clear()
 {
+	mParams.clear();
+}
+void SubstBlob::release()
+{
 	for(auto p : mParams) {
 		p->set_blob(nullptr);
 	}
-	mParams.clear();
 }
 
 void SubstBlob::choose_driving()
@@ -82,11 +88,12 @@ void SubstBlob::update_params()
 		p->reset_origin(true);
 	}
 }
-void SubstBlob::absorb(SubstBlob const& blob)
+void SubstBlob::absorb(SubstBlob& blob)
 {
 	for(auto p : blob.mParams) {
 		add_param(p);
 	}
+	blob.clear();
 }
 void SubstBlob::add_param(Param* p)
 {

@@ -99,7 +99,6 @@ public:
 
 	virtual void append_substBlobs(std::vector<SubstBlob*>& blobs) { }
 
-	static void add_toBlob(Param* p, SubstBlob*& currentBlob, bool& merged);
 	static void add_blob(Param* a, Param* b, std::vector<SubstBlob*>& blobs);
 #ifndef RELEASE_MODE
 	/*

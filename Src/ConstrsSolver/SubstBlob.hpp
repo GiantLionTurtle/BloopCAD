@@ -39,10 +39,11 @@ public:
 	SubstBlob& operator=(SubstBlob const& rhs);
 
 	void clear();
+	void release();
 
 	void choose_driving();
 	void update_params();
-	void absorb(SubstBlob const& blob);
+	void absorb(SubstBlob& blob);
 	void add_param(Param* p);
 	void release_params();
 };

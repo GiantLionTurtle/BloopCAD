@@ -19,7 +19,7 @@
 
 #include "Expression.hpp"
 #include "ConstrSyst.hpp"
-
+#include <Utils/Expunge.hpp>
 
 #ifndef RELEASE_MODE
 Constraint::Constraint(std::string name_, bool can_substitute)
@@ -71,30 +71,28 @@ bool Constraint::satisfied()
 	return (error() < CONSTR_SATISFACTION_TRESHOLD);
 }
 
-void Constraint::add_toBlob(Param* p, SubstBlob*& currentBlob, bool& merged)
-{
-	if(p->blob() == nullptr) {
-		currentBlob->add_param(p);
-	} else {
-		merged = true;
-		SubstBlob* newBlob = p->blob();
-		newBlob->absorb(*currentBlob);
-
-		delete currentBlob;
-		currentBlob = newBlob;
-	}
-}
-
 void Constraint::add_blob(Param* a, Param* b, std::vector<SubstBlob*>& blobs)
 {
-	bool merged = false;
-	SubstBlob* currentBlob = new SubstBlob;
-	
-	add_toBlob(a, currentBlob, merged);
-	add_toBlob(b, currentBlob, merged);
+	SubstBlob* blob_a = a->blob(), *blob_b = b->blob();
 
-	if(!merged)
-		blobs.push_back(currentBlob);
+	if(blob_a == blob_b) {
+		if(blob_a == nullptr) {
+			blobs.push_back(new SubstBlob({a, b}));
+		}
+		return;
+	}
+
+	if(blob_a == nullptr && blob_b != nullptr) {
+		blob_b->add_param(a);
+		return;
+	} else if(blob_a != nullptr && blob_b == nullptr) {
+		blob_a->add_param(b);
+		return;
+	}
+
+	blob_a->absorb(*blob_b);
+	blobs.erase(std::remove(blobs.begin(), blobs.end(), blob_b), blobs.end());
+	expunge(blob_b);
 }
 
 PointPoint_horizontality::PointPoint_horizontality(Geom2d::Point* p1, Geom2d::Point* p2)

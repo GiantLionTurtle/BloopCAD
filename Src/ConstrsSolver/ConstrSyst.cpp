@@ -132,6 +132,7 @@ int ConstrSyst::create_clusters()
 void ConstrSyst::create_substBlobs()
 {
 	for(auto b : mSubstBlobs) {
+		b->release();
 		b->clear();
 	}
 	mSubstBlobs.clear();
