@@ -57,7 +57,7 @@ public:
 	bool inbound(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos);
 	// will have to find another way to drag then the geometry drag, I think it would be ridiculous to solve a system for this (the solve would be fast but still)
 	int selection_rank() { return 1; }
-	void move(glm::vec2 delta);
+	void dragTo(glm::vec2 pos);
 
 	glm::vec2 pixelOffset() { return mPixelOffset; }
 	void set_pixelOffset(glm::vec2 offset);

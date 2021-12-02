@@ -31,6 +31,8 @@ private:
 	static float kSelDist2;
 	static bool kFisrstInst;
 	static glm::vec3 kColor, kColorHovered, kColorSelected; // Point color
+
+	glm::vec2 mDragStart_ptPos;
 public:
 	SkPoint(glm::vec2 pos, Geom3d::Plane_abstr* pl, bool fixed_);
 	SkPoint(Geom2d::Point* pt, Geom3d::Plane_abstr* pl, bool fixed_);
@@ -39,7 +41,8 @@ public:
 	Param* x() { return mGeom->x(); }
 	Param* y() { return mGeom->y(); }
 
-	void move(glm::vec2 delta);
+	void dragTo(glm::vec2 pos);
+	void start_drag(glm::vec2 pos);
 
 	glm::vec2 pos() { return mGeom->pos(); }
 	bool closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter);

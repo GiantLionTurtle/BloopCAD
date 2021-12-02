@@ -20,7 +20,7 @@
 #include <Workspaces/Sketch_ws.hpp>
 
 class SketchDefault_tool : public tool<Sketch_ws> {
-private:   
+private:
 	SkSelRect* mSelArea { nullptr };
 	SkGeomDragPoint mDragCandidate;
 	SkConstrAnnot* mAnnot { nullptr };

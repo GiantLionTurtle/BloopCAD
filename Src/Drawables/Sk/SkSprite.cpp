@@ -76,9 +76,9 @@ bool SkSprite::inbound(glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos)
 	return inbound_internal(worldPos, cam, cursorPos);
 }
 
-void SkSprite::move(glm::vec2 delta)
+void SkSprite::dragTo(glm::vec2 pos)
 {
-	mWorldOffset += delta;
+	mWorldOffset = pos;
 	update();
 }
 void SkSprite::set(glm::vec2 pos_)

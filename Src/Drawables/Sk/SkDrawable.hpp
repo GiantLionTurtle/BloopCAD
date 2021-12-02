@@ -60,6 +60,8 @@ public:
 
 // interactive drawables
 class SkIntDrawable : public SkDrawable {
+protected:
+	glm::vec2 mDragStart;
 public:
 	SkIntDrawable(Geom3d::Plane_abstr* pl)
 		: SkDrawable(pl)
@@ -67,8 +69,9 @@ public:
 		
 	}
 	virtual bool closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) = 0;
-	virtual void move_selected(glm::vec2 delta) { if(selected()) move(delta); }
-	virtual void move(glm::vec2 delta) {}
+	virtual void dragTo_selected(glm::vec2 delta) { if(selected()) dragTo(delta); }
+	virtual void dragTo(glm::vec2 pos) {}
+	virtual void start_drag(glm::vec2 pos) { mDragStart = pos; }
 	virtual void release() {}
 };
 

@@ -67,8 +67,6 @@ public:
 	}
 	virtual void set_annotPos(SkSprite* sp) = 0;
 	virtual void set_annotOffset(SkSprite* sp, int ind) = 0;
-
-	virtual Constraint* dragConstr() { return nullptr; }
 protected:
 	virtual void select_impl(bool sel)
 	{

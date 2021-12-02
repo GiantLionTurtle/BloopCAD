@@ -182,7 +182,13 @@ void SkPoint::graphicUpdate_impl()
 	mVB->unbind();
 }
 
-void SkPoint::move(glm::vec2 delta)
+void SkPoint::dragTo(glm::vec2 pos_)
 {
-	set(pos() + delta);
+	set(mDragStart_ptPos + pos_ - mDragStart);
+}
+
+void SkPoint::start_drag(glm::vec2 pos_)
+{
+	SkIntDrawable::start_drag(pos_);
+	mDragStart_ptPos = pos();
 }

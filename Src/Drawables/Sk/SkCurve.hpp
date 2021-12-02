@@ -124,17 +124,24 @@ public:
 			h_tmp->y()->set_frozen(Param::Frozen_levels::UNFROZEN);
 		}
 	}
-	void move_selected(glm::vec2 delta)
+	void dragTo_selected(glm::vec2 pos)
 	{
 		if(Drawable::selected()) {
 			for(int i = 0; i < n_handles(); ++i) {
-				handle(i)->move(delta);
+				handle(i)->dragTo(pos);
 			}
 		} else {
 			for(int i = 0; i < n_handles(); ++i) {
 				if(handle(i)->selected())
-					handle(i)->move(delta);
+					handle(i)->dragTo(pos);
 			}
+		}
+	}
+	void start_drag(glm::vec2 pos)
+	{
+		SkIntDrawable::mDragStart = pos;
+		for(int i = 0; i < n_handles(); ++i) {
+			handle(i)->start_drag(pos);
 		}
 	}
 protected:

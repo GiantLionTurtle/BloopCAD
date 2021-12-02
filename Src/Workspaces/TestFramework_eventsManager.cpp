@@ -135,7 +135,7 @@ void Test_EventsManager::do_test()
 	// 	// 	break;
 	// 	default:
 	// 		if(mTestStep%2 == 1) {
-	// 			mPoints[2]->move(glm::vec2(-0.05f, -0.05f));
+	// 			mPoints[2]->dragTo(glm::vec2(-0.05f, -0.05f));
 	// 		} else {
 	// 			mBloopWindow->sketchWorkspace()->target()->update_constraints(false, true);
 	// 		}
@@ -185,7 +185,7 @@ void Test_EventsManager::do_test()
 			break;
 		default:
 			if(mTestStep%2 == 1) {
-				mPoints[0]->move(glm::vec2(-1.0f, -1.0f));
+				mPoints[0]->dragTo(glm::vec2(-1.0f, -1.0f));
 			} else {
 				mBloopWindow->sketchWorkspace()->target()->update_constraints(false, true);
 			}

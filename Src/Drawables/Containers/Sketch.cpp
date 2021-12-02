@@ -109,14 +109,22 @@ SkConstrAnnot* Sketch::closest_annot(glm::vec2 cursor, Camera* cam)
 	}
 	return nullptr;
 }
-void Sketch::move_selGeom(glm::vec2 delta)
+void Sketch::drag_selGeom(glm::vec2 pos)
 {
 	for(size_t i = 0; i < mDrawList.size(); ++i) {
 		auto ch = mDrawList.at(i);
 		if(ch->exists())
-			ch->move_selected(delta);	
+			ch->dragTo_selected(pos);
 	}
 	update_constraints(false, true);
+}
+void Sketch::start_dragSelGeom(glm::vec2 pos)
+{
+	for(size_t i = 0; i < mDrawList.size(); ++i) {
+		auto ch = mDrawList.at(i);
+		if(ch->exists())
+			ch->start_drag(pos);
+	}
 }
 std::shared_ptr<Serial_action> Sketch::delete_selected()
 {
