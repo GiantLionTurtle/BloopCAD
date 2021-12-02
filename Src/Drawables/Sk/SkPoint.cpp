@@ -1,6 +1,6 @@
 
 // BloopCAD
-// Copyright (C) 2020  BloopCorp
+// Copyright (C) 2020-2021 BloopCorp
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -104,8 +104,8 @@ void SkPoint::set(glm::vec2 pt)
 
 void SkPoint::release()
 {
-	mGeom->x()->set_frozen(false);
-	mGeom->y()->set_frozen(false);
+	mGeom->x()->set_frozen(Param::Frozen_levels::UNFROZEN);
+	mGeom->y()->set_frozen(Param::Frozen_levels::UNFROZEN);
 }
 
 void SkPoint::init_impl()

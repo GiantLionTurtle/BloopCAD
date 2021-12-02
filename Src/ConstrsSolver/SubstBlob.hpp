@@ -15,20 +15,36 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PERPENDICULARITY_TOOL_HPP_
-#define PERPENDICULARITY_TOOL_HPP_
+#ifndef SUBSTNBLOB_HPP_
+#define SUBSTNBLOB_HPP_
 
-#include "Constraint_tool.hpp"
+#include <Utils/Param.hpp>
 
-class Perpendicularity_tool : public Constraint_tool {
+#include <vector>
+
+/*
+	A class that represents one or more parameters that have 
+	a substitution constraint applied on them (pointpointcoincidence, verticality, horizontality)
+
+	Simplifies work on constraint graph analysis
+*/
+class SubstBlob : public Param {
+private:
+	std::vector<Param*> mParams;
 public:
-	Perpendicularity_tool(Sketch_ws* env);
+	SubstBlob(Param* p);
+	SubstBlob(std::vector<Param*> const& params);
+	SubstBlob() = default;
+	SubstBlob(SubstBlob const& rhs);
+	SubstBlob& operator=(SubstBlob const& rhs);
 
-	std::string name() { return "perpendicularity"; }
-// protected:
-	int could_add_geom(SkGeometry* geom);
+	void clear();
 
-	void create_constraint(Constraint*& constr, SkGeometry*& priority_ent, Action_ptr& annotAct);
+	void choose_driving();
+	void update_params();
+	void absorb(SubstBlob const& blob);
+	void add_param(Param* p);
+	void release_params();
 };
 
 #endif

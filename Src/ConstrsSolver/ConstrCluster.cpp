@@ -1,6 +1,6 @@
 
 // BloopCAD
-// Copyright (C) 2020  BloopCorp
+// Copyright (C) 2020-2021 BloopCorp
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,11 +53,9 @@ int ConstrCluster::solve_LM()
 
 	if(n_constrs  == 0) {
 		verbose(VERBOSE_STEPS, "Returning early, no equation to solve.");
-		update_substitution();
 		return SolverState::SUCCESS;
 	} else if(n_params == 0) {
 		verbose(VERBOSE_STEPS, "Returning early, no variable to solve for.");
-		update_substitution();
 		return SolverState::SUCCESS;
 	}
 
@@ -198,11 +196,9 @@ int ConstrCluster::solve_DL()
 	
 	if(n_constrs  == 0) {
 		verbose(VERBOSE_STEPS, "Returning early, no equation to solve.");
-		update_substitution();
 		return SolverState::SUCCESS;
 	} else if(n_params == 0) {
 		verbose(VERBOSE_STEPS, "Returning early, no variable to solve for.");
-		update_substitution();
 		return SolverState::SUCCESS;
 	}
 	Eigen::VectorXd P(n_params), P_new(n_params), // Variables values, candidate variables values
@@ -329,29 +325,19 @@ void ConstrCluster::clear()
 void ConstrCluster::update_params(double* vals)
 {
 	for(auto p : mParams) {
-		if(p->substituted())
-			continue;
 		p->set(*vals++);
-	}
-	update_substitution();
-}
-void ConstrCluster::update_substitution()
-{
-	for(auto p : mParams) {
-		if(!p->substituted())
-			continue;
-		p->apply_substitution();
 	}
 }
 
 int ConstrCluster::n_driving()
 {
-	int count = 0;
-	for(auto p : mParams) {
-		if(!p->substituted())
-			count++;
-	}
-	return count;
+	// int count = 0;
+	// for(auto p : mParams) {
+	// 	if(!p->substituted())
+	// 		count++;
+	// }
+	// return count;
+	return mParams.size();
 }
 bool ConstrCluster::satisfied()
 {
@@ -366,8 +352,6 @@ void ConstrCluster::retrieve_params(Eigen::VectorXd& P_out)
 {
 	int i = 0;
 	for(auto p : mParams) {
-		if(p->substituted())
-			continue;
 		P_out(i++) = p->val();
 	}
 }
@@ -376,8 +360,6 @@ void ConstrCluster::compute_jacobi(Eigen::MatrixXd& J)
 	int j = 0;
 	for(int i = 0; i < mConstrs.size(); ++i) {
 		for(auto p : mParams) {
-			if(p->substituted())
-				continue;
 			J(i, j++) = mConstrs[i]->derivative(p);
 		}
 	}

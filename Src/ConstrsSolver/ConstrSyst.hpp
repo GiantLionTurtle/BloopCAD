@@ -1,6 +1,6 @@
 
 // BloopCAD
-// Copyright (C) 2020  BloopCorp
+// Copyright (C) 2020-2021 BloopCorp
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,15 +25,18 @@
 #include "ConstrCluster.hpp"
 #include "ConstrGraph.hpp"
 #include "SolverState.hpp"
+#include "SubstBlob.hpp"
 
 class ConstrSyst {
 private:
 	std::vector<Param*> mParams;
-	std::map<Param*, int> mParam_to_ind;
+	std::map<Param*, int> mParam_to_ind; // Just use std::find on mParams on add_param() instead??
 	std::vector<Constraint*> mConstrsEval { }, mConstrsSubst { };
 	std::vector<ConstrCluster> mClusters;
+	std::vector<SubstBlob*> mSubstBlobs;
 	ConstrGraph mG;
 	int nActiveClusters { 0 }, nG1 { 0 }, nG2 { 0 }, nG3 { 0 };
+	int nActiveBlobs;
 	int mAlgorithm { 0 };
 
 	bool mDecompUpToDate  { false };
@@ -57,6 +60,7 @@ public:
 
 	int create_clusters();
 private:
+	void create_substBlobs();
 	bool create_graph();
 	void fix_overConstrained() {}
 };

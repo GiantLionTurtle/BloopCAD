@@ -1,6 +1,6 @@
 
 // BloopCAD
-// Copyright (C) 2020  BloopCorp
+// Copyright (C) 2020-2021 BloopCorp
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -71,16 +71,31 @@ bool Constraint::satisfied()
 	return (error() < CONSTR_SATISFACTION_TRESHOLD);
 }
 
-void Constraint::substitute(Param* a, Param* b)
+void Constraint::add_toBlob(Param* p, SubstBlob*& currentBlob, bool& merged)
 {
-	if(a->weight() >= b->weight()) {
-		b->set_substitution(a);
-	} else if(a->weight() < b->weight()) {
-		a->set_substitution(b);
+	if(p->blob() == nullptr) {
+		currentBlob->add_param(p);
+	} else {
+		merged = true;
+		SubstBlob* newBlob = p->blob();
+		newBlob->absorb(*currentBlob);
+
+		delete currentBlob;
+		currentBlob = newBlob;
 	}
 }
 
+void Constraint::add_blob(Param* a, Param* b, std::vector<SubstBlob*>& blobs)
+{
+	bool merged = false;
+	SubstBlob* currentBlob = new SubstBlob;
+	
+	add_toBlob(a, currentBlob, merged);
+	add_toBlob(b, currentBlob, merged);
 
+	if(!merged)
+		blobs.push_back(currentBlob);
+}
 
 PointPoint_horizontality::PointPoint_horizontality(Geom2d::Point* p1, Geom2d::Point* p2)
 #ifndef RELEASE_MODE
@@ -96,13 +111,9 @@ PointPoint_horizontality::PointPoint_horizontality(Geom2d::Point* p1, Geom2d::Po
 
 double PointPoint_horizontality::error()
 {
-	return *mP1->y_raw() - *mP2->y_raw();
+	return mP1->y_val() - mP2->y_val();
 }
 
-void PointPoint_horizontality::substitute()
-{
-	Constraint::substitute(mP1->y(), mP2->y());
-}
 Param* PointPoint_horizontality::param(int ind)
 {
 	switch(ind) {
@@ -110,6 +121,10 @@ Param* PointPoint_horizontality::param(int ind)
 	case 1: return mP2->y();
 	}
 	return nullptr;
+}
+void PointPoint_horizontality::append_substBlobs(std::vector<SubstBlob*>& blobs)
+{
+	add_blob(mP1->y(), mP2->y(), blobs);
 }
 
 
@@ -129,10 +144,6 @@ double Line_horizontality::error()
 	return mLine->ptA()->y()->val() - mLine->ptB()->y()->val();
 }
 
-void Line_horizontality::substitute()
-{
-	Constraint::substitute(mLine->ptA()->y(), mLine->ptB()->y());
-}
 Param* Line_horizontality::param(int ind)
 {
 	switch(ind) {
@@ -141,6 +152,11 @@ Param* Line_horizontality::param(int ind)
 	}
 	return nullptr;
 }
+void Line_horizontality::append_substBlobs(std::vector<SubstBlob*>& blobs)
+{
+	add_blob(mLine->ptA()->y(), mLine->ptB()->y(), blobs);
+}
+
 
 PointPoint_coincidence::PointPoint_coincidence(Geom2d::Point* p1, Geom2d::Point* p2)
 #ifndef RELEASE_MODE
@@ -159,11 +175,6 @@ double PointPoint_coincidence::error()
 	return (mP1->y()->val() - mP2->y()->val()) + (mP1->x()->val() - mP2->x()->val());
 }
 
-void PointPoint_coincidence::substitute()
-{
-	Constraint::substitute(mP1->x(), mP2->x());
-	Constraint::substitute(mP1->y(), mP2->y());
-}
 Param* PointPoint_coincidence::param(int ind)
 {
 	switch(ind) {
@@ -173,6 +184,11 @@ Param* PointPoint_coincidence::param(int ind)
 	case 3: return mP2->y();
 	}
 	return nullptr;
+}
+void PointPoint_coincidence::append_substBlobs(std::vector<SubstBlob*>& blobs)
+{
+	add_blob(mP1->x(), mP2->x(), blobs);
+	add_blob(mP1->y(), mP2->y(), blobs);
 }
 
 // SkPointPoint_verticality::SkPointPoint_verticality(Geom3d::Plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2):

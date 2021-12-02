@@ -1,6 +1,6 @@
 
 // BloopCAD
-// Copyright (C) 2020  BloopCorp
+// Copyright (C) 2020-2021 BloopCorp
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -120,8 +120,8 @@ public:
 	{
 		for(int i = 0; i < n_handles(); ++i) {
 			auto h_tmp = handle(i);
-			h_tmp->x()->set_frozen(false);
-			h_tmp->y()->set_frozen(false);
+			h_tmp->x()->set_frozen(Param::Frozen_levels::UNFROZEN);
+			h_tmp->y()->set_frozen(Param::Frozen_levels::UNFROZEN);
 		}
 	}
 	void move_selected(glm::vec2 delta)

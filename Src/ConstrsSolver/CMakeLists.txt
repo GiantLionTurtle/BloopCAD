@@ -1,6 +1,6 @@
 
 # BloopCAD
-# Copyright (C) 2020  BloopCorp
+# Copyright (C) 2020-2021 BloopCorp
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ set(ConstrsSolver_source_files
 	Constraint.cpp
 	ConstrCluster.cpp
 	ConstrSyst.cpp
+	SubstBlob.cpp
 )
 
 add_library(ConstrsSolver ${ConstrsSolver_source_files})

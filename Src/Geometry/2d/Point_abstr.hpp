@@ -1,6 +1,6 @@
 
 // BloopCAD
-// Copyright (C) 2020  BloopCorp
+// Copyright (C) 2020-2021 BloopCorp
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -84,8 +84,8 @@ public:
 	Param* x() { return &mX; }
 	Param* y() { return &mY; }
 
-	double* x_raw() { return &mX.val_raw(); }
-	double* y_raw() { return &mY.val_raw(); }
+	double x_val() { return mX.val(); }
+	double y_val() { return mY.val(); }
 };
 
 // #include "Point_abstr.cpp"

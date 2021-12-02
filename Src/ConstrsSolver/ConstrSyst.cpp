@@ -1,6 +1,6 @@
 
 // BloopCAD
-// Copyright (C) 2020  BloopCorp
+// Copyright (C) 2020-2021 BloopCorp
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -84,27 +84,27 @@ int ConstrSyst::solve()
 
 void ConstrSyst::substitute()
 {
-	for(auto constr : mConstrsSubst) {
-		constr->substitute();
+	for(auto b : mSubstBlobs) {
+		b->choose_driving();
 	}
 }
 void ConstrSyst::clear_substitutions()
 {
-	for(auto p : mParams) {
-		p->apply_substitution();
-		p->delete_substitution();
+	for(auto b : mSubstBlobs) {
+		b->update_params();
 	}
 }
 void ConstrSyst::clear_drag()
 {
 	for(auto p : mParams) {
-		p->set_frozen(false);
+		p->set_frozen(Param::Frozen_levels::UNFROZEN);
 	}
 }
 
 int ConstrSyst::create_clusters()
 {
 	mDecompUpToDate = true;
+	create_substBlobs();
 	if(!create_graph())
 		return SolverState::graphState::INVALID_GRAPH;
 
@@ -129,15 +129,38 @@ int ConstrSyst::create_clusters()
 
 	return nG3 > 0 ? SolverState::graphState::OVER_CONSTRAINED : SolverState::graphState::WELL_CONSTRAINED;
 }
-
+void ConstrSyst::create_substBlobs()
+{
+	for(auto b : mSubstBlobs) {
+		b->clear();
+	}
+	mSubstBlobs.clear();
+	
+	for(auto c : mConstrsSubst) {
+		if(c->exists())
+			c->append_substBlobs(mSubstBlobs);
+	}
+}
 bool ConstrSyst::create_graph()
 {
+	
 	mG.clear();
 	int p = 0;
+	std::map<Param*, int> param_to_ind;
+	std::map<SubstBlob*, int> blob_to_ind;
+
+	for(auto b : mSubstBlobs) {
+		mG.add_var(p);
+		blob_to_ind[b] = p;
+		p++;
+	}
 	for(auto param : mParams) {
 		if(!param->exists())
 			continue;
+		if(param->blob() != nullptr)
+			continue;
 		mG.add_var(p);
+		param_to_ind[param] = p;
 		p++;
 	}
 	if(p == 0) // No variable in the graph
@@ -150,10 +173,19 @@ bool ConstrSyst::create_graph()
 		mG.add_constr(c);
 		for(int j = 0; j < constr->n_params(); ++j) {
 			Param* param = constr->param(j);
-			if(mParam_to_ind.find(param) == mParam_to_ind.end()) { // This var has never been seen
-				continue;
+			int v_ind = -1;
+			if(param->blob()) {
+				auto find = blob_to_ind.find(param->blob());
+				if(find == blob_to_ind.end())
+					continue;
+				v_ind = find->second;
+			} else {
+				auto find = param_to_ind.find(param);
+				if(find == param_to_ind.end())
+					continue;
+				v_ind = find->second;
 			}
-			mG.add_c_to_v_ind(c, mParam_to_ind[param]);
+			mG.add_c_to_v_ind(c, v_ind);
 		}
 		c++; // hehe
 	}

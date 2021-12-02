@@ -1,6 +1,6 @@
 
 // BloopCAD
-// Copyright (C) 2020  BloopCorp
+// Copyright (C) 2020-2021 BloopCorp
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -73,7 +73,6 @@ public:
 	void clear();
 
 	void update_params(double* vals);
-	void update_substitution();
 
 	int n_driving();
 	bool satisfied();

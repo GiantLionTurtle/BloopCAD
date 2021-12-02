@@ -1,6 +1,6 @@
 
 // BloopCAD
-// Copyright (C) 2020  BloopCorp
+// Copyright (C) 2020-2021 BloopCorp
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,50 +20,70 @@
 #define PARAM_HPP_
 
 #include <Bloop/BaseObject.hpp>
+#include <Utils/Debug_util.hpp>
 
 class Constraint;
+class SubstBlob;
 
 class Param : public DefaultBaseObject {
-private:
-	double mVal {0.0};
+public:
+	enum Frozen_levels { DEAD = 0, UNFROZEN = 1, DRAGGED = 2, GEOMETRICALLYFROZEN = 3, FIXED = 4 };
+protected:
+	double mVal { 0.0 };
+	double* mValOrigin;
 	int mFrozen { 0 };
-	Param* mSubstitution { nullptr };
+	SubstBlob* mBlob { nullptr };
 public:
 	friend class Constraint;
 
 	Param(double val)
 		: mVal(val)
-		, mSubstitution(nullptr)
-	{}
-	Param() = default;
-
-	inline double val()
+		, mValOrigin(&mVal)
 	{
-		if(substituted()) 
-			return mSubstitution->val();
-		return mVal;
-	}
-	inline double& val_raw() { return mVal; }	
-	inline void set(double val) { if(frozen() != 2) mVal = val; }
 
-	inline void drag(double val) { set(val); set_frozen(1); }
+	}
+	Param()
+		: mVal(0.0)
+		, mValOrigin(&mVal)
+	{
+
+	}
+	Param(Param const& p)
+	{
+		mVal = p.mVal;
+		mValOrigin = p.mValOrigin;
+		mFrozen = p.mFrozen;
+		mBlob = p.mBlob;
+	}
+	Param& operator=(Param const& p)
+	{
+		mVal = p.mVal;
+		mValOrigin = p.mValOrigin;
+		mFrozen = p.mFrozen;
+		mBlob = p.mBlob;
+		return *this;
+	}
+
+	inline double val() { return *mValOrigin; }
+	inline double val_internal() { return mVal; }
+	inline void set(double val) { if(frozen() < Frozen_levels::GEOMETRICALLYFROZEN) mVal = val; }
+	void set_origin(double* orig) { mValOrigin = orig; }
+	void reset_origin(bool keepValue)
+	{
+		if(keepValue)
+			set(val());
+		mValOrigin = &mVal;
+	}
+
+	SubstBlob* blob() { return mBlob; }
+	void set_blob(SubstBlob* b) { mBlob = b; }
+
+	inline void drag(double val) { set(val); set_frozen(Param::Frozen_levels::DRAGGED); }
 
 	inline int frozen() { return mFrozen; }
-	inline void set_frozen(int frozen) { if(mFrozen != 2) mFrozen = frozen; }
+	inline void set_frozen(int frozen) { if(mFrozen < Frozen_levels::GEOMETRICALLYFROZEN) mFrozen = frozen; }
 
-	inline bool substituted() { return mSubstitution != nullptr; }
-
-	inline void set_substitution(Param* subst) 
-	{
-		if(substituted() && mSubstitution->weight() < subst->weight())
-			mSubstitution->set_substitution(subst);
-		
-		mSubstitution = subst;
-	}
-	inline void apply_substitution() { if(substituted()) set(mSubstitution->val()); }
-	inline void delete_substitution() { mSubstitution = nullptr; }
-
-	inline int weight() { return substituted() ? mSubstitution->weight() : frozen(); }
+	inline int weight() { return frozen() * mExists; }
 };
 
 

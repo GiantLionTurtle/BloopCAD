@@ -1,6 +1,6 @@
 
 // BloopCAD
-// Copyright (C) 2020  BloopCorp
+// Copyright (C) 2020-2021 BloopCorp
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 #define CONSTR_SATISFACTION_TRESHOLD 1e-12
 
 class ConstrSyst;
+class SubstBlob;
 
 /*
 	@class Constraint represents a constraint that is a collection of at least one
@@ -95,8 +96,11 @@ public:
 	virtual bool is_linePoints() { return false; } // If all constraints in a cluster act on lines and points only
 
 	inline bool substitutionConstraint() { return mCanSubstitute; }
-	virtual void substitute() { }
-	static void substitute(Param* a, Param* b);
+
+	virtual void append_substBlobs(std::vector<SubstBlob*>& blobs) { }
+
+	static void add_toBlob(Param* p, SubstBlob*& currentBlob, bool& merged);
+	static void add_blob(Param* a, Param* b, std::vector<SubstBlob*>& blobs);
 #ifndef RELEASE_MODE
 	/*
 		@function name
@@ -118,10 +122,11 @@ public:
 
 	double error();
 	double derivative(Param* withRespectTo) { return 0.0; }
-	void substitute();
 
 	Param* param(int ind);
 	inline int n_params() { return 2; }
+
+	void append_substBlobs(std::vector<SubstBlob*>& blobs);
 };
 class Line_horizontality : public Constraint {
 private:
@@ -131,10 +136,11 @@ public:
 
 	double error();
 	double derivative(Param* withRespectTo) { return 0.0; }
-	void substitute();
 
 	Param* param(int ind);
 	inline int n_params() { return 2; }
+
+	void append_substBlobs(std::vector<SubstBlob*>& blobs);
 };
 
 /* ---------- Coincidence ---------- */
@@ -146,10 +152,11 @@ public:
 
 	double error();
 	double derivative(Param* withRespectTo) { return 0.0; }
-	void substitute();
 
 	Param* param(int ind);
 	inline int n_params() { return 4; }
+
+	void append_substBlobs(std::vector<SubstBlob*>& blobs);
 };
 
 // class SkPointLine_coincidence : public SkSprite_constraint<1> {
