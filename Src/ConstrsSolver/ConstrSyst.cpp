@@ -113,7 +113,7 @@ int ConstrSyst::create_clusters()
 		mClusters[i].clear();
 	}
 	for(int i = mClusters.size(); i < nActiveClusters; ++i) {
-		mClusters.push_back(ConstrCluster(/*mAlgorithm*/SolverState::algorithm::DogLeg));
+		mClusters.push_back(ConstrCluster(mAlgorithm));
 	}
 	
 	for(int i = 0; i < mG.V.size(); ++i) {

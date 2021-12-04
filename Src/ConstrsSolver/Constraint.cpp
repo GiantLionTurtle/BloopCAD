@@ -191,7 +191,7 @@ void PointPoint_coincidence::append_substBlobs(std::vector<SubstBlob*>& blobs)
 }
 
 
-LineLine_angle::LineLine_angle(Geom2d::Line* l1, Geom2d::Line* l2)
+LineLine_angle::LineLine_angle(Geom2d::Line* l1, Geom2d::Line* l2, double ang)
 #ifndef RELEASE_MODE
 	: Constraint("LineLine_angle", false)
 #else
@@ -199,110 +199,110 @@ LineLine_angle::LineLine_angle(Geom2d::Line* l1, Geom2d::Line* l2)
 #endif	
 	, mL1(l1)
 	, mL2(l2)
+	, mAngle(ang)
 {
 
 }
 
 double LineLine_angle::error()
 {
-	// https://www.omnicalculator.com/math/angle-between-two-vectors
 	using std::pow;
 	using std::sqrt;
 	using std::abs;
+	using std::fmod;
+	using std::acos;
 
+	// https://www.omnicalculator.com/math/angle-between-two-vectors
+
+	// Describes the vectors of each line
 	double x1 = mL1->ptA()->x()->val() - mL1->ptB()->x()->val();
 	double y1 = mL1->ptA()->y()->val() - mL1->ptB()->y()->val();
 	double x2 = mL2->ptA()->x()->val() - mL2->ptB()->x()->val();
 	double y2 = mL2->ptA()->y()->val() - mL2->ptB()->y()->val();
-
-	glm::vec2 v1(x1, y1), v2(x2, y2);
-	return std::fmod(std::acos(glm::dot(v1, v2) / (glm::length(v1) * glm::length(v2))), 2*M_PI) - M_PI_2;
+ 
+	// All function take in double! If float functions are used it 
+	// breaks everything because of precision issues
+	return (fmod(acos((x1*x2+y1*y2) / (sqrt(x1*x1+y1*y1) * sqrt(x2*x2+y2*y2))), 2.0*M_PI) - mAngle);
 }
 double LineLine_angle::derivative(Param* withRespectTo)
 {
+	using std::pow;
+	using std::sqrt;
+	using std::abs;
+	using std::fmod;
+	using std::acos;
+
+	// Put all the parameters values in variables to shorten code below
+	// anyway it wouldn't be much clearer without it
 	double a, b, c, d, e, f, g, h;
-	a = mL1->ptA()->x()->val();
-	b = mL1->ptA()->y()->val();
+	a = param(0)->val();
+	b = param(1)->val();
 
-	c = mL1->ptB()->x()->val();
-	d = mL1->ptB()->y()->val();
+	c = param(2)->val();
+	d = param(3)->val();
 
-	e = mL2->ptA()->x()->val();
-	f = mL2->ptA()->y()->val();
+	e = param(4)->val();
+	f = param(5)->val();
 
-	g = mL2->ptB()->x()->val();
-	h = mL2->ptB()->y()->val();
+	g = param(6)->val();
+	h = param(7)->val();
 
 
-	double da, db, dc, dd, de, df, dg, dh;
+	// Compute each derivative with respect to the given parameter
+	// they are probably correct
+	// they were computed&simplified using 
+	// https://www.derivative-calculator.net/ with a base formula of
+	// acos(((a-c)*(e-g) + (b-d)*(f-h)) / (sqrt((a-c)*(a-c) + (b-d)*(b-d)) * sqrt((e-g)*(e-g) + (f-h)*(f-h)))) - pi/2
+	// Note that the 'e' was replaced by another letter because 'e' is a constant
+	
+	// To know which derivative to hand in, the origins are compared
+	// this is due to the fact that if some parameters are in a 
+	// substitution blob, the blob will be passed through and not
+	// the parameter.
 
-	da = (d-b)*((h-f)*(a-c)+(d-b)*(g-e)) /
-		((pow(a-c, 2.0)+pow(d-b, 2.0))*abs((h-f)*(a-c)+(d-b)*(g-e)));
+	if(withRespectTo->origin() == param(0)->origin()) {
 
-	db = (c-a)*((g-e)*(b-d)+(c-a)*(h-f))	/
-		((pow(b-d, 2.0)+pow(c-a, 2.0))*abs((g-e)*(b-d)+(c-a)*(h-f)));
+		return 	(d-b)*((h-f)*(a-c)+(d-b)*(g-e)) /
+				((pow(a-c, 2.0)+pow(d-b, 2.0))*abs((h-f)*(a-c)+(d-b)*(g-e)));
 
-	dc = (d-b)*((h-f)*(c-a)-(d-b)*(g-e)) / 
-		((pow(c-a, 2.0)+pow(d-b, 2.0))*abs((h-f)*(c-a)-(d-b)*(g-e)));
+	} else if(withRespectTo->origin() == param(1)->origin()) {
 
-	dd = (c-a)*((g-e)*(d-b)-(c-a)*(h-f)) /
-		((pow(d-b, 2.0)+pow(c-a, 2.0))*abs((g-e)*(d-b)-(c-a)*(h-f)));
+		return 	(c-a)*((g-e)*(b-d)+(c-a)*(h-f))	/
+				((pow(b-d, 2.0)+pow(c-a, 2.0))*abs((g-e)*(b-d)+(c-a)*(h-f)));
+	
+	} else if(withRespectTo->origin() == param(2)->origin()) {
 
-	de = (h-f)*((d-b)*(e-g)+(c-a)*(h-f)) /
-		((pow(e-g, 2.0)+pow(h-f, 2.0))*abs((d-b)*(e-g)+(c-a)*(h-f)));
+		return	(d-b)*((h-f)*(c-a)-(d-b)*(g-e)) / 
+				((pow(c-a, 2.0)+pow(d-b, 2.0))*abs((h-f)*(c-a)-(d-b)*(g-e)));
 
-	df = (g-e)*((c-a)*(f-h)+(d-b)*(g-e)) /
-		((pow(f-h, 2.0)+pow(g-e, 2.0))*abs((c-a)*(f-h)+(d-b)*(g-e)));
+	} else if(withRespectTo->origin() == param(3)->origin()) {
 
-	dg = (h-f)*((d-b)*(g-e)-(c-a)*(h-f)) / 
-		((pow(g-e, 2.0)+pow(h-f, 2.0))*abs((d-b)*(g-e)-(c-a)*(h-f)));
+		return 	(c-a)*((g-e)*(d-b)-(c-a)*(h-f)) /
+				((pow(d-b, 2.0)+pow(c-a, 2.0))*abs((g-e)*(d-b)-(c-a)*(h-f)));
+	
+	} else if(withRespectTo->origin() == param(4)->origin()) {
 
-	dh = (g-e)*((c-a)*(h-f)-(d-b)*(g-e)) /
-		((pow(h-f, 2.0)+pow(g-e, 2.0))*abs((c-a)*(h-f)-(d-b)*(g-e)));
+		return	(h-f)*((d-b)*(e-g)+(c-a)*(h-f)) /
+				((pow(e-g, 2.0)+pow(h-f, 2.0))*abs((d-b)*(e-g)+(c-a)*(h-f)));
+	
+	} else if(withRespectTo->origin() == param(5)->origin()) {
 
-	if(withRespectTo->origin() == mL1->ptA()->x()->origin()) {
-		std::cout<<"da\n";
+		return	(g-e)*((c-a)*(f-h)+(d-b)*(g-e)) /
+				((pow(f-h, 2.0)+pow(g-e, 2.0))*abs((c-a)*(f-h)+(d-b)*(g-e)));
 
-		double eg_2 = pow(e-g, 2.0);
-		double fh_2 = pow(f-h, 2.0);
-		double ac_2 = pow(a-c, 2.0);
-		double bd_2 = pow(b-d, 2.0);
-		double newda;
-		newda = 	((d-b) * ((h-f)*a - c*h + (d - b)*g + c*f - e*d + e*b)) /
-				(sqrt(fh_2+eg_2) * pow(ac_2+bd_2, 1.5) * sqrt(1.0-
-				pow((e-g)*(a-c)+(b-d)*(f-h), 2.0) / ((fh_2+eg_2) * (ac_2+bd_2))));
+	} else if(withRespectTo->origin() == param(6)->origin()) {
 
-		std::cout<<"da: "<<da<<",  newda: "<<newda<<"\n";
-		return da;
-	} else if(withRespectTo->origin() == mL1->ptA()->y()->origin()) {
-		std::cout<<"db\n";
-		return db;
-	} else if(withRespectTo->origin() == mL1->ptB()->x()->origin()) {
-		std::cout<<"dc\n";
-		return dc;
-	} else if(withRespectTo->origin() == mL1->ptB()->y()->origin()) {
-		std::cout<<"dd\n";
-		return dd;
-	} else if(withRespectTo->origin() == mL2->ptA()->x()->origin()) {
-		std::cout<<"de\n";
-		return de;
-	} else if(withRespectTo->origin() == mL2->ptA()->y()->origin()) {
-		std::cout<<"df\n";
-		return df;
-	} else if(withRespectTo->origin() == mL2->ptB()->x()->origin()) {
-		std::cout<<"dg\n";
-		return dg;
-	} else if(withRespectTo->origin() == mL2->ptB()->y()->origin()) {
-		std::cout<<"dh\n";
-		return dh;
+		return	(h-f)*((d-b)*(g-e)-(c-a)*(h-f)) / 
+				((pow(g-e, 2.0)+pow(h-f, 2.0))*abs((d-b)*(g-e)-(c-a)*(h-f)));
+
+	} else if(withRespectTo->origin() == param(7)->origin()) {
+
+		return	(g-e)*((c-a)*(h-f)-(d-b)*(g-e)) /
+				((pow(h-f, 2.0)+pow(g-e, 2.0))*abs((c-a)*(h-f)-(d-b)*(g-e)));
+
 	}
 
-	std::cout<<"none?";
-	return 0.0;
-
-	// acos(((a-c)*(e-g) + (b-d)*(f-h)) / (sqrt((a-c)*(a-c) + (b-d)*(b-d)) * sqrt((e-g)*(e-g) + (f-h)*(f-h)))) - pi/2
-
-
+	return 0.0; // This parameter is unknown, perhaps it is in another constraint
 }
 
 Param* LineLine_angle::param(int ind)
@@ -318,6 +318,11 @@ Param* LineLine_angle::param(int ind)
 	case 7: return mL2->ptB()->y();
 	}
 	return nullptr;
+}
+
+void LineLine_angle::set_angle(double ang)
+{
+	mAngle = ang;
 }
 
 // SkPointPoint_verticality::SkPointPoint_verticality(Geom3d::Plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2):

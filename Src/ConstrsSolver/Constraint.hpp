@@ -29,7 +29,7 @@
 
 #include <Utils/Param.hpp>
 
-#define CONSTR_SATISFACTION_TRESHOLD 1e-8
+#define CONSTR_SATISFACTION_TRESHOLD 1e-12
 
 class ConstrSyst;
 class SubstBlob;
@@ -161,14 +161,18 @@ public:
 class LineLine_angle : public Constraint {
 private:
 	Geom2d::Line* mL1, *mL2;
+	double mAngle;
 public:
-	LineLine_angle(Geom2d::Line* l1, Geom2d::Line* l2);
+	LineLine_angle(Geom2d::Line* l1, Geom2d::Line* l2, double ang);
 
 	double error();
 	double derivative(Param* withRespectTo);
 
 	Param* param(int ind);
 	inline int n_params() { return 8; }
+
+	inline double angle() { return mAngle; }
+	void set_angle(double ang);
 };
 
 // class SkPointLine_coincidence : public SkSprite_constraint<1> {

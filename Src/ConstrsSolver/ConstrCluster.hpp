@@ -18,7 +18,6 @@
 #ifndef CONSTRCLUSTER_HPP_
 #define CONSTRCLUSTER_HPP_
 
-
 #include <Utils/Param.hpp>
 #include "Constraint.hpp"
 
@@ -35,7 +34,7 @@ private:
 	Eigen::VectorXd mErrors;
 	int mAlgorithm { 0 };
 	int mOutput { 0 };
-	double mMaxError { CONSTR_SATISFACTION_TRESHOLD };
+	double mMaxError { CONSTR_SATISFACTION_TRESHOLD / 10.0 };
 	const int mMaxIt_LM { 50 }, mMaxIt_DL { 50 };
 public:
 	ConstrCluster() = default;

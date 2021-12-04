@@ -49,7 +49,7 @@ void Perpendicularity_tool::create_constraint(Constraint*& constr, SkGeometry*& 
 		return;
 	}
 	std::cout<<"Add perpendicularity constraint!\n";
-	constr = new LineLine_angle(static_cast<SkLine*>(mEntA)->geom(), static_cast<SkLine*>(mEntB)->geom());
+	constr = new LineLine_angle(static_cast<SkLine*>(mEntA)->geom(), static_cast<SkLine*>(mEntB)->geom(), M_PI_2);
 	priority_ent = nullptr;
 
 	SkConstrAnnot* annot_a = nullptr, *annot_b = nullptr;

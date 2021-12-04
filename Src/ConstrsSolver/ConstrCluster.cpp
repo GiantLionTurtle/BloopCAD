@@ -66,7 +66,7 @@ int ConstrCluster::solve_LM()
 	mErrors.resize(n_constrs);
 	Eigen::MatrixXd J(n_constrs , n_params), A(n_params, n_params); 	// Jacobian matrix and approximation of Hessian matrix
 
-	double eps1 = 1e-24; // Squared because it uses the error square to compare
+	double eps1 = mMaxError*mMaxError; // Squared because it uses the error square to compare
 	double eps2 = 1e-24; 		// Is part of a change threshold that determines if the solver is stuck
 	double tau = 1e-3;			// Serves as a basis for the meta parameter mu
 	double mu, nu = 2.0; 		// Meta parameters defining the aggressivity of the steps
@@ -303,7 +303,6 @@ double ConstrCluster::stepScale()
 	for(int i = 0; i < mConstrs.size(); ++i) {
 		scale = std::min(scale, mConstrs[i]->stepScale(mErrors(i)));
 	}
-	std::cout<<"Scale factor: "<<scale<<"\n"; 
 	return scale;
 }
 

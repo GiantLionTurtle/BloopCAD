@@ -21,15 +21,37 @@
 #include <ConstrsSolver/ConstrSyst.hpp>
 #include <Utils/Expunge.hpp>
 
-TEST_CASE("Perpendicularity constraint is tested", "[constraints]")
+TEST_CASE("Perpendicularity constraint is tested with LM solver", "[constraints]")
 {
 	Geom2d::Line* l1 = new Geom2d::Line(glm::vec2(0.5, 0.6), glm::vec2(0.0, 0.0));
 	Geom2d::Line* l2 = new Geom2d::Line(glm::vec2(0.0, 0.0), glm::vec2(-0.8, 0.2));
 
-	LineLine_angle* perp = new LineLine_angle(l1, l2);
+	LineLine_angle* perp = new LineLine_angle(l1, l2, M_PI_2);
 	PointPoint_coincidence* coinc = new PointPoint_coincidence(l1->ptB(), l2->ptA());
 
-	ConstrSyst syst;
+	ConstrSyst syst(SolverState::algorithm::LevenbergMarquardt);
+
+	syst.add_constr(perp);
+	// syst.add_constr(coinc);
+
+	int result = syst.solve();
+	REQUIRE(result == SolverState::SUCCESS);
+
+	expunge(l1);
+	expunge(l2);
+	expunge(perp);
+	expunge(coinc);
+}
+
+TEST_CASE("Perpendicularity constraint is tested with DogLeg solver", "[constraints]")
+{
+	Geom2d::Line* l1 = new Geom2d::Line(glm::vec2(0.5, 0.6), glm::vec2(0.0, 0.0));
+	Geom2d::Line* l2 = new Geom2d::Line(glm::vec2(0.0, 0.0), glm::vec2(-0.8, 0.2));
+
+	LineLine_angle* perp = new LineLine_angle(l1, l2, M_PI_2);
+	PointPoint_coincidence* coinc = new PointPoint_coincidence(l1->ptB(), l2->ptA());
+
+	ConstrSyst syst(SolverState::algorithm::DogLeg);
 
 	syst.add_constr(perp);
 	// syst.add_constr(coinc);
