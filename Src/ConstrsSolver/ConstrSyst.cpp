@@ -113,13 +113,20 @@ int ConstrSyst::create_clusters()
 		mClusters[i].clear();
 	}
 	for(int i = mClusters.size(); i < nActiveClusters; ++i) {
-		mClusters.push_back(ConstrCluster(mAlgorithm));
+		mClusters.push_back(ConstrCluster(/*mAlgorithm*/SolverState::algorithm::DogLeg));
 	}
 	
 	for(int i = 0; i < mG.V.size(); ++i) {
 		if(mG.V[i].metacluster == 1) // Overconstrained
 			continue;
-		mClusters[mG.V[i].cluster].add_param(mParams[mG.V[i].data]);
+		Param* p;
+		int ind = mG.V[i].data;
+		if(ind < mSubstBlobs.size()) {
+			p = mSubstBlobs[ind];
+		} else {
+			p = mParams[ind - mSubstBlobs.size()];
+		}
+		mClusters[mG.V[i].cluster].add_param(p);
 	}
 	for(int i = 0; i < mG.C.size(); ++i) {
 		if(mG.C[i].metacluster == 1) // Overconstrained
@@ -149,18 +156,20 @@ bool ConstrSyst::create_graph()
 	int p = 0;
 	std::map<Param*, int> param_to_ind;
 	std::map<SubstBlob*, int> blob_to_ind;
+	std::set<SubstBlob*> blobsAdded;
 
-	for(auto b : mSubstBlobs) {
-		mG.add_var(p);
-		blob_to_ind[b] = p;
+	for(int i = 0; i < mSubstBlobs.size(); ++i) {
+		mG.add_var(i);
+		blob_to_ind[mSubstBlobs[i]] = p;
 		p++;
 	}
-	for(auto param : mParams) {
+	for(int i = 0; i < mParams.size(); ++i) {
+		auto param = mParams[i];
 		if(!param->exists())
 			continue;
 		if(param->blob() != nullptr)
 			continue;
-		mG.add_var(p);
+		mG.add_var(i+mSubstBlobs.size());
 		param_to_ind[param] = p;
 		p++;
 	}
@@ -176,6 +185,9 @@ bool ConstrSyst::create_graph()
 			Param* param = constr->param(j);
 			int v_ind = -1;
 			if(param->blob()) {
+				if(blobsAdded.find(param->blob()) != blobsAdded.end())
+					continue;
+				blobsAdded.insert(param->blob());
 				auto find = blob_to_ind.find(param->blob());
 				if(find == blob_to_ind.end())
 					continue;

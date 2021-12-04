@@ -68,7 +68,8 @@ void Constraint::receive(int msg, UI_Core_Link* sender)
 
 bool Constraint::satisfied()
 {
-	return (error() < CONSTR_SATISFACTION_TRESHOLD);
+	double err = std::abs(error());
+	return (err < CONSTR_SATISFACTION_TRESHOLD);
 }
 
 void Constraint::add_blob(Param* a, Param* b, std::vector<SubstBlob*>& blobs)
@@ -187,6 +188,136 @@ void PointPoint_coincidence::append_substBlobs(std::vector<SubstBlob*>& blobs)
 {
 	add_blob(mP1->x(), mP2->x(), blobs);
 	add_blob(mP1->y(), mP2->y(), blobs);
+}
+
+
+LineLine_angle::LineLine_angle(Geom2d::Line* l1, Geom2d::Line* l2)
+#ifndef RELEASE_MODE
+	: Constraint("LineLine_angle", false)
+#else
+	: Constraint(false)
+#endif	
+	, mL1(l1)
+	, mL2(l2)
+{
+
+}
+
+double LineLine_angle::error()
+{
+	// https://www.omnicalculator.com/math/angle-between-two-vectors
+	using std::pow;
+	using std::sqrt;
+	using std::abs;
+
+	double x1 = mL1->ptA()->x()->val() - mL1->ptB()->x()->val();
+	double y1 = mL1->ptA()->y()->val() - mL1->ptB()->y()->val();
+	double x2 = mL2->ptA()->x()->val() - mL2->ptB()->x()->val();
+	double y2 = mL2->ptA()->y()->val() - mL2->ptB()->y()->val();
+
+	glm::vec2 v1(x1, y1), v2(x2, y2);
+	return std::fmod(std::acos(glm::dot(v1, v2) / (glm::length(v1) * glm::length(v2))), 2*M_PI) - M_PI_2;
+}
+double LineLine_angle::derivative(Param* withRespectTo)
+{
+	double a, b, c, d, e, f, g, h;
+	a = mL1->ptA()->x()->val();
+	b = mL1->ptA()->y()->val();
+
+	c = mL1->ptB()->x()->val();
+	d = mL1->ptB()->y()->val();
+
+	e = mL2->ptA()->x()->val();
+	f = mL2->ptA()->y()->val();
+
+	g = mL2->ptB()->x()->val();
+	h = mL2->ptB()->y()->val();
+
+
+	double da, db, dc, dd, de, df, dg, dh;
+
+	da = (d-b)*((h-f)*(a-c)+(d-b)*(g-e)) /
+		((pow(a-c, 2.0)+pow(d-b, 2.0))*abs((h-f)*(a-c)+(d-b)*(g-e)));
+
+	db = (c-a)*((g-e)*(b-d)+(c-a)*(h-f))	/
+		((pow(b-d, 2.0)+pow(c-a, 2.0))*abs((g-e)*(b-d)+(c-a)*(h-f)));
+
+	dc = (d-b)*((h-f)*(c-a)-(d-b)*(g-e)) / 
+		((pow(c-a, 2.0)+pow(d-b, 2.0))*abs((h-f)*(c-a)-(d-b)*(g-e)));
+
+	dd = (c-a)*((g-e)*(d-b)-(c-a)*(h-f)) /
+		((pow(d-b, 2.0)+pow(c-a, 2.0))*abs((g-e)*(d-b)-(c-a)*(h-f)));
+
+	de = (h-f)*((d-b)*(e-g)+(c-a)*(h-f)) /
+		((pow(e-g, 2.0)+pow(h-f, 2.0))*abs((d-b)*(e-g)+(c-a)*(h-f)));
+
+	df = (g-e)*((c-a)*(f-h)+(d-b)*(g-e)) /
+		((pow(f-h, 2.0)+pow(g-e, 2.0))*abs((c-a)*(f-h)+(d-b)*(g-e)));
+
+	dg = (h-f)*((d-b)*(g-e)-(c-a)*(h-f)) / 
+		((pow(g-e, 2.0)+pow(h-f, 2.0))*abs((d-b)*(g-e)-(c-a)*(h-f)));
+
+	dh = (g-e)*((c-a)*(h-f)-(d-b)*(g-e)) /
+		((pow(h-f, 2.0)+pow(g-e, 2.0))*abs((c-a)*(h-f)-(d-b)*(g-e)));
+
+	if(withRespectTo->origin() == mL1->ptA()->x()->origin()) {
+		std::cout<<"da\n";
+
+		double eg_2 = pow(e-g, 2.0);
+		double fh_2 = pow(f-h, 2.0);
+		double ac_2 = pow(a-c, 2.0);
+		double bd_2 = pow(b-d, 2.0);
+		double newda;
+		newda = 	((d-b) * ((h-f)*a - c*h + (d - b)*g + c*f - e*d + e*b)) /
+				(sqrt(fh_2+eg_2) * pow(ac_2+bd_2, 1.5) * sqrt(1.0-
+				pow((e-g)*(a-c)+(b-d)*(f-h), 2.0) / ((fh_2+eg_2) * (ac_2+bd_2))));
+
+		std::cout<<"da: "<<da<<",  newda: "<<newda<<"\n";
+		return da;
+	} else if(withRespectTo->origin() == mL1->ptA()->y()->origin()) {
+		std::cout<<"db\n";
+		return db;
+	} else if(withRespectTo->origin() == mL1->ptB()->x()->origin()) {
+		std::cout<<"dc\n";
+		return dc;
+	} else if(withRespectTo->origin() == mL1->ptB()->y()->origin()) {
+		std::cout<<"dd\n";
+		return dd;
+	} else if(withRespectTo->origin() == mL2->ptA()->x()->origin()) {
+		std::cout<<"de\n";
+		return de;
+	} else if(withRespectTo->origin() == mL2->ptA()->y()->origin()) {
+		std::cout<<"df\n";
+		return df;
+	} else if(withRespectTo->origin() == mL2->ptB()->x()->origin()) {
+		std::cout<<"dg\n";
+		return dg;
+	} else if(withRespectTo->origin() == mL2->ptB()->y()->origin()) {
+		std::cout<<"dh\n";
+		return dh;
+	}
+
+	std::cout<<"none?";
+	return 0.0;
+
+	// acos(((a-c)*(e-g) + (b-d)*(f-h)) / (sqrt((a-c)*(a-c) + (b-d)*(b-d)) * sqrt((e-g)*(e-g) + (f-h)*(f-h)))) - pi/2
+
+
+}
+
+Param* LineLine_angle::param(int ind)
+{
+	switch(ind) {
+	case 0: return mL1->ptA()->x();
+	case 1: return mL1->ptA()->y();
+	case 2: return mL1->ptB()->x();
+	case 3: return mL1->ptB()->y();
+	case 4: return mL2->ptA()->x();
+	case 5: return mL2->ptA()->y();
+	case 6: return mL2->ptB()->x();
+	case 7: return mL2->ptB()->y();
+	}
+	return nullptr;
 }
 
 // SkPointPoint_verticality::SkPointPoint_verticality(Geom3d::Plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2):

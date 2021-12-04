@@ -270,9 +270,11 @@ struct ConstrGraph {
 		for(int i = 0; i < matching.size(); ++i) {
 			if(matching[i] == -1) {
 				V[i].metacluster = 2;
-				V[i].cluster = clusterID;
-				nG3++;
-				mark_ancestors_v(i, 2, clusterID++);
+				// Only one G3 cluster, so it's always cluster 0
+				V[i].cluster = 0;
+				mark_ancestors_v(i, 2, 0); 
+				clusterID = 1;
+				nG3 = 1;
 				continue;
 			}
 			saturated_C[matching[i]] = true;

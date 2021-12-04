@@ -23,10 +23,12 @@ void build_G_allvars(ConstrGraph& G);
 void build_G_reduced(ConstrGraph& G);
 void build_G_superreduced(ConstrGraph& G);
 
+void build_G_1perp(ConstrGraph& G);
+
 int main()
 {
 	ConstrGraph G;
-	build_G_superreduced(G);
+	build_G_1perp(G);
 
 	int nG1 = 0, nG2 = 0, nG3 = 0;
 	std::vector<int> match = G.maxMatching();
@@ -48,6 +50,25 @@ int main()
 	for(int i = 0; i < G.V.size(); ++i) {
 		std::cout<<G.V[i].data<<" => "<<G.V[i].cluster<<"\n";
 	}
+}
+
+void build_G_1perp(ConstrGraph& G)
+{
+	G.add_var(0);
+	G.add_var(1);
+	G.add_var(2);
+	G.add_var(3);
+	G.add_var(4);
+	G.add_var(5);
+
+	G.add_constr(0);
+
+	G.add_c_to_v_ind(0, 0);
+	G.add_c_to_v_ind(0, 1);
+	G.add_c_to_v_ind(0, 2);
+	G.add_c_to_v_ind(0, 3);
+	G.add_c_to_v_ind(0, 4);
+	G.add_c_to_v_ind(0, 5);
 }
 
 void build_G_allvars(ConstrGraph& G)

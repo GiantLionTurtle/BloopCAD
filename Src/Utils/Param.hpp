@@ -64,6 +64,7 @@ public:
 		return *this;
 	}
 
+	inline double* origin() { return mValOrigin; }
 	inline double val() { return *mValOrigin; }
 	inline double val_internal() { return mVal; }
 	inline void set(double val) { if(frozen() < Frozen_levels::GEOMETRICALLYFROZEN) mVal = val; }

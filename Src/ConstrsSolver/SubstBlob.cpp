@@ -77,6 +77,7 @@ void SubstBlob::choose_driving()
 	if(max_weight == 0) {
 		LOG_WARNING("Problem.");
 	}
+	mValOrigin = &mVal;
 	set_frozen(max_weight);
 	for(auto p : mParams) {
 		p->set_origin(&mVal);

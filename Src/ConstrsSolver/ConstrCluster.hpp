@@ -18,6 +18,7 @@
 #ifndef CONSTRCLUSTER_HPP_
 #define CONSTRCLUSTER_HPP_
 
+
 #include <Utils/Param.hpp>
 #include "Constraint.hpp"
 

@@ -48,8 +48,15 @@ void Perpendicularity_tool::create_constraint(Constraint*& constr, SkGeometry*& 
 		LOG_WARNING("Attempting to add incomplete constraint.");
 		return;
 	}
-
-	// constr = new SkLineLinePerpendicularity(mEnv->target()->basePlane(), 
-		// static_cast<SkLineCurve*>(mEntA), static_cast<SkLineCurve*>(mEntB));
+	std::cout<<"Add perpendicularity constraint!\n";
+	constr = new LineLine_angle(static_cast<SkLine*>(mEntA)->geom(), static_cast<SkLine*>(mEntB)->geom());
 	priority_ent = nullptr;
+
+	SkConstrAnnot* annot_a = nullptr, *annot_b = nullptr;
+	SkConstrAnnot::make_dual_annot(annot_a, annot_b, constr, mEnv->target()->basePlane(), 
+		"Resources/Textures/Images/Icons/Sketch/Constraints/Perpendicularity.png");
+	mEnv->target()->add_annot(annot_a);
+	mEnv->target()->add_annot(annot_b);
+	mEntA->add_annot(annot_a);
+	mEntB->add_annot(annot_b);
 }
