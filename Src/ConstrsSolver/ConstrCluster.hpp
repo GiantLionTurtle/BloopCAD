@@ -74,7 +74,7 @@ public:
 
 	void update_params(double* vals);
 
-	int n_driving();
+	int n_dragged();
 	bool satisfied();
 
 	void retrieve_params(Eigen::VectorXd& P);

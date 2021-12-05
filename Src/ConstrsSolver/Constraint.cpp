@@ -304,6 +304,16 @@ double LineLine_angle::derivative(Param* withRespectTo)
 
 	return 0.0; // This parameter is unknown, perhaps it is in another constraint
 }
+double LineLine_angle::stepScale(double lasterror)
+{
+	double dError = std::abs(lasterror-error());
+	const double maxdErr = (1.0*M_PI/180.0); // max change in 5 degrees per iteration
+
+	if(dError > maxdErr) {
+		return maxdErr / dError;
+	}
+	return 1.0;
+}
 
 Param* LineLine_angle::param(int ind)
 {
@@ -324,6 +334,7 @@ void LineLine_angle::set_angle(double ang)
 {
 	mAngle = ang;
 }
+
 
 // SkPointPoint_verticality::SkPointPoint_verticality(Geom3d::Plane_abstr* baseplane_, SkPoint* p1, SkPoint* p2):
 // 	SkSprite_constraint<2>(baseplane_, { }, { p1->x() ^= p2->x() },

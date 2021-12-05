@@ -41,7 +41,7 @@ class SubstBlob;
 	@parent BaseObject
 */
 class Constraint : virtual public BaseObject, public ParamIterator, public UI_Core_Link {
-private:
+protected:
 #ifndef RELEASE_MODE // The name of the variable if not planned to be revealed to the user
 	std::string mName;
 #endif
@@ -167,6 +167,7 @@ public:
 
 	double error();
 	double derivative(Param* withRespectTo);
+	double stepScale(double lasterror);
 
 	Param* param(int ind);
 	inline int n_params() { return 8; }

@@ -49,7 +49,7 @@ int ConstrCluster::solve_LM()
 	// Taken from http://www2.imm.dtu.dk/pubdb/edoc/imm3215.pdf
 
 	verbose(VERBOSE_STEPS, "LM solver...");
-	int n_params = n_driving();		// Number of variables in the system
+	int n_params = mParams.size() - n_dragged();		// Number of variables in the system
 	int n_constrs  = mConstrs.size();;	// Number of equations in the system
 
 	if(n_constrs  == 0) {
@@ -190,7 +190,7 @@ int ConstrCluster::solve_DL()
 	// DogLeg combines Stepest Descent and Gauss Newton with a trust region (or trust radius)
 
 	verbose(VERBOSE_STEPS, "DL solver...");
-	int n_params = n_driving();		// Number of variables in the system
+	int n_params = mParams.size() - n_dragged();		// Number of variables in the system
 	int n_constrs  = mConstrs.size();	// Number of equations in the system
 	verbose(VERBOSE_INNERSTEPS,	"Num tagged: "<<n_constrs );
 	
@@ -303,6 +303,7 @@ double ConstrCluster::stepScale()
 	for(int i = 0; i < mConstrs.size(); ++i) {
 		scale = std::min(scale, mConstrs[i]->stepScale(mErrors(i)));
 	}
+	std::cout<<"Step scale: "<<scale<<"\n";
 	return scale;
 }
 
@@ -324,19 +325,20 @@ void ConstrCluster::clear()
 void ConstrCluster::update_params(double* vals)
 {
 	for(auto p : mParams) {
+		if(p->frozen() == Param::Frozen_levels::DRAGGED)
+			continue;
 		p->set(*vals++);
 	}
 }
 
-int ConstrCluster::n_driving()
+int ConstrCluster::n_dragged()
 {
-	// int count = 0;
-	// for(auto p : mParams) {
-	// 	if(!p->substituted())
-	// 		count++;
-	// }
-	// return count;
-	return mParams.size();
+	int count = 0;
+	for(auto p : mParams) {
+		if(p->frozen() == Param::Frozen_levels::DRAGGED)
+			count++;
+	}
+	return count;
 }
 bool ConstrCluster::satisfied()
 {
@@ -351,6 +353,8 @@ void ConstrCluster::retrieve_params(Eigen::VectorXd& P_out)
 {
 	int i = 0;
 	for(auto p : mParams) {
+		if(p->frozen() == Param::Frozen_levels::DRAGGED)
+			continue;
 		P_out(i++) = p->val();
 	}
 }
@@ -359,6 +363,8 @@ void ConstrCluster::compute_jacobi(Eigen::MatrixXd& J)
 	int j = 0;
 	for(int i = 0; i < mConstrs.size(); ++i) {
 		for(auto p : mParams) {
+			if(p->frozen() == Param::Frozen_levels::DRAGGED)
+				continue;
 			J(i, j++) = mConstrs[i]->derivative(p);
 		}
 	}
