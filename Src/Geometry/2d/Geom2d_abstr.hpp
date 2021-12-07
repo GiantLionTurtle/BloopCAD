@@ -38,14 +38,14 @@ public:
 	}
 	GeomTypes type() { return mType; }
 
-	glm::vec2 at(float t);
+	glm::dvec2 at(double t);
 
-	bool within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained);
+	bool within(glm::dvec2 top_left, glm::dvec2 bottom_right, bool contained);
 
-	float closest_to_point_interp(glm::vec2 const& pt); // Plugging this function in at(t) should give the same as closest_to_point
-	glm::vec2 closest_to_point(glm::vec2 const& pt);
+	double closest_to_point_interp(glm::dvec2 const& pt); // Plugging this function in at(t) should give the same as closest_to_point
+	glm::dvec2 closest_to_point(glm::dvec2 const& pt);
 
-	float dist_to_point(glm::vec2 const& pt);
+	double dist_to_point(glm::dvec2 const& pt);
 };
 
 #include "Geom2d_abstr.cpp"
