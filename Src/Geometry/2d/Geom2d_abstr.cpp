@@ -47,3 +47,9 @@ double Geom2d_abstr<Geom>::dist_to_point(glm::dvec2 const& pt)
 {
     return static_cast<Geom*>(this)->dist_to_point_geom(pt);
 }
+
+template<class Geom>
+bool Geom2d_abstr<Geom>::free()
+{
+	return static_cast<Geom*>(this)->free_impl();
+}

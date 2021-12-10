@@ -124,28 +124,28 @@ void SkLine::graphicUpdate_impl()
 
 void SkLine::internalUpdate_impl()
 {
-	std::cout<<"Line update!!!\n";
 	Param* Ax = ptA()->x();
 	Param* Ay = ptA()->y();
 	Param* Bx = ptB()->x();
 	Param* By = ptB()->y();
-	
+
 	verbose(VERBOSE_INNERSTEPS, "Lineupdate drag: "<<Ax->frozen()<<",  "<<
 	Ay->frozen()<<" : "<<Bx->frozen()<<",  "<<By->frozen())
 
-	if(Ax->frozen() == Param::Frozen_levels::DRAGGED && Bx->frozen() < Ax->frozen()) {
-		Bx->set_frozen(Param::Frozen_levels::DRAGGED);
-		verbose(VERBOSE_INNERSTEPS, "Set ptbx");
-	} else if(Ax->frozen() < Bx->frozen() && Bx->frozen() == Param::Frozen_levels::DRAGGED) {
-		Ax->set_frozen(Param::Frozen_levels::DRAGGED);
-		verbose(VERBOSE_INNERSTEPS, "Set ptax");
-	}
 
-	if(Ay->frozen() == Param::Frozen_levels::DRAGGED && By->frozen() < Ay->frozen()) {
-		By->set_frozen(Param::Frozen_levels::DRAGGED);
-		verbose(VERBOSE_INNERSTEPS, "Set ptby");
-	} else if(Ay->frozen() < By->frozen() && By->frozen() == Param::Frozen_levels::DRAGGED) {
-		Ay->set_frozen(Param::Frozen_levels::DRAGGED);
-		verbose(VERBOSE_INNERSTEPS, "Set ptay");
-	}
+	// if(Ax->frozen() == Param::Frozen_levels::DRAGGED && Bx->frozen() < Ax->frozen()) {
+	// 	Bx->set_frozen(Param::Frozen_levels::PRETTYFIXED);
+	// 	verbose(VERBOSE_INNERSTEPS, "Set ptbx");
+	// } else if(Ax->frozen() < Bx->frozen() && Bx->frozen() == Param::Frozen_levels::DRAGGED) {
+	// 	Ax->set_frozen(Param::Frozen_levels::PRETTYFIXED);
+	// 	verbose(VERBOSE_INNERSTEPS, "Set ptax");
+	// }
+
+	// if(Ay->frozen() == Param::Frozen_levels::DRAGGED && By->frozen() < Ay->frozen()) {
+	// 	By->set_frozen(Param::Frozen_levels::PRETTYFIXED);
+	// 	verbose(VERBOSE_INNERSTEPS, "Set ptby");
+	// } else if(Ay->frozen() < By->frozen() && By->frozen() == Param::Frozen_levels::DRAGGED) {
+	// 	Ay->set_frozen(Param::Frozen_levels::PRETTYFIXED);
+	// 	verbose(VERBOSE_INNERSTEPS, "Set ptay");
+	// }
 }

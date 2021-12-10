@@ -70,7 +70,10 @@ int ConstrSyst::solve()
 
 	if(out == SolverState::solveOutput::SUCCESS)
 		return out;
+
+	std::cout<<"Solving a second time.\n";
 	
+	out = SolverState::solveOutput::SUCCESS;
 	substitute();
 	for(int i = 0; i < nActiveClusters; ++i) {
 		if(mClusters[i].output() == SolverState::solveOutput::SUCCESS)
@@ -132,6 +135,10 @@ int ConstrSyst::create_clusters()
 		if(mG.C[i].metacluster == 1) // Overconstrained
 			continue; 
 		mClusters[mG.C[i].cluster].add_constr(mConstrsEval[mG.C[i].data]);
+	}
+
+	for(int i = 0; i < mClusters.size(); ++i) {
+		mClusters[i].configure();
 	}
 
 	return nG3 > 0 ? SolverState::graphState::OVER_CONSTRAINED : SolverState::graphState::WELL_CONSTRAINED;

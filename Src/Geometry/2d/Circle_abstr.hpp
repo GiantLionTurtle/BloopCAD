@@ -41,6 +41,10 @@ public:
 	{
 		return static_cast<Impl*>(this)->radius_val_impl();
 	}
+	bool free_impl()
+	{
+		return static_cast<Impl*>(this)->free_impl2();
+	}
 
 	glm::dvec2 at_geom(double t)
 	{
@@ -139,6 +143,11 @@ public:
 
 	Geom2d::Point* center() { return &mCenter; }
 	Param* radius() { return &mRadius; }
+
+	bool free_impl2()
+	{
+		return mRadius.frozen() == Param::Frozen_levels::UNFROZEN && mCenter.free();
+	}
 };
 
 // #include "Circle_abstr.cpp"

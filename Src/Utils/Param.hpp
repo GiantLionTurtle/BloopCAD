@@ -27,7 +27,10 @@ class SubstBlob;
 
 class Param : public DefaultBaseObject {
 public:
-	enum Frozen_levels { DEAD = 0, UNFROZEN = 1, DRAGGED = 2, GEOMETRICALLYFROZEN = 3, FIXED = 4 };
+	// PRETTYFIXED, not a great name, means it is fixed for it to be a prettier solve, but is not
+	// as enforced as DRAGGED (for instance the opposing point of a DRAGGED handle on a line would
+	// have this level)
+	enum Frozen_levels { DEAD = 0, UNFROZEN = 1, PRETTYFIXED = 2, DRAGGED = 3, GEOMETRICALLYFROZEN = 4, FIXED = 5 };
 protected:
 	double mVal { 0.0 };
 	double* mValOrigin;

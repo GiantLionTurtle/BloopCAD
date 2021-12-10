@@ -46,6 +46,8 @@ public:
 	glm::dvec2 closest_to_point(glm::dvec2 const& pt);
 
 	double dist_to_point(glm::dvec2 const& pt);
+
+	bool free();
 };
 
 #include "Geom2d_abstr.cpp"

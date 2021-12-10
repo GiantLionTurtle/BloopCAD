@@ -136,7 +136,7 @@ public:
 					handle(i)->dragTo(pos);
 			}
 		}
-		internalUpdate();
+		// internalUpdate();
 	}
 	void start_drag(glm::vec2 pos)
 	{

@@ -27,6 +27,8 @@
 
 class ConstrCluster {
 private:
+	// test_towardZero_optim mOptim_constr;
+	test_lineLength_optim mOptim_constr;
 	std::vector<Param*> mParams { };
 
 	std::vector<Constraint*> mConstrs { };
@@ -71,6 +73,7 @@ public:
 	void add_constr(Constraint* constr);
 	void add_param(Param* param);
 	void clear();
+	void configure();
 
 	void update_params(double* vals);
 
@@ -78,8 +81,8 @@ public:
 	bool satisfied();
 
 	void retrieve_params(Eigen::VectorXd& P);
-	void compute_jacobi(Eigen::MatrixXd& J);
-	void compute_errors(Eigen::VectorXd& e);
+	void compute_jacobi(Eigen::MatrixXd& J, bool with_softConstraint = false);
+	void compute_errors(Eigen::VectorXd& e, bool with_softConstraint = false);
 };
 
 #endif

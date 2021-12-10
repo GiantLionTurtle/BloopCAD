@@ -73,6 +73,7 @@ public:
 	virtual double error() = 0;
 
 	inline virtual double stepScale(double lastError) { return 1.0f; }
+	virtual void record_state() {}
 
 	/*
 		@function satisfied
@@ -100,6 +101,9 @@ public:
 	virtual void append_substBlobs(std::vector<SubstBlob*>& blobs) { }
 
 	static void add_blob(Param* a, Param* b, std::vector<SubstBlob*>& blobs);
+
+	virtual int n_lines() { return 0; }
+	virtual Geom2d::Line* line(int ind) { return nullptr; }
 #ifndef RELEASE_MODE
 	/*
 		@function name
@@ -162,18 +166,61 @@ class LineLine_angle : public Constraint {
 private:
 	Geom2d::Line* mL1, *mL2;
 	double mAngle;
+
+	double len1, len2;
 public:
 	LineLine_angle(Geom2d::Line* l1, Geom2d::Line* l2, double ang);
 
 	double error();
 	double derivative(Param* withRespectTo);
 	double stepScale(double lasterror);
+	void record_state();
 
 	Param* param(int ind);
 	inline int n_params() { return 8; }
 
+	int n_lines() { return 2; }
+	Geom2d::Line* line(int ind);
+
 	inline double angle() { return mAngle; }
 	void set_angle(double ang);
+};
+
+class test_towardZero_optim : public Constraint {
+private:
+	std::vector<Param*> mParams;
+	std::vector<double> mInitVals;
+	double nerf { 1e-4 };
+public:
+	test_towardZero_optim();
+
+	double error();
+	double error_impl();
+	double derivative(Param* withRespectTo);
+
+	void set_nerf(double n) { nerf = n; }
+	void set_init(std::vector<double> ps);
+
+	void set_params(std::vector<Param*> ps);
+
+	Param* param(int ind);
+	inline int n_params() { return 6; }
+};
+
+class test_lineLength_optim : public Constraint {
+private:
+	std::vector<Geom2d::Line*> mLines;
+	std::vector<double> mLengths;
+public:
+	test_lineLength_optim();
+
+	double error();
+	double derivative(Param* withRespectTo);
+	void set_init();
+	void set_lines(std::vector<Geom2d::Line*> lines);
+
+	Param* param(int ind);
+	inline int n_params() { return mLines.size() * 4; }
 };
 
 // class SkPointLine_coincidence : public SkSprite_constraint<1> {

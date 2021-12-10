@@ -41,6 +41,10 @@ public:
 	{
 		return static_cast<Impl*>(this)->pos_impl();
 	}
+	bool free_impl()
+	{
+		return 	static_cast<Impl*>(this)->free_impl2();
+	}
 
 	glm::dvec2 at_geom(double t) { return pos(); }
 	bool within_geom(glm::dvec2 top_left, glm::dvec2 bottom_right, bool contained)
@@ -79,6 +83,12 @@ public:
 	glm::dvec2 pos_impl()
 	{
 		return glm::dvec2(mX.val(), mY.val());
+	}
+
+	bool free_impl2()
+	{
+		return 	mX.frozen() == Param::Frozen_levels::UNFROZEN &&
+				mY.frozen() == Param::Frozen_levels::UNFROZEN;
 	}
 
 	Param* x() { return &mX; }

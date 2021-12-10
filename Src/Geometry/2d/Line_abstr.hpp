@@ -18,7 +18,8 @@
 #ifndef LINE_ABSTR2_HPP_
 #define LINE_ABSTR2_HPP_
 
-#include <ConstrsSolver/Expression.hpp>
+
+#include <Utils/Expunge.hpp>
 
 #include "Point_abstr.hpp"
 #include <glm/glm.hpp>
@@ -41,6 +42,10 @@ public:
 	glm::dvec2 posB()
 	{
 		return static_cast<Impl*>(this)->posB_impl();
+	}
+	bool free_impl()
+	{
+		return static_cast<Impl*>(this)->free_impl2();
 	}
 	double length()
 	{
@@ -128,12 +133,13 @@ public:
 
 	glm::dvec2 posA_impl() { return mA; }
 	glm::dvec2 posB_impl() { return mB; }
+
+	bool free_impl2() { return true; }
 };
 
 class Line : public Line_abstr<Line> {
 private:
 	Geom2d::Point* mA, *mB;
-	double* mParams[4];
 public:
 	Line(glm::dvec2 a, glm::dvec2 b)
 		: Line_abstr<Line>()
@@ -149,12 +155,19 @@ public:
 	{
 
 	}
+	// ~Line()
+	// {
+	// 	expunge(mA);
+	// 	expunge(mB);
+	// }
 
 	glm::dvec2 posA_impl() { return mA->pos(); }
 	glm::dvec2 posB_impl() { return mB->pos(); }
 
 	Geom2d::Point* ptA() { return mA; }
 	Geom2d::Point* ptB() { return mB; }
+
+	bool free_impl2() { return mA->free() && mB->free(); }
 };
 
 // #include "Line_abstr.cpp"
