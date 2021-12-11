@@ -312,11 +312,11 @@ double LineLine_angle::stepScale(double lasterror)
 	const double maxdErr = (10.0*M_PI/180.0); // max change in 10 degrees per iteration
 
 	double scale = 1.0;
-	// double dError = 0.0;
+	double dError = 0.0;
 	
-	// if((dError = abs(lasterror-error())) > maxdErr) {
-	// 	scale *= maxdErr / dError;
-	// }
+	if((dError = abs(lasterror-error())) > maxdErr) {
+		scale *= maxdErr / dError;
+	}
 	return scale;
 }
 
@@ -488,6 +488,8 @@ Param* test_lineLength_optim::param(int ind)
 	case 3:
 		return l->ptB()->y();
 	}
+	
+	return nullptr;
 }
 
 

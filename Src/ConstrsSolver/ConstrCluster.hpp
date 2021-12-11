@@ -37,7 +37,7 @@ private:
 	int mAlgorithm { 0 };
 	int mOutput { 0 };
 	double mMaxError { CONSTR_SATISFACTION_TRESHOLD / 10.0 };
-	const int mMaxIt_LM { 50 }, mMaxIt_DL { 50 };
+	const int mMaxIt_LM { 100 }, mMaxIt_DL { 100 };
 public:
 	ConstrCluster() = default;
 	ConstrCluster(int algo);

@@ -231,13 +231,13 @@ int ConstrCluster::solve_DL()
 
 	g = J.transpose() * mErrors; // Initial g
 	
-	std::cout<<"J:\n"<<J<<"\n";
+	// std::cout<<"J:\n"<<J<<"\n";
 
-	std::cout<<"Errors: \n"<<mErrors<<"\n";
-	std::cout<<"error inf norm: "<<mErrors.lpNorm<Eigen::Infinity>()<<"\n";
+	// std::cout<<"Errors: \n"<<mErrors<<"\n";
+	// std::cout<<"error inf norm: "<<mErrors.lpNorm<Eigen::Infinity>()<<"\n";
 
-	std::cout<<"G: \n"<<g<<"\n";
-	std::cout<<"g inf norm: "<<g.lpNorm<Eigen::Infinity>()<<"\n";
+	// std::cout<<"G: \n"<<g<<"\n";
+	// std::cout<<"g inf norm: "<<g.lpNorm<Eigen::Infinity>()<<"\n";
 
 	// Check if error is already low enough
 	int output = (mErrors.lpNorm<Eigen::Infinity>() <= eps3 || g.lpNorm<Eigen::Infinity>() <= eps1) ? SolverState::SUCCESS : SolverState::RUNNING;
@@ -284,21 +284,21 @@ int ConstrCluster::solve_DL()
 		update_params(P_new.data());
 		double p_scale = stepScale();
 		if(p_scale < 1.0) {
-			std::cout<<"Scale = "<<p_scale<<"\nInit:\n";
-			std::cout<<"Delta:\n"<<h_dl<<"\nParams";
-			for(int i = 0; i < mParams.size(); ++i) {
-				std::cout<<mParams[i]->val()<<"\n";
-			}
+			// std::cout<<"Scale = "<<p_scale<<"\nInit:\n";
+			// std::cout<<"Delta:\n"<<h_dl<<"\nParams";
+			// for(int i = 0; i < mParams.size(); ++i) {
+			// 	std::cout<<mParams[i]->val()<<"\n";
+			// }
 			h_dl *= p_scale;
 			P_new = P + h_dl;
 
 			update_params(P_new.data());
 
-			std::cout<<"After:\n";
-			std::cout<<"Delta:\n"<<h_dl<<"\nParams";
-			for(int i = 0; i < mParams.size(); ++i) {
-				std::cout<<mParams[i]->val()<<"\n";
-			}
+			// std::cout<<"After:\n";
+			// std::cout<<"Delta:\n"<<h_dl<<"\nParams";
+			// for(int i = 0; i < mParams.size(); ++i) {
+			// 	std::cout<<mParams[i]->val()<<"\n";
+			// }
 
 		}
 		compute_errors(e_new);
@@ -381,8 +381,10 @@ void ConstrCluster::configure()
 void ConstrCluster::update_params(double* vals)
 {
 	for(auto p : mParams) {
-		if(p->frozen() > Param::Frozen_levels::UNFROZEN)
+		if(p->frozen() > Param::Frozen_levels::UNFROZEN) {
+			std::cout<<"Skip, frozen\n";
 			continue;
+		}
 		p->set(*vals++);
 	}
 }
