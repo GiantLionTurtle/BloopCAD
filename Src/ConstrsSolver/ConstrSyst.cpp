@@ -139,7 +139,7 @@ int ConstrSyst::create_clusters()
 	}
 
 	for(int i = 0; i < mClusters.size(); ++i) {
-		mClusters[i].configure();
+		// mClusters[i].configure();
 	}
 
 	return nG3 > 0 ? SolverState::graphState::OVER_CONSTRAINED : SolverState::graphState::WELL_CONSTRAINED;

@@ -58,7 +58,6 @@ public:
 
 	/*
 		@function solve_LM is an implementation of the Levenberg-Marquardt algorithm
-
 		@note There might be implementation errors that are yet to be discovered as this is a complex bit
 	*/
 	int solve_LM();
@@ -73,7 +72,6 @@ public:
 	void add_constr(Constraint* constr);
 	void add_param(Param* param);
 	void clear();
-	void configure();
 
 	void update_params(double* vals);
 
@@ -81,8 +79,8 @@ public:
 	bool satisfied();
 
 	void retrieve_params(Eigen::VectorXd& P);
-	void compute_jacobi(Eigen::MatrixXd& J, bool with_softConstraint = false);
-	void compute_errors(Eigen::VectorXd& e, bool with_softConstraint = false);
+	void compute_jacobi(Eigen::MatrixXd& J);
+	void compute_errors(Eigen::VectorXd& e);
 };
 
 #endif
