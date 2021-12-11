@@ -186,13 +186,20 @@ public:
 	void set_angle(double ang);
 };
 
-class test_towardZero_optim : public Constraint {
+/*
+	soft constraint that aims at minimizing the change in change in params
+
+	(not used currently because of stability issues with certain scenarios, eg.
+	
+	dragging the hinge point of two connected lines with a perpendicularity)
+*/
+class Params_softConstr : public Constraint {
 private:
 	std::vector<Param*> mParams;
 	std::vector<double> mInitVals;
 	double nerf { 1e-4 };
 public:
-	test_towardZero_optim();
+	Params_softConstr();
 
 	double error();
 	double error_impl();
@@ -207,16 +214,19 @@ public:
 	inline int n_params() { return 6; }
 };
 
-class test_lineLength_optim : public Constraint {
+/*
+	Soft constraint that aims at minimizing the change in line lengths (squared)
+*/
+class LineLengths_softConstr : public Constraint {
 private:
 	std::vector<Geom2d::Line*> mLines;
 	std::vector<double> mLengths;
 public:
-	test_lineLength_optim();
+	LineLengths_softConstr();
 
 	double error();
 	double derivative(Param* withRespectTo);
-	void set_init();
+	void fetch_initLenghts();
 	void set_lines(std::vector<Geom2d::Line*> lines);
 
 	Param* param(int ind);

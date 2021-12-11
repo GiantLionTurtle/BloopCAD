@@ -312,11 +312,11 @@ double LineLine_angle::stepScale(double lasterror)
 	const double maxdErr = (10.0*M_PI/180.0); // max change in 10 degrees per iteration
 
 	double scale = 1.0;
-	// double dError = 0.0;
+	double dError = 0.0;
 	
-	// if((dError = abs(lasterror-error())) > maxdErr) {
-	// 	scale *= maxdErr / dError;
-	// }
+	if((dError = abs(lasterror-error())) > maxdErr) {
+		scale *= maxdErr / dError;
+	}
 	return scale;
 }
 
@@ -358,9 +358,9 @@ void LineLine_angle::set_angle(double ang)
 
 
 
-test_towardZero_optim::test_towardZero_optim()
+Params_softConstr::Params_softConstr()
 #ifndef RELEASE_MODE
-	: Constraint("test_towardZero_optim", false)
+	: Constraint("Params_softConstr", false)
 #else
 	: Constraint(false)
 #endif
@@ -368,32 +368,26 @@ test_towardZero_optim::test_towardZero_optim()
 
 }
 
-double test_towardZero_optim::error()
+double Params_softConstr::error()
 {
 	return error_impl() * nerf;
 }
-double test_towardZero_optim::error_impl()
+double Params_softConstr::error_impl()
 {
-	std::cout<<"Bloop\n";
 	using std::sqrt;
 	using std::pow;
 
 	int max_ind = std::max(mParams.size(), mInitVals.size());
-	if(mParams.size() != mInitVals.size()) {
-		std::cout<<"[e] Problem, param size = "<<mParams.size()<<",  initvals size = "<<mInitVals.size()<<"\n";
-	}
 
 	double inner_sum = 0.0;
 	for(int i = 0; i < max_ind; ++i) {
 		inner_sum += pow(mParams[i]->val() - mInitVals[i], 2.0);
-		std::cout<<"sum: "<<inner_sum<<",  "<<mParams[i]->val()<<",  "<<mInitVals[i]<<"\n";
 	}
 
 	return sqrt(inner_sum);
 }
-double test_towardZero_optim::derivative(Param* withRespectTo)
+double Params_softConstr::derivative(Param* withRespectTo)
 {
-	std::cout<<"Blip\n";
 	double* target_orgigin = withRespectTo->origin();
 	for(int i = 0; i < mParams.size(); ++i) {
 		if(mParams[i]->origin() == target_orgigin) {
@@ -407,17 +401,17 @@ double test_towardZero_optim::derivative(Param* withRespectTo)
 	return 0.0;
 }
 
-void test_towardZero_optim::set_init(std::vector<double> ps)
+void Params_softConstr::set_init(std::vector<double> ps)
 {
 	mInitVals = ps;
 }
 
-void test_towardZero_optim::set_params(std::vector<Param*> ps)
+void Params_softConstr::set_params(std::vector<Param*> ps)
 {
 	mParams = ps;
 }
 
-Param* test_towardZero_optim::param(int ind)
+Param* Params_softConstr::param(int ind)
 {
 	if(ind < 0 || ind >= mParams.size())
 		return nullptr;
@@ -426,9 +420,9 @@ Param* test_towardZero_optim::param(int ind)
 }
 
 
-test_lineLength_optim::test_lineLength_optim()
+LineLengths_softConstr::LineLengths_softConstr()
 #ifndef RELEASE_MODE
-	: Constraint("test_lineLength_optim", false)
+	: Constraint("LineLengths_softConstr", false)
 #else
 	: Constraint(false)
 #endif
@@ -436,7 +430,7 @@ test_lineLength_optim::test_lineLength_optim()
 
 }
 
-double test_lineLength_optim::error()
+double LineLengths_softConstr::error()
 {
 	double sum = 0;
 
@@ -445,7 +439,7 @@ double test_lineLength_optim::error()
 	}
 	return sum;
 }
-double test_lineLength_optim::derivative(Param* withRespectTo)
+double LineLengths_softConstr::derivative(Param* withRespectTo)
 {
 	double* target_orgigin = withRespectTo->origin();
 	for(int i = 0; i < n_params(); ++i) {
@@ -458,19 +452,19 @@ double test_lineLength_optim::derivative(Param* withRespectTo)
 	
 	return 0.0;
 }
-void test_lineLength_optim::set_init()
+void LineLengths_softConstr::fetch_initLenghts()
 {
 	for(int i = 0; i < mLines.size(); ++i) {
 		mLengths[i] = mLines[i]->length2();
 	}
 }
-void test_lineLength_optim::set_lines(std::vector<Geom2d::Line*> lines)
+void LineLengths_softConstr::set_lines(std::vector<Geom2d::Line*> lines)
 {
 	mLines = lines;
 	mLengths.resize(lines.size());
 }
 
-Param* test_lineLength_optim::param(int ind)
+Param* LineLengths_softConstr::param(int ind)
 {
 	if(ind < 0 || ind >= mLines.size() * 4)
 		return nullptr;

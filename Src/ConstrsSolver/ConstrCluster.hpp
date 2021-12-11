@@ -27,8 +27,7 @@
 
 class ConstrCluster {
 private:
-	// test_towardZero_optim mOptim_constr;
-	test_lineLength_optim mOptim_constr;
+	LineLengths_softConstr mSoft_constr;
 	std::vector<Param*> mParams { };
 
 	std::vector<Constraint*> mConstrs { };

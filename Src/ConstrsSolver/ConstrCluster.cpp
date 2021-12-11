@@ -50,7 +50,7 @@ int ConstrCluster::solve_LM()
 
 	verbose(VERBOSE_STEPS, "LM solver...");
 	int n_params = mParams.size() - n_dragged();		// Number of variables in the system
-	int n_constrs  = mConstrs.size();;	// Number of equations in the system
+	int n_constrs = mConstrs.size() + 1;	// Number of equations in the system
 
 	if(n_constrs  == 0) {
 		verbose(VERBOSE_STEPS, "Returning early, no equation to solve.");
@@ -74,6 +74,7 @@ int ConstrCluster::solve_LM()
 	double g_norm;				// Infinity norm of the profuct J.inv * e
 	
 	// Compute and retrieve the initial state of the system
+	mSoft_constr.fetch_initLenghts();
 	retrieve_params(P);
 	compute_jacobi(J);
 	compute_errors(mErrors);
@@ -85,13 +86,9 @@ int ConstrCluster::solve_LM()
 	A_diag = A.diagonal();
 	mu = tau * A_diag.lpNorm<Eigen::Infinity>();
 	
-	int output = g.lpNorm<Eigen::Infinity>() <= eps1 ? SolverState::SUCCESS : SolverState::RUNNING; // Check if the error is already low enough
+	int output = satisfied() ? SolverState::SUCCESS : SolverState::RUNNING; // Check if the error is already low enough
 	int k;
 	for(k = 0; k < mMaxIt_LM && !output; ++k) {
-		if(e_norm <= eps1) { // Error is low enough to exit
-			output = SolverState::SUCCESS;
-			break;
-		}
 		if(e_norm != e_norm) { // NaN, exit
 			output = SolverState::FAILURE;
 			break;
@@ -148,8 +145,8 @@ int ConstrCluster::solve_LM()
 					g = J.transpose() * mErrors;
 
 					// Check if the error is low enough
-					output = g.lpNorm<Eigen::Infinity>() <= eps1 ? SolverState::SUCCESS : SolverState::RUNNING;
-					
+					if(g.lpNorm<Eigen::Infinity>())
+						break;					
 					// Update meta parameters, mu will get smaller
 					double tmp = 2*rho - 1;
 					mu *= std::max(1.0/3.0, 1.0 - (tmp*tmp*tmp));
@@ -166,6 +163,7 @@ int ConstrCluster::solve_LM()
 				nu *= 2.0;
 			}
 		}
+		output = satisfied() ? SolverState::SUCCESS : SolverState::RUNNING; // Check if the error is already low enough
 	}
 
 	verbose(VERBOSE_STEPS, "Satisfied: "<<std::boolalpha<<satisfied())
@@ -213,23 +211,24 @@ int ConstrCluster::solve_DL()
 
 	double r = 1.0; // Trust radius (arbitrary at the moment)
 	double eps = mMaxError;
-	double eps1 = eps;
-	double eps2 = eps;
-	double eps3 = 10e-20;
-
+	double e_norm = mErrors.squaredNorm();
 	
 	// Compute and retrieve the initial state of the system
+	mSoft_constr.fetch_initLenghts();
 	retrieve_params(P);
-	mOptim_constr.set_init();
 	compute_jacobi(J);
 	compute_errors(mErrors);
 
 	g = J.transpose() * mErrors; // Initial g
 	
 	// Check if error is already low enough
-	int output = (mErrors.lpNorm<Eigen::Infinity>() <= eps3 || g.lpNorm<Eigen::Infinity>() <= eps1) ? SolverState::SUCCESS : SolverState::RUNNING;
+	int output = satisfied() ? SolverState::SUCCESS : SolverState::RUNNING;
 	int k;
 	for(k = 0; k < mMaxIt_DL && !output; ++k) {
+		if(e_norm != e_norm) { // NaN, exit
+			output = SolverState::FAILURE;
+			break;
+		}
 
 		double alpha = g.norm() / (J * g).norm(); // How far along h_sd is the step in stepest descent
 		h_sd = -alpha * g;
@@ -264,11 +263,12 @@ int ConstrCluster::solve_DL()
 		}
 		compute_errors(e_new);
 
-		double rho = 	(mErrors.squaredNorm() / 2.0 - e_new.squaredNorm() / 2.0) / ((mErrors.squaredNorm() / 2.0) - 
+		double rho = 	(e_norm / 2.0 - e_new.squaredNorm() / 2.0) / ((e_norm / 2.0) - 
 						((mErrors + J * h_dl).squaredNorm() / 2.0));
 		if(rho > 0) {
 			P = P_new;
 			mErrors = e_new;
+			e_norm = mErrors.squaredNorm();
 			compute_jacobi(J);
 			g = J.transpose() * mErrors;
 		}
@@ -283,11 +283,11 @@ int ConstrCluster::solve_DL()
 	verbose(VERBOSE_STEPS, "Satisfied: "<<std::boolalpha<<satisfied())
 	switch(output) {
 	case SolverState::SUCCESS:
-		verbose(VERBOSE_STEPS, "Succeeded in "<<k<<" steps ; squared error of "<<mErrors.squaredNorm());
+		verbose(VERBOSE_STEPS, "Succeeded in "<<k<<" steps ; squared error of "<<e_norm);
 		break;
 	case SolverState::FAILURE:
 	default:
-		verbose(VERBOSE_STEPS, "Failed in "<<k<<" steps ; squared error of "<<mErrors.squaredNorm()<<" ; Gaming Gamer UwU");
+		verbose(VERBOSE_STEPS, "Failed in "<<k<<" steps ; squared error of "<<e_norm<<" ; Gaming Gamer UwU");
 		break;
 	}
 	return output == SolverState::SUCCESS ? SolverState::SUCCESS : SolverState::FAILURE;
@@ -299,7 +299,8 @@ double ConstrCluster::stepScale()
 	for(int i = 0; i < mConstrs.size(); ++i) {
 		scale = std::min(scale, mConstrs[i]->stepScale(mErrors(i)));
 	}
-	std::cout<<"Step scale: "<<scale<<"\n";
+	if(scale != 1.0)
+		std::cout<<"Step scale: "<<scale<<"\n";
 	return scale;
 }
 
@@ -369,7 +370,7 @@ void ConstrCluster::compute_jacobi(Eigen::MatrixXd& J)
 	for(auto p : mParams) {
 		if(p->frozen() > Param::Frozen_levels::UNFROZEN)
 			continue;
-		J(mConstrs.size(), j++) = mOptim_constr.derivative(p);
+		J(mConstrs.size(), j++) = mSoft_constr.derivative(p);
 	}
 }
 void ConstrCluster::compute_errors(Eigen::VectorXd& e)
@@ -377,6 +378,5 @@ void ConstrCluster::compute_errors(Eigen::VectorXd& e)
 	for(int i = 0; i < mConstrs.size(); ++i) {
 		e(i) = mConstrs[i]->error();
 	}
-
-	e(mConstrs.size()) = mOptim_constr.error();
+	e(mConstrs.size()) = mSoft_constr.error();
 }

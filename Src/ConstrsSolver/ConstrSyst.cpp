@@ -56,7 +56,6 @@ int ConstrSyst::solve()
 	if(!mDecompUpToDate) {
 		create_clusters();
 	}
-	clear_drag();
 
 	substitute();
 
