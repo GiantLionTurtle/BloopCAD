@@ -15,28 +15,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
-	This shader draws an antialiased line segment 
-*/
-
 #version 330
 
-out vec4 fragColor;
+layout(location = 0) in vec3 vertexPosition;
+layout(location = 1) in vec3 arrowDirections;
 
-uniform vec4 u_Color;
-uniform float u_Feather;
+uniform mat4 u_MVP;
+uniform vec2 u_Viewport;
 
-in fData
-{
-    vec2 normal;
-}frag;
+out VS_OUT {
+    vec3 dir;
+} vs_out;
 
 void main()
 {
-	float len = length(frag.normal);
-	float feather = u_Feather;
-	if(len < (1-feather))
-		fragColor = u_Color;
-	else 
-		fragColor = vec4(u_Color.xyz, pow((1.0-len)/(feather), 2.5));
+    gl_Position = u_MVP * vec4(vertexPosition.xyz, 1.0);
+    vs_out.dir  = u_MVP * vec4(arrowDirections.xyz, 1.0);
 }

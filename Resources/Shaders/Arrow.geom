@@ -31,23 +31,36 @@ out data
 	vec2 UV_coord;
 }gs_out;
 
+in VS_OUT {
+    vec3 color;
+} gs_in[];  
+
 void main() 
 {
-	// Find the half width and half height of the quad in normalized coordinates
-	float mv_x = gl_in[0].gl_Position.w * (u_Width / u_Viewport.x) / 2;
-	float mv_y = gl_in[0].gl_Position.w * (u_Height / u_Viewport.y) / 2;
+    /*
+            *
+           ***
+          *****
+        
+        The arrow sprite looks something like this, the tip is in the midle
+        at the top, it is the position that is in the input
+    */
 
-	gs_out.UV_coord = vec2(1.0, 1.0);
-	gl_Position = gl_in[0].gl_Position + vec4(mv_x, mv_y, 0.0, 0.0);
-	EmitVertex();
-	gs_out.UV_coord = vec2(0.0, 1.0);
-	gl_Position = gl_in[0].gl_Position + vec4(-mv_x, mv_y, 0.0, 0.0);
-	EmitVertex();
+	vec2 dir = gs_in[0].xy / gs_in[0].w;
+	vec2 mv_w = vec2(dir.y, -dir.x) * u_Width / u_Viewport / 2.0;
+	vec2 mv_h = dir * u_Height / u_Viewport;
+
 	gs_out.UV_coord = vec2(1.0, 0.0);
-	gl_Position = gl_in[0].gl_Position + vec4(mv_x, -mv_y, 0.0, 0.0);
+	gl_Position = gl_in[0].gl_Position + vec4(mv_w, 0.0, 0.0, 0.0);
 	EmitVertex();
 	gs_out.UV_coord = vec2(0.0, 0.0);
-	gl_Position = gl_in[0].gl_Position + vec4(-mv_x, -mv_y, 0.0, 0.0);
+	gl_Position = gl_in[0].gl_Position + vec4(-mv_w, 0, 0.0, 0.0);
+	EmitVertex();
+	gs_out.UV_coord = vec2(1.0, 1.0);
+	gl_Position = gl_in[0].gl_Position + vec4(-mv_w, mv_h, 0.0, 0.0);
+	EmitVertex();
+	gs_out.UV_coord = vec2(1.0, 1.0);
+	gl_Position = gl_in[0].gl_Position + vec4(mv_w, mv_h, 0.0, 0.0);
 	EmitVertex();
 
 	EndPrimitive();
