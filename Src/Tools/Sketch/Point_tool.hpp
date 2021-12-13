@@ -23,7 +23,7 @@
 #include <Drawables/Sk/SkPoint.hpp>
 #include <Workspaces/Sketch_ws.hpp>
 
-class Point_tool : public tool<Sketch_ws> {
+class Point_tool : public Tool<Sketch_ws> {
 private:
 	SkPoint* mCurrentPoint;
 public:

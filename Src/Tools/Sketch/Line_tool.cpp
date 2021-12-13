@@ -27,7 +27,7 @@
 #include <Tools/Sketch/Coincidence_tool.hpp>
 
 Line_tool::Line_tool(Sketch_ws* env)
-	: tool(env)
+	: Tool(env)
 	, mEndPos(nullptr)
 	, mLinePreview(nullptr)
 	, mLastAdded(nullptr)

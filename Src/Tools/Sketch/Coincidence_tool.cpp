@@ -70,8 +70,8 @@ void Coincidence_tool::create_constraint(Constraint*& constr, SkGeometry*& prior
 	} else {
 		constr = new PointPoint_coincidence(static_cast<SkPoint*>(mEntA)->geom(), static_cast<SkPoint*>(mEntB)->geom());
 
-		SkConstrAnnot* annot = nullptr;
-		SkConstrAnnot::make_single_annot(annot, constr, mEnv->target()->basePlane(), 
+		SkSymbolicAnnot* annot = nullptr;
+		SkSymbolicAnnot::make_single_annot(annot, constr, mEnv->target()->basePlane(), 
 		"Resources/Textures/Images/Icons/Sketch/Constraints/Coincidence.png");
 		mEnv->target()->add_annot(annot);
 		mEntA->add_annot(annot, true);

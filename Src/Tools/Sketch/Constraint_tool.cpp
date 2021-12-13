@@ -24,7 +24,7 @@
 #include <Workspaces/Document.hpp>
 
 Constraint_tool::Constraint_tool(Sketch_ws* env, int filter)
-	: tool<Sketch_ws>(env)
+	: Tool<Sketch_ws>(env)
 	, mEntA(nullptr)
 	, mEntB(nullptr)
 	, mCurrentHover(nullptr)

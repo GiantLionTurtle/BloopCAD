@@ -22,7 +22,7 @@
 #include <Geometry/3d/Plane_abstr.hpp>
 
 Zoom3d_tool::Zoom3d_tool(Workspace_abstr* env)
-	: tool(env)
+	: Tool(env)
 {
 	// Attempt to load the cursor icon
 	try {

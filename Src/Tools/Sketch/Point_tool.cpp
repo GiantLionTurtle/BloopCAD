@@ -22,7 +22,7 @@
 #include <Actions/Common/ToggleBaseObject_action.hpp>
 
 Point_tool::Point_tool(Sketch_ws* env)
-	: tool(env)
+	: Tool(env)
 {
 	DEBUG_ASSERT(mEnv, "No valid Workspace_abstr.");
 }

@@ -31,6 +31,7 @@
 #include <Tools/Sketch/Verticality_tool.hpp>
 #include <Tools/Sketch/Horizontality_tool.hpp>
 #include <Tools/Sketch/SketchDefault_tool.hpp>
+#include <Tools/Sketch/Dimension_tool.hpp>
 #include <Tools/Sketch/Pan2d_tool.hpp>
 #include <Tools/Sketch/Zoom2d_tool.hpp>
 #include <Utils/XMLParser.hpp>
@@ -51,6 +52,7 @@ Sketch_ws::Sketch_ws(Glib::RefPtr<Gtk::Builder> const& builder, Bloop* parent)
 	mVerticality_tool 				= new Verticality_tool(this);
 	mHorizontality_tool 			= new Horizontality_tool(this);
 	mPerpendiculatiry_tool 			= new Perpendicularity_tool(this);
+	mDimension_tool					= new Dimension_tool(this);
 	mDefaultTool = mSketchDefault_tool;
 
 	// Initialize all buttons as 2 nullptr
@@ -208,6 +210,9 @@ bool Sketch_ws::set_tool(int name)
 	case TOOLIDS::TOOLID_PERPENDICULARITY:
 		to_set = mPerpendiculatiry_tool;
 		break;
+	case TOOLIDS::TOOLID_DIMENSION:
+		to_set = mDimension_tool;
+		break;
 	case TOOLIDS::TOOLID_PAN:
 		to_set = mPan3d_tool;
 		break;
@@ -268,7 +273,7 @@ void Sketch_ws::begin_threePointsArc()
 
 void Sketch_ws::begin_dimension()
 {
-	LOG_WARNING("This tool is not available yet.");
+	set_tool(TOOLID_DIMENSION);
 }
 void Sketch_ws::begin_verticality()
 {

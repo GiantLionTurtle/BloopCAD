@@ -18,6 +18,8 @@
 #ifndef MATHUTILS_HPP_
 #define MATHUTILS_HPP_
 
+#include <glm/glm.hpp>
+
 /*
 	@function diff_angless computes the minimum difference between two angles
 
@@ -46,6 +48,19 @@ T map(T x, T in_min, T in_max, T out_min, T out_max)
 {
 	// https://www.arduino.cc/reference/en/language/functions/math/map/
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+// Maths (and corresponding unit test) from 
+// https://gamedev.stackexchange.com/questions/70075/how-can-i-find-the-perpendicular-to-a-2d-vector
+template<typename T>
+glm::vec<2, T, glm::defaultp> perpendicular_cw(glm::vec<2, T, glm::defaultp> in)
+{
+	return glm::vec<2, T, glm::defaultp>(in.y, -in.x);
+}
+template<typename T>
+glm::vec<2, T, glm::defaultp> perpendicular_ccw(glm::vec<2, T, glm::defaultp> in)
+{
+	return glm::vec<2, T, glm::defaultp>(-in.y, in.x);
 }
 
 #endif

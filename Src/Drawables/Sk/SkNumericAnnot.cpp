@@ -1,4 +1,5 @@
 
+
 // BloopCAD
 // Copyright (C) 2020-2021 BloopCorp
 
@@ -15,35 +16,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CIRCLE_TOOL_HPP_
-#define CIRCLE_TOOL_HPP_
+#include "SkNumericAnnot.hpp"
 
-#include <Tools/Tool.hpp>
+SkNumericAnnot::SkNumericAnnot(Geom3d::Plane_abstr* pl)
+    : SkIntDrawable(pl)
+{
+    mType |= Drawable_types::ANNOTATION;
+}
 
-#include <Drawables/Sk/SkCircle.hpp>
-#include <Workspaces/Sketch_ws.hpp>
+Constraint* SkNumericAnnot::build_constr()
+{
+    mBuilt_constr = true;
+    return build_constr_impl();
+}
 
-#include <glm/glm.hpp>
+void SkNumericAnnot::set_val(double val)
+{
+    mVal = val;
 
-class Circle_tool : public Tool<Sketch_ws> {
-private:
-	SkCircle* mCirclePreview;
-	bool mStarted; // Whether or not the drawing of the circle has started
-public:
-	Circle_tool(Sketch_ws* env);
-
-	/*
-		@function init makes sure the started flag is down
-	*/
-	void init();
-	void finish();
-
-	bool manage_key_press(GdkEventKey* event);
-
-	bool manage_mouse_move(GdkEventMotion* event);
-	bool manage_button_press(GdkEventButton* event);
-
-	std::string name() { return "circle"; }
-};
-
-#endif
+    if(mBuilt_constr)
+        update_constr();
+}

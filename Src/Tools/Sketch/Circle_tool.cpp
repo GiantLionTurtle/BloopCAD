@@ -25,7 +25,7 @@
 #include <Utils/Maths_util.hpp>
 
 Circle_tool::Circle_tool(Sketch_ws* env)
-	: tool(env)
+	: Tool(env)
 	, mCirclePreview(nullptr)
 {
 	DEBUG_ASSERT(mEnv, "No valid Workspace_abstr.");

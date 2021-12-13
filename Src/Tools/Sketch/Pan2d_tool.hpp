@@ -21,7 +21,7 @@
 #include <Workspaces/Sketch_ws.hpp>
 #include <Tools/Tool.hpp>
 
-class Pan2d_tool : public tool<Sketch_ws> {
+class Pan2d_tool : public Tool<Sketch_ws> {
 private:
 	glm::vec3 mTranStart, mDragStart; // Helper record of the position of the mouse on the previous update
 	glm::vec3 mPl_right, mPl_up;

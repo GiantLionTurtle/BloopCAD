@@ -356,6 +356,55 @@ void LineLine_angle::set_angle(double ang)
 	mAngle = ang;
 }
 
+Line_length::Line_length(Geom2d::Line* l, double len)
+#ifndef RELEASE_MODE
+	: Constraint("LineLine_angle", false)
+#else
+	: Constraint(false)
+#endif
+	, mLine(l)
+	, mLength2(len*len)
+{
+
+}
+
+double Line_length::error()
+{
+	return mLength2 - mLine->length2();
+}
+double Line_length::derivative(Param* withRespectTo)
+{
+	double* target_origin = withRespectTo->origin();
+	
+	double paired_val;
+	if(mLine->ptA()->x()->origin() == target_origin) {
+		paired_val = mLine->ptB()->x()->val();
+	} else if(mLine->ptA()->x()->origin() == target_origin) {
+		paired_val = mLine->ptB()->y()->val();
+	} else if(mLine->ptB()->x()->origin() == target_origin) {
+		paired_val = mLine->ptA()->x()->val();
+	} else if(mLine->ptB()->y()->origin() == target_origin) {
+		paired_val = mLine->ptA()->y()->val();
+	} else {
+		return 0.0;
+	}
+
+	return 2 * (withRespectTo->val() - paired_val);
+}
+
+Param* Line_length::param(int ind)
+{
+	switch(ind) {
+	case 0: return mLine->ptA()->x();
+	case 1: return mLine->ptA()->y();
+	case 2: return mLine->ptB()->x();
+	case 3: return mLine->ptB()->y();
+	}
+	
+	return nullptr;
+}
+
+
 
 
 Params_softConstr::Params_softConstr()

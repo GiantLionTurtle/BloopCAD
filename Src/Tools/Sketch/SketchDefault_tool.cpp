@@ -32,7 +32,7 @@
 #include <iostream>
 
 SketchDefault_tool::SketchDefault_tool(Sketch_ws* env)
-	: tool<Sketch_ws>(env)
+	: Tool<Sketch_ws>(env)
 	, mMode(modes::NORMAL)
 	, mSelArea(nullptr)
 	, mCurrentHover(nullptr)
@@ -159,7 +159,7 @@ bool SketchDefault_tool::manage_mouse_move(GdkEventMotion* event)
 
 void SketchDefault_tool::update_annot(glm::vec2 cursorPos)
 {
-	SkConstrAnnot* candidateAnnot = nullptr;
+	SkSymbolicAnnot* candidateAnnot = nullptr;
 	Camera* cam = mEnv->state()->cam;
 	Sketch* sk = mEnv->target();
 	if(cursorPos != mLastCursorPos && !sk->need_graphicUpdate() && !cam->need_update()) { // Prevent recomputing the same thing multiple times

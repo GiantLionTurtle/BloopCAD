@@ -47,10 +47,4 @@ Project started on september 27 2020
 
 ## Current developpement goals
 
-* Get constraints out of Drawables again (bad move were done..)
-* Stop relying on expression system for constraint solver (it will be kept for future expression parsing and dynamic input)
-* Solve constraints rather than equations
-* Make sketch geometries integrate rather derive from abstract geometries
-* Constraints get to know about abstract geometries
 * More speeed in the solver with a reduced number of jumps
-* Move expressions out of constraint solving and into utils

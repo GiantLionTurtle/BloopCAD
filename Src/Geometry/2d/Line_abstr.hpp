@@ -108,14 +108,14 @@ public:
 		// https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
 		return ccw(posA(), a, b) != ccw(posB(), a, b) && ccw(posA(), posB(), a) != ccw(posA(), posB(), b);
 	}
+	glm::dvec2 as_vec()
+	{
+		return posA() - posB();
+	}
 protected:
 	bool ccw(glm::dvec2 A, glm::dvec2 B, glm::dvec2 C) // determine if three point are aranged in a counter clockwise fashion
 	{
 		return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x);
-	}
-	glm::dvec2 as_vec()
-	{
-		return posA() - posB();
 	}
 };
 

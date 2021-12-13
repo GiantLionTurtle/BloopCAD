@@ -19,10 +19,20 @@
 
 #include <Utils/Maths_util.hpp>
 
-TEST_CASE("Map function is tested", "[maths]")
+TEST_CASE("Map", "[maths]")
 {
 	REQUIRE(map(0.5, 0.0, 1.0, -10.0, 10.0) == 0.0);
 	REQUIRE(map(0.0, 0.0, 1.0, -10.0, 10.0) == -10.0);
 	REQUIRE(map(7.0, 0.0, 10.0, 5.0, 25.0) == 19.0);
 	REQUIRE(map(-5.0, -10.0, 10.0, -10.0, 10.0) == -5.0);
+}
+
+TEST_CASE("Perpendicular vector 2d", "[maths]")
+{
+	glm::ivec2 a(5, -10);
+	glm::ivec2 b = perpendicular_cw(a);
+	glm::ivec2 c = perpendicular_ccw(a);
+
+	REQUIRE(b == glm::ivec2(-10, -5));
+	REQUIRE(c == glm::ivec2(10, 5));
 }

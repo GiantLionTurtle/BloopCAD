@@ -54,8 +54,8 @@ void Horizontality_tool::create_constraint(Constraint*& constr, SkGeometry*& pri
 	if(!mEntB) {
 		constr = new Line_horizontality(static_cast<SkLine*>(mEntA)->geom());
 
-		SkConstrAnnot* annot = nullptr;
-		SkConstrAnnot::make_single_annot(annot, constr, mEnv->target()->basePlane(), 
+		SkSymbolicAnnot* annot = nullptr;
+		SkSymbolicAnnot::make_single_annot(annot, constr, mEnv->target()->basePlane(), 
 		"Resources/Textures/Images/Icons/Sketch/Constraints/Horizontality.png");
 		mEnv->target()->add_annot(annot);
 		mEntA->add_annot(annot);
@@ -63,8 +63,8 @@ void Horizontality_tool::create_constraint(Constraint*& constr, SkGeometry*& pri
 		constr = new PointPoint_horizontality(static_cast<SkPoint*>(mEntA)->geom(), static_cast<SkPoint*>(mEntB)->geom());
 		priority_ent = mEntA;
 
-		SkConstrAnnot* annot_a = nullptr, *annot_b = nullptr;
-		SkConstrAnnot::make_dual_annot(annot_a, annot_b, constr, mEnv->target()->basePlane(), 
+		SkSymbolicAnnot* annot_a = nullptr, *annot_b = nullptr;
+		SkSymbolicAnnot::make_dual_annot(annot_a, annot_b, constr, mEnv->target()->basePlane(), 
 		"Resources/Textures/Images/Icons/Sketch/Constraints/Horizontality.png");
 		mEnv->target()->add_annot(annot_a);
 		mEnv->target()->add_annot(annot_b);

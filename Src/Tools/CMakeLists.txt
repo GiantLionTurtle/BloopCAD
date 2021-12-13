@@ -36,6 +36,7 @@ set(Tools_source_files
 	Sketch/Perpendicularity_tool.cpp
 	Sketch/Verticality_tool.cpp
 	Sketch/Horizontality_tool.cpp
+	Sketch/Dimension_tool.cpp
 )
 
 add_library(Tools ${Tools_source_files})

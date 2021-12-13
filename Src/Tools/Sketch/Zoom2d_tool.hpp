@@ -21,7 +21,7 @@
 #include <Tools/Tool.hpp>
 #include <Workspaces/Sketch_ws.hpp>
 
-class Zoom2d_tool : public tool<Sketch_ws> {
+class Zoom2d_tool : public Tool<Sketch_ws> {
 private:
 	glm::vec2 mPrevPos; // Helper previous position of mouse, on last update
 	glm::vec3 mZoomStart_world;

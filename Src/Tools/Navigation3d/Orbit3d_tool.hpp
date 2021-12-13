@@ -24,7 +24,7 @@
 	@class Orbit3d_tool describes the orbit function to rotate the Camera around the center of the scene
 	@parent : Tool_abstract
 */
-class Orbit3d_tool : public tool<Workspace_abstr> {
+class Orbit3d_tool : public Tool<Workspace_abstr> {
 private:
 	glm::vec2 prevPos; // Helper record of the position of the mouse on the previous update
 	bool is_moving; // If the mouse is currently moving

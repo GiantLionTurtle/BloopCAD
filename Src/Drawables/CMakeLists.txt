@@ -26,6 +26,8 @@ set(Drawables_source_files
 	Sk/SkPoint.cpp
 	Sk/SkSelRect.cpp
 	Sk/SkSprite.cpp
+	Sk/SkNumericAnnot.cpp
+	Sk/SkLengthAnnot.cpp
 
 	3d/Plane.cpp
 	3d/Point.cpp

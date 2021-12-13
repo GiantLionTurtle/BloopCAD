@@ -33,11 +33,12 @@ public:
 	using SkCurve<LinearFixed_indexer<SkPoint*, 2>, Geom2d::Line>::handle;
 	SkLine(glm::vec2 ptA_, glm::vec2 ptB_, Geom3d::Plane_abstr* pl, bool fixed_ = false);
 
-	SkPoint* ptA() { return handle(0); }
-	SkPoint* ptB() { return handle(1); }
+	inline SkPoint* ptA() { return handle(0); }
+	inline SkPoint* ptB() { return handle(1); }
 
-	glm::vec2 posA() { return mGeom->posA(); }
-	glm::vec2 posB() { return mGeom->posB(); }
+	inline glm::vec2 posA() { return mGeom->posA(); }
+	inline glm::vec2 posB() { return mGeom->posB(); }
+	inline glm::dvec2 dir() { return mGeom->as_vec(); }
 
 	int selection_rank() { return 3; }
 

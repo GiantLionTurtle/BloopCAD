@@ -26,7 +26,7 @@
 	@class SimpleSelector_tool describes a tool used to select entities in a Document
 */
 template<typename wst>
-class SimpleSelector_tool : public tool<wst> {
+class SimpleSelector_tool : public Tool<wst> {
 protected:
 	Drawable* mCurrentHover; // The entity under the mouse, if there is one
 	int mFilter;
@@ -37,7 +37,7 @@ public:
 		@param env : The workspace owning the tool
 	*/
 	SimpleSelector_tool(wst* env)
-		: tool<wst>(env)
+		: Tool<wst>(env)
 		, mCurrentHover(nullptr) // No entity is under the mouse
 		, mFilter(DRAWABLE)
 	{
@@ -54,12 +54,12 @@ public:
 	*/
 	virtual bool manage_button_press(GdkEventButton* event)
 	{
-		if(tool<wst>::mEnv->state() && event->button == 1) {
+		if(Tool<wst>::mEnv->state() && event->button == 1) {
 			// Here it lets the Document manage it's selection
 			// it hands over the shift&ctrl
-			tool<wst>::mEnv->state()->doc->toggle_select(
+			Tool<wst>::mEnv->state()->doc->toggle_select(
 				entity_at_point(glm::vec2(event->x, event->y)), 
-				tool<wst>::mEnv->state()->cam->state(),
+				Tool<wst>::mEnv->state()->cam->state(),
 				event->state & GDK_CONTROL_MASK || event->state & GDK_SHIFT_MASK);		
 		}
 		return true;
@@ -71,7 +71,7 @@ public:
 	*/
 	virtual bool manage_mouse_move(GdkEventMotion* event)
 	{
-		if(tool<wst>::mEnv->state()) {
+		if(Tool<wst>::mEnv->state()) {
 			Drawable* ent = entity_at_point(glm::vec2(event->x, event->y));
 			// Toggle hovering
 			if(ent != mCurrentHover) {
@@ -98,7 +98,7 @@ public:
 	*/
 	virtual Drawable* entity_at_point(glm::vec2 pt)
 	{
-		return tool<wst>::mEnv->state()->doc->target()->closest(pt, tool<wst>::mEnv->state()->cam, mFilter).ent;
+		return Tool<wst>::mEnv->state()->doc->target()->closest(pt, Tool<wst>::mEnv->state()->cam, mFilter).ent;
 	}
 };
 

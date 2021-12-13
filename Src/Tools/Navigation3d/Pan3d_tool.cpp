@@ -20,7 +20,7 @@
 #include <Workspaces/Workspace_abstr.hpp>
 
 Pan3d_tool::Pan3d_tool(Workspace_abstr* env)
-	: tool(env, Gdk::Cursor::create(Gdk::IRON_CROSS)) // Iron cross is the closest to the icon
+	: Tool(env, Gdk::Cursor::create(Gdk::IRON_CROSS)) // Iron cross is the closest to the icon
 {
 	// Attempt to load cursor icon
 	try {

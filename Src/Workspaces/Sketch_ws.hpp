@@ -40,6 +40,7 @@ protected:
 	Verticality_tool* 			mVerticality_tool;
 	Horizontality_tool* 		mHorizontality_tool;
 	Perpendicularity_tool* 		mPerpendiculatiry_tool;
+	Dimension_tool* 			mDimension_tool;
 
 	std::map<std::string, std::pair<Gtk::Button*, Gtk::Image*>> mButtons; // Buttons with names and icons
 	Sketch* mTarget;

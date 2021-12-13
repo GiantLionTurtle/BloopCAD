@@ -1,4 +1,5 @@
 
+
 // BloopCAD
 // Copyright (C) 2020-2021 BloopCorp
 
@@ -15,35 +16,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CIRCLE_TOOL_HPP_
-#define CIRCLE_TOOL_HPP_
+#ifndef SKNUMERICANNOT_HPP_
+#define SKNUMERICANNOT_HPP_
 
-#include <Tools/Tool.hpp>
+#include "SkDrawable.hpp"
+#include <ConstrsSolver/Constraint.hpp>
+#include <Utils/Units_utils.hpp>
 
-#include <Drawables/Sk/SkCircle.hpp>
-#include <Workspaces/Sketch_ws.hpp>
-
-#include <glm/glm.hpp>
-
-class Circle_tool : public Tool<Sketch_ws> {
-private:
-	SkCircle* mCirclePreview;
-	bool mStarted; // Whether or not the drawing of the circle has started
+class SkNumericAnnot : public SkIntDrawable {
+protected:
+	double mVal;
+	bool mBuilt_constr { false };
 public:
-	Circle_tool(Sketch_ws* env);
+	SkNumericAnnot(Geom3d::Plane_abstr* pl);
 
-	/*
-		@function init makes sure the started flag is down
-	*/
-	void init();
-	void finish();
+	Constraint* build_constr();
 
-	bool manage_key_press(GdkEventKey* event);
+	inline double val() { return mVal; }
+	void set_val(double val);
 
-	bool manage_mouse_move(GdkEventMotion* event);
-	bool manage_button_press(GdkEventButton* event);
-
-	std::string name() { return "circle"; }
+	virtual int expected_unit() = 0;
+protected:
+	virtual Constraint* build_constr_impl() = 0;
+	virtual void update_constr() = 0;
 };
 
 #endif

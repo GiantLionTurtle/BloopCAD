@@ -21,7 +21,7 @@
 #include <Geometry/3d/Plane_abstr.hpp>
 
 Zoom2d_tool::Zoom2d_tool(Sketch_ws* env)
-	: tool(env)
+	: Tool(env)
 {
 	// Attempt to load the cursor icon
 	try {

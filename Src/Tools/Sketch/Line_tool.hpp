@@ -30,7 +30,7 @@
 	@class Line_tool describes the tool used to make lines and polylines on a sketch
 	@parent : Tool_abstract
 */
-class Line_tool : public tool<Sketch_ws> {
+class Line_tool : public Tool<Sketch_ws> {
 private:
 	SkPoint* mEndPos; // end pos of the last line added
 	SkLine* mLinePreview, *mLastAdded;

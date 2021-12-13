@@ -19,11 +19,11 @@
 #include <Drawables/Sk/SkSelRect.hpp>
 #include <Workspaces/Sketch_ws.hpp>
 
-class SketchDefault_tool : public tool<Sketch_ws> {
+class SketchDefault_tool : public Tool<Sketch_ws> {
 private:
 	SkSelRect* mSelArea { nullptr };
 	SkGeomDragPoint mDragCandidate;
-	SkConstrAnnot* mAnnot { nullptr };
+	SkSymbolicAnnot* mAnnot { nullptr };
 	Drawable* mCurrentHover { nullptr };
 
 	enum modes { NORMAL, SINGLEGEOMDRAG, GEOMDRAG, ANNOTDRAG, AREASELECT };

@@ -161,9 +161,6 @@ void SkSprite::draw_impl(Camera* cam, int frame, draw_type type)
 	mTexture->bind();
 	mVA->bind();
 
-	glm::vec3 t;
-	GLCall(glGetNamedBufferSubData(mVB->id(), 0, sizeof(glm::vec3), &t[0]));
-
 	GLCall(glDrawArrays(GL_POINTS, 0, 1));
 
 	mVA->unbind();

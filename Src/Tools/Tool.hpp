@@ -120,13 +120,13 @@ public:
 };
 
 template<typename wst>
-class tool : public Tool_abstract {
+class Tool : public Tool_abstract {
 protected:
 	static_assert(std::is_base_of<Workspace_abstr, wst>::value, "Workspace type must derive from Workspace_abstr");
     wst* mEnv;
 public:
-    tool(wst* env): mEnv(env) {}
-    tool(wst* env, Glib::RefPtr<Gdk::Cursor> cursor_): Tool_abstract(cursor_), mEnv(env) {}
+    Tool(wst* env): mEnv(env) {}
+    Tool(wst* env, Glib::RefPtr<Gdk::Cursor> cursor_): Tool_abstract(cursor_), mEnv(env) {}
 };
 
 #endif

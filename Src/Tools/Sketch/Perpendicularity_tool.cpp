@@ -52,8 +52,8 @@ void Perpendicularity_tool::create_constraint(Constraint*& constr, SkGeometry*& 
 	constr = new LineLine_angle(static_cast<SkLine*>(mEntA)->geom(), static_cast<SkLine*>(mEntB)->geom(), M_PI_2);
 	priority_ent = nullptr;
 
-	SkConstrAnnot* annot_a = nullptr, *annot_b = nullptr;
-	SkConstrAnnot::make_dual_annot(annot_a, annot_b, constr, mEnv->target()->basePlane(), 
+	SkSymbolicAnnot* annot_a = nullptr, *annot_b = nullptr;
+	SkSymbolicAnnot::make_dual_annot(annot_a, annot_b, constr, mEnv->target()->basePlane(), 
 		"Resources/Textures/Images/Icons/Sketch/Constraints/Perpendicularity.png");
 	mEnv->target()->add_annot(annot_a);
 	mEnv->target()->add_annot(annot_b);

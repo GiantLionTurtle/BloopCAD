@@ -21,7 +21,7 @@
 #include <Workspaces/Sketch_ws.hpp>
 #include <Tools/Tool.hpp>
 
-class Constraint_tool : public tool<Sketch_ws> {
+class Constraint_tool : public Tool<Sketch_ws> {
 public:
 	enum add_states { COULDNT_ADD, COULD_ADD, WOULD_BE_COMPLETE };
 protected:

@@ -22,7 +22,7 @@
 #include <Workspaces/Document.hpp>
 
 Pan2d_tool::Pan2d_tool(Sketch_ws* env)
-	: tool(env, Gdk::Cursor::create(Gdk::IRON_CROSS)) // Iron cross is the closest to the icon
+	: Tool(env, Gdk::Cursor::create(Gdk::IRON_CROSS)) // Iron cross is the closest to the icon
 	, mProxyCam(nullptr)
 {
 	// Attempt to load cursor icon

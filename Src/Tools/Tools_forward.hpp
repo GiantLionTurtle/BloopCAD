@@ -38,7 +38,7 @@ class Coincidence_tool;
 class Verticality_tool;
 class Horizontality_tool;
 class Perpendicularity_tool;
-
+class Dimension_tool;
 
 enum TOOLIDS {
 	TOOLID_ORBIT,
@@ -55,7 +55,8 @@ enum TOOLIDS {
 	TOOLID_COINCIDENCE,
 	TOOLID_VERTICALITY,
 	TOOLID_HORIZONTALITY,
-	TOOLID_PERPENDICULARITY
+	TOOLID_PERPENDICULARITY,
+	TOOLID_DIMENSION
 };
 
 

@@ -22,9 +22,9 @@
 #include <Geometry/3d/Plane_abstr.hpp>
 #include <Drawables/Sk/SkDrawable.hpp>
 #include <Drawables/Sk/SkGeometry.hpp>
-#include <Drawables/Sk/SkConstrAnnot.hpp>
+#include <Drawables/Sk/SkSymbolicAnnot.hpp>
 #include <Actions/Common/Serial_action.hpp>
-#include <Drawables/Sk/SkConstrAnnot.hpp>
+#include <Drawables/Sk/SkSymbolicAnnot.hpp>
 #include <ConstrsSolver/ConstrSyst.hpp>
 
 #include <memory>
@@ -33,7 +33,7 @@
 class SkIndexer : public Indexer_abstr {
 private:
 	std::vector<SkGeometry*> mGeometries;
-	std::vector<SkConstrAnnot*> mAnnotations;
+	std::vector<SkSymbolicAnnot*> mAnnotations;
 	int mInitInd_geom, mInitInd_constr;
 public:
 	SkIndexer(Drawable* driven)
@@ -71,8 +71,8 @@ public:
 	void add_geom(SkGeometry* g) { mGeometries.push_back(g); mDriven->update(); }
 
 	size_t n_annots() { return mAnnotations.size(); }
-	SkConstrAnnot* annot(size_t ind) { return mAnnotations.at(ind); }
-	void add_annot(SkConstrAnnot* c) { mAnnotations.push_back(c); mDriven->update(); }
+	SkSymbolicAnnot* annot(size_t ind) { return mAnnotations.at(ind); }
+	void add_annot(SkSymbolicAnnot* c) { mAnnotations.push_back(c); mDriven->update(); }
 };
 
 
@@ -107,7 +107,7 @@ public:
 
 	SelPoint closest(glm::vec2 cursor, Camera* cam, int filter);
 	bool closest_draggable(SkGeomDragPoint& selP, glm::vec2 cursor, Camera* cam, int filter);
-	SkConstrAnnot* closest_annot(glm::vec2 cursor, Camera* cam);
+	SkSymbolicAnnot* closest_annot(glm::vec2 cursor, Camera* cam);
 	void start_dragSelGeom(glm::vec2 pos);
 	void drag_selGeom(glm::vec2 pos);
 	std::shared_ptr<Serial_action> delete_selected(); 
@@ -128,7 +128,7 @@ public:
 
 	// Folder* origin() const { return mOrigin; }
 
-	void add_annot(SkConstrAnnot* annot);
+	void add_annot(SkSymbolicAnnot* annot);
 	bool add_constraint(Constraint* constr, SkDrawable* immovable_hint = nullptr);
 	bool toggle_constraint(Constraint* constr, bool enable);
 	bool update_constraints(bool safeUpdate, bool update_on_solveFail);

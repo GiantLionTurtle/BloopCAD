@@ -186,6 +186,24 @@ public:
 	void set_angle(double ang);
 };
 
+class Line_length : public Constraint {
+private:
+	Geom2d::Line* mLine;
+
+	double mLength2;
+public:
+	Line_length(Geom2d::Line* l, double length);
+
+	double error();
+	double derivative(Param* withRespectTo);
+
+	Param* param(int ind);
+	inline int n_params() { return 4; }
+
+	double length() { return std::sqrt(mLength2); }
+	void set_length(double len) { mLength2 = len*len; }
+};
+
 /*
 	soft constraint that aims at minimizing the change in change in params
 

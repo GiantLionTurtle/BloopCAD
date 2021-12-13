@@ -99,11 +99,11 @@ bool Sketch::closest_draggable(SkGeomDragPoint& selP, glm::vec2 cursor, Camera* 
 	}
 	return maxpriority != -1; // Success if maxpriority has been updated
 }
-SkConstrAnnot* Sketch::closest_annot(glm::vec2 cursor, Camera* cam)
+SkSymbolicAnnot* Sketch::closest_annot(glm::vec2 cursor, Camera* cam)
 {
 	glm::vec2 planepos = mBasePlane->to_planePos(mBasePlane->line_intersection(cam->pos(), cam->cast_ray(cursor)));
 	for(int i = 0; i < mDrawList.n_annots(); ++i) {
-		SkConstrAnnot* annot = mDrawList.annot(i);
+		SkSymbolicAnnot* annot = mDrawList.annot(i);
 		if(annot->visible() && annot->inbound(planepos, cam, cursor))
 			return annot;
 	}
@@ -171,7 +171,7 @@ bool Sketch::can_delete(SkDrawable* ent)
 	return false;
 }
 
-void Sketch::add_annot(SkConstrAnnot* annot)
+void Sketch::add_annot(SkSymbolicAnnot* annot)
 {
 	mDrawList.add_annot(annot);
 	set_need_redraw();

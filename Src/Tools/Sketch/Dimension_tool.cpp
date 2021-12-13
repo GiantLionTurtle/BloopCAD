@@ -15,35 +15,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CIRCLE_TOOL_HPP_
-#define CIRCLE_TOOL_HPP_
+#include "Dimension_tool.hpp"
 
-#include <Tools/Tool.hpp>
+Dimension_tool::Dimension_tool(Sketch_ws* env)
+	: Tool<Sketch_ws>(env)
+{
 
-#include <Drawables/Sk/SkCircle.hpp>
-#include <Workspaces/Sketch_ws.hpp>
+}
 
-#include <glm/glm.hpp>
+void Dimension_tool::init()
+{
+	// Constraint_tool::init();
+	std::cout<<"Start dimension tool!\n";
+}
 
-class Circle_tool : public Tool<Sketch_ws> {
-private:
-	SkCircle* mCirclePreview;
-	bool mStarted; // Whether or not the drawing of the circle has started
-public:
-	Circle_tool(Sketch_ws* env);
+int Dimension_tool::could_add_geom(SkGeometry* geom)
+{
+	return 0;
+}
 
-	/*
-		@function init makes sure the started flag is down
-	*/
-	void init();
-	void finish();
+void Dimension_tool::create_constraint(Constraint*& constr, SkGeometry*& priority_ent, Action_ptr& annotAct) 
+{
 
-	bool manage_key_press(GdkEventKey* event);
-
-	bool manage_mouse_move(GdkEventMotion* event);
-	bool manage_button_press(GdkEventButton* event);
-
-	std::string name() { return "circle"; }
-};
-
-#endif
+}
