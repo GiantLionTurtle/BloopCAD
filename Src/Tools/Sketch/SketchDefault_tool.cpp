@@ -175,7 +175,7 @@ void SketchDefault_tool::update_dragCandidate(glm::vec2 cursorPos)
 	Camera* cam = mEnv->state()->cam;
 	Sketch* sk = mEnv->target();
 	if(cursorPos != mLastCursorPos && !sk->need_graphicUpdate() && !cam->need_update()) { // Prevent recomputing the same thing multiple times
-		if(!sk->closest_draggable(mDragCandidate, cursorPos, cam, DRAWABLE))
+		if(!sk->closest_draggable(mDragCandidate, cursorPos, cam, Geom2d::ANY))
 			mDragCandidate.geom = nullptr;
 	}
 }

@@ -67,6 +67,8 @@ public:
 	}
 	virtual void set_annotPos(SkSprite* sp) = 0;
 	virtual void set_annotOffset(SkSprite* sp, int ind) = 0;
+
+	virtual int geomType() = 0;
 protected:
 	virtual void select_impl(bool sel)
 	{
@@ -110,6 +112,7 @@ public:
 		expunge(mVB);
 	}
 	inline Geom* geom() { return mGeom; }
+	int geomType() { return Geom2d::ANY | mGeom->type(); }
 
 	void select_within(glm::vec2 top_left, glm::vec2 bottom_right, bool contained)
 	{

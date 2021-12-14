@@ -25,7 +25,7 @@
 
 
 Coincidence_tool::Coincidence_tool(Sketch_ws* env)
-	: Constraint_tool(env, CURVE | POINT | SKDRAWABLE)
+	: Constraint_tool(env, Geom2d::CIRCLE | Geom2d::LINE | Geom2d::POINT)
 {
 	load_icon("Resources/Textures/Images/Icons/Sketch/Cursors/Coincidence_cursor.png");
 }

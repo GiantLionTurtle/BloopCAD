@@ -24,7 +24,12 @@
 
 namespace Geom2d {
 
-enum GeomTypes { POINT, LINE, CIRCLE };
+enum GeomTypes { 
+	ANY = 1, 
+	POINT = 2,
+	LINE = 4, 
+	CIRCLE = 8 
+};
 
 template<class Geom>
 class Geom2d_abstr {

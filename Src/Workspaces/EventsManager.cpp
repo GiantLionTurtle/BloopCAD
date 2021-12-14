@@ -49,7 +49,9 @@ bool stimuli_EventsManager::manage_mouse_scroll(GdkEventScroll* event)
 	glm::vec2 deltas = mBloopWindow->scrollDeltas();
 	event->delta_x = deltas.x;
 	event->delta_y = deltas.y;
+	// std::cout<<"stimuli_"<<glm::to_string(deltas)<<"\n";
 	return mBloopWindow->currentWorkspace()->manage_mouse_scroll(event);
+	// return true;
 }
 bool stimuli_EventsManager::manage_button_press(GdkEventButton* event)
 {

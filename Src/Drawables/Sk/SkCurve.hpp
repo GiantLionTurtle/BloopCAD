@@ -101,7 +101,7 @@ public:
 			if(handle(i)->closest_2d_draggable(selP, planePos, cam, cursorPos, filter))
 				return true;
 		}
-		if(this->type() & filter) {
+		if(this->geomType() & filter) {
 			float t = this->mGeom->closest_to_point_interp(planePos);
 			glm::vec3 worldpos = this->mBasePlane->to_worldPos(this->mGeom->at(t));
 			if(glm::distance2(cam->world_to_screen(worldpos), cursorPos) < kSelDist2) {

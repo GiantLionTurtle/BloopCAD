@@ -28,7 +28,7 @@ protected:
 	SkGeometry* mEntA, *mEntB, *mCurrentHover;
 	int mFilter;
 public:
-	Constraint_tool(Sketch_ws* env, int filter = Drawable_types::DRAWABLE);
+	Constraint_tool(Sketch_ws* env, int filter = Geom2d::ANY);
 
 	virtual void init();
 	virtual void finish();

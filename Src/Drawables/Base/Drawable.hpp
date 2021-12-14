@@ -55,7 +55,7 @@ enum Drawable_types {
 	AXIS = 8,
 	PLANE = 16,
 	ANNOTATION = 32,
-	CURVE = 64,
+	CURVE = 64
 };
 
 struct SelPoint {

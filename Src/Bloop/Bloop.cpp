@@ -189,6 +189,8 @@ void Bloop::add_sideBar(Gtk::Widget* sideBar)
 bool Bloop::manage_mouse_scroll_internal(GdkEventScroll* event)
 {
 	scroll_deltas = glm::vec2(event->delta_x, event->delta_y); // Record the scroll event
+	if(currentWorkspace())
+		currentWorkspace()->manage_mouse_scroll(event);
 	return true;
 }
 
