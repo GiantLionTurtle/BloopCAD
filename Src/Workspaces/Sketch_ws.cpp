@@ -237,6 +237,10 @@ bool Sketch_ws::manage_key_press(GdkEventKey* event)
 	case GDK_KEY_c:
 		begin_coincidence();
 		break;
+	case GDK_KEY_D:
+	case GDK_KEY_d:
+		begin_dimension();
+		break;
 	default:
 		return Workspace_abstr::manage_key_press(event);
 	}

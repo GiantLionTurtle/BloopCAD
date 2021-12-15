@@ -18,6 +18,7 @@
 #include "Dimension_tool.hpp"
 
 #include <Drawables/Sk/SkLine.hpp>
+#include <Drawables/Sk/SkCircle.hpp>
 
 Dimension_tool::Dimension_tool(Sketch_ws* env)
 	: Tool<Sketch_ws>(env)
@@ -36,13 +37,30 @@ void Dimension_tool::init()
 	mGeomA = nullptr;
 	mGeomB = nullptr;
 	mCurrHov = nullptr;
+	// reset preview (delete!!!!!)
 
 	mFilter = Geom2d::ANY;
+
+	std::cout<<"Blank dimension tool\n";
+}
+void Dimension_tool::finish()
+{
+	init();
+}
+
+bool Dimension_tool::manage_key_press(GdkEventKey* event)
+{
+	if(event->keyval == GDK_KEY_Escape && mMode != Dimension_modes::NONE) {
+		finish();
+		return false;
+	}
+	return true;
 }
 
 bool Dimension_tool::manage_mouse_move(GdkEventMotion* event)
 {
 	glm::vec2 screenPos = glm::vec2(event->x, event->y);
+	glm::vec2 plPos = mEnv->state()->cam->screen_to_plane(screenPos, mEnv->target()->basePlane());
 	SkGeomDragPoint gdpt;
 	SkGeometry* geom = mEnv->target()->closest_draggable(gdpt, screenPos, mEnv->state()->cam, mFilter) ? gdpt.geom : nullptr;
 
@@ -57,12 +75,43 @@ bool Dimension_tool::manage_mouse_move(GdkEventMotion* event)
 		}
 		mCurrHov = geom;
 	}
+
+	if(mMode == Dimension_modes::NONE)
+		return true;
+	
+	switch(mMode) {
+	case Dimension_modes::PTPT_HDIST:
+	case Dimension_modes::PTPT_VDIST:
+		if(mGeomB != nullptr) {
+			int tmp_mode = mode_selection_ptpt_dist(plPos);
+
+			if(tmp_mode != mMode) {
+				mMode = tmp_mode;
+				std::cout<<"Switched mode to PTPT_"
+				<<(mMode == Dimension_modes::PTPT_HDIST ? "H" : "V")<<"DIST\n";
+			}
+		}
+		break;
+	case Dimension_modes::CIRC_DIAM:
+	case Dimension_modes::CIRC_RAD:
+		int tmp_mode = mode_selection_circ_dim(plPos);
+
+		if(tmp_mode != mMode) {
+			mMode = tmp_mode;
+			std::cout<<"Enter mode CIRC_"<<(mMode == Dimension_modes::CIRC_DIAM ? "DIAM" : "RAD")<<"\n";
+		}
+	}
+
+	// if(mPreview)
+		// mPreview->move(plPos);
+
 	return true;
 }
 
 bool Dimension_tool::manage_button_release(GdkEventButton* event)
 {
 	glm::vec2 screenPos = glm::vec2(event->x, event->y);
+	glm::vec2 plPos = mEnv->state()->cam->screen_to_plane(screenPos, mEnv->target()->basePlane());
 	SkGeomDragPoint gdpt;
 	SkGeometry* geom = mEnv->target()->closest_draggable(gdpt, screenPos, mEnv->state()->cam, mFilter) ? gdpt.geom : nullptr;
 
@@ -70,7 +119,7 @@ bool Dimension_tool::manage_button_release(GdkEventButton* event)
 	if(!geom) {
 		if(mMode != Dimension_modes::NONE) {
 			create_constraint();
-			init();
+			finish();
 		}
 		return true;
 	}
@@ -78,7 +127,7 @@ bool Dimension_tool::manage_button_release(GdkEventButton* event)
 	// User clicked on a legal (the filter is updated to match the mode) geometry
 	switch(mMode) {
 	case Dimension_modes::NONE:
-		dispatch_mode_none(geom);
+		dispatch_mode_none(geom, plPos);
 		break;
 	case Dimension_modes::LINE_LEN:
 		dispatch_mode_line_len(geom);
@@ -88,7 +137,7 @@ bool Dimension_tool::manage_button_release(GdkEventButton* event)
 		dispatch_mode_circle_dim(geom);
 	case Dimension_modes::PTPT_HDIST:
 	case Dimension_modes::PTPT_VDIST:
-		dispatche_mode_pt_dist(geom);
+		dispatche_mode_pt_dist(geom, plPos);
 	};
 
 	return true;
@@ -168,7 +217,7 @@ void Dimension_tool::create_constraint()
 	}
 }
 
-void Dimension_tool::dispatch_mode_none(SkGeometry* geom)
+void Dimension_tool::dispatch_mode_none(SkGeometry* geom, glm::vec2 plPos)
 {
 	// Here geom A is not set
 
@@ -183,10 +232,10 @@ void Dimension_tool::dispatch_mode_none(SkGeometry* geom)
 		mMode = Dimension_modes::PTPT_HDIST;
 		mFilter = Geom2d::LINE | Geom2d::POINT | Geom2d::CIRCLE;
 	} else if(geom->geomType() & Geom2d::CIRCLE) {
-		std::cout<<"Enter mode CIRC_DIAM\n";
 		mGeomA = geom;
-		mMode = Dimension_modes::CIRC_DIAM;
+		mMode = mode_selection_circ_dim(plPos);
 		mFilter = Geom2d::LINE | Geom2d::POINT | Geom2d::CIRCLE;
+		std::cout<<"Enter mode CIRC_"<<(mMode == Dimension_modes::CIRC_DIAM ? "DIAM" : "RAD")<<"\n";
 	}
 }
 
@@ -232,12 +281,13 @@ void Dimension_tool::dispatch_mode_circle_dim(SkGeometry* geom)
 	}
 }
 
-void Dimension_tool::dispatche_mode_pt_dist(SkGeometry* geom)
+void Dimension_tool::dispatche_mode_pt_dist(SkGeometry* geom, glm::vec2 plPos)
 {
 	if(geom->geomType() & Geom2d::POINT) {
-		std::cout<<"Enter mode PTPT_DIST\n";
 		mGeomB = geom;
+		mMode = mode_selection_ptpt_dist(plPos);
 		mFilter = 0;
+		std::cout<<"Enter mode PTPT_"<<(mMode == Dimension_modes::PTPT_HDIST ? "H" : "V")<<"DIST\n";
 	} else if(geom->geomType() & Geom2d::LINE) {		
 		std::cout<<"Enter mode LINEPT_DIST\n";
 		mGeomB = geom;
@@ -249,5 +299,54 @@ void Dimension_tool::dispatche_mode_pt_dist(SkGeometry* geom)
 		mGeomB = geom;
 		mMode = Dimension_modes::PTCIRC_DIST;
 		mFilter = 0;
+	}
+}
+
+int Dimension_tool::mode_selection_ptpt_dist(glm::vec2 plPos)
+{
+	glm::vec2 pA = static_cast<SkPoint*>(mGeomA)->geom()->pos();
+	glm::vec2 pB = static_cast<SkPoint*>(mGeomB)->geom()->pos();
+
+	// Extreme positions of both points
+	double max_x = std::max(pA.x, pB.x);
+	double max_y = std::max(pA.y, pB.y);
+	double min_x = std::min(pA.x, pB.x);
+	double min_y = std::min(pA.y, pB.y);
+
+	// where the mouse is in relation to the points
+	// x_mid => x in the middle (not actual middle but between extremes)
+	bool x_mid = plPos.x >= min_x && plPos.x <= max_x;
+	bool y_mid = plPos.y >= min_y && plPos.y <= max_y;
+
+	// both distances between points to make decision 
+	// the largest distance will dictate the default
+	// orientation of the distance
+	double dist_h = max_x - min_x;
+	double dist_v = max_y - min_y;
+
+	if(x_mid && y_mid) { // Mouse is between points, default
+		return dist_h > dist_v ? 
+			Dimension_modes::PTPT_HDIST : Dimension_modes::PTPT_VDIST;
+	} else if(!x_mid && !y_mid) { // Mouse is outside bounds of points, default
+		return dist_h > dist_v ?
+			Dimension_modes::PTPT_HDIST : Dimension_modes::PTPT_VDIST;
+	} else if(!x_mid) { // On the right or the left
+		return Dimension_modes::PTPT_VDIST;
+	} else if(!y_mid) { // Above or below
+		return Dimension_modes::PTPT_HDIST;
+	}
+
+	BLOOP_MARKER;
+	return dist_h > dist_v ? 
+			Dimension_modes::PTPT_HDIST : Dimension_modes::PTPT_VDIST; 
+}
+int Dimension_tool::mode_selection_circ_dim(glm::vec2 plPos)
+{
+	SkCircle* circ = static_cast<SkCircle*>(mGeomA);
+	
+	if(glm::distance(glm::dvec2(plPos), circ->geom()->center_pos()) < circ->radius_val()) {
+		return Dimension_modes::CIRC_DIAM;
+	} else {
+		return Dimension_modes::CIRC_RAD;
 	}
 }

@@ -60,21 +60,21 @@ public:
 	Dimension_tool(Sketch_ws* env);
 
 	void init();
-	void finish() {}
+	void finish();
 
-	bool manage_key_press(GdkEventKey* event) { return true; }
-	bool manage_key_release(GdkEventKey* event) { return true; }
+	bool manage_key_press(GdkEventKey* event);
 	bool manage_mouse_move(GdkEventMotion* event);
-	bool manage_scroll(GdkEventScroll* event) { return true; }
-	bool manage_button_press(GdkEventButton* event) { return true; }
 	bool manage_button_release(GdkEventButton* event);
 
 	void create_constraint();
 
-	void dispatch_mode_none(SkGeometry* geom);
+	void dispatch_mode_none(SkGeometry* geom, glm::vec2 plPos);
 	void dispatch_mode_line_len(SkGeometry* geom);
 	void dispatch_mode_circle_dim(SkGeometry* geom);
-	void dispatche_mode_pt_dist(SkGeometry* geom);
+	void dispatche_mode_pt_dist(SkGeometry* geom, glm::vec2 plPos);
+
+	int mode_selection_ptpt_dist(glm::vec2 plPos);
+	int mode_selection_circ_dim(glm::vec2 plPos);
 
 	std::string name() { return "dimension"; }
 };
