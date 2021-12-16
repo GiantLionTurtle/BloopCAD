@@ -23,6 +23,7 @@
 
 #include "Point_abstr.hpp"
 #include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 namespace Geom2d {
 
@@ -93,7 +94,16 @@ public:
 	glm::dvec2 closest_to_point_geom(glm::dvec2 const& pt) { return at_geom(closest_to_point_interp_geom(pt)); }
 	double dist_to_point_geom(glm::dvec2 const& pt)
 	{
-		return glm::distance(closest_to_point_geom(pt), pt);
+		return std::abs(signed_dist_to_point(pt));
+	}
+	double signed_dist_to_point(glm::dvec2 const& pt)
+	{
+		// https://brilliant.org/wiki/dot-product-distance-between-point-and-a-line/
+		double a, b, c;
+		standard_form(a, b, c);
+
+		double dist = ((a * pt.x) + (b * pt.y) + c) / (std::sqrt(a*a + b*b));
+		return dist;
 	}
 
 	bool intersects(Line_abstr* l)
@@ -116,6 +126,27 @@ protected:
 	bool ccw(glm::dvec2 A, glm::dvec2 B, glm::dvec2 C) // determine if three point are aranged in a counter clockwise fashion
 	{
 		return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x);
+	}
+	void standard_form(double& a, double& b, double& c)
+	{
+		glm::dvec2 pA = posA();
+		glm::dvec2 pB = posB();
+
+		// really there are infinite valid answer so it gives
+		// one of them
+		
+		if(pA.x == pB.x) { // Vertical line
+			a = 1;
+			b = 0;
+			c = -pA.x;
+			return;
+		}
+
+		double m = (pB.y - pA.y) / (pB.x - pA.x);
+
+		a = m;
+		b = -1.0;
+		c = -m * pA.x + pA.y;
 	}
 };
 

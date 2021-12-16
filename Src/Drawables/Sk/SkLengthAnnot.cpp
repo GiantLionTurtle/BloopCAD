@@ -102,19 +102,42 @@ void SkLineLengthAnnot::draw_impl(Camera* cam, int frame, draw_type type)
 	mVA->unbind();
 	mTexture->unbind();
 	mArrowShader->unbind();
+
+
+
 }
 void SkLineLengthAnnot::graphicUpdate_impl()
 {
-	
+	mVB->bind();
+	set_vertices();
+	mVB->set(&mVertices[0], sizeof(ArrowVertex) * 2);
+	mVB->unbind();
+}
+
+void SkLineLengthAnnot::moveTo(glm::vec2 pos)
+{
+	mDistToLine = mLine->signed_dist_to_point(pos);
+	set_need_graphicUpdate();
 }
 
 void SkLineLengthAnnot::set_vertices()
 {
-	glm::dvec2 cross = glm::normalize(perpendicular_ccw(mLine->as_vec()));
-	glm::dvec3 dir = glm::normalize(mBasePlane->to_worldPos(mLine->as_vec()));
+	glm::dvec2 linevec = mLine->as_vec();
 
-	mVertices[0] = { mBasePlane->to_worldPos(mLine->posA() + cross * mDistToLine),  dir };
-	mVertices[1] = { mBasePlane->to_worldPos(mLine->posB() + cross * mDistToLine), -dir };
+
+	bool ccw =  mLine->posA().y < mLine->posB().y;
+
+	ccw = ((linevec.x >= 0 && linevec.y >= 0) || (linevec.x <= 0 && linevec.y <= 0)) ? ccw : !ccw;
+
+	glm::dvec2 cross = ccw ? 
+		perpendicular_ccw(linevec) :
+		perpendicular_cw(linevec);
+	cross = glm::normalize(cross);
+
+	glm::dvec3 dir = glm::normalize(mBasePlane->to_worldPos(linevec));
+
+	mVertices[0] = { mBasePlane->to_worldPos(mLine->posA() + cross * mDistToLine), -dir };
+	mVertices[1] = { mBasePlane->to_worldPos(mLine->posB() + cross * mDistToLine), dir };
 }
 
 Constraint* SkLineLengthAnnot::build_constr_impl()

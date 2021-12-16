@@ -104,8 +104,8 @@ bool Dimension_tool::manage_mouse_move(GdkEventMotion* event)
 		}
 	}
 
-	// if(mPreview)
-		// mPreview->move(plPos);
+	if(mPreview)
+		mPreview->moveTo(plPos);
 
 	return true;
 }

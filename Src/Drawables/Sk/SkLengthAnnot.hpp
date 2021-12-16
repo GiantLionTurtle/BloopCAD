@@ -51,6 +51,8 @@ protected:
 	void draw_impl(Camera* cam, int frame, draw_type type);
 	void graphicUpdate_impl();
 
+	void moveTo(glm::vec2 pos);
+
 	void set_vertices();
 
 	bool closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return false; }

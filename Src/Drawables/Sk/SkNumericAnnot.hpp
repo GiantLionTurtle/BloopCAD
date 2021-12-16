@@ -35,6 +35,8 @@ public:
 	inline double val() { return mVal; }
 	void set_val(double val);
 
+	virtual void moveTo(glm::vec2 pos) = 0;
+
 	virtual int expected_unit() = 0;
 protected:
 	virtual Constraint* build_constr_impl() = 0;
