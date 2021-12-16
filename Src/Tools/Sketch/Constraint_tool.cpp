@@ -127,15 +127,15 @@ void Constraint_tool::clear_geometries()
 
 bool Constraint_tool::is_point(SkGeometry* geom)
 {
-	return geom->type() & Geom2d::POINT;
+	return geom->geomType() & Geom2d::POINT;
 }
 bool Constraint_tool::is_line(SkGeometry* geom)
 {
-	return geom->type() & Geom2d::LINE;
+	return geom->geomType() & Geom2d::LINE;
 }
 bool Constraint_tool::is_curve(SkGeometry* geom)
 {
-	return is_line(geom) || geom->type() & Geom2d::CIRCLE;
+	return is_line(geom) || geom->geomType() & Geom2d::CIRCLE;
 }
 bool Constraint_tool::is_point_or_curve(SkGeometry* geom)
 {
