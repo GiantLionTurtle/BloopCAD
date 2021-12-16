@@ -43,7 +43,8 @@ void SkLineLengthAnnot::init_impl()
 	
 	mVA = new VertexArray();
 	VertexBufferLayout layout;
-	layout.add_proprety_float(3);
+	layout.add_proprety_float(3); // Position
+	layout.add_proprety_float(3); // Direction
 	mVA->bind();
 
 	set_vertices();
@@ -51,6 +52,7 @@ void SkLineLengthAnnot::init_impl()
 	mVA->add_buffer(*mVB, layout);
 	mVA->unbind();
 
+	BLOOP_MARKER;
 	mLineShader = ShadersPool::get_instance().get("linelength");
 	if(!mLineShader) {
 		mLineShader = Shader::fromFiles_ptr({
@@ -60,6 +62,7 @@ void SkLineLengthAnnot::init_impl()
 		ShadersPool::get_instance().add("linelength", mLineShader);
 	}
 
+	BLOOP_MARKER;
 	mArrowShader = ShadersPool::get_instance().get("arrow");
 	if(!mArrowShader) {
 		mArrowShader = Shader::fromFiles_ptr({
@@ -82,8 +85,8 @@ void SkLineLengthAnnot::draw_impl(Camera* cam, int frame, draw_type type)
 	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	mArrowShader->setUniform3f("u_Color", color);
-	mArrowShader->setUniform1f("u_Width", 50);
-	mArrowShader->setUniform1f("u_Height", 50);
+	mArrowShader->setUniform1f("u_Width", 10.0);
+	mArrowShader->setUniform1f("u_Height", 10.0);
 
 	if(mArrowShader->lastUsed() != frame) {
 		mArrowShader->setUniformMat4f("u_MVP", cam->mvp());
@@ -107,8 +110,8 @@ void SkLineLengthAnnot::graphicUpdate_impl()
 
 void SkLineLengthAnnot::set_vertices()
 {
-	glm::dvec2 cross = perpendicular_ccw(mLine->as_vec());
-	glm::dvec3 dir = mBasePlane->to_worldPos(mLine->as_vec());
+	glm::dvec2 cross = glm::normalize(perpendicular_ccw(mLine->as_vec()));
+	glm::dvec3 dir = glm::normalize(mBasePlane->to_worldPos(mLine->as_vec()));
 
 	mVertices[0] = { mBasePlane->to_worldPos(mLine->posA() + cross * mDistToLine),  dir };
 	mVertices[1] = { mBasePlane->to_worldPos(mLine->posB() + cross * mDistToLine), -dir };

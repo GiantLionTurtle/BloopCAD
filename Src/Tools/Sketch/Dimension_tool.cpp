@@ -19,6 +19,8 @@
 
 #include <Drawables/Sk/SkLine.hpp>
 #include <Drawables/Sk/SkCircle.hpp>
+#include <Workspaces/Document.hpp>
+#include <Drawables/Sk/SkLengthAnnot.hpp>
 
 Dimension_tool::Dimension_tool(Sketch_ws* env)
 	: Tool<Sketch_ws>(env)
@@ -37,8 +39,8 @@ void Dimension_tool::init()
 	mGeomA = nullptr;
 	mGeomB = nullptr;
 	mCurrHov = nullptr;
-	// reset preview (delete!!!!!)
-
+	set_preview(nullptr);
+	
 	mFilter = Geom2d::ANY;
 
 	std::cout<<"Blank dimension tool\n";
@@ -226,6 +228,7 @@ void Dimension_tool::dispatch_mode_none(SkGeometry* geom, glm::vec2 plPos)
 		mGeomA = geom;
 		mMode = Dimension_modes::LINE_LEN;
 		mFilter = /*Geom2d::LINE | */Geom2d::POINT | Geom2d::CIRCLE;
+		set_preview(new SkLineLengthAnnot(mEnv->target()->basePlane(), static_cast<SkLine*>(geom)->geom()));
 	} else if(geom->geomType() & Geom2d::POINT) {
 		std::cout<<"Enter mode PTPT_HDIST\n";
 		mGeomA = geom;
@@ -349,4 +352,12 @@ int Dimension_tool::mode_selection_circ_dim(glm::vec2 plPos)
 	} else {
 		return Dimension_modes::CIRC_RAD;
 	}
+}
+
+void Dimension_tool::set_preview(SkNumericAnnot* prev)
+{
+	mEnv->state()->doc->set_toolPreview(prev);
+
+	expunge(mPreview);
+	mPreview = prev;
 }

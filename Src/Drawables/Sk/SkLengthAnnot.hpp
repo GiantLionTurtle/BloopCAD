@@ -53,6 +53,8 @@ protected:
 
 	void set_vertices();
 
+	bool closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return false; }
+
 	Constraint* build_constr_impl();
 	void update_constr();
 };

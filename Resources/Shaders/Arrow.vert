@@ -24,11 +24,11 @@ uniform mat4 u_MVP;
 uniform vec2 u_Viewport;
 
 out VS_OUT {
-    vec3 dir;
+    vec4 dir;
 } vs_out;
 
 void main()
 {
     gl_Position = u_MVP * vec4(vertexPosition.xyz, 1.0);
-    vs_out.dir  = u_MVP * vec4(arrowDirections.xyz, 1.0);
+    vs_out.dir  = normalize(u_MVP * vec4(arrowDirections.xyz, 0.0));
 }

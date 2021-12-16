@@ -32,7 +32,7 @@ out data
 }gs_out;
 
 in VS_OUT {
-    vec3 color;
+    vec4 dir;
 } gs_in[];  
 
 void main() 
@@ -46,21 +46,25 @@ void main()
         at the top, it is the position that is in the input
     */
 
-	vec2 dir = gs_in[0].xy / gs_in[0].w;
-	vec2 mv_w = vec2(dir.y, -dir.x) * u_Width / u_Viewport / 2.0;
-	vec2 mv_h = dir * u_Height / u_Viewport;
+	vec2 aspectVec = vec2(u_Viewport.x/u_Viewport.y, 1.0);
+	vec2 dir = normalize(gs_in[0].dir.xy * gl_in[0].gl_Position.w * aspectVec);
+	vec2 mv_w = vec2(dir.y, -dir.x) * u_Width / (u_Viewport.x) / (u_Viewport.x/u_Viewport.y) * gl_in[0].gl_Position.w * 4 / aspectVec;
+	vec2 mv_h = dir * u_Height / (u_Viewport.y) * gl_in[0].gl_Position.w / aspectVec * 2;
+
+	gs_out.UV_coord = vec2(1.0, 1.0);
+	gl_Position = gl_in[0].gl_Position + vec4((mv_w), 0.0, 0.0);
+	EmitVertex();
 
 	gs_out.UV_coord = vec2(1.0, 0.0);
-	gl_Position = gl_in[0].gl_Position + vec4(mv_w, 0.0, 0.0, 0.0);
+	gl_Position = gl_in[0].gl_Position + vec4((mv_w - mv_h), 0.0, 0.0);
 	EmitVertex();
+
+	gs_out.UV_coord = vec2(0.0, 1.0);
+	gl_Position = gl_in[0].gl_Position + vec4((-mv_w), 0.0, 0.0);
+	EmitVertex();
+
 	gs_out.UV_coord = vec2(0.0, 0.0);
-	gl_Position = gl_in[0].gl_Position + vec4(-mv_w, 0, 0.0, 0.0);
-	EmitVertex();
-	gs_out.UV_coord = vec2(1.0, 1.0);
-	gl_Position = gl_in[0].gl_Position + vec4(-mv_w, mv_h, 0.0, 0.0);
-	EmitVertex();
-	gs_out.UV_coord = vec2(1.0, 1.0);
-	gl_Position = gl_in[0].gl_Position + vec4(mv_w, mv_h, 0.0, 0.0);
+	gl_Position = gl_in[0].gl_Position + vec4((-mv_w - mv_h), 0.0, 0.0);
 	EmitVertex();
 
 	EndPrimitive();

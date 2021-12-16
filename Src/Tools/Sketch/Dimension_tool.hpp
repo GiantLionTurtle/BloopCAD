@@ -21,7 +21,7 @@
 #include <Workspaces/Sketch_ws.hpp>
 #include <Drawables/Sk/SkGeometry.hpp>
 #include "Constraint_tool.hpp"
-
+#include <Drawables/Sk/SkNumericAnnot.hpp>
 
 /*
 	Tool for dimensioning part of the sketch, idealy it could do
@@ -56,6 +56,8 @@ private:
 	SkGeometry* mGeomA { nullptr }, *mGeomB { nullptr };
 	SkGeometry* mCurrHov { nullptr };
 	int mFilter { Geom2d::ANY };
+
+	SkNumericAnnot* mPreview { nullptr };
 public:
 	Dimension_tool(Sketch_ws* env);
 
@@ -75,6 +77,8 @@ public:
 
 	int mode_selection_ptpt_dist(glm::vec2 plPos);
 	int mode_selection_circ_dim(glm::vec2 plPos);
+
+	void set_preview(SkNumericAnnot* prev);
 
 	std::string name() { return "dimension"; }
 };
