@@ -25,6 +25,11 @@
 #include <Graphics_utils/GLCall.hpp>
 #include <Utils/Maths_util.hpp>
 
+struct ArrowVertex {
+	glm::vec3 pos;
+	glm::vec3 dir;
+};
+
 SkLineLengthAnnot::SkLineLengthAnnot(Geom3d::Plane_abstr* pl, Geom2d::Line* l)
 	: SkNumericAnnot(pl)
 	, mLine(l)
@@ -41,28 +46,39 @@ void SkLineLengthAnnot::init_impl()
 {
 	mNeed_graphicUpdate = false;
 	
-	mVA = new VertexArray();
-	VertexBufferLayout layout;
-	layout.add_proprety_float(3); // Position
-	layout.add_proprety_float(3); // Direction
-	mVA->bind();
+	{
+		mArrowVA = new VertexArray();
+		VertexBufferLayout layout;
+		layout.add_proprety_float(3); // Position
+		layout.add_proprety_float(3); // Direction
+		mArrowVA->bind();
 
-	set_vertices();
-	mVB = new VertexBuffer(&mVertices[0], sizeof(ArrowVertex) * 2);
-	mVA->add_buffer(*mVB, layout);
-	mVA->unbind();
+		mArrowVB = new VertexBuffer(sizeof(ArrowVertex) * 2);
+		mArrowVA->add_buffer(*mArrowVB, layout);
+		mArrowVA->unbind();
+	}
+	{
+		mLegsVA = new VertexArray();
+		VertexBufferLayout layout;
+		layout.add_proprety_float(3); // Position
+		mLegsVA->bind();
 
-	BLOOP_MARKER;
+		mLegsVB = new VertexBuffer(sizeof(glm::vec3) * 4);
+		mLegsVA->add_buffer(*mLegsVB, layout);
+		mLegsVA->unbind();
+	}
+
+	fill_vbs();
+
 	mLineShader = ShadersPool::get_instance().get("linelength");
 	if(!mLineShader) {
 		mLineShader = Shader::fromFiles_ptr({
 		{"Resources/Shaders/Point.vert", GL_VERTEX_SHADER},
-		{"Resources/Shaders/LineLength.geom", GL_GEOMETRY_SHADER}, 
+		{"Resources/Shaders/LineLengthLegs.geom", GL_GEOMETRY_SHADER}, 
 		{"Resources/Shaders/Line.frag", GL_FRAGMENT_SHADER}});
 		ShadersPool::get_instance().add("linelength", mLineShader);
 	}
 
-	BLOOP_MARKER;
 	mArrowShader = ShadersPool::get_instance().get("arrow");
 	if(!mArrowShader) {
 		mArrowShader = Shader::fromFiles_ptr({
@@ -95,49 +111,90 @@ void SkLineLengthAnnot::draw_impl(Camera* cam, int frame, draw_type type)
 	}
 
 	mTexture->bind();
-	mVA->bind();
+	mArrowVA->bind();
 
 	GLCall(glDrawArrays(GL_POINTS, 0, 2));
 
-	mVA->unbind();
+	mArrowVA->unbind();
 	mTexture->unbind();
 	mArrowShader->unbind();
 
+	/* dimensioning legs */
 
+	mLineShader->bind();
 
+	mLineShader->setUniform4f("u_Color", glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	mLineShader->setUniform1f("u_LineWidth", 2); 	// Line width is in pixel
+	mLineShader->setUniform1f("u_Feather", 0.6);	// Amount of feather, the formula might change so for the time being, higher is more feather
+
+	if(mLineShader->lastUsed() != frame) {
+		mLineShader->setUniformMat4f("u_MVP", cam->mvp());
+		mLineShader->setUniform2f("u_Viewport", cam->viewport());
+		mLineShader->set_used(frame);
+	}
+
+	mLegsVA->bind();
+
+	GLCall(glDrawArrays(GL_LINES, 0, 4));
+
+	mLegsVA->unbind();
+	mLineShader->unbind();
 }
 void SkLineLengthAnnot::graphicUpdate_impl()
 {
-	mVB->bind();
-	set_vertices();
-	mVB->set(&mVertices[0], sizeof(ArrowVertex) * 2);
-	mVB->unbind();
+	fill_vbs();
 }
 
 void SkLineLengthAnnot::moveTo(glm::vec2 pos)
 {
 	mDistToLine = mLine->signed_dist_to_point(pos);
+	// std::cout<<"Closest: "<<mLine->closest_to_point_interp(pos)<<"\n";
+	float closest_lerp = mLine->closest_to_point_interp(pos);
+	if(closest_lerp == 0.0) {
+		mDirection = -1;
+	} else if(closest_lerp == 1.0) {
+		mDirection = 1;
+	} else {
+		mDirection = 0;
+	}
+
+	// mDistToLine = Geom2d::Line::ccw(mLine->posA(), glm::vec2(0.0, 0.0), mLine->posB()) ? mDistToLine : -mDistToLine;
 	set_need_graphicUpdate();
 }
 
-void SkLineLengthAnnot::set_vertices()
+glm::dvec2 flip_to_second_third(glm::dvec2 vec)
 {
+	if(vec.x >= 0.0)
+		return -vec;
+	return vec;
+}
+
+void SkLineLengthAnnot::fill_vbs()
+{
+	mArrowVB->bind();
+	
 	glm::dvec2 linevec = mLine->as_vec();
-
-
-	bool ccw =  mLine->posA().y < mLine->posB().y;
-
-	ccw = ((linevec.x >= 0 && linevec.y >= 0) || (linevec.x <= 0 && linevec.y <= 0)) ? ccw : !ccw;
-
-	glm::dvec2 cross = ccw ? 
-		perpendicular_ccw(linevec) :
-		perpendicular_cw(linevec);
-	cross = glm::normalize(cross);
-
+	glm::dvec2 cross = glm::normalize(perpendicular_ccw(flip_to_second_third(linevec)));
+	// flip_to_first_fourth(cross);
 	glm::dvec3 dir = glm::normalize(mBasePlane->to_worldPos(linevec));
+	double dir_mod = mDirection == 0 ? 1.0 : -1.0;
 
-	mVertices[0] = { mBasePlane->to_worldPos(mLine->posA() + cross * mDistToLine), -dir };
-	mVertices[1] = { mBasePlane->to_worldPos(mLine->posB() + cross * mDistToLine), dir };
+	ArrowVertex arrowVert[2] = 
+		{ 	{mBasePlane->to_worldPos(mLine->posA() + cross * mDistToLine),  dir * dir_mod},
+			{mBasePlane->to_worldPos(mLine->posB() + cross * mDistToLine), -dir * dir_mod}};
+
+	mArrowVB->set(&arrowVert[0], sizeof(ArrowVertex) * 2);
+	mArrowVB->unbind();
+
+
+	mLegsVB->bind();
+
+	glm::vec3 legsVert[4] = 
+		{	arrowVert[0].pos, mBasePlane->to_worldPos(mLine->posA()),
+			arrowVert[1].pos, mBasePlane->to_worldPos(mLine->posB()) };
+	
+	mLegsVB->set(&legsVert[0], sizeof(glm::vec3) * 4);
+	mLegsVB->unbind();
 }
 
 Constraint* SkLineLengthAnnot::build_constr_impl()

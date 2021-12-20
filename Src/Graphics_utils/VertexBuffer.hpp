@@ -34,6 +34,7 @@ public:
 		@param size_ : 	The size in bytes of the buffer
 	*/
 	VertexBuffer(void const* data, unsigned int size_);
+	VertexBuffer(unsigned int size_);
 	/*
 		@function ~VertexBuffer destroys a VertexBuffer object and cleanly handles the deallocation in openGL
 	*/

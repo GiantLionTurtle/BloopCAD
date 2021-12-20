@@ -52,6 +52,9 @@ void Verticality_tool::create_constraint(Constraint*& constr, SkGeometry*& prior
 		return;
 	}
 
+	// When this is enabled, check if the dimension tool behaves correctly 
+	// for vertical lines traced up-down and down-up
+
 	if(!mEntB) {
 		// constr = new SkLine_verticality(mEnv->target()->basePlane(), static_cast<SkLineCurve*>(mEntA));
 	} else {

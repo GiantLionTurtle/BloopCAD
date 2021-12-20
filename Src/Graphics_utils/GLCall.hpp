@@ -34,9 +34,16 @@ bool GLLogCall(std::string const& call, std::string const& file, std::string con
 /*
 	@macro GLCall calls an openGL function and logs a warning if a new error appears
 */
-#define GLCall(x) GLClearErrors();\
-	x;\
+#define GLCall(x) \
+	GLClearErrors(); \
+	x; \
 	GLLogCall(#x, __FILE__, __FUNCTION__, __LINE__)
+
+#define GLCall_msg(x, msg) \
+	GLClearErrors(); \
+	x; \
+	if(!GLLogCall(#x, __FILE__, __FUNCTION__, __LINE__)) \
+		std::cout<<msg<<std::endl;
 
 // #define LOG_EVERY_GLCALL // Uncomment to have every openGL call logged, error or no error
 

@@ -116,7 +116,7 @@ void Point::draw_impl(Camera* cam, int frame, draw_type type)
 
 	mVA->bind();
 
-	GLCall(glDrawArrays(GL_POINTS, 0, 1)); // No indexing needed, a line only has one vertex
+	GLCall(glDrawArrays(GL_POINTS, 0, 1)); // No indexing needed, a point only has one vertex
 
 	mVA->unbind();
 	mShader->unbind();

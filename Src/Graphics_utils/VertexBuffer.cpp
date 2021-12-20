@@ -29,6 +29,12 @@ VertexBuffer::VertexBuffer(void const* data, unsigned int size_)
 	bind();
 	GLCall(glBufferData(GL_ARRAY_BUFFER, size_, data, GL_STATIC_DRAW)); // The draw mode might become an option eventually
 }
+VertexBuffer::VertexBuffer(unsigned int size_)
+	: mSize(size_)
+{
+	// Create the buffer
+	GLCall(glGenBuffers(1, &mRendererID));
+}
 
 VertexBuffer::~VertexBuffer()
 {

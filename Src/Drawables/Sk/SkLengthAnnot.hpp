@@ -25,21 +25,16 @@
 #include <Graphics_utils/Shader.hpp>
 #include <Graphics_utils/Texture.hpp>
 
-struct ArrowVertex {
-	glm::vec3 pos;
-	glm::vec3 dir;
-};
-
 class SkLineLengthAnnot : public SkNumericAnnot {
 private:	
 	Geom2d::Line* mLine;
 	double mDistToLine { 0.0 };
+	int mDirection { 0 }; // -1 : left, 0 : center, 1 : right (not actualy left/right but one side and the other)
 
 	Line_length* mConstr;
 
-	ArrowVertex mVertices[2];
-	VertexArray* mVA;
-	VertexBuffer* mVB;
+	VertexArray* mArrowVA, *mLegsVA;
+	VertexBuffer* mArrowVB, *mLegsVB;
 	Shader* mLineShader, *mArrowShader;
 	Texture* mTexture;
 public:
@@ -53,7 +48,7 @@ protected:
 
 	void moveTo(glm::vec2 pos);
 
-	void set_vertices();
+	void fill_vbs();
 
 	bool closest_2d(SelPoint& selP, glm::vec2 planePos, Camera* cam, glm::vec2 cursorPos, int filter) { return false; }
 

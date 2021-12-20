@@ -122,11 +122,13 @@ public:
 	{
 		return posA() - posB();
 	}
-protected:
-	bool ccw(glm::dvec2 A, glm::dvec2 B, glm::dvec2 C) // determine if three point are aranged in a counter clockwise fashion
+
+	static bool ccw(glm::dvec2 A, glm::dvec2 B, glm::dvec2 C) // determine if three point are aranged in a counter clockwise fashion
 	{
 		return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x);
 	}
+protected:
+	
 	void standard_form(double& a, double& b, double& c)
 	{
 		glm::dvec2 pA = posA();
